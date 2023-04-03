@@ -7,7 +7,7 @@ var Metadata = (function() {
             Ds1: "ds1", Eb1: "ds1",
         E1: "e1",
         F1: "c1",
-            Fs1: "cs1", Gb1: "cs1",
+            Fs1: "fs1", Gb1: "fs1",
         G1: "g1",
             Gs1: "gs1", Ab1: "gs1",
         A1: "a1",
@@ -19,7 +19,7 @@ var Metadata = (function() {
             Ds2: "ds2", Eb2: "ds2",
         E2: "e2",
         F2: "c2",
-            Fs2: "cs2", Gb2: "cs2",
+            Fs2: "fs2", Gb2: "fs2",
         G2: "g2",
             Gs2: "gs2", Ab2: "gs2",
         A2: "a2",
@@ -85,6 +85,7 @@ var Metadata = (function() {
 //    ];
 
     var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void" ];
+    var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
     var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
     var scaleChordOrder = [ "12-1", "12-2", "12-3", "23-1", "23-2", "23-3", "13-1", "13-2", "13-3", "123-1", "123-2", "123-3" ];
 
@@ -1170,6 +1171,8 @@ var Metadata = (function() {
                         "img": "corbu/chrom/chord-13-1.png",
                         "length": 12,
                         "notes": [note.Fs1, note.Cs2, note.FS2],
+                        // todo: figure out a better way to remove this during the merge
+                        "comment": ""
                     },
                     "13-2": {
                         "name": "G",
@@ -1961,11 +1964,11 @@ var Metadata = (function() {
                     "13-3": { "length": 32 },
                     "123-1": { "length": 32 },
                     "123-2": {
-                        "name": "G<sup7>/D",
+                        "name": "G<sup>7</sup>/D",
                         "img": "aristei/maj/chord-123-1.png",
                         "length": 32,
                         "notes": [note.D1, note.F1, note.B1],
-                        "comment": "Has a low D instead of a G, still functional as a G<sup7> but just weirdly different"
+                        "comment": "Has a low D instead of a G, still functional as a G<sup>7</sup> but just weirdly different"
                     },
                     "123-3": { "length": 32 }
                 }
@@ -1993,14 +1996,14 @@ var Metadata = (function() {
                         "img": "aristei/min/chord-123-2.png",
                         "length": 32,
                         "notes": [note.G1, note.C2, note.Ab2],
-                        "comment": "The normal A\u266D is up an octave, changing the feel of this chord"
+                        "comment": "The middle A\u266D is up an octave, changing the feel of this chord"
                     },
                     "123-3": {
                         "name": "B\u266D<sup>7</sup>/A\u266D",
                         "img": "aristei/min/chord-123-3.png",
                         "length": 32,
                         "notes": [note.Ab1, note.D2, note.Bb2],
-                        "comment": "The normal B\u266D is up an octave, changing the feel of this chord"
+                        "comment": "The middle B\u266D is up an octave, changing the feel of this chord"
                     }
                 }
             },
@@ -2058,6 +2061,7 @@ var Metadata = (function() {
     return  {
         shawzinOrder: shawzinOrder,
         noteOrder: noteOrder,
+        scaleOrder: scaleOrder,
         scaleNoteOrder: scaleNoteOrder,
         scaleChordOrder: scaleChordOrder,
         shawzinList: {
