@@ -23,6 +23,22 @@
         background-color: #000000;
     }
 
+    .button {
+        margin: 1ex 1ex 1ex 1ex;
+        cursor: pointer;
+        background-color: #808080;
+        border: none;
+        color: #FFFFFF;
+        padding: 1ex;
+        text-align: center;
+        text-decoration: none;
+        font-size: 100%;
+        border-radius: 1ex;
+        display: block-inline;
+    }
+    .urlButton, {
+        background-color: #406080;
+    }
 
 
     .title {

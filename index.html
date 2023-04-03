@@ -13,6 +13,9 @@
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
 <script type="text/javascript" language="javascript">
     function initModel() {
+    }
+
+    function dumpJson() {
         var dumpelement = document.getElementById("metadata-dump");
         dumpelement.innerHTML = JSON.stringify(Metadata, null, 2);
     }
@@ -37,7 +40,9 @@
 </div>
 
 <p>
-    Click here here for the same data as huge JSON dump, provided with absolutely no documentation.
+    Click
+    <input type="submit" class="button" value="here" onClick="dumpJson(this)"/>
+    for the full data as huge JSON dump, provided with absolutely no documentation.
 </p>
 <pre id="metadata-dump" style="font-family: monospace">
 
