@@ -109,8 +109,9 @@ var Metadata = (function() {
             "slap": "false", // tiamat is its own thing
         },
         "notes": {
-            "length": 2
             // todo: individual lengths of each note?  The answer is no
+            "length": 2,
+            "alts": false
         },
         "scales": {
 
@@ -970,7 +971,8 @@ var Metadata = (function() {
             "type": "monophonic",
         },
         "notes": {
-            "length": 10
+            "length": 10,
+            "alts": true
         },
         "scales": {
 
@@ -1686,6 +1688,44 @@ var Metadata = (function() {
         },
         "slap": {
             "length": 4
+        },
+        "scales": {
+            "pmin": {
+                "chords": "none",
+                "slap": { "img": "tiamat/pmin/slap.png" }
+            },
+            "pmaj": {
+                "chords": "none",
+                "slap": { "img": "tiamat/pmaj/slap.png" }
+            },
+            "chrom": {
+                "chords": "none",
+                "slap": { "img": "tiamat/chrom/slap.png" }
+            },
+            "hex": {
+                "chords": "none",
+                "slap": { "img": "tiamat/hex/slap.png" }
+            },
+            "maj": {
+                "chords": "none",
+                "slap": { "img": "tiamat/maj/slap.png" }
+            },
+            "min": {
+                "chords": "none",
+                "slap": { "img": "tiamat/min/slap.png" }
+            },
+            "hira": {
+                "chords": "none",
+                "slap": { "img": "tiamat/hira/slap.png" }
+            },
+            "phry": {
+                "chords": "none",
+                "slap": { "img": "tiamat/phry/slap.png" }
+            },
+            "yo": {
+                "chords": "none",
+                "slap": { "img": "tiamat/yo/slap.png" }
+            }
         }
     });
 
@@ -1718,7 +1758,8 @@ var Metadata = (function() {
             "type": "monophonic",
         },
         "notes": {
-            "length": 10
+            "length": 10,
+            "alts": true
         },
         "scales": {
             "pmin": {
@@ -1964,7 +2005,7 @@ var Metadata = (function() {
                     "13-3": { "length": 32 },
                     "123-1": {
                         "name": "G7/D",
-                        "img": "aristei/maj/chord-123-1.png",
+                        "img": "void/maj/chord-123-1.png",
                         "length": 32,
                         "notes": [note.D1, note.F1, note.B1],
                         "comment": "Has a low D instead of a G, still functional as a G7 but just weirdly different"
@@ -1986,21 +2027,21 @@ var Metadata = (function() {
                     "13-3": { "length": 32 },
                     "123-1": {
                         "name": "B\u266D/F",
-                        "img": "aristei/min/chord-123-1.png",
+                        "img": "void/min/chord-123-1.png",
                         "length": 32,
                         "notes": [note.F1, note.Bb1, note.D2],
                         "comment": "Has a high D instead of a G, turning it into an inverted B\u266D chord"
                     },
                     "123-2": {
                         "name": "A\u266Dmaj7/G",
-                        "img": "aristei/min/chord-123-2.png",
+                        "img": "void/min/chord-123-2.png",
                         "length": 32,
                         "notes": [note.G1, note.C2, note.Ab2],
                         "comment": "The middle A\u266D is up an octave, changing the feel of this chord"
                     },
                     "123-3": {
                         "name": "B\u266D7/A\u266D",
-                        "img": "aristei/min/chord-123-3.png",
+                        "img": "void/min/chord-123-3.png",
                         "length": 32,
                         "notes": [note.Ab1, note.D2, note.Bb2],
                         "comment": "The middle B\u266D is up an octave, changing the feel of this chord"
