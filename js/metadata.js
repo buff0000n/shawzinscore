@@ -132,7 +132,7 @@ var Metadata = (function() {
                 },
                 "chords": {
                     "12-1": {
-                        "name": "Cm<sup>7</sup>sus4",
+                        "name": "Cm7sus4",
                         "img": "standard/pmin/chord-12-1.png",
                         "length": 2,
                         "notes": [note.C1, note.F1, note.Bb1]
@@ -144,13 +144,13 @@ var Metadata = (function() {
                         "notes": [note.Eb1, note.G1, note.C2]
                     },
                     "12-3": {
-                        "name": "Fm<sup>7</sup>sus4",
+                        "name": "Fm7sus4",
                         "img": "standard/pmin/chord-12-3.png",
                         "length": 2,
                         "notes": [note.F1, note.Bb1, note.Eb2]
                     },
                     "23-1": {
-                        "name": "Gm<sup>7</sup>sus4",
+                        "name": "Gm7sus4",
                         "img": "standard/pmin/chord-23-1.png",
                         "length": 2,
                         "notes": [note.G1, note.C2, note.F2]
@@ -162,7 +162,7 @@ var Metadata = (function() {
                         "notes": [note.Bb1, note.Eb2, note.G2]
                     },
                     "23-3": {
-                        "name": "Cm<sup>7</sup>sus4",
+                        "name": "Cm7sus4",
                         "img": "standard/pmin/chord-23-3.png",
                         "length": 2,
                         "notes": [note.C2, note.F2, note.Bb2]
@@ -230,13 +230,13 @@ var Metadata = (function() {
                         "notes": [note.C1, note.E1, note.A1]
                     },
                     "12-2": {
-                        "name": "Dm<sup>7</sup>sus4",
+                        "name": "Dm7sus4",
                         "img": "standard/pmaj/chord-12-2.png",
                         "length": 2,
                         "notes": [note.D1, note.G1, note.C2]
                     },
                     "12-3": {
-                        "name": "Em<sup>7</sup>sus4",
+                        "name": "Em7sus4",
                         "img": "standard/pmaj/chord-12-3.png",
                         "length": 2,
                         "notes": [note.E1, note.A1, note.D2]
@@ -248,7 +248,7 @@ var Metadata = (function() {
                         "notes": [note.G1, note.C2, note.E2]
                     },
                     "23-2": {
-                        "name": "Am<sup>7</sup>sus4",
+                        "name": "Am7sus4",
                         "img": "standard/pmaj/chord-23-2.png",
                         "length": 2,
                         "notes": [note.A1, note.D2, note.G2]
@@ -457,13 +457,13 @@ var Metadata = (function() {
                         "notes": [note.Eb1, note.F1, note.Bb1]
                     },
                     "13-3": {
-                        "name": "Gm<sup>7</sup>/F",
+                        "name": "Gm7/F",
                         "img": "standard/hex/chord-13-3.png",
                         "length": 2,
                         "notes": [note.F1, note.G1, note.Bb1]
                     },
                     "123-1": {
-                        "name": "Cm<sup>7</sup>\u266D5/G\u266D",
+                        "name": "Cm7\u266D5/G\u266D",
                         "img": "standard/hex/chord-123-1.png",
                         "length": 2,
                         "notes": [note.Gb1, note.Bb1, note.C2]
@@ -475,7 +475,7 @@ var Metadata = (function() {
                         "notes": [note.G1, note.Bb1, note.C2]
                     },
                     "123-3": {
-                        "name": "Cm<sup>7</sup>/B\u266D",
+                        "name": "Cm7/B\u266D",
                         "img": "standard/hex/chord-123-3.png",
                         "length": 2,
                         "notes": [note.G1, note.Bb2, note.C2]
@@ -537,31 +537,31 @@ var Metadata = (function() {
                         "notes": [note.A1, note.C2, note.E2]
                     },
                     "13-1": {
-                        "name": "Dm<sup>7</sup>/C",
+                        "name": "Dm7/C",
                         "img": "standard/maj/chord-13-1.png",
                         "length": 2,
                         "notes": [note.C1, note.D1, note.F1]
                     },
                     "13-2": {
-                        "name": "Em<sup>7</sup>/C",
+                        "name": "Em7/C",
                         "img": "standard/maj/chord-13-2.png",
                         "length": 2,
                         "notes": [note.D1, note.E1, note.G1]
                     },
                     "13-3": {
-                        "name": "Fmaj/E",
+                        "name": "Fmaj7/E",
                         "img": "standard/maj/chord-13-3.png",
                         "length": 2,
                         "notes": [note.E1, note.F1, note.A1]
                     },
                     "123-1": {
-                        "name": "G<sup>7</sup>/F",
+                        "name": "G7/F",
                         "img": "standard/maj/chord-123-1.png",
                         "length": 2,
                         "notes": [note.F1, note.G1, note.B1]
                     },
                     "123-2": {
-                        "name": "Am<sup>7</sup>/G",
+                        "name": "Am7/G",
                         "img": "standard/maj/chord-123-2.png",
                         "length": 2,
                         "notes": [note.G1, note.A1, note.C2]
@@ -641,13 +641,13 @@ var Metadata = (function() {
                         "notes": [note.D1, note.Eb1, note.G1]
                     },
                     "13-3": {
-                        "name": "Fm<sup>7</sup>/E\u266D",
+                        "name": "Fm7/E\u266D",
                         "img": "standard/min/chord-13-3.png",
                         "length": 2,
                         "notes": [note.Eb1, note.F1, note.Ab1]
                     },
                     "123-1": {
-                        "name": "Gm<sup>7</sup>/F",
+                        "name": "Gm7/F",
                         "img": "standard/min/chord-123-1.png",
                         "length": 2,
                         "notes": [note.F1, note.G1, note.Bb1]
@@ -659,7 +659,7 @@ var Metadata = (function() {
                         "notes": [note.G1, note.Ab1, note.C2]
                     },
                     "123-3": {
-                        "name": "B\u266D<sup>7</sup>/A\u266D",
+                        "name": "B\u266D7/A\u266D",
                         "img": "standard/min/chord-123-3.png",
                         "length": 2,
                         "notes": [note.Ab1, note.Bb1, note.D2]
@@ -691,10 +691,10 @@ var Metadata = (function() {
                         "notes": [note.C1, note.F1, note.Bb1]
                     },
                     "12-2": {
-                        "name": "???",
+                        "name": "G\u266Daug4/D\u266D",
                         "img": "standard/hira/chord-12-2.png",
                         "length": 2,
-                        "notes": [note.F1, note.Gb1, note.C2]
+                        "notes": [note.C1, note.Gb1, note.C2]
                     },
                     "12-3": {
                         "name": "B\u266Dm/F",
@@ -703,7 +703,7 @@ var Metadata = (function() {
                         "notes": [note.F1, note.Bb1, note.Db2]
                     },
                     "23-1": {
-                        "name": "???",
+                        "name": "A\u266D7sus6/G\u266D",
                         "img": "standard/hira/chord-23-1.png",
                         "length": 2,
                         "notes": [note.Gb1, note.C2, note.F2]
@@ -789,7 +789,7 @@ var Metadata = (function() {
                         "notes": [note.Db1, note.F1, note.Ab1]
                     },
                     "12-3": {
-                        "name": "C<sup>7</sup>/E",
+                        "name": "C7/E",
                         "img": "standard/phry/chord-12-3.png",
                         "length": 2,
                         "notes": [note.E1, note.G1, note.Bb1]
@@ -813,7 +813,7 @@ var Metadata = (function() {
                         "notes": [note.Ab1, note.C2, note.E2]
                     },
                     "13-1": {
-                        "name": "D\u266Dma7j/C",
+                        "name": "D\u266Dmaj7/C",
                         "img": "standard/phry/chord-13-1.png",
                         "length": 2,
                         "notes": [note.C1, note.Db1, note.F1]
@@ -843,7 +843,7 @@ var Metadata = (function() {
                         "notes": [note.G1, note.Ab1, note.C2]
                     },
                     "123-3": {
-                        "name": "B\u266Dm<sup>7</sup>/A\u266D",
+                        "name": "B\u266Dm7/A\u266D",
                         "img": "standard/phry/chord-123-3.png",
                         "length": 2,
                         "notes": [note.Ab1, note.Bb1, note.Db2]
@@ -875,7 +875,7 @@ var Metadata = (function() {
                         "notes": [note.Db1, note.Gb1, note.Bb1]
                     },
                     "12-2": {
-                        "name": "E\u266Dm<sup>7</sup>sus4",
+                        "name": "E\u266Dm7sus4",
                         "img": "standard/yo/chord-12-2.png",
                         "length": 2,
                         "notes": [note.Eb1, note.Ab1, note.Db2]
@@ -1964,11 +1964,11 @@ var Metadata = (function() {
                     "13-3": { "length": 32 },
                     "123-1": { "length": 32 },
                     "123-2": {
-                        "name": "G<sup>7</sup>/D",
+                        "name": "G7/D",
                         "img": "aristei/maj/chord-123-1.png",
                         "length": 32,
                         "notes": [note.D1, note.F1, note.B1],
-                        "comment": "Has a low D instead of a G, still functional as a G<sup>7</sup> but just weirdly different"
+                        "comment": "Has a low D instead of a G, still functional as a G7 but just weirdly different"
                     },
                     "123-3": { "length": 32 }
                 }
@@ -1999,7 +1999,7 @@ var Metadata = (function() {
                         "comment": "The middle A\u266D is up an octave, changing the feel of this chord"
                     },
                     "123-3": {
-                        "name": "B\u266D<sup>7</sup>/A\u266D",
+                        "name": "B\u266D7/A\u266D",
                         "img": "aristei/min/chord-123-3.png",
                         "length": 32,
                         "notes": [note.Ab1, note.D2, note.Bb2],
