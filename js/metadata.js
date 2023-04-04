@@ -1962,14 +1962,14 @@ var Metadata = (function() {
                     "13-1": { "length": 32 },
                     "13-2": { "length": 32 },
                     "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": {
+                    "123-1": {
                         "name": "G7/D",
                         "img": "aristei/maj/chord-123-1.png",
                         "length": 32,
                         "notes": [note.D1, note.F1, note.B1],
                         "comment": "Has a low D instead of a G, still functional as a G7 but just weirdly different"
                     },
+                    "123-2": { "length": 32 },
                     "123-3": { "length": 32 }
                 }
             },
