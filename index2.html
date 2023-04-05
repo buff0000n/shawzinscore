@@ -19,11 +19,45 @@
 
     var testSB = null;
 
-    function test() {
-        if (!testSB) {
-            testSB = ShawzinAudio.getSoundBank("tiamat", "pmin");
-        }
-        testSB.play("0-2");
+    function test1() {
+        testSB = ShawzinAudio.getSoundBank("narmer", "hex");
+
+        testSB.checkInit(() => {
+            ShawzinAudio.setTimeOffset();
+
+            testSB.play("0-1", 0.00);
+            testSB.play("0-3", 0.25);
+            testSB.play("0-1", 0.50);
+            testSB.play("0-2", 0.75);
+            testSB.play("0-1", 1.00);
+        });
+    }
+
+    function test2() {
+        testSB = ShawzinAudio.getSoundBank("void", "maj");
+
+        testSB.checkInit(() => {
+            ShawzinAudio.setTimeOffset();
+            testSB.play("12-1", 0.00);
+            testSB.play("2-2", 0.25);
+            testSB.play("2-3", 0.50);
+            testSB.play("3-1", 0.75);
+            testSB.play("23-1", 1.00);
+        });
+    }
+
+
+    function test3() {
+        testSB = ShawzinAudio.getSoundBank("nelumbo", "chrom");
+
+        testSB.checkInit(() => {
+            ShawzinAudio.setTimeOffset();
+            testSB.play("3-3", 0.00);
+            testSB.play("3-2", 0.25);
+            testSB.play("3-1", 0.50);
+            testSB.play("2-3", 0.75);
+            testSB.play("2-2", 1.00);
+        });
     }
 
     //==============================================================
@@ -465,7 +499,9 @@
     <!--&lt;!&ndash; For some reason Canvas requires actual HTML elements to load the images, they will go in here &ndash;&gt;-->
 <!--</div>-->
 
-<input type="submit" value="test" onClick="test()"/>
+<input type="submit" value="test1" onClick="test1()"/>
+<input type="submit" value="test2" onClick="test2()"/>
+<input type="submit" value="test3" onClick="test3()"/>
 
 <div id="title-bar">
     <div class="main-title">Shawzin Score</div>

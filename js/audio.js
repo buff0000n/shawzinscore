@@ -6,7 +6,13 @@ var Audio = (function() {
     // we will initialize the context at the last possible moment, inside a user event,
     // because that's what some browsers require
     var context;
+    // The context's timer starts when its created and just keeps going as long as the page is open
+    // Save an offset so we can zero out the playback timer without worrying about the context's current time
     var timeOffset = 0;
+    // grace period for comparing sound times because they're all floating point
+    var timeUlp = 0.01;
+    // grace period for canceling sounds so we don't have some audibly cut off.
+    var dropGracePeriod = 0.1;
 
     function initAudioContext() {
         // init the audio context if it's not initialized
@@ -20,187 +26,14 @@ var Audio = (function() {
         }
     }
 
-    function setTimeOffset(offset) {
+    function setTimeOffset(offset=0) {
         if (context != null) {
             // the given offset is assumed to be relative to the current time
-            timeOffset = audioContext.currentTime + offset;
+            timeOffset = context.currentTime + offset;
+
         } else {
             // save for when the audio context is initialized
             timeOffset = offset;
-        }
-    }
-
-    // object wrapping a single sound and keeping track of its source, volume, and play state.
-    class SoundEntry {
-        constructor(monoFadeTime=0.05) {
-            // init with no sound for now
-            this.setBuffers(null, null);
-            // default volume
-            this.volume = 1.0;
-//            this.mixVolume = 1.0;
-//            this.masterVolume = 1.0;
-            this.queuedTime = null;
-            // fade time for stopping a sound
-            // we can't just stop a sound instantly because there will be an audible pop.
-            this.monoFadeTime = monoFadeTime;
-        }
-
-        setBuffers(buffers, sourceName) {
-            // save the sound info
-            this.buffers = buffers;
-            this.bufferIndex = 0;
-            this.sourceName = sourceName;
-            // if we need to play a sound and we have an actual buffer then play it
-            if (this.queuedTime != null && this.buffers != null) {
-                this.triggerAtTime(this.queuedTime);
-                this.queuedTime = null;
-            }
-        }
-
-        getMaxDuration() {
-            var duration = 0;
-            for (var b = 0; b < this.buffers.length; b++) {
-                if (this.buffers[b].length > duration) {
-                    duration = this.buffers[b].length;
-                }
-            }
-            return duration;
-        }
-
-        setVolume(volume) {
-            if (volume != this.volume) {
-                this.volume = volume;
-            }
-        }
-
-//        setMixVolume(mixVolume) {
-//            if (mixVolume != this.mixVolume) {
-//                this.mixVolume = mixVolume;
-//            }
-//        }
-//
-//        setMasterVolume(masterVolume) {
-//            if (masterVolume != this.masterVolume) {
-//                this.masterVolume = masterVolume;
-//            }
-//        }
-
-//        trigger() {
-//            this.triggerLater(0);
-//        }
-//
-//        triggerLater(time=0, context=audioContext) {
-//            if (time > 0) {
-//                // calculate the sound start time in the audio context's terms
-//                var triggerTime = context.currentTime + (time/1000);
-//            } else {
-//                // just start the source immediately and forget it
-//                var triggerTime = 0
-//            }
-//
-//            if (this.buffers == null) {
-//                // if we don't have the sound yet then queue playback for when we do
-//                this.queuedTime = triggerTime;
-//
-//            } else {
-//                // create the sound and schedule it
-//                this.triggerAtTime(triggerTime, context);
-//            }
-//        }
-
-        play(time=null) {
-            // play immediately
-            if (time == null) {
-                time = 0;
-
-            } else {
-                time += timeOffset;
-            }
-
-            // combine section volume, master volume, and individual sound mix volume
-//            var gainValue = this.volume * this.mixVolume * this.masterVolume;
-            var gainValue = this.volume;
-
-            // short circuit
-            if (gainValue == 0) {
-                return;
-            }
-
-            // create a source node
-            var source = context.createBufferSource();
-            source.buffer = this.buffers[this.bufferIndex];
-            this.bufferIndex++;
-            if (this.bufferIndex >= this.buffers.length) {
-                this.bufferIndex = 0;
-            }
-
-            // create a volume node
-            var gain = context.createGain();
-            // set the volume on the gain node
-            gain.gain.value = gainValue;
-
-            // connect the nodes to the audio context output
-            source.connect(gain);
-            gain.connect(context.destination);
-
-            // schedule the sound
-             console.log("Playing at " + time + ": " + this.sourceName);
-            source.start(time);
-
-            // hold on to the source and gain nodes in case we have to cancel it or stop it
-            this.lastSource = source;
-            this.lastGain = gain;
-        }
-
-//        stop() {
-//            this.stopLater(0);
-//        }
-//
-        stop(time=null) {
-            // stop immediately
-            if (time == null) {
-                time = 0;
-
-            } else {
-                time += timeOffset;
-            }
-
-            // if we have a scheduled source then cancel it
-            if (this.lastSource != null) {
-                if (time > 0) {
-                    // calculate the sound start time in the audio context's terms
-                    var t = context.currentTime + (time/1000);
-                    // schedule the stop
-                    // We can't just stop the sound instantly because there will be an audio pop
-                    // this.lastSource.stop(t);
-                    // schedule the start of a fade
-                    this.lastGain.gain.setValueAtTime(this.volume, t);
-                    // schedule a very quick fade, down to 0.01 volume because it doesn't like 0.
-                    this.lastGain.gain.exponentialRampToValueAtTime(0.01, t + this.monoFadeTime);
-                    // stop the source at the end of the fade
-                    this.lastSource.stop(t + this.monoFadeTime);
-
-                } else {
-                    // stop immediately
-                    // We can't just stop the sound instantly because there will be an audio pop
-                    // this.lastSource.stop();
-                    // start a very quick fade, down to 0.01 volume because it doesn't like 0.
-                    this.lastGain.gain.exponentialRampToValueAtTime(0.01, this.monoFadeTime);
-                    // stop the source at the end of the fade
-                    this.lastSource.stop(this.monoFadeTime);
-                }
-                // clear the source state
-                this.lastSource = null;
-                this.gain = null;
-            }
-        }
-
-        clearStop() {
-            // I can't believe I have to do this.
-            // there is no way to get notified when a scheduled sound starts playing.
-            // there is no way to cancel a scheduled sound without stopping it in the middle if it's already playing
-            // AudioContext is better than new Audio().play(), but damn is it Very Annoying in some ways.
-            this.lastSource = null;
         }
     }
 
@@ -210,8 +43,11 @@ var Audio = (function() {
 
         // When finished, calls callback({url: buffer, url: buffer, ...});
         function loadSounds(urlList, callback) {
+            // collect cache hits imediately
             var cacheHits = {};
-            var loadUrlList = Array();
+            // anything else is queued for loading
+            var loadUrlList = [];
+            // go through the URL list and separate into "already cached" and "not cached"
             for (var i = 0; i < urlList.length; i++) {
                 if (cache[urlList[i]]) {
                     cacheHits[urlList[i]] = cache[urlList[i]];
@@ -220,18 +56,21 @@ var Audio = (function() {
                 }
             }
 
-            // all cache hits, return the sounds directly
+            // all URLs were cache hits, return the sounds directly
             if (loadUrlList.length == 0) {
                 callback(cacheHits);
                 return;
             }
 
+            // start a loader to load and decode the uncached sounds
             new BufferLoader(context, urlList, (urlToBuffer) => {
+                // put each loaded sound into the cache hits and our actual cache
                 for (var url in urlToBuffer) {
                     var buffer = urlToBuffer[url];
                     cacheHits[url] = buffer;
                     cache[url] = buffer;
                 }
+                // return the sounds
                 callback(cacheHits);
             }).load();
         }
@@ -241,81 +80,313 @@ var Audio = (function() {
         };
     }());
 
-    class SoundBank {
-        constructor(nameToUrlList, monoGroupNameLists=null) {
-            this.nameToUrlList = nameToUrlList;
-            this.monoGroupNameLists = monoGroupNameLists;
+    // sound event, starts/schedules an instance of a sound and tracks everything we might need to cut it off or cancel it
+    class SoundEvent {
+        constructor(name, buffer, volume, startTime, duration, monoFadeTime) {
+            // sound data
+            this.name = name;
+            this.buffer = buffer;
+            this.volume = volume;
+            this.startTime = startTime;
+            this.endTime = startTime + duration;
+            this.monoFadeTime = monoFadeTime;
 
-            this.nameToSoundEntry = null;
-            this.monoGroups = null;
+            // audio context objects
+            this.source = null;
+            this.gain = null;
+        }
+
+        play() {
+            // create a source node
+            this.source = context.createBufferSource();
+            this.source.buffer = this.buffer;
+
+            // create a volume node
+            this.gain = context.createGain();
+            // set the volume on the gain node
+            this.gain.gain.value = this.volume;
+
+            // connect the nodes to the audio context output
+            this.source.connect(this.gain);
+            this.gain.connect(context.destination);
+
+            // schedule the sound
+            console.log("Playing at " + this.startTime + ": " + this.name);
+            this.source.start(this.startTime);
+        }
+
+        stopAt(time) {
+            // schedule the stop
+            // We can't just stop the sound instantly because there will be an audible pop
+            // schedule the start of a fade
+            this.gain.gain.setValueAtTime(this.volume, time);
+            // update the event stop time
+            this.endTime = time + this.monoFadeTime;
+            // schedule a very quick fade, down to 0.01 volume because it doesn't like 0.
+            this.gain.gain.exponentialRampToValueAtTime(0.01, this.endTime);
+            // stop the source at the end of the fade
+            this.source.stop(this.endTime);
+
+            console.log("Stopping at " + time + ": " + this.name);
+        }
+
+        cancel() {
+            // should only be called if the sound hasn't been started yet
+            this.source.cancel();
+        }
+    }
+
+    // event queue for sounds, takes care of handling mono and canceling unplayed sounds
+    class SoundEventQueue {
+        constructor(mono=false) {
+            // mono flag
+            this.mono = mono;
+            // event queue
+            this.queue = [];
+        }
+
+        clear() {
+            // just start over
+            this.queue = [];
+        }
+
+        clean(currentTime) {
+            // clean up and events that are past their end time
+            var index = 0;
+            // iterate from the beginning until the start time is past the current time
+            while (index < this.queue.length && this.queue[index].startTime < currentTime + timeUlp) {
+                // check to see if this event is past its end time
+                if (this.queue[index].endTime < currentTime) {
+                    this.queue.splice(index, 1);
+                    // repeat the index
+                } else {
+                    // increment the index
+                    index++;
+                }
+            }
+        }
+
+        dropAfter(currentTime) {
+            // add some grace time
+            currentTime += dropGracePeriod;
+            // iterate from the end until the start time is before the current time
+            while (this.queue[this.queue.length - 1].startTime > currentTime - timeUlp) {
+                // remove the event and cancel it
+                var event = this.queue.pop();
+                event.cancel();
+            }
+        }
+
+        insert(currentTime, soundEvent) {
+            // do cleanup
+            this.clean(currentTime);
+            // if we're mono, stop any existing sounds playing at that time.
+            if (this.mono) {
+                this.stopAt(soundEvent.startTime);
+            }
+
+            // find the correct index to insert the sound, just a simple linear search
+            var index = 0;
+            while (index < this.queue.length && this.queue[index].startTime < soundEvent.startTime + timeUlp) {
+                index++;
+            }
+            // insert
+            this.queue.splice(index, 0, soundEvent);
+        }
+
+        stopAt(stopTime) {
+            // get all events that are playing at the given time
+            var soundEvents = this.getAt(stopTime);
+            // stop each one at that time
+            for (var i = 0; i < soundEvents.length; i++) {
+                soundEvents[i].stopAt(stopTime);
+            }
+        }
+
+        getAt(getTime) {
+            // start a list
+            var got = [];
+            // iterate from the beginning until the start time is past the given time
+            var index = 0;
+            while (index < this.queue.length && this.queue[index].startTime < getTime + timeUlp) {
+                // if the end time is past the given time then this sound is playing
+                if (this.queue[index].endTime > getTime) {
+                    got.push(this.queue[index]);
+                }
+                index++;
+            }
+            return got;
+        }
+    }
+
+    // object wrapping a single sound and keeping track of its source, volume, and play state.
+    class SoundEntry {
+        constructor(name, urlList, soundEventQueue, monoFadeTime=0.05) {
+            // sound data
+            this.name = name;
+            this.urlList = urlList;
+
+            // fade time for stopping a sound
+            // we can't just stop a sound instantly because there will be an audible pop.
+            this.monoFadeTime = monoFadeTime;
+
+            // the sound event queue, multiple sounds can share the same queue.
+            this.soundEventQueue = soundEventQueue;
+
+            // tracker for cycling through alternate sounds
+            this.bufferIndex = 0;
+
+            // default volume
             this.volume = 1.0;
         }
 
+        init(buffers) {
+            // sound buffers
+            this.buffers = buffers;
+
+            // calculate buffer durations
+            this.durations = [];
+            for (var b = 0; b < this.buffers.length; b++) {
+                var bufferDuration = this.buffers[b].length / this.buffers[b].sampleRate
+                this.durations.push(bufferDuration);
+            }
+        }
+
+        setVolume(volume) {
+            if (volume != this.volume) {
+                this.volume = volume;
+            }
+        }
+
+        play(currentTime, time=null) {
+            if (time == null) {
+                // play immediately
+                time = currentTime;
+
+            } else {
+                // offset playtime to be in the context's time
+                time += timeOffset;
+            }
+
+            // short circuit
+            if (this.volume == 0) {
+                return;
+            }
+
+            // pull the cycle's current buffer and duration
+            var buffer = this.buffers[this.bufferIndex];
+            var duration = this.durations[this.bufferIndex];
+
+            // cycle
+            this.bufferIndex++;
+            if (this.bufferIndex >= this.buffers.length) {
+                this.bufferIndex = 0;
+            }
+
+            // build a sound event
+            var soundEvent = new SoundEvent(this.name, buffer, this.volume, time, duration, this.monoFadeTime);
+            // insert in the queue
+            this.soundEventQueue.insert(currentTime, soundEvent);
+            // start it
+            // todo: do this automatically in the soundEventQueue?
+            soundEvent.play();
+        }
+    }
+
+    class SoundBank {
+        constructor() {
+            // init flag
+            this.initialized = false;
+            // map of sound entries
+            this.nameToSoundEntry = {};
+            // map of mono group event queues
+            this.monoSoundEventQueues = {};
+            // one event queue for sounds that aren't in a mono group
+            this.polySoundEventQueue = null;
+
+            this.volume = 1.0;
+        }
+
+        addSound(name, urlList, monoGroup=null, monoFadeTime=0) {
+            // console.log("Adding sound " + name + ", monoGroup: " + monoGroup + ", monoFadeTime: " + monoFadeTime);
+            // get the right sound event queue
+            var soundEventQueue = null;
+            if (monoGroup) {
+                // create a sound event queue for this mono group if it doesn't exist
+                if (!this.monoSoundEventQueues[monoGroup]) {
+                    this.monoSoundEventQueues[monoGroup] = new SoundEventQueue(true);
+                }
+                soundEventQueue = this.monoSoundEventQueues[monoGroup];
+            } else {
+                // create a non-mono sound event queue, if it doesn't exist
+                if (this.polySoundEventQueue == null) {
+                    this.polySoundEventQueue = new SoundEventQueue(false);
+                }
+                soundEventQueue = this.polySoundEventQueue;
+            }
+            // build the sound entry
+            this.nameToSoundEntry[name] = new SoundEntry(name, urlList, soundEventQueue, monoFadeTime);
+        }
+
         checkInit(callback) {
-            initAudioContext();
-            if (this.nameToSoundEntry) {
+            // short-circuit if we're initialized
+            if (this.initialized) {
                 callback();
                 return;
             }
 
-            var urlList = Array();
-            for (var name in this.nameToUrlList) {
-                for (var j = 0; j < this.nameToUrlList[name].length; j++) {
-                    urlList.push(this.nameToUrlList[name][j]);
+            // make sure the audio context is initialized.  This has to be done first while handling a UI event
+            initAudioContext();
+
+            // put together a list of all URLs from all sounds
+            var urlList = [];
+            for (var name in this.nameToSoundEntry) {
+                var soundEntry = this.nameToSoundEntry[name];
+                for (var j = 0; j < soundEntry.urlList.length; j++) {
+                    urlList.push(soundEntry.urlList[j]);
                 }
             }
 
+            // load the sounds
             SoundCache.loadSounds(urlList, (urlToBuffer) => {
-                this.nameToSoundEntry = {};
-                for (var name in this.nameToUrlList) {
-                    var soundUrlList = this.nameToUrlList[name];
-                    var buffers = Array();
+                // correlate the sounds back to their sound entries
+                for (var name in this.nameToSoundEntry) {
+                    var soundEntry = this.nameToSoundEntry[name];
+                    var soundUrlList = soundEntry.urlList;
+                    var buffers = [];
+                    // pull the entry's sounds from the loaded sounds
                     for (var i = 0; i < soundUrlList.length; i++) {
                         buffers.push(urlToBuffer[soundUrlList[i]]);
                     }
-
-                    var soundEntry = new SoundEntry();
-                    soundEntry.setBuffers(buffers, name);
-                    this.nameToSoundEntry[name] = soundEntry;
+                    // update the entry
+                    soundEntry.init(buffers);
                 }
 
-                this.monoGroups = {};
-                if (this.monoGroupNameLists) {
-                    for (var i = 0; i < this.monoGroupNameLists.length; i++) {
-                        var monoGroupNameList = this.monoGroupNameLists[i];
-                        var monoGroup = i + 1;
-
-                        var monoGroupSoundEntryList = Array();
-                        for (var j = 0; j < monoGroupNameList.length; j++) {
-                            var soundEntry = this.nameToSoundEntry[monoGroupNameList[j]];
-                            monoGroupSoundEntryList.push(soundEntry);
-                            soundEntry.monoGroup = monoGroup;
-                        }
-                        this.monoGroups[monoGroup] = monoGroupSoundEntryList;
-                    }
-                }
-
+                // init volume
                 this.setVolume(this.volume);
+                // set the flag
+                this.initialized = true;
 
+                // return
                 callback();
             });
         }
 
         play(name, time=null) {
             this.checkInit(() => {
+                // get the current time for reasons
+                var currentTime = context.currentTime;
+                // find the sound entry
                 var soundEntry = this.nameToSoundEntry[name];
-                if (soundEntry.monoGroup) {
-                    var list = this.monoGroups[soundEntry.monoGroup];
-                    for (var i = 0; i < list.length; i++) {
-                        list[i].stop(time);
-                    }
-                }
-                soundEntry.play(time);
+                // play the sound
+                soundEntry.play(currentTime, time);
             });
         }
 
         setVolume(volume) {
+            // store the volume
             this.volume = volume;
+            // propagate to sound entries
             if (this.nameToSoundEntry) {
                 for (name in this.nameToSoundEntry) {
                     this.nameToSoundEntry[name].setVolume(volume);
@@ -324,24 +395,7 @@ var Audio = (function() {
         }
     }
 
-    var SoundBankCache = (function() {
-        // map from name to SoundBank
-        var cache = {};
 
-        function getSoundBank(name, nameToUrlList, monoGroupNameLists=null) {
-            if (!this.cache[name]) {
-                var soundBank = new SoundBank(nameToUrlList, monoGroupNameLists);
-                this.cache[name] = soundBank;
-            }
-            return this.cache[name];
-        }
-
-        return {
-            getSoundBank: getSoundBank
-        };
-    }());
-
-//
 //    // object wrapping a bank of sounds from a single source
 //    class SoundBankSource {
 //        constructor(sourceName, sources, mono=null) {
@@ -906,12 +960,12 @@ var Audio = (function() {
 //    }
 
 
+    // public members
     return  {
-        createSoundBank: function(nameToUrlList, monoGroupNameLists=null) {
-            return new SoundBank(nameToUrlList, monoGroupNameLists)
+        createSoundBank: function() {
+            return new SoundBank()
         },
-        setTimeOffset: setTimeOffset,
-        context: function() { return context; }
+        setTimeOffset: setTimeOffset
     };
 })();
 
