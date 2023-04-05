@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+<!-- Full disclosure: JavaScript is not my forte and neither is CSS. -B -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport" content="width=640, initial-scale=1">
+<head>
+    <title>Warframe Shawzin Tab Generator</title>
+</head>
+<!-- embedded favicon because why not -->
+<link href="data:image/png;base64,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" rel="icon" type="image/png" />
+<link rel="stylesheet" type="text/css" href="css/main.css"/>
+<body onload="initModel()">
+<script type="text/javascript" language="javascript" src="js/util.js"></script>
+<script type="text/javascript" language="javascript" src="js/metadata.js"></script>
+<script type="text/javascript" language="javascript" src="js/audio.js"></script>
+<script type="text/javascript" language="javascript" src="js/lib/bufferLoader.js"></script>
+<script type="text/javascript" language="javascript" src="js/shawzinAudio.js"></script>
+<script type="text/javascript" language="javascript">
+
+    var testSB = null;
+
+    function test() {
+        if (!testSB) {
+            testSB = ShawzinAudio.getSoundBank("tiamat", "pmin");
+        }
+        testSB.play("0-2");
+    }
+
+    //==============================================================
+    // Model-View control
+    //==============================================================
+
+    var showHelpUrlString = "&h=yes";
+
+    function initModel() {
+        // javascript is working
+        clearErrors();
+
+        var url = window.location.href;
+
+        window.onerror = windowOnError;
+
+        if (getQueryParam(url, "h")) {
+            about();
+        }
+
+/*
+        // stuff that gets init'd from cookies
+        initPlatformImages();
+        initDarkMode()
+        initHiDPI()
+
+        // init the model
+        reinitModel(url);
+*/
+    }
+
+/*
+    function reinitModel(url) {
+        // on page load, see if there's a "song=..." query string
+        var songString = getQueryParam(url, "song", false);
+        if (songString) {
+            // if there is, then initialize our song
+            setSong(urlDecodeString(songString, false));
+        }
+
+        var title = getQueryParam(url, "title");
+        if (title) {
+            document.getElementById("songTitle").value = urlDecodeString(title);
+        }
+
+        var author = getQueryParam(url, "author");
+        if (author) {
+            document.getElementById("author").value = urlDecodeString(author);
+        }
+
+        var metered = getQueryParam(url, "metered");
+        if (metered) {
+            if (metered == "y") {
+                document.getElementById("metered").checked = true;
+                document.getElementById("meter").value = getQueryParam(url, "meter");
+                document.getElementById("tempo").value = getQueryParam(url, "tempo");
+                document.getElementById("measuresPerLine").value = getQueryParam(url, "measuresPerLine");
+                document.getElementById("leadInBeats").value = getQueryParam(url, "leadInBeats");
+
+            } else {
+                document.getElementById("metered").checked = false;
+                document.getElementById("secondsPerLine").value = getQueryParam(url, "secondsPerLine");
+            }
+        } else {
+            document.getElementById("metered").checked = false;
+            document.getElementById("secondsPerLine").value = "4";
+        }
+        meteredChanged(document.getElementById("metered"))
+
+        if (songString) {
+            // start the display automatically
+            startRun();
+        }
+    }
+
+    function setSongString(songString) {
+        if (songString !== null && songString.length > 0) {
+            // parse a model from the string
+            var song = new Song().fromString(song);
+            // build the UI
+            setSong(song);
+            // clear any error
+            clearErrors();
+        }
+    }
+
+    function copyModelUrl() {
+        // build a model from the UI
+        var songString = getSong()
+
+        var title = document.getElementById("songTitle").value;
+
+        var author = document.getElementById("author").value;
+
+        var query = "?title=" + urlEncodeString(title) + "&author=" + urlEncodeString(author);
+
+        if (document.getElementById("metered").checked) {
+            query += "&metered=y"
+                + ("&meter=" + document.getElementById("meter").value || "4/4")
+                + ("&tempo=" + document.getElementById("tempo").value || "120")
+                + ("&measuresPerLine=" + document.getElementById("measuresPerLine").value || "4")
+                + ("&leadInBeats=" + document.getElementById("leadInBeats").value || "0");
+        } else {
+            query += "&metered=n"
+                + ("&secondsPerLine=" + document.getElementById("secondsPerLine").value || "4");
+        }
+
+        query += "&song=" + urlEncodeString(songString, false)
+
+        // build a full URL using the current URL
+        var url = buildQueryUrl(query);
+
+        // find the pop-up URL text field and set its contents
+        var textField = document.getElementById("urlHolder");
+        textField.value = url;
+        // show the popup
+        var popup = document.getElementById("popupBox");
+        popup.classList.toggle("show");
+        // focus and select the contents of the text field
+        textField.focus();
+        textField.select();
+    }
+
+	function urlEncodeString(string, plusIsSpace=true) {
+	    // urlencode some things
+	    string = encodeURIComponent(string);
+
+	    if (plusIsSpace) {
+            // replace whitespace with '+'
+            string = string.replace(/\s/g, "+");
+        }
+        return string;
+	}
+
+	function urlDecodeString(string, plusIsSpace=true) {
+	    if (plusIsSpace) {
+            // un-replace '+' with a space
+            string = string.replace(/\+/g, " ");
+        }
+
+	    // urldecode some things
+	    string = decodeURIComponent(string);
+
+	    // no funny business
+	    string = string.replace(/[<>\"]/g, "");
+	    return string;
+	}
+
+    function hideUrlPopup() {
+        // hide the popup when the text field loses focus
+        var popup = document.getElementById("popupBox");
+        popup.classList.toggle("show");
+        // todo: the onBlur() event fails to get called sometimes in Chrome
+    }
+
+    function buildQueryUrl(query) {
+        // get the current URL and strip out any query string
+        var url = window.location.href;
+        url = url.replace(/\?.* /, "");
+        // append our parameters
+        url += query;
+
+        return url;
+    }
+
+    function meteredChanged(checkbox) {
+        var metered = checkbox.checked;
+        if (metered) {
+            document.getElementById("meterDiv").style.display = "inline-block";
+            document.getElementById("tempoDiv").style.display = "inline-block";
+            document.getElementById("measuresPerLineDiv").style.display = "inline-block";
+            document.getElementById("leadInBeatsDiv").style.display = "inline-block";
+            document.getElementById("secondsPerLineDiv").style.display = "none";
+
+        } else {
+            document.getElementById("meterDiv").style.display = "none";
+            document.getElementById("tempoDiv").style.display = "none";
+            document.getElementById("measuresPerLineDiv").style.display = "none";
+            document.getElementById("leadInBeatsDiv").style.display = "none";
+            document.getElementById("secondsPerLineDiv").style.display = "inline-block";
+        }
+
+        valueChanged(checkbox);
+    }
+
+    function initDarkMode() {
+        // check cookie for a preferenc
+        if ("true" == getCookie("dark")) {
+            var checkbox = document.getElementById("darkMode")
+            checkbox.checked = true;
+            darkModeChanged(checkbox);
+        }
+    }
+
+    function darkModeChanged(checkbox) {
+        darkMode = checkbox.checked;
+        valueChanged(checkbox);
+        document.getElementById("tabArea").style.backgroundColor = darkMode ? "#000000" : "#FFFFFF";
+        setCookie("dark", darkMode ? "true" : "false");
+    }
+
+    function initHiDPI() {
+        // check cookie for a preferenc
+        if ("true" == getCookie("hidpi")) {
+            var checkbox = document.getElementById("hiDPI")
+            checkbox.checked = true;
+            hiDPIChanged(checkbox);
+        }
+    }
+
+    function hiDPIChanged(checkbox) {
+        hiDPI = checkbox.checked;
+        platformChanged();
+        setCookie("hidpi", hiDPI ? "true" : "false");
+    }
+
+    // loading images is async, keep track of how many are still loading so we can do something when it hits zero
+    var imagesStillLoading = 0;
+
+    // platform constants
+    var platformList = ["ps4", "xb1", "nsw", "pc", "none"];
+
+    var platformImgList = [
+        "_f_1_d",
+        "_f_2_d",
+        "_f_3_d",
+        "_s_1_d",
+        "_s_2_d",
+        "_s_3_d",
+        "_f_1_l",
+        "_f_2_l",
+        "_f_3_l",
+        "_s_1_l",
+        "_s_2_l",
+        "_s_3_l"
+    ];
+
+    function createImageLoader(id, src) {
+        // create an <img> element with the right ID, src, and onload function
+        var img = document.createElement("img");
+        img.id = id;
+        img.src = (isHiDPI() ? "img2x/" : "img/") + src + ".png";
+        img.onload = platformImageLoaded;
+        return img;
+    }
+
+    function initPlatformImages() {
+        // get the platform preference from cookies
+        platName = getCookie("platform")
+        // if it's empty or otherwise not valid then default to PS4
+        if (!platformList.includes(platName)) {
+            platName = "ps4";
+        }
+        // set the UI
+        platformElement = document.getElementById("platform").value = platName;
+
+        platformChanged();
+    }
+
+    function platformChanged(platform) {
+        platformElement = document.getElementById("platform")
+        // get the platform name
+        platName = platformElement.value;
+
+        // hidden image container
+        var imageLoaderContainer = document.getElementById("imageLoaderContainer");
+        // clear everything out
+        imageLoaderContainer.innerHTML = ``;
+
+        if  (platName == "none") {
+            valueChanged();
+
+        } else {
+            // shrug, disable the platform dropdown while we're loading
+            platformElement.disabled = true;
+
+            // init the loading image count before we add the elements
+            // add two for the platform-neutral dot images, loaded once on start-up
+            imagesStillLoading = platformImgList.length + 2;
+
+            // add the platform-neutral dots
+            imageLoaderContainer.append(createImageLoader("all_f_0_l", "all_f_0_l"));
+            imageLoaderContainer.append(createImageLoader("all_f_0_d", "all_f_0_d"));
+            // load the platform-specific images
+            for (var i = 0; i < platformImgList.length; i++) {
+                var suffix = platformImgList[i];
+                // hack so I don't have to worry about intializing the image loaders in multiple different ways
+                var prefix = platName == "none" ? "ps4" : platName;
+                imageLoaderContainer.append(createImageLoader("plat" + suffix, prefix + suffix));
+            }
+        }
+    }
+
+    function platformImageLoaded() {
+        // callback, we've loaded an image
+        imagesStillLoading--;
+        // oh look we're done
+        if (imagesStillLoading <= 0) {
+            // get the dropdown, enable it, and save the preference
+            platformElement = document.getElementById("platform")
+            platformElement.disabled = false;
+            setCookie("platform", platform.value);
+            // reset the count
+            platformChangeCount = 0;
+            // redraw the tablature
+            valueChanged();
+        }
+    }
+
+    function isHiDPIEnabled() {
+        return true;
+    }
+
+    function valueChanged(input) {
+        startRun();
+    }
+
+    function setSong(songString) {
+        document.getElementById('songCode').value = songString;
+    }
+
+    function getSong() {
+        // build a model from the current state of the UI
+
+        return document.getElementById('songCode').value.replace(/\s/g, "");
+    }
+
+    function getQueryParam(url, name, plusIsSpace=true) {
+        // from https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+        // weird that there's no built in function for this
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+        var results = regex.exec(url);
+        if (!results) {
+            return null;
+        }
+        if (!results[2]) {
+            return '';
+        }
+
+        var res = results[2];
+
+        if (plusIsSpace) {
+            res = res.replace(/\+/g, ' ')
+        }
+
+        return decodeURIComponent(res);
+    }
+*/
+    //==============================================================
+    // Runner
+    //==============================================================
+/*
+    function startRun() {
+        // disable/enable everything accordingly
+        document.getElementById('generateButton').disabled = true;
+
+        // update state
+        stopped = false;
+
+        try {
+            // parse the UI into a model
+            var songString = getSong();
+
+            if (songString) {
+                var song = new Song().fromString(songString);
+
+                if (document.getElementById("metered").checked) {
+                    buildTabWithMeasures(song,
+                        document.getElementById("platform").value,
+                        document.getElementById("songTitle").value,
+                        document.getElementById("author").value,
+                        document.getElementById("meter").value || "4/4",
+                        document.getElementById("tempo").value,
+                        document.getElementById("measuresPerLine").value || "4",
+                        document.getElementById("leadInBeats").value || "0");
+                } else {
+                    buildTabWithoutMeasures(song,
+                        document.getElementById("platform").value,
+                        document.getElementById("songTitle").value,
+                        document.getElementById("author").value,
+                        document.getElementById("secondsPerLine").value || "4");
+                }
+            }
+
+            clearErrors();
+
+        } finally {
+            stopRun()
+        }
+    }
+
+    function stopRun() {
+        // disable/enable everything accordingly
+        document.getElementById('generateButton').disabled = false;
+        // document.getElementById('stopButton').disabled = true;
+
+        // update state
+        stopped = true;
+        // the running simulation will check the stopped flag eventually and stop itself
+    }
+
+
+    function about() {
+        var container = document.getElementById("lotsOfWordsContainer")
+
+        if (container.style.display === "none") {
+            container.style.display = "block";
+
+            // perform some history shenanigans to make sure that if you display Help, click a link, and then go back,
+            // then Help is still displayed and you don't lose your place.
+            var href = window.location.href;
+
+            if (href.indexOf(showHelpUrlString) < 0) {
+                if (href.indexOf("?") < 0) {
+                    href += "?";
+                }
+                href += showHelpUrlString;
+                history.replaceState( {} , document.title, href );
+            }
+
+        } else {
+            container.style.display = "none";
+            var href = window.location.href;
+            var index = href.indexOf(showHelpUrlString)
+            if (index >= 0) {
+                href = href.substring(0, index) + href.substring(index + showHelpUrlString.length);
+                history.replaceState( {} , document.title, href );
+            }
+        }
+    }
+
+*/
+
+
+</script>
+
+<!--<div id="imageLoaderContainer" style="display: none">-->
+    <!--&lt;!&ndash; For some reason Canvas requires actual HTML elements to load the images, they will go in here &ndash;&gt;-->
+<!--</div>-->
+
+<input type="submit" value="test" onClick="test()"/>
+
+<div id="title-bar">
+    <div class="main-title">Shawzin Score</div>
+</div>
+
+<div id="error-bar">
+    <div id="error">
+        <div class="errorLine">Javascript not enabled.</div>
+    </div>
+</div>
+
+<div id="debug-bar">
+</div>
+
+<div id="toolbar">
+
+    <div id="toolbar-shawzin">
+        <img src="img/shawz-dax-medium.png" srcset="img2x/shawz-dax-medium.png 2x"/>
+    </div>
+
+    <div id="toolbar-settings">
+        <div id="metadata-settings-code"></div>
+        <div id="metadata-settings-title"></div>
+        <div id="song-settings-shawzin-name">Dax's Shawzin</div>
+        <div id="song-settings-scale"></div>
+    </div>
+
+    <div id="toolbar-buttons">
+        <div id="toolbar-buttons-burger">
+            <div id="toolbar-buttons-burger-menu">
+                <div id="toolbar-buttons-burger-share">Share</div>
+                <div id="toolbar-buttons-burger-system-select">Select System</div>
+                <!--<div id="toolbar-buttons-burger-dark">Dark Mode</div>-->
+                <div id="toolbar-buttons-burger-clear">Clear</div>
+                <!--<div id="toolbar-buttons-burger-storage">Storage</div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="song-container">
+    <div id="song-buttons">
+
+        <div id="song-buttons-config">
+            <div id="song-buttons-config-menu">
+                <div id="song-buttons-config-tempo">Tempo</div>
+                <div id="song-buttons-config-meter">Meter</div>
+                <!--<div id="song-buttons-config-lead-in">Lead In</div>-->
+            </div>
+        </div>
+
+        <div id="song-buttons-select">Select</div>
+        <div id="song-buttons-copy">Copy</div>
+        <div id="song-buttons-cut">Cut</div>
+        <div id="song-buttons-paste">Paste</div>
+        <div id="song-buttons-undo">Undo</div>
+        <div id="song-buttons-redo">Redo</div>
+        <div id="song-buttons-rewind">Rewind</div>
+        <div id="song-buttons-play">Play</div>
+        <div id="song-buttons-stop">Stop</div>
+        <div id="song-buttons-ff">Fast Forward</div>
+    </div>
+
+    <div id="song-header">
+        <div id="song-header-tab">
+            <div id="tab-fret-none">None</div>
+            <div id="tab-fret-1">Air</div>
+            <div id="tab-fret-2">Earth</div>
+            <div id="tab-fret-3">Water</div>
+        </div>
+        <div id="song-header-roll">
+            <div id="roll-keyboard">keyboard</div>
+        </div>
+    </div>
+    <div id="song-scroll">
+        <div id="song-scroll-tab">
+            TAB
+        </div>
+        <div id="song-scroll-roll">
+            ROLLL
+        </div>
+    </div>
+</div>
+
+<!--
+<div class="songContainer">
+    <div class="songDiv">
+        <div class="util" id="songTitleDiv">
+            <div class="tooltip">
+                <span class="label">Song Title:</span>
+                <input id="songTitle" class="songTitle" type="text" size="50" onchange="valueChanged(this);"/>
+                <span class="tooltiptextbottom">Give your song a name</span>
+            </div>
+        </div>
+        <div class="util" id="authorDiv">
+            <div class="tooltip">
+                <span class="label">Author:</span>
+                <input id="author" class="author" type="text" size="50" onchange="valueChanged(this);"/>
+                <span class="tooltiptextbottom">Who is the author?  Be honest :)</span>
+            </div>
+        </div>
+        <div class="util" id="songCodeDiv">
+            <div class="tooltip">
+                <div class="label">Song Code:</div>
+                <textarea id="songCode" rows="5" cols="64" onchange="valueChanged(this);"></textarea>
+                <span class="tooltiptextbottom">Paste the song code in here</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="businessDiv">
+    <div class="utilGroup">
+        <div class="util" id="platformDiv">
+            <div class="tooltip">
+                <span class="label">Platform:</span>
+                <select id="platform" class="platform" onchange="platformChanged(this);">
+                    <option value="ps4" selected>PS4</option>
+                    <option value="xb1">XB1</option>
+                    <option value="nsw">NSW</option>
+                    <option value="pc">PC</option>
+                    <option value="none">None</option>
+                </select>
+                <span class="tooltiptextbottom">Select which platform's controls to display.  Choose <strong>None</strong> to use the old numeric display.</span>
+            </div>
+        </div>
+
+        <div class="util" id="meteredDiv">
+            <div class="tooltip">
+                <input id="metered" class="button" type="checkbox" onchange="meteredChanged(this);"/>
+                <span class="label">Metered</span>
+                <span class="tooltiptextbottom">Enable if the Shzawzin song follows a specific meter.</span>
+            </div>
+        </div>
+
+        <div class="util" id="secondsPerLineDiv">
+            <div class="tooltip">
+                <span class="label">Seconds per line:</span>
+                <input id="secondsPerLine" class="secondsPerLine" type="number" step="0.01" value="4" min="1" placeholder="4" onchange="valueChanged(this);"/>
+                <span class="tooltiptextbottom">How many seconds on each line</span>
+            </div>
+        </div>
+
+        <div class="util" id="meterDiv">
+            <div class="tooltip">
+                <span class="label">Time Signature:</span>
+                <input id="meter" class="meter" type="text" value="4/4" placeholder="4/4" onchange="valueChanged(this);"/>
+                <span class="tooltiptextbottom">The meter of the song</span>
+            </div>
+        </div>
+        <div class="util" id="tempoDiv">
+            <div class="tooltip">
+                <span class="label">Tempo:</span>
+                <select id="tempo" class="tempo" onchange="valueChanged(this);">
+                    <option value="120" selected>120 bps</option>
+                    <option value="160">160 bps</option>
+                    <option value="240">240 bps</option>
+                    <option value="192">192 bps</option>
+                    <option value="96">96 bps</option>
+                    <option value="80">80 bps</option>
+                    <option value="60">60 bps</option>
+                </select>
+                <span class="tooltiptextbottom">The Tempo of the song</span>
+            </div>
+        </div>
+        <div class="util" id="measuresPerLineDiv">
+            <div class="tooltip">
+                <span class="label">Measures per line:</span>
+                <input id="measuresPerLine" class="measuresPerLine" type="number" value="4" size="3" min="1" placeholder="4" onchange="valueChanged(this);"/>
+                <span class="tooltiptextbottom">How many measures per line</span>
+            </div>
+        </div>
+        <div class="util" id="leadInBeatsDiv">
+            <div class="tooltip">
+                <span class="label">Lead in beats:</span>
+                <input id="leadInBeats" class="leadInBeats" type="number" value="0" step="0.125" size="5" min="0" placeholder="0" onchange="valueChanged(this);"/>
+                <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
+            </div>
+        </div>
+
+        <div class="util" id="darkModeDiv">
+            <div class="tooltip">
+                <input id="darkMode" class="button" type="checkbox" onchange="darkModeChanged(this);"/>
+                <span class="label">Dark</span>
+                <span class="tooltiptextbottom">Enable for a dark-colored image intead of a light one.</span>
+            </div>
+        </div>
+        <div class="util" id="hiDPIDiv">
+            <div class="tooltip">
+                <input id="hiDPI" class="button" type="checkbox" onchange="hiDPIChanged(this);"/>
+                <span class="label">High DPI</span>
+                <span class="tooltiptextbottom">Enable for a higher-resolution tab image.</span>
+            </div>
+        </div>
+
+        <div id="generateDiv" class="util">
+            <span class="tooltip">
+                <input id="generateButton" class="button generate" type="submit" value="Generate Tab" onClick="startRun()"/>
+                <span class="tooltiptextbottom">Generate tablature</span>
+            </span>
+        </div>
+        <div class="util">
+            <div class="popup">
+                <input id="copyUrlButton" class="button urlButton popup" type="submit" value="Generate Link"
+                       onClick="copyModelUrl()"/>
+                <div class="popuptext" id="popupBox">
+                    <input id="urlHolder" type="text" size="60" onblur="hideUrlPopup()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+<div id="tabArea">
+
+</div>
+
+<div class="titleBar">
+    <div class="utilGroup">
+        <div class="util">
+            <span class="tooltip">
+                <input id="about" class="button about" type="submit" value="Help" onClick="about()"/>
+                <span class="tooltiptext">Click here for lots of words</span>
+            </span>
+        </div>
+    </div>
+    <div id="lotsOfWordsContainer" style="display: none;">
+        <div class="lotsOfWords">
+            <h1>What is this?</h1>
+            <p>
+                Something.
+            </p>
+
+            <h1>Table of Contents</h1>
+            <ul id="TOC">
+                <li><a href="#tocGettingStarted">Getting Started</a>
+                    <ul>
+                        <li><a href="#tocEnterSongInfo">Enter your song's information</a>
+                    </ul>
+                </li>
+            </ul>
+
+            <h1 id="tocGettingStarted">Getting Started</h1>
+
+            <h2 id="tocEnterSongInfo">Enter your song's information:</h2>
+            <ul>
+                <li><strong>Title</strong>: Enter a title for your song here.  This will appear at the top of the generated image.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footerContainer">
+        <div>
+            <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
+        </div>
+        <div>
+            Buff00n
+        </div>
+        <div>
+            <a href="https://github.com/buff0000n/shawzinscore">Source</a>
+            <a href="https://github.com/buff0000n/shawzinscore/issues/1">Feedback</a>
+        </div>
+        <div>
+            v0.0.1: 2023-03-21
+        </div>
+        <div>Thanks:
+            <div><a href="https://forums.warframe.com/profile/3060756-ps4poison___insect/">(PS4)Poison___Insect</a></div>
+            <div><a href="https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/">u/Empyrrhus</a></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

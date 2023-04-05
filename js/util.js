@@ -207,7 +207,7 @@ function showError(error) {
 
 function showErrors(errors) {
     // find the error bar
-    var errorBarElement = document.getElementById("errorBar");
+    var errorBarElement = document.getElementById("error-bar");
     // build and error div with a line for each error in the list
     var html = `<div id="error">`;
     for (var error in errors) {
