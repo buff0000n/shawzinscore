@@ -962,7 +962,8 @@ var Metadata = (function() {
         },
         "notes": {
             "length": 10,
-            "alts": true
+            "alts": true,
+            "monoFadeTime": 0.1
         },
         "scales": {
 
@@ -971,73 +972,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/pmin/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C1]
                     },
                     "12-2": {
                         "name": "E\u266D",
                         "img": "corbu/pmin/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Eb1, note.G1, note.C2]
                     },
                     "12-3": {
                         "name": "F",
                         "img": "corbu/pmin/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "23-1": {
                         "name": "G",
                         "img": "corbu/pmin/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "23-2": {
                         "name": "B\u266D",
                         "img": "corbu/pmin/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.Eb2, note.Bb2]
                     },
                     "23-3": {
                         "name": "C",
                         "img": "corbu/pmin/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.G2, note.C3]
                     },
                     "13-1": {
                         "name": "Cm",
                         "img": "corbu/pmin/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "E\u266D",
                         "img": "corbu/pmin/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Eb1, note.Eb1]
                     },
                     "13-3": {
                         "name": "F",
                         "img": "corbu/pmin/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.F2]
                     },
                     "323-1": {
                         "name": "G",
                         "img": "corbu/pmin/chord-323-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     },
                     "323-2": {
                         "name": "B\u266D",
                         "img": "corbu/pmin/chord-323-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.Bb2]
                     },
                     "323-3": {
                         "name": "C",
                         "img": "corbu/pmin/chord-323-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.C3]
                     }
                 }
@@ -1048,73 +1049,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/pmaj/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "D",
                         "img": "corbu/pmaj/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.D1, note.A1, note.D2]
                     },
                     "12-3": {
                         "name": "E",
                         "img": "corbu/pmaj/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.E1, note.B1, note.E2]
                     },
                     "23-1": {
                         "name": "G",
                         "img": "corbu/pmaj/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "23-2": {
                         "name": "A",
                         "img": "corbu/pmaj/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.A1, note.E2, note.A2]
                     },
                     "23-3": {
                         "name": "C",
                         "img": "corbu/pmaj/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.G2, note.C3]
                     },
                     "13-1": {
                         "name": "C",
                         "img": "corbu/pmaj/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "D",
                         "img": "corbu/pmaj/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.D1, note.D2]
                     },
                     "13-3": {
                         "name": "E",
                         "img": "corbu/pmaj/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.E1, note.E2]
                     },
                     "123-1": {
                         "name": "G",
                         "img": "corbu/pmaj/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     },
                     "123-2": {
                         "name": "A",
                         "img": "corbu/pmaj/chord-123-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.A1, note.A2]
                     },
                     "123-3": {
                         "name": "C",
                         "img": "corbu/pmaj/chord-123-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.C3]
                     }
                 }
@@ -1125,43 +1126,43 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/chrom/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "C\u266F",
                         "img": "corbu/chrom/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Gs1, note.Gs1, note.Cs2]
                     },
                     "12-3": {
                         "name": "D",
                         "img": "corbu/chrom/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.D1, note.A1, note.D2]
                     },
                     "23-1": {
                         "name": "D\u266F",
                         "img": "corbu/chrom/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Ds1, note.As1, note.Ds2]
                     },
                     "23-2": {
                         "name": "E",
                         "img": "corbu/chrom/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.E1, note.B1, note.E2]
                     },
                     "23-3": {
                         "name": "F",
                         "img": "corbu/chrom/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "13-1": {
                         "name": "F\u266F",
                         "img": "corbu/chrom/chord-13-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Fs1, note.Cs2, note.FS2],
                         // todo: figure out a better way to remove this during the merge
                         "comment": ""
@@ -1169,31 +1170,31 @@ var Metadata = (function() {
                     "13-2": {
                         "name": "G",
                         "img": "corbu/chrom/chord-13-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "13-3": {
                         "name": "G\u266F",
                         "img": "corbu/chrom/chord-13-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Gs1, note.Ds2, note.Gs2]
                     },
                     "123-1": {
                         "name": "A",
                         "img": "corbu/chrom/chord-123-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.A1, note.E2, note.A2]
                     },
                     "123-2": {
                         "name": "A\u266F",
                         "img": "corbu/chrom/chord-123-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.As1, note.F2, note.As2]
                     },
                     "123-3": {
                         "name": "B",
                         "img": "corbu/chrom/chord-123-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.B1, note.Fs2, note.B2]
                     }
                 }
@@ -1205,73 +1206,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/pmin/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C1]
                     },
                     "12-2": {
                         "name": "E\u266D",
                         "img": "corbu/pmin/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Eb1, note.G1, note.C2]
                     },
                     "12-3": {
                         "name": "F",
                         "img": "corbu/pmin/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "23-1": {
                         "name": "G",
                         "img": "corbu/pmin/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "23-2": {
                         "name": "B\u266D",
                         "img": "corbu/pmin/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.Eb2, note.Bb2]
                     },
                     "23-3": {
                         "name": "C",
                         "img": "corbu/pmin/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.G2, note.C3]
                     },
                     "13-1": {
                         "name": "Cm",
                         "img": "corbu/pmin/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "E\u266D",
                         "img": "corbu/pmin/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Eb1, note.Eb1]
                     },
                     "13-3": {
                         "name": "F",
                         "img": "corbu/pmin/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.F2]
                     },
                     "323-1": {
                         "name": "G",
                         "img": "corbu/pmin/chord-323-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     },
                     "323-2": {
                         "name": "B\u266D",
                         "img": "corbu/pmin/chord-323-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.Bb2]
                     },
                     "323-3": {
                         "name": "C",
                         "img": "corbu/pmin/chord-323-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.C3]
                     }
                 }
@@ -1282,73 +1283,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/maj/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "D",
                         "img": "corbu/maj/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.D1, note.A1, note.D2]
                     },
                     "12-3": {
                         "name": "E",
                         "img": "corbu/maj/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.E1, note.B1, note.E2]
                     },
                     "23-1": {
                         "name": "F",
                         "img": "corbu/maj/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "23-2": {
                         "name": "G",
                         "img": "corbu/maj/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "23-3": {
                         "name": "A",
                         "img": "corbu/maj/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.A1, note.E2, note.A2]
                     },
                     "13-1": {
                         "name": "C",
                         "img": "corbu/maj/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "D",
                         "img": "corbu/maj/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.D1, note.D2]
                     },
                     "13-3": {
                         "name": "E",
                         "img": "corbu/maj/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.E1, note.E2]
                     },
                     "123-1": {
                         "name": "F",
                         "img": "corbu/maj/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "123-2": {
                         "name": "G",
                         "img": "corbu/maj/chord-123-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     },
                     "123-3": {
                         "name": "A",
                         "img": "corbu/maj/chord-123-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     }
                 }
@@ -1359,73 +1360,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/min/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "E\u266D",
                         "img": "corbu/min/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Eb1, note.Bb1, note.Eb2]
                     },
                     "12-3": {
                         "name": "F",
                         "img": "corbu/min/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "23-1": {
                         "name": "G",
                         "img": "corbu/min/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "23-2": {
                         "name": "A\u266D",
                         "img": "corbu/min/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Ab1, note.Eb1, note.Ab2]
                     },
                     "23-3": {
                         "name": "B\u266D",
                         "img": "corbu/min/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Ab1, note.C2, note.Eb2]
                     },
                     "13-1": {
                         "name": "C",
                         "img": "corbu/min/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "E\u266D",
                         "img": "corbu/min/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Eb1, note.Eb2]
                     },
                     "13-3": {
                         "name": "F",
                         "img": "corbu/min/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.F2]
                     },
                     "123-1": {
                         "name": "G",
                         "img": "corbu/min/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     },
                     "123-2": {
                         "name": "A\u266D",
                         "img": "corbu/min/chord-123-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Ab1, note.Ab2]
                     },
                     "123-3": {
                         "name": "B\u266D",
                         "img": "corbu/min/chord-123-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.Bb2]
                     }
                 }
@@ -1436,73 +1437,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/hira/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "D\u266D",
                         "img": "corbu/hira/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Db1, note.Ab1, note.Db2]
                     },
                     "12-3": {
                         "name": "F",
                         "img": "corbu/hira/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "23-1": {
                         "name": "G\u266D",
                         "img": "corbu/hira/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Gb1, note.Db2, note.Gb2]
                     },
                     "23-2": {
                         "name": "B\u266D",
                         "img": "corbu/hira/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.F2, note.Bb2]
                     },
                     "23-3": {
                         "name": "C",
                         "img": "corbu/hira/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.G2, note.C3]
                     },
                     "13-1": {
                         "name": "C",
                         "img": "corbu/hira/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "D\u266D",
                         "img": "corbu/hira/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Db1, note.Db2]
                     },
                     "13-3": {
                         "name": "F",
                         "img": "corbu/hira/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.F2]
                     },
                     "123-1": {
                         "name": "G\u266D",
                         "img": "corbu/hira/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Gb1, note.Db1, note.Gb2]
                     },
                     "123-2": {
                         "name": "B\u266D",
                         "img": "corbu/hira/chord-123-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.Bb2]
                     },
                     "123-3": {
                         "name": "C",
                         "img": "corbu/hira/chord-123-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.C3]
                     }
                 }
@@ -1513,73 +1514,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/phry/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "D\u266D",
                         "img": "corbu/phry/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Db1, note.Ab1, note.Db2]
                     },
                     "12-3": {
                         "name": "F",
                         "img": "corbu/phry/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "23-1": {
                         "name": "G",
                         "img": "corbu/phry/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "23-2": {
                         "name": "A\u266D",
                         "img": "corbu/phry/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Ab1, note.Eb1, note.Ab2]
                     },
                     "23-3": {
                         "name": "B\u266D",
                         "img": "corbu/phry/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.F2, note.Bb2]
                     },
                     "13-1": {
                         "name": "C",
                         "img": "corbu/phry/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "D\u266D",
                         "img": "corbu/phry/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Db1, note.Db2]
                     },
                     "13-3": {
                         "name": "F",
                         "img": "corbu/phry/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.F2]
                     },
                     "123-1": {
                         "name": "G",
                         "img": "corbu/phry/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     },
                     "123-2": {
                         "name": "A\u266D",
                         "img": "corbu/phry/chord-123-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Ab1, note.Ab2]
                     },
                     "123-3": {
                         "name": "B\u266D",
                         "img": "corbu/phry/chord-123-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.Bb1, note.Bb2]
                     }
                 }
@@ -1591,73 +1592,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "corbu/yo/chord-12-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "D",
                         "img": "corbu/yo/chord-12-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.D1, note.A1, note.D2]
                     },
                     "12-3": {
                         "name": "F",
                         "img": "corbu/yo/chord-12-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "23-1": {
                         "name": "G",
                         "img": "corbu/yo/chord-23-1.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "23-2": {
                         "name": "A",
                         "img": "corbu/yo/chord-23-2.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.A1, note.E1, note.A2]
                     },
                     "23-3": {
                         "name": "C",
                         "img": "corbu/yo/chord-23-3.png",
-                        "length": 12,
+                        "length": 12, "monoFadeTime": 0.1,
                         "notes": [note.C2, note.G2, note.C3]
                     },
                     "13-1": {
                         "name": "C",
                         "img": "corbu/yo/chord-13-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     },
                     "13-2": {
                         "name": "D",
                         "img": "corbu/yo/chord-13-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.D1, note.D2]
                     },
                     "13-3": {
                         "name": "F",
                         "img": "corbu/yo/chord-13-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.F1, note.F2]
                     },
                     "123-1": {
                         "name": "G",
                         "img": "corbu/yo/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.G1, note.G2]
                     },
                     "123-2": {
                         "name": "A",
                         "img": "corbu/yo/chord-123-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.A1, note.A2]
                     },
                     "123-3": {
                         "name": "C",
                         "img": "corbu/yo/chord-123-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.1,
                         "notes": [note.C1, note.C2]
                     }
                 }
@@ -1673,7 +1674,8 @@ var Metadata = (function() {
             "slap": true,
         },
         "notes": {
-            "length": 10
+            "length": 10,
+            "monoFadeTime": 0.1
         },
         "slap": {
             "length": 4
@@ -1746,151 +1748,152 @@ var Metadata = (function() {
         },
         "notes": {
             "length": 10,
-            "alts": true
+            "alts": true,
+            "monoFadeTime": 0.1
         },
         "scales": {
             "pmin": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "pmaj": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "chrom": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "hex": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "maj": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "min": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "hira": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "phry": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             },
             "yo": {
                 "chords": {
-                    "12-1": { "length": 12 },
-                    "12-2": { "length": 12 },
-                    "12-3": { "length": 12 },
-                    "23-1": { "length": 12 },
-                    "23-2": { "length": 12 },
-                    "23-3": { "length": 12 },
-                    "13-1": { "length": 12 },
-                    "13-2": { "length": 12 },
-                    "13-3": { "length": 12 },
-                    "123-1": { "length": 12 },
-                    "123-2": { "length": 12 },
-                    "123-3": { "length": 12 }
+                    "12-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "12-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "23-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "13-3": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-1": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-2": { "length": 12, "monoFadeTime": 0.1 },
+                    "123-3": { "length": 12, "monoFadeTime": 0.1 }
                 }
             }
         }
@@ -1910,124 +1913,125 @@ var Metadata = (function() {
             "type": "duophonic",
         },
         "notes": {
-            "length": 22
+            "length": 22,
+            "monoFadeTime": 0.25
         },
         "scales": {
             "pmin": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             },
             "pmaj": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             },
             "chrom": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             },
             "hex": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             },
             "maj": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
                     "123-1": {
                         "name": "G7/D",
                         "img": "void/maj/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.D1, note.F1, note.B1],
                         "comment": "Has a low D instead of a G, still functional as a G7 but just weirdly different"
                     },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             },
             "min": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
                     "123-1": {
                         "name": "B\u266D/F",
                         "img": "void/min/chord-123-1.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.F1, note.Bb1, note.D2],
                         "comment": "Has a high D instead of a G, turning it into an inverted B\u266D chord"
                     },
                     "123-2": {
                         "name": "A\u266Dmaj7/G",
                         "img": "void/min/chord-123-2.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.G1, note.C2, note.Ab2],
                         "comment": "The middle A\u266D is up an octave, changing the feel of this chord"
                     },
                     "123-3": {
                         "name": "B\u266D7/A\u266D",
                         "img": "void/min/chord-123-3.png",
-                        "length": 32,
+                        "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.Ab1, note.D2, note.Bb2],
                         "comment": "The middle B\u266D is up an octave, changing the feel of this chord"
                     }
@@ -2035,55 +2039,56 @@ var Metadata = (function() {
             },
             "hira": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             },
             "phry": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             },
             "yo": {
                 "chords": {
-                    "12-1": { "length": 32 },
-                    "12-2": { "length": 32 },
-                    "12-3": { "length": 32 },
-                    "23-1": { "length": 32 },
-                    "23-2": { "length": 32 },
-                    "23-3": { "length": 32 },
-                    "13-1": { "length": 32 },
-                    "13-2": { "length": 32 },
-                    "13-3": { "length": 32 },
-                    "123-1": { "length": 32 },
-                    "123-2": { "length": 32 },
-                    "123-3": { "length": 32 }
+                    "12-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "12-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "23-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "13-3": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-1": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-2": { "length": 32, "monoFadeTime": 0.25 },
+                    "123-3": { "length": 32, "monoFadeTime": 0.25 }
                 }
             }
         }
     });
 
+    // public members
     return  {
         shawzinOrder: shawzinOrder,
         noteOrder: noteOrder,
