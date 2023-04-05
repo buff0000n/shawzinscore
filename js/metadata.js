@@ -6,7 +6,7 @@ var Metadata = (function() {
         D1: "d1",
             Ds1: "ds1", Eb1: "ds1",
         E1: "e1",
-        F1: "c1",
+        F1: "f1",
             Fs1: "fs1", Gb1: "fs1",
         G1: "g1",
             Gs1: "gs1", Ab1: "gs1",
@@ -18,7 +18,7 @@ var Metadata = (function() {
         D2: "d2",
             Ds2: "ds2", Eb2: "ds2",
         E2: "e2",
-        F2: "c2",
+        F2: "f2",
             Fs2: "fs2", Gb2: "fs2",
         G2: "g2",
             Gs2: "gs2", Ab2: "gs2",
@@ -92,21 +92,14 @@ var Metadata = (function() {
     var flat = "\u266D";
     var sharp = "\u266F";
 
-//    var imagePrefix = ["img/scales/", "img2x/scales/"];
-//
-//    var soundPrefix = "sounds/";
-//    var noteSoundPrefix = "note/";
-//    var chordSoundPrefix = "chord/";
-
     var standardShawzin  = {
         "config": {
             // metadata, override this
             "name": "",
             "comment": "",
-            "shawzinSoundPrefix": "",
             // options
             "type": "polyphonic", // (polyphonic, monophonic, duophonic)
-            "slap": "false", // tiamat is its own thing
+            "slap": false, // tiamat is its own thing
         },
         "notes": {
             // todo: individual lengths of each note?  The answer is no
@@ -951,7 +944,6 @@ var Metadata = (function() {
         "config": {
             "name": "Dax's Shawzin",
             "comment": "Based on a shamisen. Also includes Dawn, Mimica, and Day of the Dead skins.",
-            "shawzinSoundPrefix": "dax/"
         }
     });
 
@@ -959,7 +951,6 @@ var Metadata = (function() {
         "config": {
             "name": "Nelumbo Shawzin",
             "comment": "Based on an acoustic guitar.",
-            "shawzinSoundPrefix": "nelumbo/"
         }
     });
 
@@ -967,7 +958,6 @@ var Metadata = (function() {
         "config": {
             "name": "Corbu Shawzin",
             "comment": "Based on djent-style electric guitar.",
-            "shawzinSoundPrefix": "corbu/",
             "type": "monophonic",
         },
         "notes": {
@@ -1679,9 +1669,8 @@ var Metadata = (function() {
         "config": {
             "name": "Tiamat Shawzin",
             "comment": "Based on an electric bass.",
-            "shawzinSoundPrefix": "tiamat/",
             "type": "monophonic",
-            "slap": "true",
+            "slap": true,
         },
         "notes": {
             "length": 10
@@ -1733,7 +1722,6 @@ var Metadata = (function() {
         "config": {
             "name": "Aristei Shawzin",
             "comment": "Based on harp.",
-            "shawzinSoundPrefix": "aristei/",
         },
         "scales": {
             "phry": {
@@ -1754,7 +1742,6 @@ var Metadata = (function() {
         "config": {
             "name": "Narmer Shawzin",
             "comment": "Based on a lead electric guitar.",
-            "shawzinSoundPrefix": "narmer/",
             "type": "monophonic",
         },
         "notes": {
@@ -1913,7 +1900,6 @@ var Metadata = (function() {
         "config": {
             "name": "Kira's Shawzin",
             "comment": "Based on a keytar/synthesizer.",
-            "shawzinSoundPrefix": "kira/"
         }
     });
 
@@ -1921,7 +1907,6 @@ var Metadata = (function() {
         "config": {
             "name": "Void's Song Shawzin",
             "comment": "Based on vocals/vocaloid.",
-            "shawzinSoundPrefix": "void/",
             "type": "duophonic",
         },
         "notes": {
