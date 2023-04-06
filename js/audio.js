@@ -120,12 +120,13 @@ var Audio = (function() {
             // We can't just stop the sound instantly because there will be an audible pop
             // schedule the start of a fade
             this.gain.gain.setValueAtTime(this.volume, time);
-            // update the event stop time
-            this.endTime = time + this.monoFadeTime;
             // schedule a very quick fade, down to 0.01 volume because it doesn't like 0.
-            this.gain.gain.exponentialRampToValueAtTime(0.01, this.endTime);
+            this.gain.gain.exponentialRampToValueAtTime(0.01, time + this.monoFadeTime);
             // stop the source at the end of the fade
-            this.source.stop(this.endTime);
+            this.source.stop(time + this.monoFadeTime);
+            // update the event stop time
+            // don't include the fade time, so it doesn't try to reset its end time to later and cause audio glitches
+            this.endTime = time
 
             console.log("Stopping at " + time + ": " + this.name);
         }

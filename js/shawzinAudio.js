@@ -34,6 +34,7 @@ var ShawzinAudio = (function() {
     function createSoundBank(shawzinName, scaleName) {
         // get the shawzin's metadata
         var shawzinMetadata = Metadata.shawzinList[shawzinName];
+
         // get scale's metadata
         var scaleMetadata = shawzinMetadata.scales[scaleName];
 
@@ -49,8 +50,7 @@ var ShawzinAudio = (function() {
         var noteMonoFadeTime = shawzinMetadata.notes.monoFadeTime;
 
         // add the notes in order
-        for (var i in Metadata.scaleNoteOrder) {
-            var name = Metadata.scaleNoteOrder[i];
+        for (var name in scaleMetadata.notes) {
             // get the correct note pitch name for the scale note
             var note = scaleMetadata.notes[name];
             // build a base URL for the shawzin's sound for that pitch
@@ -71,34 +71,50 @@ var ShawzinAudio = (function() {
             soundBank.addSound(name, urlList, monoGroups[name], noteMonoFadeTime);
         }
 
-        // check for slap
-        if (shawzinMetadata.config.slap) {
-            // for slap, go back over the scale notes in order
-            for (var i in Metadata.scaleNoteOrder) {
-                var name = Metadata.scaleNoteOrder[i];
-                // get the corresponding chord name
-                var chordName = Metadata.scaleChordOrder[i];
-                // get the scale note pitch name
-                var note = scaleMetadata.notes[name];
-                // build a base URL for the slap sound
-                var noteUrlBase = baseUrl + shawzinName + "/slap/" + note;
-                // no alts for slap, just one sound in the list
-                var urlList = [noteUrlBase + soundFileExtension];
-                // add the sound to the bank
-                soundBank.addSound(name, urlList, monoGroups[name], noteMonoFadeTime);
-            }
-        } else {
-            // go over the chord notes in order
-            for (var i in Metadata.scaleChordOrder) {
-                var chordName = Metadata.scaleChordOrder[i];
-                // build a base URL for the chord sound
-                var chordUrlBase = baseUrl + shawzinName + "/chord/" + scaleName + "/" + chordName;
-                // no alts, just a single sound
-                var urlList = [chordUrlBase + soundFileExtension];
-                // pull the mono fade time on a per-chord basis
-                var monoFadeTime = scaleMetadata.chords[chordName].monoFadeTime;
-                // add the sound to the bank
-                soundBank.addSound(chordName, urlList, monoGroups[chordName], monoFadeTime);
+        if (scaleMetadata.chords) {
+            // check for slap
+            if (shawzinMetadata.config.slap) {
+                if (scaleMetadata.slap.notes) {
+                    // custom slap scale because it's bugged
+                    for (var chordName in scaleMetadata.slap.notes) {
+                        // get the slap note pitch name
+                        var note = scaleMetadata.slap.notes[chordName];
+                        // build a base URL for the slap sound
+                        var noteUrlBase = baseUrl + shawzinName + "/slap/" + note;
+                        // no alts for slap, just one sound in the list
+                        var urlList = [noteUrlBase + soundFileExtension];
+                        // add the sound to the bank
+                        soundBank.addSound(chordName, urlList, monoGroups[name], noteMonoFadeTime);
+                    }
+                } else {
+                    // go back over the scale notes in order
+                    for (var i in Metadata.scaleNoteOrder) {
+                        var name = Metadata.scaleNoteOrder[i];
+                        // get the corresponding chord name
+                        var chordName = Metadata.scaleChordOrder[i];
+                        // get the scale note pitch name
+                        var note = scaleMetadata.notes[name];
+                        // build a base URL for the slap sound
+                        var noteUrlBase = baseUrl + shawzinName + "/slap/" + note;
+                        // no alts for slap, just one sound in the list
+                        var urlList = [noteUrlBase + soundFileExtension];
+                        // add the sound to the bank
+                        soundBank.addSound(chordName, urlList, monoGroups[name], noteMonoFadeTime);
+                    }
+                }
+            } else {
+                // go over the chord notes in order
+                for (var i in Metadata.scaleChordOrder) {
+                    var chordName = Metadata.scaleChordOrder[i];
+                    // build a base URL for the chord sound
+                    var chordUrlBase = baseUrl + shawzinName + "/chord/" + scaleName + "/" + chordName;
+                    // no alts, just a single sound
+                    var urlList = [chordUrlBase + soundFileExtension];
+                    // pull the mono fade time on a per-chord basis
+                    var monoFadeTime = scaleMetadata.chords[chordName].monoFadeTime;
+                    // add the sound to the bank
+                    soundBank.addSound(chordName, urlList, monoGroups[chordName], monoFadeTime);
+                }
             }
         }
 

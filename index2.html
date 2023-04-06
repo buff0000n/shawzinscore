@@ -46,7 +46,6 @@
         });
     }
 
-
     function test3() {
         testSB = ShawzinAudio.getSoundBank("nelumbo", "chrom");
 
@@ -58,6 +57,85 @@
             testSB.play("2-3", 0.75);
             testSB.play("2-2", 1.00);
         });
+    }
+
+    function test4() {
+        testSB = ShawzinAudio.getSoundBank("tiamat", "min");
+
+        testSB.checkInit(() => {
+            ShawzinAudio.setTimeOffset();
+            testSB.play("0-1", 0.00);
+            testSB.play("13-2", 0.25);
+            testSB.play("0-1", 0.375);
+            testSB.play("0-3", 0.50);
+            testSB.play("123-1", 0.75);
+            testSB.play("0-3", 0.875);
+            testSB.play("1-1", 1.00);
+        });
+    }
+
+    function scaleTest(time, shawz, scale, next=null) {
+        var sb = ShawzinAudio.getSoundBank(shawz, scale);
+
+        sb.checkInit(() => {
+            if (time == null) {
+                ShawzinAudio.setTimeOffset();
+                time = 0;
+            }
+            for (var i = 0; i < Metadata.scaleNoteOrder.length; i++) {
+                sb.play(Metadata.scaleNoteOrder[i], time);
+                time += 0.25;
+            }
+            for (var i = 0; i < Metadata.scaleChordOrder.length; i++) {
+                sb.play(Metadata.scaleChordOrder[i], time);
+                time += 0.25;
+            }
+            if (next) next(time);
+        });
+    }
+
+    function shawzTest(shawz) {
+        var j = 0;
+        var thing = (time) => {
+            if (j < Metadata.scaleOrder.length) {
+                scale = Metadata.scaleOrder[j];
+                j++;
+                scaleTest(time, shawz, scale, thing);
+            }
+        };
+        thing(null);
+    }
+
+
+    function tiamatScaleTest(time, scale, next=null) {
+        var sb = ShawzinAudio.getSoundBank("tiamat", scale);
+
+        sb.checkInit(() => {
+            if (time == null) {
+                ShawzinAudio.setTimeOffset();
+                time = 0;
+            }
+            for (var i = 0; i < Metadata.scaleNoteOrder.length; i++) {
+                sb.play(Metadata.scaleNoteOrder[i], time);
+                time += 0.25;
+                sb.play(Metadata.scaleChordOrder[i], time);
+                time += 0.25;
+            }
+
+            if (next) next(time);
+        });
+    }
+
+    function tiamatTest() {
+        var j = 0;
+        var thing = (time) => {
+            if (j < Metadata.scaleOrder.length) {
+                scale = Metadata.scaleOrder[j];
+                j++;
+                tiamatScaleTest(time, scale, thing);
+            }
+        };
+        thing(null);
     }
 
     //==============================================================
@@ -502,6 +580,7 @@
 <input type="submit" value="test1" onClick="test1()"/>
 <input type="submit" value="test2" onClick="test2()"/>
 <input type="submit" value="test3" onClick="test3()"/>
+<input type="submit" value="test4" onClick="test4()"/>
 
 <div id="title-bar">
     <div class="main-title">Shawzin Score</div>
