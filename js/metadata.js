@@ -1723,7 +1723,7 @@ var Metadata = (function() {
                     "sc3": "../slap/" + note.C3,
                         "scs3": "../slap/" + note.Cs3,
                     "sd3": "../slap/" + note.D3,
-                        "sds3": note.Ds3
+                        "sds3": "../slap/" + note.Ds3
                 }
             },
             "pmin": {
@@ -1819,7 +1819,7 @@ var Metadata = (function() {
     var aristeiShawzin = merge(standardShawzin, {
         "config": {
             "name": "Aristei Shawzin",
-            "comment": "Based on harp.",
+            "comment": "Based on a harp.",
         },
         "scales": {
             "phry": {
