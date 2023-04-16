@@ -62,6 +62,40 @@ var Metadata = (function() {
             note.Ds3
     ];
 
+    var noteKeyboardBoxes = {
+        "c1": "left: 2px; top: 55px; width: 20px; height: 41px;",
+            "cs1": "left: 9px; top: 0px; width: 23px; height: 55px;",
+        "d1": "left: 22px; top: 55px; width: 21px; height: 41px;",
+            "ds1": "left: 32px; top: 0px; width: 23px; height: 55px;",
+        "e1": "left: 43px; top: 55px; width: 20px; height: 41px;",
+        "f1": "left: 63px; top: 55px; width: 21px; height: 41px;",
+            "fs1": "left: 71px; top: 0px; width: 23px; height: 55px;",
+        "g1": "left: 84px; top: 55px; width: 21px; height: 41px;",
+            "gs1": "left: 94px; top: 0px; width: 22px; height: 55px;",
+        "a1": "left: 105px; top: 55px; width: 20px; height: 41px;",
+            "as1": "left: 116px; top: 0px; width: 23px; height: 55px;",
+        "b1": "left: 125px; top: 55px; width: 21px; height: 41px;",
+        "c2": "left: 146px; top: 55px; width: 20px; height: 41px;",
+            "cs2": "left: 154px; top: 0px; width: 23px; height: 55px;",
+        "d2": "left: 166px; top: 55px; width: 21px; height: 41px;",
+            "ds2": "left: 177px; top: 0px; width: 23px; height: 55px;",
+        "e2": "left: 187px; top: 55px; width: 21px; height: 41px;",
+        "f2": "left: 208px; top: 55px; width: 20px; height: 41px;",
+            "fs2": "left: 215px; top: 0px; width: 23px; height: 55px;",
+        "g2": "left: 228px; top: 55px; width: 21px; height: 41px;",
+            "gs2": "left: 238px; top: 0px; width: 22px; height: 55px;",
+        "a2": "left: 249px; top: 55px; width: 20px; height: 41px;",
+            "as2": "left: 260px; top: 0px; width: 23px; height: 55px;",
+        "b2": "left: 269px; top: 55px; width: 21px; height: 41px;",
+        "c3": "left: 290px; top: 55px; width: 21px; height: 41px;",
+            "cs3": "left: 298px; top: 0px; width: 23px; height: 55px;",
+        "d3": "left: 311px; top: 55px; width: 21px; height: 41px;",
+            "ds3": "left: 321px; top: 0px; width: 23px; height: 55px;",
+    }
+
+    var noteRollOffset = 2;
+    var noteRollWidth = 12;
+
     var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void" ];
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
     var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
@@ -1723,7 +1757,7 @@ var Metadata = (function() {
                     "sc3": "../slap/" + note.C3,
                         "scs3": "../slap/" + note.Cs3,
                     "sd3": "../slap/" + note.D3,
-                        "sds3": note.Ds3
+                        "sds3": "../slap/" + note.Ds3
                 }
             },
             "pmin": {
@@ -1819,7 +1853,7 @@ var Metadata = (function() {
     var aristeiShawzin = merge(standardShawzin, {
         "config": {
             "name": "Aristei Shawzin",
-            "comment": "Based on harp.",
+            "comment": "Based on a harp.",
         },
         "scales": {
             "phry": {
@@ -2188,6 +2222,9 @@ var Metadata = (function() {
     return  {
         shawzinOrder: shawzinOrder,
         noteOrder: noteOrder,
+        noteRollOffset = noteRollOffset,
+        noteRollWidth = noteRollWidth,
+        noteKeyboardBoxes: noteKeyboardBoxes,
         scaleOrder: scaleOrder,
         scaleNoteOrder: scaleNoteOrder,
         scaleChordOrder: scaleChordOrder,
