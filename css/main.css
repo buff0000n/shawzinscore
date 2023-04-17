@@ -23,7 +23,53 @@ td {
 }
 
 .menu {
-    display: none;
+    position: absolute;
+}
+
+.closeMenuButton {
+}
+
+.menu-container {
+    display: block;
+    position: absolute;
+    background-color: #404040;
+    margin: 1ex;
+    /*padding: 1ex;*/
+    border-radius: 1ex;
+    text-align: left;
+    box-shadow: 0 0 3px 3px #000000;
+}
+.menu-title-bar {
+    background-color: #808080;
+    margin: 0;
+    padding: 0.5ex;
+    border-radius: 1ex;
+    text-align: left;
+}
+.menu-title {
+    font-weight: bold;
+    font-size: 100%;
+    color: #FFFFFF;
+}
+.menu-content-container {
+    padding: 1ex;
+}
+.selection-div {
+    padding: 1ex;
+    border-radius: 1ex;
+    background-color: #202020;
+}
+.selection-table {
+    border-spacing: 0;
+}
+.selection-item {
+    cursor: pointer;
+    background-color: #202020;
+    border-radius: 1ex;
+}
+.selection-item:hover {
+    background-color: #808080;
+    color: #FFFFFF;
 }
 
 #title-bar {
@@ -82,7 +128,9 @@ td {
             border-radius: 1ex;
         }
         #song-header-tab > div {
-            display: inline-block;
+            /* display: inline-block; */
+            /* this fixes it?! frickin' voodoo */
+            display: inline-flex;
         }
         #song-header-roll {
             background-color: #404040;
@@ -136,8 +184,16 @@ td {
     transform: translate(-1px, -1px);
     border-color: #00FF00;
 }
+.roll-note-row {
+    position: absolute;
+}
+
 .roll-note {
     position: absolute;
+    border: solid;
+    border-width: 1px;
+    border-color: #202020;
+    transform: translate(-1px, -1px);
 }
 .roll-note-outline {
     position: absolute;
@@ -146,4 +202,18 @@ td {
     transform: translate(-1px, -1px);
 }
 
+.tab-fret {
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+}
+.tab-fret-button, .tab-fret-button-enabled {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
 
+.tab-fret-button {
+    filter: brightness(0%);
+}

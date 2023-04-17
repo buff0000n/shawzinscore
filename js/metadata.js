@@ -121,7 +121,10 @@ var Metadata = (function() {
         "scales": {
         
             "free": {
-                "img": "standard/blank.png",
+                "config": {
+                    "img": "standard/blank.png",
+                    "name": "Free"
+                },
                 "notes": {
                     "c1": note.C1,
                         "cs1": note.Cs1,
@@ -155,7 +158,10 @@ var Metadata = (function() {
             },
 
             "pmin": {
-                "img": "standard/pmin/scale.png",
+                "config": {
+                    "img": "standard/pmin/scale.png",
+                    "name": "Pentatonic Minor"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.Eb1,
@@ -247,7 +253,10 @@ var Metadata = (function() {
             },
 
             "pmaj": {
-                "img": "standard/pmaj/scale.png",
+                "config": {
+                    "img": "standard/pmaj/scale.png",
+                    "name": "Pentatonic Major"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.D1,
@@ -339,7 +348,10 @@ var Metadata = (function() {
             },
 
             "chrom": {
-                "img": "standard/chrom/scale.png",
+                "config": {
+                    "img": "standard/chrom/scale.png",
+                    "name": "Chromatic"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.Cs1,
@@ -432,7 +444,10 @@ var Metadata = (function() {
             },
 
             "hex": {
-                "img": "standard/hex/scale.png",
+                "config": {
+                    "img": "standard/hex/scale.png",
+                    "name": "Hexatonic"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.Eb1,
@@ -524,7 +539,10 @@ var Metadata = (function() {
             },
 
             "maj": {
-                "img": "standard/maj/scale.png",
+                "config": {
+                    "img": "standard/maj/scale.png",
+                    "name": "Major"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.D1,
@@ -616,7 +634,10 @@ var Metadata = (function() {
             },
 
             "min": {
-                "img": "standard/min/scale.png",
+                "config": {
+                    "img": "standard/min/scale.png",
+                    "name": "Minor"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.D1,
@@ -708,7 +729,10 @@ var Metadata = (function() {
             },
 
             "hira": {
-                "img": "standard/hira/scale.png",
+                "config": {
+                    "img": "standard/hira/scale.png",
+                    "name": "Hirajoshi"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.Db1,
@@ -800,7 +824,10 @@ var Metadata = (function() {
             },
 
             "phry": {
-                "img": "standard/phry/scale.png",
+                "config": {
+                    "img": "standard/phry/scale.png",
+                    "name": "Phrygian Dominant"
+                },
                 "notes": {
                     "0-1": note.C1,
                     "0-2": note.Db1,
@@ -892,7 +919,10 @@ var Metadata = (function() {
             },
 
             "yo": {
-                "img": "standard/yo/scale.png",
+                "config": {
+                    "img": "standard/yo/scale.png",
+                    "name": "Yo"
+                },
                 "notes": {
                     "0-1": note.Db1,
                     "0-2": note.Eb1,
@@ -2222,8 +2252,8 @@ var Metadata = (function() {
     return  {
         shawzinOrder: shawzinOrder,
         noteOrder: noteOrder,
-        noteRollOffset = noteRollOffset,
-        noteRollWidth = noteRollWidth,
+        noteRollOffset: noteRollOffset,
+        noteRollWidth: noteRollWidth,
         noteKeyboardBoxes: noteKeyboardBoxes,
         scaleOrder: scaleOrder,
         scaleNoteOrder: scaleNoteOrder,

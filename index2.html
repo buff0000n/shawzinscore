@@ -16,6 +16,10 @@
 <script type="text/javascript" language="javascript" src="js/audio.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/bufferLoader.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzinAudio.js"></script>
+<script type="text/javascript" language="javascript" src="js/events.js"></script>
+<script type="text/javascript" language="javascript" src="js/model.js"></script>
+<script type="text/javascript" language="javascript" src="js/menus.js"></script>
+<script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript">
 
     var testSB = null;
@@ -148,6 +152,10 @@
     function initModel() {
         // javascript is working
         clearErrors();
+
+        Model.initDefaults();
+        Controls.registerEventListeners();
+        Events.registerEventListeners();
 
         var url = window.location.href;
 
@@ -592,7 +600,7 @@
 
 <div id="toolbar" style="width: 340px;">
     <div id="toolbar-shawzin">
-        <img src="img/shawzin-dax-large.png" srcset="img2x/shawzin-narmer-large.png 2x"/>
+        <img id="toolbar-shawzin-img" src="img/shawzin-dax-large.png" srcset="img2x/shawzin-dax-large.png 2x"/>
     </div>
 
     <div id="toolbar-settings">
@@ -618,22 +626,23 @@
         </div>
         <div id="select-shawzin" class="selectButton">
             <img src="img/icon-dropdpwn.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-            Void's Song Shawzin
+            <span id="select-shawzin-text"></span>
         </div>
-        <div id="song-settings-scale" class="selectButton">
+        <div id="select-scale" class="selectButton">
             <img src="img/icon-dropdpwn.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-            Phrygian Domonant
+            <span id="select-scale-text"></span>
         </div>
         <div id="toolbar-buttons">
             <div id="toolbar-buttons-burger" class="smallButton">
                 <img src="img/icon-burger.png" srcset="img2x/icon-burger.png 2x" alt="Burger" class="icon"/>
-                <div id="toolbar-buttons-burger-menu" class="menu">
+                <!--<div id="toolbar-buttons-burger-menu" class="menu">
                     <div id="toolbar-buttons-burger-share">Share</div>
                     <div id="toolbar-buttons-burger-system-select">Select System</div>
-                    <!--<div id="toolbar-buttons-burger-dark">Dark Mode</div>-->
+                    <div id="toolbar-buttons-burger-dark">Dark Mode</div>
                     <div id="toolbar-buttons-burger-clear">Clear</div>
-                    <!--<div id="toolbar-buttons-burger-storage">Storage</div>-->
+                    <div id="toolbar-buttons-burger-storage">Storage</div>
                 </div>
+                -->
             </div>
             <div class="tooltip">
                 <span id="copyUrlButton" class="smallButton urlButton popup" onclick="copyModelUrl(this)">
@@ -667,11 +676,12 @@
                 <td id="song-buttons">
                     <div id="song-buttons-config" class="smallButton">
                         <img src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x" class="icon"/>
-                        <div id="song-buttons-config-menu" class="menu">
+                        <!--<div id="song-buttons-config-menu" class="menu">
                             <div id="song-buttons-config-tempo">Tempo</div>
                             <div id="song-buttons-config-meter">Meter</div>
-                            <!--<div id="song-buttons-config-lead-in">Lead In</div>-->
+                            <div id="song-buttons-config-lead-in">Lead In</div>
                         </div>
+                        -->
                     </div>
 
                     <div id="song-buttons-select" class="smallButton">
@@ -708,12 +718,15 @@
                     </div>
                     <div id="tab-fret-1" class="tab-fret">
                         <img id="tab-fret-1-img" src="img/fret-1.png" srcset="img2x/fret-1.png 2x"/>
+                        <img id="tab-note-fret-1" src="img/tab-note-fret-button-1-pc.png" srcset="img2x/tab-note-fret-button-1-pc.png 2x" class="tab-fret-button"/>
                     </div>
                     <div id="tab-fret-2" class="tab-fret">
                         <img id="tab-fret-2-img" src="img/fret-2.png" srcset="img2x/fret-2.png 2x"/>
+                        <img id="tab-note-fret-2" src="img/tab-note-fret-button-2-pc.png" srcset="img2x/tab-note-fret-button-2-pc.png 2x" class="tab-fret-button"/>
                     </div>
                     <div id="tab-fret-3" class="tab-fret">
-                        <img id="tab-fret-3-img" src="img/fret-3.png" srcset="img2x/fret-3.png 2x"/>
+                        <img id="tab-fret-3-img" src="img/fret-enabled-3.png" srcset="img2x/fret-enabled-3.png 2x"/>
+                        <img id="tab-note-fret-3" src="img/tab-note-fret-button-3-pc.png" srcset="img2x/tab-note-fret-button-3-pc.png 2x" class="tab-fret-button-enabled"/>
                     </div>
                 </td>
                 <td id="song-header-roll" style="width: 340px; position: relative;">
@@ -935,45 +948,47 @@
                          style="position: absolute; top: 225px; left: 0px; transform: translateY(-50%); z-index: 100;"
                     />
 
-                    <div class="roll-note-outline"
-                         style="left: 2px; top: 100px; width: 12px; height: 50px; border-color: #BF8340;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 38px; top: 100px; width: 12px; height: 50px; background-color: #BF8340;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 62px; top: 100px; width: 12px; height: 50px; background-color: #BF8340;"
-                    ></div>
+                    <div class="roll-note-row" style="left: 0; top: 100px;">
+                        <div class="roll-note-outline"
+                             style="left: 2px; top: 0px; width: 12px; height: 50px; border-color: #BF8340;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 38px; top: 0px; width: 12px; height: 50px; background-color: #BF8340;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 62px; top: 0px; width: 12px; height: 50px; background-color: #BF8340;"
+                        ></div>
 
-                    <div class="roll-note"
-                         style="left: 86px; top: 100px; width: 12px; height: 50px; background-color: #C03F3F;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 122px; top: 100px; width: 12px; height: 50px; background-color: #C03F3F;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 146px; top: 100px; width: 12px; height: 50px; background-color: #C03F3F;"
-                    ></div>
+                        <div class="roll-note"
+                             style="left: 86px; top: 0px; width: 12px; height: 50px; background-color: #C03F3F;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 122px; top: 0px; width: 12px; height: 50px; background-color: #C03F3F;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 146px; top: 0px; width: 12px; height: 50px; background-color: #C03F3F;"
+                        ></div>
 
-                    <div class="roll-note"
-                         style="left: 182px; top: 100px; width: 12px; height: 50px; background-color: #3FC03F;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 206px; top: 100px; width: 12px; height: 50px; background-color: #3FC03F;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 230px; top: 100px; width: 12px; height: 50px; background-color: #3FC03F;"
-                    ></div>
+                        <div class="roll-note"
+                             style="left: 182px; top: 0px; width: 12px; height: 50px; background-color: #3FC03F;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 206px; top: 0px; width: 12px; height: 50px; background-color: #3FC03F;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 230px; top: 0px; width: 12px; height: 50px; background-color: #3FC03F;"
+                        ></div>
 
-                    <div class="roll-note"
-                         style="left: 266px; top: 100px; width: 12px; height: 50px; background-color: #00B4FF;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 290px; top: 100px; width: 12px; height: 50px; background-color: #00B4FF;"
-                    ></div>
-                    <div class="roll-note"
-                         style="left: 326px; top: 100px; width: 12px; height: 50px; background-color: #00B4FF;"
-                    ></div>
+                        <div class="roll-note"
+                             style="left: 266px; top: 0px; width: 12px; height: 50px; background-color: #00B4FF;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 290px; top: 0px; width: 12px; height: 50px; background-color: #00B4FF;"
+                        ></div>
+                        <div class="roll-note"
+                             style="left: 326px; top: 0px; width: 12px; height: 50px; background-color: #00B4FF;"
+                        ></div>
+                    </div>
                 </td>
             </tr>
         </table>
