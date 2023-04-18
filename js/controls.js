@@ -3,6 +3,18 @@ var Controls = (function() {
     function registerEventListeners() {
         document.getElementById("select-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
         document.getElementById("select-scale").addEventListener("click", doScaleSelect, { passive: false });
+
+        function commitNameChange() {
+            var input = document.getElementById("metadata-settings-title-text");
+            input.blur();
+            Model.setSongName(input.value);
+        }
+        document.getElementById("metadata-settings-title-text").addEventListener("change", commitNameChange, { passive: false });
+        document.getElementById("metadata-settings-title-text").addEventListener("keydown", (e) => {
+            if ("Enter" == e.code) {
+                commitNameChange();
+            }
+        }, { passive: false });
     }
 
     function doShawzinSelect() {

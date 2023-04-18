@@ -96,6 +96,11 @@ var Metadata = (function() {
     var noteRollOffset = 2;
     var noteRollWidth = 12;
 
+    var tickSpacing = 20;
+    var ticksPerSecond = 16;
+    // technically the song format can support 4m16s, but the game caps it at exactly 4m
+    var maxTickLength = 4 * 60 * ticksPerSecond;
+
     var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void" ];
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
     var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
@@ -2250,11 +2255,9 @@ var Metadata = (function() {
 
     // public members
     return  {
+        // shawzin metadata
         shawzinOrder: shawzinOrder,
         noteOrder: noteOrder,
-        noteRollOffset: noteRollOffset,
-        noteRollWidth: noteRollWidth,
-        noteKeyboardBoxes: noteKeyboardBoxes,
         scaleOrder: scaleOrder,
         scaleNoteOrder: scaleNoteOrder,
         scaleChordOrder: scaleChordOrder,
@@ -2267,6 +2270,14 @@ var Metadata = (function() {
             "narmer" :narmerShawzin,
             "kira": kiraShawzin,
             "void": voidShawzin
-        }
+        },
+        // more general song format metadata
+        ticksPerSecond: ticksPerSecond,
+        maxTickLength: maxTickLength,
+        // UI metadata
+        tickSpacing: tickSpacing,
+        noteRollOffset: noteRollOffset,
+        noteRollWidth: noteRollWidth,
+        noteKeyboardBoxes: noteKeyboardBoxes,
     }
 })();

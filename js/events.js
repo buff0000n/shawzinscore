@@ -1,7 +1,7 @@
 // magic singleton pattern
 var Events = (function() {
-    var keyDownHandlers = {};
-    var mouseDownHandlers = [];
+    var keyDownListeners = {};
+    var mouseDownListeners = [];
 
     function registerEventListeners() {
         var body = document.body;
@@ -9,21 +9,22 @@ var Events = (function() {
         body.addEventListener("mousedown", mouseDown);
     }
 
-    function addKeyDownHandler(key, handler) {
-        if (!keyDownHandlers[key]) {
-            keyDownHandlers[key] = [];
+    function addKeyDownListener(key, listener) {
+        if (!keyDownListeners[key]) {
+            keyDownListeners[key] = [];
         }
-        keyDownHandlers[key].push(handler);
+        keyDownListeners[key].push(listener);
     }
 
-    function addMouseDownHandler(handler) {
-        mouseDownHandlers.push(handler);
+    function addMouseDownListener(listener) {
+        mouseDownListeners.push(listener);
     }
 
-    function runHandlers(e, handlers) {
-        if (handlers) {
-            for (var i = 0; i < handlers.length; i++) {
-                if (handlers[i](e)) {
+    function runListeners(e, listeners) {
+        if (listeners) {
+            for (var i = 0; i < listeners.length; i++) {
+                if (listeners[i](e)) {
+                    e.preventDefault();
                     break;
                 }
             }
@@ -35,21 +36,21 @@ var Events = (function() {
 
         // ignore typing in a text box
         nodeName = e.target.nodeName;
-        if (nodeName == "TEXTAREA") {
+        if (nodeName == "TEXTAREA" || nodeName == "INPUT") {
             return;
         }
 
-        runHandlers(e, keyDownHandlers[e.code]);
+        runListeners(e, keyDownListeners[e.code]);
     }
 
     function mouseDown(e) {
-        runHandlers(e, mouseDownHandlers);
+        runListeners(e, mouseDownListeners);
     }
 
     // public members
     return  {
         registerEventListeners: registerEventListeners,
-        addKeyDownHandler: addKeyDownHandler,
-        addMouseDownHandler: addMouseDownHandler,
+        addKeyDownListener: addKeyDownListener,
+        addMouseDownListener: addMouseDownListener,
     }
 })();

@@ -202,6 +202,16 @@ td {
     transform: translate(-1px, -1px);
 }
 
+.measure-spacer {
+    position: relative;
+}
+
+.measure-marker {
+    position: absolute;
+    left: 0px;
+    transform: translateY(-50%);
+}
+
 .tab-fret {
     position: relative;
     margin: 0px;

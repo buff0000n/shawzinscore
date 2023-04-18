@@ -17,7 +17,9 @@
 <script type="text/javascript" language="javascript" src="js/lib/bufferLoader.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzinAudio.js"></script>
 <script type="text/javascript" language="javascript" src="js/events.js"></script>
+<script type="text/javascript" language="javascript" src="js/undo.js"></script>
 <script type="text/javascript" language="javascript" src="js/model.js"></script>
+<script type="text/javascript" language="javascript" src="js/track.js"></script>
 <script type="text/javascript" language="javascript" src="js/menus.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript">
@@ -156,6 +158,8 @@
         Model.initDefaults();
         Controls.registerEventListeners();
         Events.registerEventListeners();
+        Undo.registerEventListeners();
+        Track.registerEventListeners();
 
         var url = window.location.href;
 
@@ -621,8 +625,8 @@
             </div>
         </div>
         <div id="metadata-settings-title" class="toolbarSection">
-            <div class="fieldTitle">Title</div>
-            <input type="text" value="Megalovania" size="25"/>
+            <div id="metadata-settings-title-title" class="fieldTitle">Title</div>
+            <input id="metadata-settings-title-text" type="text" value="" size="25"/>
         </div>
         <div id="select-shawzin" class="selectButton">
             <img src="img/icon-dropdpwn.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
@@ -654,13 +658,13 @@
                 <span class="tooltiptextbottom">Generate a URL for this song</span>
             </div>
             <div class="tooltip">
-                <div id="song-buttons-undo" class="smallButton">
-                    <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon"/>
+                <div id="button-undo" class="smallButton-disabled">
+                    <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
                 </div>
             </div>
             <div class="tooltip">
-                <div id="song-buttons-redo" class="smallButton">
-                    <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon"/>
+                <div id="button-redo" class="smallButton-disabled">
+                    <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
                 </div>
             </div>
         </div>
@@ -731,6 +735,7 @@
                 </td>
                 <td id="song-header-roll" style="width: 340px; position: relative;">
                     <img id="roll-keyboard" src="img/keys-plain.png" srcset="img2x/keys-plain.png 2x"/>
+                    <!--
                     <div class="roll-keyboard-note"
                          style="left: 2px; top: 55px; width: 20px; height: 41px; background-color: #BF834080;"
                     ></div>
@@ -815,6 +820,7 @@
                         <div class="roll-keyboard-note"
                              style="left: 321px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
                         ></div>
+                    -->
                 </td>
             </tr>
         </table>
@@ -823,6 +829,7 @@
         <table id="song-scroll-table" style="width: 680px;">
             <tr>
                 <td id="song-scroll-tab" style="background-image: url('img/tab-bg.png'); width: 340px; position: relative;">
+                    <!--
                     <div class="measure-spacer" style="height: 400px; position: relative;">
                         <img src="img/measure-marker-1.png" srcset="img2x/measure-marker-1.png 2x"
                              style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
@@ -865,7 +872,9 @@
                              style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
                         />
                     </div>
+                    -->
 
+                    <!--
                     <img id="playback-marker-tab" src="img/play-marker-tab.png" srcset="img2x/play-marker-tab.png 2x"
                          style="position: absolute; top: 225px; left: 0px; transform: translateY(-50%);"
                     />
@@ -899,8 +908,10 @@
                     <img src="img/tab-note-fret-3-pc.png" srcset="img2x/tab-note-fret-3-pc.png 2x"
                          style="position: absolute; top: 62px; left: 316px; transform: translate(-50%, -50%);"
                     />
+                    -->
                 </td>
                 <td id="song-scroll-roll" style="background-image: url('img/keys-bg.png'); width: 340px; position: relative; z-index: 0;">
+                    <!--
                     <div class="measure-spacer" style="height: 400px; position: relative;">
                         <img src="img/measure-marker-1-roll.png" srcset="img2x/measure-marker-1-roll.png 2x"
                              style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
@@ -943,7 +954,8 @@
                              style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
                         />
                     </div>
-
+                    -->
+                    <!--
                     <img id="playback-marker-roll" src="img/play-marker-roll.png" srcset="img2x/play-marker-roll.png 2x"
                          style="position: absolute; top: 225px; left: 0px; transform: translateY(-50%); z-index: 100;"
                     />
@@ -989,6 +1001,7 @@
                              style="left: 326px; top: 0px; width: 12px; height: 50px; background-color: #00B4FF;"
                         ></div>
                     </div>
+                    -->
                 </td>
             </tr>
         </table>

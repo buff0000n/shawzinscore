@@ -45,8 +45,7 @@
     .urlButton, {
         background-color: #406080;
     }
-    .smallButton {
-        cursor: pointer;
+    .smallButton, .smallButton-disabled {
         text-align: center;
         text-decoration: none;
         font-size: 100%;
@@ -54,13 +53,25 @@
         margin: 0;
         background-color: #404040;
         border: none;
-        color: #FFFFFF;
         padding: 0;
         border-radius: 1ex;
+    }
+    .smallButton {
+        cursor: pointer;
+        color: #FFFFFF;
+    }
+    .smallButton-disabled {
+        cursor: default;
+        color: #808080;
     }
 
     .icon {
         vertical-align: middle;
+    }
+
+    .icon-disabled {
+        vertical-align: middle;
+        filter: saturate(0%) brightness(50%);
     }
 
     .title {

@@ -47,24 +47,36 @@ var Menus = (function() {
         }
     }
 
-    Events.addKeyDownHandler("Escape", clearLastMenu);
-    Events.addMouseDownHandler((e) => {
+    Events.addKeyDownListener("Escape", clearLastMenu);
+    Events.addMouseDownListener((e) => {
+        // check if there are menus
         if (getCurrentMenuLevel() > 0) {
+            // get the clicked target
             var element = e.target;
+            // iterate over the target and its parents
             while (element) {
+                // look for a menu level.  This will be set on the top level menu div
                 if (element.menuLevel) {
+                    // see if it's less than the current menu level
                     if (element.menuLevel != getCurrentMenuLevel()) {
+                        // clear menus back to the clicked menu
                         clearMenus(element.menuLevel);
-                        e.preventDefault();
+                        // we did something, prevent other listeners
                         return true;
                     }
+                    // clicked on the current menu, let other listeners handle it
                     return false;
                 }
+                // proceed to the parent
                 element = element.parentElement;
             }
+            // got all the way to the top level body with no menu found
+            // click was off any menu, so clear everything
             clearMenus();
+            // we did something, prevent other listeners
             return true;
         }
+        // no menus, let other listeners handle it
         return false;
     });
 
