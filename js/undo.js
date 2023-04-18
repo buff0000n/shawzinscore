@@ -217,6 +217,7 @@ var Undo = (function() {
         addUndoAction(action);
         action.redoAction();
         endUndoCombo();
+        PageUtils.clearErrors();
     }
 
     // public members

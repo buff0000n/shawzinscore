@@ -215,7 +215,7 @@ var Menus = (function() {
     //	var windowWidth;
     //	var windowHeight;
 
-        if (bcr.right > windowWidth) {
+        if (bcr.right > PageUtils.getWindowWidth()) {
             menuDiv.style.left = "";
             menuDiv.style.right = "0px";
         }
@@ -229,7 +229,7 @@ var Menus = (function() {
     //	var windowWidth;
     //	var windowHeight;
 
-        if (bcr.bottom > windowHeight) {
+        if (bcr.bottom > PageUtils.getWindowHeight()) {
             menuDiv.style.top = "";
             menuDiv.style.bottom = "0px";
         }

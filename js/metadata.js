@@ -1021,21 +1021,21 @@ var Metadata = (function() {
         }
     };
 
-    var daxShawzin = merge(standardShawzin, {
+    var daxShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Dax's Shawzin",
             "comment": "Based on a shamisen. Also includes Dawn, Mimica, and Day of the Dead skins.",
         }
     });
 
-    var nelumboShawzin = merge(standardShawzin, {
+    var nelumboShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Nelumbo Shawzin",
             "comment": "Based on an acoustic guitar.",
         }
     });
 
-    var corbuShawzin = merge(standardShawzin, {
+    var corbuShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Corbu Shawzin",
             "comment": "Based on djent-style electric guitar.",
@@ -1747,7 +1747,7 @@ var Metadata = (function() {
         }
     });
 
-    var tiamatShawzin = merge(standardShawzin, {
+    var tiamatShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Tiamat Shawzin",
             "comment": "Based on an electric bass.",
@@ -1885,7 +1885,7 @@ var Metadata = (function() {
         }
     });
 
-    var aristeiShawzin = merge(standardShawzin, {
+    var aristeiShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Aristei Shawzin",
             "comment": "Based on a harp.",
@@ -1905,7 +1905,7 @@ var Metadata = (function() {
         }
     });
 
-    var narmerShawzin = merge(standardShawzin, {
+    var narmerShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Narmer Shawzin",
             "comment": "Based on a lead electric guitar.",
@@ -2064,14 +2064,14 @@ var Metadata = (function() {
         }
     });
 
-    var kiraShawzin = merge(standardShawzin, {
+    var kiraShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Kira's Shawzin",
             "comment": "Based on a keytar/synthesizer.",
         }
     });
 
-    var voidShawzin = merge(standardShawzin, {
+    var voidShawzin = ObjectUtils.merge(standardShawzin, {
         "config": {
             "name": "Void's Song Shawzin",
             "comment": "Based on vocals/vocaloid.",

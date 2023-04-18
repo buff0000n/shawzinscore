@@ -1,6 +1,8 @@
 var Controls = (function() {
 
     function registerEventListeners() {
+        document.body.addEventListener("resize", PageUtils.doonresize);
+
         document.getElementById("select-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
         document.getElementById("select-scale").addEventListener("click", doScaleSelect, { passive: false });
 

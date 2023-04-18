@@ -1,30 +1,57 @@
 var Model = (function() {
 
     var shawzin = null;
-    var song = new Song();
+    var song = null;
     var songName = null;
 
     var updateDelay = 1000;
     var scheduledUpdate = null;
 
-    function initDefaults() {
-        doSetShawzin(Metadata.shawzinOrder[0]);
-        doSetScale(Metadata.scaleOrder[0]);
+    function init(url) {
+        shawzin = PageUtils.getQueryParam("s");
+        if (!shawzin) shawzin = Metadata.shawzinOrder[0];
+        doSetShawzin(shawzin);
+
+        songName = PageUtils.getQueryParam("n");
+        doSetSongName(songName); // can be null
+
+        // todo: compressed format?
+        songCode = PageUtils.getQueryParam("c");
+        if (songCode) {
+            var newSong = new Song();
+            newSong.fromString(songCode);
+            doSetSong(newSong);
+            doUpdateSongCode();
+        } else {
+            song = new Song();
+            doSetScale(Metadata.scaleOrder[0]);
+        }
+
     }
 
-    function scheduleSongCodeUpdate() {
+    function scheduleUpdate() {
         if (scheduledUpdate) {
             clearTimeout(scheduledUpdate);
         }
         scheduledUpdate = setTimeout(() => {
-            updateSongCode();
+            doUpdate();
             scheduledUpdate = null;
         }, updateDelay);
     }
 
-    function updateSongCode() {
+    function doUpdateSongCode() {
+        var songCode = doGetSongCode();
         var codeField = document.getElementById("metadata-settings-code-text");
-        codeField.value = doGetSongCode();
+        codeField.value = songCode;
+        return songCode;
+    }
+
+    function doUpdate() {
+        var songCode = doUpdateSongCode();
+        PageUtils.setQueryParam("n", songName);
+        PageUtils.setQueryParam("s", shawzin);
+        // todo: compressed format?
+        PageUtils.setQueryParam("c", songCode);
     }
 
     function doSetShawzin(name) {
@@ -54,6 +81,7 @@ var Model = (function() {
     }
 
     function doSetSongName(name) {
+        if (name && name.length == 0) name = null;
         songName = name;
         var text = document.getElementById("metadata-settings-title-text");
         text.value = name;
@@ -74,15 +102,15 @@ var Model = (function() {
 
    // public members
     return  {
-        initDefaults: initDefaults,
+        init: init,
 
         getShawzin: function() { return shawzin; },
         setShawzin: function(newShawzin) {
             var current = shawzin;
             if (newShawzin != current) {
                 Undo.doAction(
-                    () => { doSetShawzin(newShawzin); },
-                    () => { doSetShawzin(current); },
+                    () => { doSetShawzin(newShawzin); scheduleUpdate(); },
+                    () => { doSetShawzin(current); scheduleUpdate(); },
                     "Set Shawzin"
                 );
             }
@@ -93,8 +121,8 @@ var Model = (function() {
             var current = getScale();
             if (newScale != current) {
                 Undo.doAction(
-                    () => { doSetScale(newScale); scheduleSongCodeUpdate(); },
-                    () => { doSetScale(current); scheduleSongCodeUpdate(); },
+                    () => { doSetScale(newScale); scheduleUpdate(); },
+                    () => { doSetScale(current); scheduleUpdate(); },
                     "Set Scale"
                 );
             }
@@ -105,8 +133,8 @@ var Model = (function() {
             var current = songName;
             if (newName != current) {
                 Undo.doAction(
-                    () => { doSetSongName(newName); },
-                    () => { doSetSongName(current); },
+                    () => { doSetSongName(newName); scheduleUpdate(); },
+                    () => { doSetSongName(current); scheduleUpdate(); },
                     "Set Song Name"
                 );
             }
@@ -129,8 +157,8 @@ var Model = (function() {
             if (newCode != currentCode) {
                 Undo.doAction(
                     // set the song object directly, to preserve and references in the undo/redo lists.
-                    () => { doSetSong(newSong); scheduleSongCodeUpdate(); },
-                    () => { doSetSong(currentSong); scheduleSongCodeUpdate(); },
+                    () => { doSetSong(newSong); scheduleUpdate(); },
+                    () => { doSetSong(currentSong); scheduleUpdate(); },
                     "Set Song Code"
                 );
             }
