@@ -15,6 +15,18 @@ var Controls = (function() {
                 commitNameChange();
             }
         }, { passive: false });
+
+        function commitSongCodeChange() {
+            var input = document.getElementById("metadata-settings-code-text");
+            input.blur();
+            Model.setSongCode(input.value);
+        }
+        document.getElementById("metadata-settings-code-text").addEventListener("change", commitSongCodeChange, { passive: false });
+        document.getElementById("metadata-settings-code-text").addEventListener("keydown", (e) => {
+            if ("Enter" == e.code) {
+                commitSongCodeChange();
+            }
+        }, { passive: false });
     }
 
     function doShawzinSelect() {

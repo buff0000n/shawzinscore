@@ -213,8 +213,10 @@ var Undo = (function() {
 
     function doAction(doFunc, undoFunc, description) {
         var action = new AdhocUndoAction(doFunc, undoFunc, description);
+        startUndoCombo();
         addUndoAction(action);
         action.redoAction();
+        endUndoCombo();
     }
 
     // public members

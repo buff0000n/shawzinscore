@@ -13,6 +13,7 @@
 <body onload="initModel()">
 <script type="text/javascript" language="javascript" src="js/util.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
+<script type="text/javascript" language="javascript" src="js/song.js"></script>
 <script type="text/javascript" language="javascript" src="js/audio.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/bufferLoader.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzinAudio.js"></script>
@@ -610,7 +611,11 @@
     <div id="toolbar-settings">
         <div id="metadata-settings-code" class="toolbarSection">
             <div class="fieldTitle">Song Code</div>
-            <input type="text" value="blahlahlafskhshgfdskjhgfdshgfsdlhglfdskgjhsdsfdsfdsfdsfsdfhl" size="15"/>
+<!--
+6EAAKACRAEhAGUAIUAMRAOSAQSAUMAWRAYBAgCAiJAkMAmKAoEBAKBCRBEhBGUBIUBMRBOSBQSBUMBWRBYMBgRBiSBkUBmhBo
+6KAACACJAEMAGSAKhAOSASUAUiAWkAYZBAZBCZBGZBIZBKZBMZBQZBSZBWZBYZBaZBc0Bg0Bi0Bm0Bo0Bq0Bs0Bw0By0B20B40B60B88CA8CC8CG8CI8CK8CM8CQ8CS8CW8CY8Ca8CcyCgyCiyCmyCoyCqyCsyCwyCyyC2yC4yC6yC8ZDAZDCZDGZDIZDKZDMZDQZDSZDWZDYZDaZDc0Dg0Di0Dm0Do0Dq0Ds0Dw0Dy0D20D40D60D88EA8EC8EG8EI8EK8EM8EQ8ES8EW8EY8Ea8EcyEgyEiyEmyEoyEqyEsyEwyEyyE2yE4yE6yE8KFCSFEUFGhFIKFOSFQUFShFUMFiSFkUFmhFoMFuSFwUFyhF0JGCRGESGGUGIJGORGQSGSUGUhGiiGkhGmUGoKHCSHEUHGhHIKHOSHQUHShHUMHiSHkUHmhHoMHuSHwUHyhH0JICRIESIGUIIJIORIQSISUIUhIgiIihIkUImKJEhJKUJQSJWKJcRJgRJoSJqRJsMJuJKEUKKSKQRKWMKcKKgMKoRKqMKsKKuKLEhLKULQSLWKLcRLgRLoSLqRLsMLuEL8JMASMMRMQMMcKMghNEUNKhNQUNWKNcRNgMNqKNsMNuUOESOKUOQROWMOcKOgMOoROqMOsKOuBPCCPEEPGKPIBPOCPQEPSKPUBPiCPkEPmMPoBPuCPwEPyMP0EP8JQAUQMSQQJQcKQghRAURChRESRUURWhRYiRahRcURehRgURihRkUSASSCUSERSUSSWUSYhSaUScSSeUSgSSiUSkhTAUTChTESTUUTWhTYiTahTcUTehTgUTihTkJUAEUCJUECUUEUWJUYKUaMUcRUeKUgMUiKUkKVCSVEUVGhVIKVOSVQUVShVUMViSVkUVmhVoMVuSVwUVyhV0JWCRWESWGUWIJWORWQSWSUWUhWiiWkhWmUWoKXCSXEUXGhXIKXOSXQUXShXUMXiSXkUXmhXoMXuSXwUXyhX0EX8JYASYMRYQMYcKYgZZAZZCZZGZZIZZKZZMZZQ
+-->
+            <input id="metadata-settings-code-text" type="text" value="" size="15"/>
             <div class="tooltip">
                 <span id="copyCodeButton" class="smallButton icon" onclick="copyModelUrl(this)">
                     <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" >
