@@ -144,28 +144,31 @@ var ObjectUtils = (function() {
     }
     
     function merge(o1, o2) {
-        // see if there are two arrays to merge
-        if (isArray(o1) && isArray(o2)) {
-            // build a new array
-            var o3 = new Array();
-            // iterate over the first array
-            for (var i = 0; i < o1.length; i++) {
-                // if there's no corresponding entry in the second array, just copy from the first
-                if (i >= o2.length) {
-                    o3.push(o1[i]);
-    
-                // otherwise, merge corresponding entries
-                } else {
-                    o3.push(merge(o1[i], o2[i]));
-                }
-            }
-            // iterate over the second array if it's longer than the first and copy it in
-            for (var i = o1.length; i < o2.length; i++) {
-                o3.push(o2[i]);
-            }
-    
+    // meh, skip merging arrays and just overwrite
+//        // see if there are two arrays to merge
+//        if (isArray(o1) && isArray(o2)) {
+//            // build a new array
+//            var o3 = new Array();
+//            // iterate over the first array
+//            for (var i = 0; i < o1.length; i++) {
+//                // if there's no corresponding entry in the second array, just copy from the first
+//                if (i >= o2.length) {
+//                    o3.push(o1[i]);
+//
+//                // otherwise, merge corresponding entries
+//                } else {
+//                    o3.push(merge(o1[i], o2[i]));
+//                }
+//            }
+//            // iterate over the second array if it's longer than the first and copy it in
+//            for (var i = o1.length; i < o2.length; i++) {
+//                o3.push(o2[i]);
+//            }
+//            return o3;
+//
+//        } else
         // see if there are two objects to merge
-        } else if (isObject(o1) && isObject(o2)) {
+        if (isObject(o1) && isObject(o2) && !isArray(o1) && !isArray(o2)) {
             // build a new object
             var o3 = new Object();
     

@@ -39,6 +39,9 @@ class Note {
         this.string = string;
         this.fret = fret;
         this.time = time;
+
+        this.prev = null;
+        this.next = null;
     }
 
     fromString(code) {
@@ -101,6 +104,10 @@ class Note {
         return SongUtils.intToBas64(b1) + SongUtils.intToBas64(b2) + SongUtils.intToBas64(b3);
     }
 
+    isChord() {
+        return this.fret.length > 1;
+    }
+
     desc() {
         return "[" + this.time + " : " + this.string + "-" + this.fret + "]";
     }
@@ -148,14 +155,105 @@ class Song {
         this.notes = Array();
         // pull out each three-char substring and parse it into a note string, fret, and time
         for (var i = 1; i < code.length; i+= 3) {
-            this.notes.push(new Note().fromString(code.substring(i, i+3)));
+            // add to the note list, sorting by time and setting up a doubly linked list
+            this.addNote(new Note().fromString(code.substring(i, i+3)));
         }
 
-        // sort by time, should be unnecessary but there's nothing preventing anyone from
-        // building note lists out of order.
-        this.notes.sort(SongUtils.noteTimeComparator);
-
         return this;
+    }
+
+    addNote(note) {
+        // search for the insertion index
+        var index = binarySearch(this.notes, note, SongUtils.noteTimeComparator);
+        if (index < 0) {
+            // no exact time match found, just get the insertion index
+            index = -(index + 1);
+        } else {
+            // exact time match found, which you should not be doing.
+            // Insert this note as the last one in the list at that time
+            while (index < this.notes.length && this.notes[index].time == note.time) { index++ }
+        }
+        this.notes.splice(index, 0, note);
+        if (index > 0) {
+            this.notes[index].prev = this.notes[index - 1];
+            this.notes[index - 1].next = this.notes[index];
+        }
+        if (index < this.notes.length - 1) {
+            this.notes[index + 1].prev = this.notes[index];
+            this.notes[index].next = this.notes[index + 1];
+        }
+    }
+
+    getNoteIndex(note) {
+        // search for the index
+        var index = binarySearch(this.notes, note, SongUtils.noteTimeComparator);
+        if (index < 0) {
+            // no exact time match found
+            return -1;
+
+        } else {
+            // just in case there's more than one at the same time
+            while (index < this.notes.length - 1 && this.notes[index] != note && this.notes[index + 1].time == note.time) { index++ }
+            if (index >= this.notes.length || this.notes[index] != note) {
+                // should I even be bothering with keeping an array?
+                return -1;
+            }
+        }
+        return index;
+    }
+
+    removeNote(note) {
+        var index = this.getNoteIndex(note);
+        if (index < 0) {
+            throw "Note not found: " + note;
+        }
+
+        if (index > 0) {
+            this.notes[index - 1].next = this.notes[index].next;
+        }
+        if (index < this.notes.length - 1) {
+            this.notes[index + 1].prev = this.notes[index].prev;
+        }
+
+        this.notes.splice(index, 1);
+    }
+
+    swap(index1, index2) {
+        var t1 = this.notes[index1];
+        var t2prev = t2.prev;
+        var t2next = t2.next;
+
+        this.notes[index1] = this.notes[index2];
+        this.notes[index1].prev = t1.prev;
+        this.notes[index1].next = t1.next;
+
+        this.notes[index2] = t1;
+        this.notes[index2].prev = t2prev;
+        this.notes[index2].next = t2next;
+    }
+
+    moveNote(note, time) {
+        var index = this.getNoteIndex(note);
+        if (index < 0) {
+            throw "Note not found: " + note;
+        }
+
+        note.time = time;
+        // Assume we don't have to move it far and be a little efficient about it
+        while (index > 0 && this.notes[index - 1].time > note.time) {
+            this.swap(index - 1, index);
+        }
+        while (index < this.notes.length - 1 && this.notes[index + 1].time <= note.time) {
+            this.swap(index, index + 1);
+        }
+    }
+
+    findNextNote(note, condition = (n1, n2) => true) {
+        var note2 = note.next;
+        while (note2 != null && !condition(note, note2)) {
+            note2 = note2.next;
+        }
+        return note2;
     }
 
     toString() {

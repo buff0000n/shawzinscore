@@ -93,18 +93,51 @@ var Metadata = (function() {
             "ds3": "left: 321px; top: 0px; width: 23px; height: 55px;",
     }
 
-    var noteRollOffset = 2;
-    var noteRollWidth = 12;
-
     var tickSpacing = 20;
     var ticksPerSecond = 16;
-    // technically the song format can support 4m16s, but the game caps it at exactly 4m
+    // technically the song code format can support 4m16s, but the game caps it at exactly 4m
     var maxTickLength = 4 * 60 * ticksPerSecond;
+    
+    var tabStringXOffsets = {
+        "1": 58,
+        "2": 170,
+        "3": 282,
+    }
+    var tabFretYOffset = -38;
+    var tabFretXOffsets = {
+        "1": -34,
+        "2": 0,
+        "3": 34,
+    };
+
+    var fretToRollColors = {
+        "": "#BF8340",
+        "0": "#BF8340",
+        "1": "#C03F3F",
+        "2": "#3FC03F",
+        "3": "#00B4FF",
+        "12": "#D4D41B",
+        "23": "#20BA9F",
+        "13": "#7B609F",
+        "123": "#E27119",
+    };
+    
+    var noteRollOffset = 2;
+    var noteRollWidth = 12;
+    var noteToRollOffsets = {};
+    for (var n = 0; n < noteOrder.length; n++) {
+        noteToRollOffsets[noteOrder[n]] = noteRollOffset + (noteRollWidth * n);
+    }
 
     var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void" ];
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
     var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
     var scaleChordOrder = [ "12-1", "12-2", "12-3", "23-1", "23-2", "23-3", "13-1", "13-2", "13-3", "123-1", "123-2", "123-3" ];
+
+    var slapMap = {};
+    for (var n = 0; n < scaleNoteOrder.length; n++) {
+        slapMap[scaleChordOrder[n]] = scaleNoteOrder[n];
+    }
 
     var flat = "\u266D";
     var sharp = "\u266F";
@@ -1104,19 +1137,19 @@ var Metadata = (function() {
                         "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.F1, note.F2]
                     },
-                    "323-1": {
+                    "123-1": {
                         "name": "G",
                         "img": "corbu/pmin/chord-323-1.png",
                         "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.G1, note.G2]
                     },
-                    "323-2": {
+                    "123-2": {
                         "name": "B\u266D",
                         "img": "corbu/pmin/chord-323-2.png",
                         "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.Bb1, note.Bb2]
                     },
-                    "323-3": {
+                    "123-3": {
                         "name": "C",
                         "img": "corbu/pmin/chord-323-3.png",
                         "length": 32, "monoFadeTime": 0.25,
@@ -1338,19 +1371,19 @@ var Metadata = (function() {
                         "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.F1, note.F2]
                     },
-                    "323-1": {
+                    "123-1": {
                         "name": "G",
                         "img": "corbu/pmin/chord-323-1.png",
                         "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.G1, note.G2]
                     },
-                    "323-2": {
+                    "123-2": {
                         "name": "B\u266D",
                         "img": "corbu/pmin/chord-323-2.png",
                         "length": 32, "monoFadeTime": 0.25,
                         "notes": [note.Bb1, note.Bb2]
                     },
-                    "323-3": {
+                    "123-3": {
                         "name": "C",
                         "img": "corbu/pmin/chord-323-3.png",
                         "length": 32, "monoFadeTime": 0.25,
@@ -1466,13 +1499,13 @@ var Metadata = (function() {
                         "name": "A\u266D",
                         "img": "corbu/min/chord-23-2.png",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.Ab1, note.Eb1, note.Ab2]
+                        "notes": [note.Ab1, note.Eb2, note.Ab2]
                     },
                     "23-3": {
                         "name": "B\u266D",
                         "img": "corbu/min/chord-23-3.png",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.Ab1, note.C2, note.Eb2]
+                        "notes": [note.Bb1, note.F2, note.Bb2]
                     },
                     "13-1": {
                         "name": "C",
@@ -2261,6 +2294,7 @@ var Metadata = (function() {
         scaleOrder: scaleOrder,
         scaleNoteOrder: scaleNoteOrder,
         scaleChordOrder: scaleChordOrder,
+        slapMap: slapMap,
         shawzinList: {
             "dax": daxShawzin,
             "nelumbo": nelumboShawzin,
@@ -2276,8 +2310,11 @@ var Metadata = (function() {
         maxTickLength: maxTickLength,
         // UI metadata
         tickSpacing: tickSpacing,
-        noteRollOffset: noteRollOffset,
-        noteRollWidth: noteRollWidth,
+        tabStringXOffsets: tabStringXOffsets,
+        tabFretYOffset: tabFretYOffset,
+        tabFretXOffsets: tabFretXOffsets,
+        noteToRollOffsets: noteToRollOffsets,
+        fretToRollColors: fretToRollColors,
         noteKeyboardBoxes: noteKeyboardBoxes,
     }
 })();

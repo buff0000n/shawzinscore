@@ -11,11 +11,12 @@
 <link rel="stylesheet" type="text/css" href="css/common.css"/>
 <link rel="stylesheet" type="text/css" href="css/main.css"/>
 <body onload="initModel()">
+<script type="text/javascript" language="javascript" src="js/lib/bufferLoader.js"></script>
+<script type="text/javascript" language="javascript" src="js/lib/binarySearch.js"></script>
 <script type="text/javascript" language="javascript" src="js/util.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
 <script type="text/javascript" language="javascript" src="js/song.js"></script>
 <script type="text/javascript" language="javascript" src="js/audio.js"></script>
-<script type="text/javascript" language="javascript" src="js/lib/bufferLoader.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzinAudio.js"></script>
 <script type="text/javascript" language="javascript" src="js/events.js"></script>
 <script type="text/javascript" language="javascript" src="js/undo.js"></script>
@@ -157,12 +158,12 @@
         PageUtils.clearErrors();
         window.onerror = PageUtils.windowOnError;
 
-        Model.init();
-
         Controls.registerEventListeners();
         Events.registerEventListeners();
         Undo.registerEventListeners();
         Track.registerEventListeners();
+
+        Model.init();
 
         if (PageUtils.getQueryParam("h")) {
             about();
@@ -178,6 +179,12 @@
         reinitModel(url);
 */
     }
+
+    function dumpJson() {
+        var dumpelement = document.getElementById("metadata-dump");
+        dumpelement.innerHTML = JSON.stringify(Metadata, null, 2);
+    }
+
 
 /*
     function reinitModel(url) {
@@ -610,10 +617,20 @@
         <div id="metadata-settings-code" class="toolbarSection">
             <div class="fieldTitle">Song Code</div>
 <!--
+yeah
+5KAAMACSAEMAGhAIhAOUAUKAgMAiSAkMAmUAoUAuSA0RA4MA6KBAMBCSBEMBGSBIUBQRBUMBaKBcKBkUBoSBwKCAMCCSCEMCGhCIhCOUCUKCgMCiSCkMCmkCoRCuSC0RC4MC6KDAMDCSDEMDGSDIUDQRDUMDaKDcKDkUDoSDw
+trol
 6EAAKACRAEhAGUAIUAMRAOSAQSAUMAWRAYBAgCAiJAkMAmKAoEBAKBCRBEhBGUBIUBMRBOSBQSBUMBWRBYMBgRBiSBkUBmhBo
+geru
 6KAACACJAEMAGSAKhAOSASUAUiAWkAYZBAZBCZBGZBIZBKZBMZBQZBSZBWZBYZBaZBc0Bg0Bi0Bm0Bo0Bq0Bs0Bw0By0B20B40B60B88CA8CC8CG8CI8CK8CM8CQ8CS8CW8CY8Ca8CcyCgyCiyCmyCoyCqyCsyCwyCyyC2yC4yC6yC8ZDAZDCZDGZDIZDKZDMZDQZDSZDWZDYZDaZDc0Dg0Di0Dm0Do0Dq0Ds0Dw0Dy0D20D40D60D88EA8EC8EG8EI8EK8EM8EQ8ES8EW8EY8Ea8EcyEgyEiyEmyEoyEqyEsyEwyEyyE2yE4yE6yE8KFCSFEUFGhFIKFOSFQUFShFUMFiSFkUFmhFoMFuSFwUFyhF0JGCRGESGGUGIJGORGQSGSUGUhGiiGkhGmUGoKHCSHEUHGhHIKHOSHQUHShHUMHiSHkUHmhHoMHuSHwUHyhH0JICRIESIGUIIJIORIQSISUIUhIgiIihIkUImKJEhJKUJQSJWKJcRJgRJoSJqRJsMJuJKEUKKSKQRKWMKcKKgMKoRKqMKsKKuKLEhLKULQSLWKLcRLgRLoSLqRLsMLuEL8JMASMMRMQMMcKMghNEUNKhNQUNWKNcRNgMNqKNsMNuUOESOKUOQROWMOcKOgMOoROqMOsKOuBPCCPEEPGKPIBPOCPQEPSKPUBPiCPkEPmMPoBPuCPwEPyMP0EP8JQAUQMSQQJQcKQghRAURChRESRUURWhRYiRahRcURehRgURihRkUSASSCUSERSUSSWUSYhSaUScSSeUSgSSiUSkhTAUTChTESTUUTWhTYiTahTcUTehTgUTihTkJUAEUCJUECUUEUWJUYKUaMUcRUeKUgMUiKUkKVCSVEUVGhVIKVOSVQUVShVUMViSVkUVmhVoMVuSVwUVyhV0JWCRWESWGUWIJWORWQSWSUWUhWiiWkhWmUWoKXCSXEUXGhXIKXOSXQUXShXUMXiSXkUXmhXoMXuSXwUXyhX0EX8JYASYMRYQMYcKYgZZAZZCZZGZZIZZKZZMZZQ
+saria
 5JAAMAERAIJAQMAURAYJAgMAkRAohAsUAwRA4SA8RBAKBEEBICBcEBgKBkEBoJCAMCERCIJCQMCURCYJCgMCkRCohCsUCwRC4SC8hDARDEKDIRDcKDgCDkEDoCEAEEEJEIKEQMEUREYSEgREkEEoCFAEFEJFIKFQMFURFYSFgUFkhFoCGAEGEJGIKGQMGURGYSGgRGkEGoCHABHEJHIEHMKHQJHUMHYKHcRHgMHkSHoRHsUHwSH0hH4iH6UH+hIAJJAMJERJIJJQMJURJYJJgMJkRJohJsUJwRJ4SJ8RKAKKEEKICKcEKgKKkEKoJLAMLERLIJLQMLURLYJLgMLkRLohLsULwRL4SL8hMARMEKMIRMcKMgCMkEMoCNAENEJNIKNQMNURNYSNgRNkENoCOAEOEJOIKOQMOUROYSOgUOkhOoCPAEPEJPIKPQMPURPYSPgRPkEPoCQABQEJQIEQMKQQJQUMQYKQcRQgMQkSQoRQsUQwSQ0hQ4iQ6UQ+hRA
+freeb
 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
+stroms
+5CAAaAGCAMEASKAVcAYJAkxAqxAwEA2KA5cA8CBIaBOaBUEBaKBdcBgJBsxByxB4EB+KCBcCECCQJCTUCWCCiJClUCohC0iC9hDAiDDhDGSDJMDMMDYCDeJDkKDnMDqMD8CECJEIKELEEOCEgJEjUEmCEyJE1UE4hFEiFNhFQiFThFWSFZMFcMFoCFuJF0KF3MF6MGGCGMaGSaGYEGeKGhcGkJGwxG2xG8EHCcHICHUaHaaHgEHmcHsJH4xH+xIEEIKcIQCIcaIiaIoEIucI0JJAxJGxJMEJScJYMJkaJqaJwJJ2xJ8MKIaKOaKUMKa6KgCKsaKyaK4EK+cLEJLQxLWxLcELicLnML0aL6aMAMMG6MMCMY
+slamp
+6yAA8AMKAV6Ab8AhKAnaAqcAw8A8EBF6BL8BRkBXxBayBg8BsKB16B78CBKCHaCKcCQ8CcECl6Cr8CxkC3cC6ZDAqDMqDVBDYqDbqDhSDnZDqcDw5D85EFEEI5ELpERREXyEaKEdyEg8EsKE16E78FBKFHaFKcFQ8FcEFl6Fr8FxkF3xF6yGA
 -->
             <input id="metadata-settings-code-text" type="text" value="" size="15"/>
             <div class="tooltip">
@@ -835,178 +852,18 @@
             <tr>
                 <td id="song-scroll-tab" style="background-image: url('img/tab-bg.png'); width: 340px; position: relative;">
                     <!--
-                    <div class="measure-spacer" style="height: 400px; position: relative;">
-                        <img src="img/measure-marker-1.png" srcset="img2x/measure-marker-1.png 2x"
-                             style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 200px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 100px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
-                        />
-                    </div>
-                    <div class="measure-spacer" style="height: 400px; position: relative;">
-                        <img src="img/measure-marker-1.png" srcset="img2x/measure-marker-1.png 2x"
-                             style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 200px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 100px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
-                        />
-                    </div>
-                    <div class="measure-spacer" style="height: 400px; position: relative;">
-                        <img src="img/measure-marker-1.png" srcset="img2x/measure-marker-1.png 2x"
-                             style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 200px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 100px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2.png" srcset="img2x/measure-marker-2.png 2x"
-                             style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
-                        />
-                    </div>
-                    -->
-
-                    <!--
                     <img id="playback-marker-tab" src="img/play-marker-tab.png" srcset="img2x/play-marker-tab.png 2x"
                          style="position: absolute; top: 225px; left: 0px; transform: translateY(-50%);"
-                    />
-
-                    <img src="img/tab-note-dot.png" srcset="img2x/tab-note-dot.png 2x"
-                         style="position: absolute; top: 100px; left: 58px; transform: translate(-50%, -50%);"
-                    />
-                    <img src="img/tab-note-fret-0.png" srcset="img2x/tab-note-fret-0.png 2x"
-                         style="position: absolute; top: 62px; left: 24px; transform: translate(-50%, -50%);"
-                    />
-                    <img src="img/tab-note-fret-0.png" srcset="img2x/tab-note-fret-0.png 2x"
-                         style="position: absolute; top: 62px; left: 58px; transform: translate(-50%, -50%);"
-                    />
-                    <img src="img/tab-note-fret-0.png" srcset="img2x/tab-note-fret-0.png 2x"
-                         style="position: absolute; top: 62px; left: 92px; transform: translate(-50%, -50%);"
-                    />
-
-                    <img src="img/tab-note-dot.png" srcset="img2x/tab-note-dot.png 2x"
-                         style="position: absolute; top: 100px; left: 170px; transform: translate(-50%, -50%);"
-                    />
-
-                    <img src="img/tab-note-dot.png" srcset="img2x/tab-note-dot.png 2x"
-                         style="position: absolute; top: 100px; left: 282px; transform: translate(-50%, -50%);"
-                    />
-                    <img src="img/tab-note-fret-1-pc.png" srcset="img2x/tab-note-fret-1-pc.png 2x"
-                         style="position: absolute; top: 62px; left: 248px; transform: translate(-50%, -50%);"
-                    />
-                    <img src="img/tab-note-fret-2-pc.png" srcset="img2x/tab-note-fret-2-pc.png 2x"
-                         style="position: absolute; top: 62px; left: 282px; transform: translate(-50%, -50%);"
-                    />
-                    <img src="img/tab-note-fret-3-pc.png" srcset="img2x/tab-note-fret-3-pc.png 2x"
-                         style="position: absolute; top: 62px; left: 316px; transform: translate(-50%, -50%);"
                     />
                     -->
                 </td>
                 <td id="song-scroll-roll" style="background-image: url('img/keys-bg.png'); width: 340px; position: relative; z-index: 0;">
                     <!--
-                    <div class="measure-spacer" style="height: 400px; position: relative;">
-                        <img src="img/measure-marker-1-roll.png" srcset="img2x/measure-marker-1-roll.png 2x"
-                             style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2-roll.png" srcset="img2x/measure-marker-2-roll.png 2x"
-                             style="position: absolute; top: 200px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-3-roll.png" srcset="img2x/measure-marker-3-roll.png 2x"
-                             style="position: absolute; top: 100px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-3-roll.png" srcset="img2x/measure-marker-3-roll.png 2x"
-                             style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
-                        />
-                    </div>
-                    <div class="measure-spacer" style="height: 400px; position: relative;">
-                        <img src="img/measure-marker-1-roll.png" srcset="img2x/measure-marker-1-roll.png 2x"
-                             style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2-roll.png" srcset="img2x/measure-marker-2-roll.png 2x"
-                             style="position: absolute; top: 200px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-3-roll.png" srcset="img2x/measure-marker-3-roll.png 2x"
-                             style="position: absolute; top: 100px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-4-roll.png" srcset="img2x/measure-marker-3-roll.png 2x"
-                             style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
-                        />
-                    </div>
-                    <div class="measure-spacer" style="height: 400px; position: relative;">
-                        <img src="img/measure-marker-1-roll.png" srcset="img2x/measure-marker-1-roll.png 2x"
-                             style="position: absolute; top: 0px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-2-roll.png" srcset="img2x/measure-marker-2-roll.png 2x"
-                             style="position: absolute; top: 200px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-3-roll.png" srcset="img2x/measure-marker-3-roll.png 2x"
-                             style="position: absolute; top: 100px; left: 0px; transform: translateY(-50%);"
-                        />
-                        <img src="img/measure-marker-4-roll.png" srcset="img2x/measure-marker-3-roll.png 2x"
-                             style="position: absolute; top: 300px; left: 0px; transform: translateY(-50%);"
-                        />
-                    </div>
-                    -->
-                    <!--
                     <img id="playback-marker-roll" src="img/play-marker-roll.png" srcset="img2x/play-marker-roll.png 2x"
                          style="position: absolute; top: 225px; left: 0px; transform: translateY(-50%); z-index: 100;"
                     />
-
-                    <div class="roll-note-row" style="left: 0; top: 100px;">
-                        <div class="roll-note-outline"
-                             style="left: 2px; top: 0px; width: 12px; height: 50px; border-color: #BF8340;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 38px; top: 0px; width: 12px; height: 50px; background-color: #BF8340;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 62px; top: 0px; width: 12px; height: 50px; background-color: #BF8340;"
-                        ></div>
-
-                        <div class="roll-note"
-                             style="left: 86px; top: 0px; width: 12px; height: 50px; background-color: #C03F3F;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 122px; top: 0px; width: 12px; height: 50px; background-color: #C03F3F;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 146px; top: 0px; width: 12px; height: 50px; background-color: #C03F3F;"
-                        ></div>
-
-                        <div class="roll-note"
-                             style="left: 182px; top: 0px; width: 12px; height: 50px; background-color: #3FC03F;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 206px; top: 0px; width: 12px; height: 50px; background-color: #3FC03F;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 230px; top: 0px; width: 12px; height: 50px; background-color: #3FC03F;"
-                        ></div>
-
-                        <div class="roll-note"
-                             style="left: 266px; top: 0px; width: 12px; height: 50px; background-color: #00B4FF;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 290px; top: 0px; width: 12px; height: 50px; background-color: #00B4FF;"
-                        ></div>
-                        <div class="roll-note"
-                             style="left: 326px; top: 0px; width: 12px; height: 50px; background-color: #00B4FF;"
-                        ></div>
-                    </div>
                     -->
+
                 </td>
             </tr>
         </table>
@@ -1201,5 +1058,11 @@
         </div>
     </div>
 </div>
+
+<p>
+    <input type="submit" class="button" value="DUMP" onClick="dumpJson(this)"/>
+</p>
+<pre id="metadata-dump" style="font-family: monospace; text-align: left;"></pre>
+
 </body>
 </html>

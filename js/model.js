@@ -63,6 +63,8 @@ var Model = (function() {
 
         var text = document.getElementById("select-shawzin-text");
         text.innerHTML = Metadata.shawzinList[shawzin].config.name;
+
+        Track.updateShawzin();
     }
 
     function getScale() {
@@ -73,6 +75,8 @@ var Model = (function() {
         var text = document.getElementById("select-scale-text");
         var scale = song.getScale();
         text.innerHTML = Metadata.shawzinList[shawzin].scales[scale].config.name;
+
+        Track.updateScale();
     }
 
     function doSetScale(name) {
@@ -97,6 +101,7 @@ var Model = (function() {
         song = newSong;
         updateScale();
 
+        Track.setSong(song);
 //        Track.setSong(this.song );
     }
 

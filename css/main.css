@@ -191,7 +191,7 @@ td {
 .roll-note {
     position: absolute;
     border: solid;
-    border-width: 1px;
+    border-width: 2px 1px;
     border-color: #202020;
     transform: translate(-1px, -1px);
 }
@@ -200,6 +200,10 @@ td {
     border: solid;
     border-width: 1px;
     transform: translate(-1px, -1px);
+}
+.centerImg {
+    position: absolute;
+    transform: translate(-50%, -50%);
 }
 
 .measure-spacer {
