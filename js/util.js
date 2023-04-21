@@ -403,6 +403,16 @@ var PageUtils = (function() {
         hrefToUpdate = null;
     }
 
+    //==============================================================
+    // Misc
+    //==============================================================
+
+    function setImgSrc(img, png) {
+        img.src = "img/" + png;
+        img.srcset = "img2x/" + png + " 2x";
+        return img;
+    }
+
     // public members
     return  {
         doonresize: doonresize,
@@ -419,6 +429,8 @@ var PageUtils = (function() {
         urlDecodeString: urlDecodeString,
         getQueryParam: getQueryParam,
         setQueryParam: setQueryParam,
+
+        setImgSrc: setImgSrc,
     }
 })();
 
@@ -454,7 +466,7 @@ var ExportUtils = (function() {
 
             var img = document.createElement("img");
             img.src = link.href;
-            img.srcset = link.href + " 2x";;
+            img.srcset = link.href + " 2x";
 
             var parent = link.parentNode;
             parent.innerHTML = "";

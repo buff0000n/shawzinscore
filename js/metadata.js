@@ -95,9 +95,11 @@ var Metadata = (function() {
 
     var tickSpacing = 20;
     var ticksPerSecond = 16;
+    var leadInTicks = 2 * ticksPerSecond;
     // technically the song code format can support 4m16s, but the game caps it at exactly 4m
     var maxTickLength = 4 * 60 * ticksPerSecond;
-    
+    var maxNotes = 1000;
+
     var tabStringXOffsets = {
         "1": 58,
         "2": 170,
@@ -2308,8 +2310,10 @@ var Metadata = (function() {
         // more general song format metadata
         ticksPerSecond: ticksPerSecond,
         maxTickLength: maxTickLength,
+        maxNotes: maxNotes,
         // UI metadata
         tickSpacing: tickSpacing,
+        leadInTicks: leadInTicks,
         tabStringXOffsets: tabStringXOffsets,
         tabFretYOffset: tabFretYOffset,
         tabFretXOffsets: tabFretXOffsets,

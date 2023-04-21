@@ -22,11 +22,30 @@
 <script type="text/javascript" language="javascript" src="js/undo.js"></script>
 <script type="text/javascript" language="javascript" src="js/model.js"></script>
 <script type="text/javascript" language="javascript" src="js/track.js"></script>
+<script type="text/javascript" language="javascript" src="js/playback.js"></script>
 <script type="text/javascript" language="javascript" src="js/menus.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript">
 
     var testSB = null;
+
+    function testStop() {
+        testSB = ShawzinAudio.getSoundBank("corbu", "hex");
+
+        testSB.checkInit(() => {
+            ShawzinAudio.setTimeOffset();
+
+            testSB.play("0-1", 0.00);
+            testSB.play("0-3", 0.25);
+            testSB.play("0-1", 0.50);
+            testSB.play("0-2", 0.75);
+            testSB.play("0-1", 1.00);
+        });
+        setTimeout(() => {
+            testSB.stop();
+        }, 330);
+    }
+
 
     function test1() {
         testSB = ShawzinAudio.getSoundBank("narmer", "hex");
@@ -162,6 +181,7 @@
         Events.registerEventListeners();
         Undo.registerEventListeners();
         Track.registerEventListeners();
+        Playback.registerEventListeners();
 
         Model.init();
 
@@ -631,16 +651,18 @@ stroms
 5CAAaAGCAMEASKAVcAYJAkxAqxAwEA2KA5cA8CBIaBOaBUEBaKBdcBgJBsxByxB4EB+KCBcCECCQJCTUCWCCiJClUCohC0iC9hDAiDDhDGSDJMDMMDYCDeJDkKDnMDqMD8CECJEIKELEEOCEgJEjUEmCEyJE1UE4hFEiFNhFQiFThFWSFZMFcMFoCFuJF0KF3MF6MGGCGMaGSaGYEGeKGhcGkJGwxG2xG8EHCcHICHUaHaaHgEHmcHsJH4xH+xIEEIKcIQCIcaIiaIoEIucI0JJAxJGxJMEJScJYMJkaJqaJwJJ2xJ8MKIaKOaKUMKa6KgCKsaKyaK4EK+cLEJLQxLWxLcELicLnML0aL6aMAMMG6MMCMY
 slamp
 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
+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
 -->
             <input id="metadata-settings-code-text" type="text" value="" size="15"/>
             <div class="tooltip">
-                <span id="copyCodeButton" class="smallButton icon" onclick="copyModelUrl(this)">
+                <span id="copyCodeButton" class="smallButton icon">
                     <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" >
                 </span>
                 <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
             </div>
             <div class="tooltip">
-                <span id="pasteCodeButton" class="smallButton icon" onclick="copyModelUrl(this)">
+                <span id="pasteCodeButton" class="smallButton icon">
                     <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" >
                 </span>
                 <span class="tooltiptextbottom">Paste a song code from the clipboard</span>
@@ -713,27 +735,30 @@ slamp
                     <div id="song-buttons-select" class="smallButton">
                         <img src="img/icon-select.png" srcset="img2x/icon-select.png 2x" alt="select" class="icon"/>
                     </div>
+                    <div id="song-buttons-paste" class="smallButton">
+                        <img src="img/icon-paste-notes.png" srcset="img2x/icon-paste-notes.png 2x" alt="paste" class="icon"/>
+                    </div>
                     <div id="song-buttons-copy" class="smallButton">
                         <img src="img/icon-copy-notes.png" srcset="img2x/icon-copy-notes.png 2x" alt="copy" class="icon"/>
                     </div>
                     <div id="song-buttons-cut" class="smallButton">
                         <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="cut" class="icon"/>
                     </div>
-                    <div id="song-buttons-paste" class="smallButton">
-                        <img src="img/icon-paste-notes.png" srcset="img2x/icon-paste-notes.png 2x" alt="paste" class="icon"/>
-                    </div>
-                    <div id="song-buttons-rewind" class="smallButton">
-                        <img src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x" alt="rewind" class="icon"/>
-                    </div>
+
                     <div id="song-buttons-play" class="smallButton">
                         <img src="img/icon-play.png" srcset="img2x/icon-play.png 2x" alt="play" class="icon"/>
                     </div>
-                    <div id="song-buttons-stop" class="smallButton">
-                        <img src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x" alt="stop" class="icon"/>
+                    <div id="song-buttons-stop" class="smallButton-disabled">
+                        <img src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x" alt="stop" class="icon-disabled"/>
+                    </div>
+                    <!--
+                    <div id="song-buttons-rewind" class="smallButton">
+                        <img src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x" alt="rewind" class="icon"/>
                     </div>
                     <div id="song-buttons-ff" class="smallButton">
                         <img src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x" alt="fast forward" class="icon"/>
                     </div>
+                    -->
                 </td>
                 <td></td>
             </tr>
@@ -750,9 +775,15 @@ slamp
                         <img id="tab-fret-2-img" src="img/fret-2.png" srcset="img2x/fret-2.png 2x"/>
                         <img id="tab-note-fret-2" src="img/tab-note-fret-button-2-pc.png" srcset="img2x/tab-note-fret-button-2-pc.png 2x" class="tab-fret-button"/>
                     </div>
+                    <!--
                     <div id="tab-fret-3" class="tab-fret">
                         <img id="tab-fret-3-img" src="img/fret-enabled-3.png" srcset="img2x/fret-enabled-3.png 2x"/>
                         <img id="tab-note-fret-3" src="img/tab-note-fret-button-3-pc.png" srcset="img2x/tab-note-fret-button-3-pc.png 2x" class="tab-fret-button-enabled"/>
+                    </div>
+                    -->
+                    <div id="tab-fret-3" class="tab-fret">
+                        <img id="tab-fret-3-img" src="img/fret-3.png" srcset="img2x/fret-3.png 2x"/>
+                        <img id="tab-note-fret-3" src="img/tab-note-fret-button-3-pc.png" srcset="img2x/tab-note-fret-button-3-pc.png 2x" class="tab-fret-button"/>
                     </div>
                 </td>
                 <td id="song-header-roll" style="width: 340px; position: relative;">

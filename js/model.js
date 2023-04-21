@@ -23,8 +23,9 @@ var Model = (function() {
             doSetSong(newSong);
             doUpdateSongCode();
         } else {
-            song = new Song();
-            doSetScale(Metadata.scaleOrder[0]);
+            var newSong = new Song();
+            newSong.setScale(Metadata.scaleOrder[0]);
+            doSetSong(newSong);
         }
 
     }
@@ -58,17 +59,17 @@ var Model = (function() {
         shawzin = name;
 
         var image = document.getElementById("toolbar-shawzin-img");
-        image.src = `img/shawzin-${name}-large.png`;
-        image.srcset = `img2x/shawzin-${name}-large.png 2x`;
+        PageUtils.setImgSrc(image, `shawzin-${name}-large.png`);
 
         var text = document.getElementById("select-shawzin-text");
         text.innerHTML = Metadata.shawzinList[shawzin].config.name;
 
         Track.updateShawzin();
+        Playback.updateShawzin();
     }
 
     function getScale() {
-        return song.getScale();
+        return song ? song.getScale() : null;
     }
 
     function updateScale() {
@@ -77,6 +78,7 @@ var Model = (function() {
         text.innerHTML = Metadata.shawzinList[shawzin].scales[scale].config.name;
 
         Track.updateScale();
+        Playback.updateScale();
     }
 
     function doSetScale(name) {
@@ -102,6 +104,7 @@ var Model = (function() {
         updateScale();
 
         Track.setSong(song);
+        Playback.setSong(song);
 //        Track.setSong(this.song );
     }
 
@@ -177,10 +180,11 @@ var Model = (function() {
                 for (var n = 0; n < song.notes.length; n++) {
                     var note = song.notes[n];
                     var noteName = note.toNoteName();
-                    var time = note.time / 16;
+                    var time = note.tick / 16;
                     sb.play(noteName, time);
                 }
             });
+            return sb;
         },
 
     };

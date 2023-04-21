@@ -88,6 +88,7 @@ var Audio = (function() {
             this.buffer = buffer;
             this.volume = volume;
             this.startTime = startTime;
+            this.duration = duration;
             this.endTime = startTime + duration;
             this.monoFadeTime = monoFadeTime;
 
@@ -131,9 +132,19 @@ var Audio = (function() {
             console.log("Stopping at " + time + ": " + this.name);
         }
 
+        cancelStop() {
+            if (this.endTime < this.startTime + this.duration) {
+                // huh, that's convenient
+                this.gain.gain.cancelScheduledValues(this.startTime);
+                // reset the stop time
+                this.endTime = this.startTime + this.duration;
+                this.source.stop(this.endTime);
+            }
+        }
+
         cancel() {
             // should only be called if the sound hasn't been started yet
-            this.source.cancel();
+            this.source.stop();
         }
     }
 
@@ -144,6 +155,8 @@ var Audio = (function() {
             this.mono = mono;
             // event queue
             this.queue = [];
+            // keep track of the end time
+            this.endTime = 0;
         }
 
         clear() {
@@ -171,10 +184,19 @@ var Audio = (function() {
             // add some grace time
             currentTime += dropGracePeriod;
             // iterate from the end until the start time is before the current time
-            while (this.queue[this.queue.length - 1].startTime > currentTime - timeUlp) {
+            while (this.queue.length > 0 && this.queue[this.queue.length - 1].startTime > currentTime - timeUlp) {
                 // remove the event and cancel it
                 var event = this.queue.pop();
+                //console.log("removing event at " + event.startTime)
                 event.cancel();
+            }
+
+            // find any events that end after the drop time
+            for (var index = this.queue.length - 1; index >= 0 && this.queue[index].endTime > currentTime + timeUlp; index--) {
+                // cancel any stops on this event, but otherwise leave it alone
+                var event = this.queue[index];
+                //console.log("removing stops on event at " + event.startTime)
+                event.cancelStop();
             }
         }
 
@@ -193,6 +215,19 @@ var Audio = (function() {
             }
             // insert
             this.queue.splice(index, 0, soundEvent);
+
+            if (this.mono) {
+                // with mono, the end time of the last sound in the queue is the overall end time.
+                if (index == this.queue.length - 1) {
+                    this.endTime = soundEvent.endTime;
+                    console.log("New end time: " + this.endTime);
+                }
+
+                // if it's not mono, then just track the latest end time as the overall end time
+            } else if (this.endTime < soundEvent.endTime) {
+                this.endTime = soundEvent.endTime;
+                console.log("New end time: " + this.endTime);
+            }
         }
 
         stopAt(stopTime) {
@@ -217,6 +252,36 @@ var Audio = (function() {
                 index++;
             }
             return got;
+        }
+
+        isIdle(currentTime) {
+            // This is way easier
+            return currentTime >= this.endTime;
+
+            // now that I've written it out, this is far too much to be doing 20 times a second
+//            // check if there's a queue and there's any event scheduled to start in the future
+//            if (this.queue != null || this.queue[this.queue.length - 1].startTime >= currentTime) {
+//                // not idle
+//                return false;
+//            }
+//
+//            // for mono, we just have to check the last one to see if it ends before the current time
+//            if (mono) {
+//                // idle if the last mono sound in the queue is finished
+//                return (this.queue[this.queue.length - 1].endTime <= currentTime);
+//
+//            } else {
+//                // For poly, we gotta check every damn thing we got scheduled
+//                // start from the end for a better chance of finding one early
+//                for (var e = this.queue.length - 1; e >= 0; e--) {
+//                    if (this.queue[e].endTime > currentTime) {
+//                        // not idle
+//                        return false;
+//                    }
+//                }
+//                // idle, finally
+//                return true;
+//            }
         }
     }
 
@@ -393,6 +458,42 @@ var Audio = (function() {
                     this.nameToSoundEntry[name].setVolume(volume);
                 }
             }
+        }
+
+        stop(time=null) {
+            this.checkInit(() => {
+                // get the current time for reasons
+                if (time == null) time = context.currentTime;
+                // stop the poly soung queue
+                if (this.polySoundEventQueue) {
+                    this.polySoundEventQueue.dropAfter(time);;
+                }
+                // stop the mono sound groups
+                for (var monoGroup in this.monoSoundEventQueues) {
+                    this.monoSoundEventQueues[monoGroup].dropAfter(time);;
+                };
+            });
+        }
+
+        getCurrentTime() {
+            // convenience method
+            return context.currentTime - timeOffset;
+        }
+
+        isIdle(currentTime) {
+            currentTime += timeOffset;
+            // check if the poly queue is not idle
+            if (this.polySoundEventQueue && !this.polySoundEventQueue.isIdle(currentTime)) {
+                return false;
+            }
+            // look for a non-idle mono queue
+            for (var monoGroup in this.monoSoundEventQueues) {
+                if (!this.monoSoundEventQueues[monoGroup].isIdle(currentTime)) {
+                    return false;
+                }
+            };
+            // didn't find any non-idle queues, we're idle.
+            return true;
         }
     }
 

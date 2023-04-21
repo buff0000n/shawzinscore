@@ -15,9 +15,12 @@ var Track = (function() {
 
     var bars = [];
     var tickCapacity = 0;
-    var tickOffset = null;
+
+    // hard-coded 2-second buffer at beginning
+    var tickOffset = Metadata.leadInTicks;
 
     var song = null;
+    var playbackMarker = null;
 
     function registerEventListeners() {
         scroll = document.getElementById("song-scroll");
@@ -28,44 +31,45 @@ var Track = (function() {
 
         resize();
         startBar = [
-            buildBar(true, "tab"),
-            buildBar(true, "roll")
+            buildBar(false, "tab", tickOffset),
+            buildBar(false, "roll", tickOffset)
         ];
         tab.appendChild(startBar[0]);
         roll.appendChild(startBar[1]);
-        tickOffset = visibleTicks;
 
         endBar = [
-            buildBar(true, "tab"),
-            buildBar(true, "roll")
+            buildBar(false, "tab", visibleTicks),
+            buildBar(false, "roll", visibleTicks)
         ];
         tab.appendChild(endBar[0]);
         roll.appendChild(endBar[1]);
 
 
-        bpm = 120;
-        meterBar = 4;
-        meterBeat = 4;
+//        bpm = 120;
+//        meterBar = 4;
+//        meterBeat = 4;
         ensureTickCapacity(visibleTicks - 1);
+    }
+
+    function getView(note) {
+        if (!note.view) {
+            note.view = new NoteView(note);
+        }
+        return note.view;
     }
 
     function setSong(newSong) {
         if (song) {
             for (var n = 0; n < song.notes.length; n++) {
-                clearTabNote(song.notes[n]);
-                clearRollNoteRow(song.notes[n]);
+                getView(song.notes[n]).clear();
             }
         }
         song = newSong;
-        rebuildTabNotes();
-        rebuildRollNotes();
-    }
-
-    function rebuildTabNotes() {
         if (song) {
             for (var n = 0; n < song.notes.length; n++) {
-                clearTabNote(song.notes[n]);
-                buildTabNote(song.notes[n]);
+                var noteView = getView(song.notes[n]);
+                noteView.clear();
+                noteView.build();
             }
         }
     }
@@ -73,8 +77,9 @@ var Track = (function() {
     function rebuildRollNotes() {
         if (song) {
             for (var n = 0; n < song.notes.length; n++) {
-                clearRollNoteRow(song.notes[n]);
-                buildRollNoteRow(song.notes[n]);
+                var noteView = getView(song.notes[n]);
+                noteView.clearRoll();
+                noteView.buildRoll();
             }
         }
     }
@@ -89,27 +94,50 @@ var Track = (function() {
         var endTick = startTick + visibleTicks;
         if (endTick >= tickCapacity) {
             ensureTickCapacity(startTick + visibleTicks);
-        } else if (endTick < tickCapacity) {
+        } else if (endTick < tickCapacity && endTick > song.getLastTick()) {
             // check for notes present
-            trimTickCapacity(startTick + visibleTicks);
+            trimTickCapacity(endTick + visibleTicks);
         }
     }
 
+    function setPlaybackTick(tick) {
+        if (playbackMarker == null) {
+            playbackMarker = new PlaybackMarker(tick);
+        } else {
+            playbackMarker.setPlayTick(tick);
+        }
+
+        // scroll to location
+        var pos = (tick + tickOffset) * tickSpacing;
+        scroll.scrollTo(0, pos - (viewHeight/2));
+    }
+
+    function getPlaybackTick() {
+        return playbackMarker != null ? playbackMarker.playTick : null;
+    }
+
+    function clearPlayback() {
+        if (playbackMarker != null) {
+            playbackMarker.clear();
+            playbackMarker = null;
+        }
+    }
+
+
     function buildMarker(png, top) {
         var marker = document.createElement("img");
-        marker.src = "img/" + png;
-        marker.srcset="img2x/" + png + " 2x";
+        PageUtils.setImgSrc(marker, png);
         marker.className = "measure-marker";
         marker.style.top = top + "px";
         return marker;
     }
 
-    function buildBar(first, pngSuffix) {
+    function buildBar(first, pngSuffix, ticks = null) {
         var div = document.createElement("div");
         div.className = "measure-spacer";
 
-        if (!bpm) {
-            var ticks = visibleTicks;
+        if (ticks || !bpm) {
+            if (!ticks) ticks = visibleTicks;
             div.style.height = (ticks * tickSpacing) + "px";
             if (first) {
                 div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", 0));
@@ -134,8 +162,8 @@ var Track = (function() {
 
     function insertBar() {
         var bar = [
-            buildBar(bars.length == 1, "tab"),
-            buildBar(bars.length == 1, "roll")
+            buildBar(bars.length == 0, "tab"),
+            buildBar(bars.length == 0, "roll")
         ];
 
         bars.push(bar);
@@ -163,128 +191,255 @@ var Track = (function() {
         }
     }
 
-    function makeImage(png) {
+    function makeImage(png, className="centerImg") {
         var img = document.createElement("img");
         img.src = "img/" + png;
         img.srcset = "img2x/" + png + " 2x";
-        img.className = "centerImg";
+        img.className = className;
         return img;
-    }
-
-    function clearTabNote(note) {
-        if (note.dot) { note.dot.remove(); note.dot = null; }
-        if (note.fret1) { note.fret1.remove(); note.fret1 = null; }
-        if (note.fret2) { note.fret2.remove(); note.fret2 = null; }
-        if (note.fret3) { note.fret3.remove(); note.fret3 = null; }
-    }
-
-    function buildTabNote(note) {
-        note.dot = makeImage("tab-note-dot.png");
-        note.fret1 = makeImage(note.fret.indexOf("1") >= 0 ? "tab-note-fret-1-pc.png" : "tab-note-fret-0.png");
-        note.fret2 = makeImage(note.fret.indexOf("2") >= 0 ? "tab-note-fret-2-pc.png" : "tab-note-fret-0.png");
-        note.fret3 = makeImage(note.fret.indexOf("3") >= 0 ? "tab-note-fret-3-pc.png" : "tab-note-fret-0.png");
-
-        note.dot.style.left = (Metadata.tabStringXOffsets[note.string]) + "px";
-        note.dot.style.top = ((note.time + tickOffset) * tickSpacing) + "px" ;
-        note.fret1.style.left = (Metadata.tabStringXOffsets[note.string] + Metadata.tabFretXOffsets["1"]) + "px";
-        note.fret1.style.top = (((note.time + tickOffset) * tickSpacing) + Metadata.tabFretYOffset) + "px" ;
-        note.fret2.style.left = (Metadata.tabStringXOffsets[note.string] + Metadata.tabFretXOffsets["2"]) + "px";
-        note.fret2.style.top = (((note.time + tickOffset) * tickSpacing) + Metadata.tabFretYOffset) + "px" ;
-        note.fret3.style.left = (Metadata.tabStringXOffsets[note.string] + Metadata.tabFretXOffsets["3"]) + "px";
-        note.fret3.style.top = (((note.time + tickOffset) * tickSpacing) + Metadata.tabFretYOffset) + "px" ;
-
-        tab.append(note.dot);
-        tab.append(note.fret1);
-        tab.append(note.fret2);
-        tab.append(note.fret3);
-
-        ensureTickCapacity(note.time);
     }
 
     function trimToNextNonPolyphonicNote(note, noteLength, poly) {
         if (poly == "polyphonic") return noteLength;
 
         var nextNote = song.findNextNote(note, (note1, note2) => {
-            return note2.time - note1.time < noteLength && (
+            return note2.tick - note1.tick < noteLength && (
                 (poly == "monophonic") ||
                 (poly == "duophonic" && note1.isChord() == note2.isChord())
             );
         });
         if (nextNote) {
-            var nextTime = nextNote.time - note.time;
-            if (nextTime < noteLength) {
-                return nextTime;
+            var nextTick = nextNote.tick - note.tick;
+            if (nextTick < noteLength) {
+                return nextTick;
             }
         }
         return noteLength;
     }
 
-    function buildRollNoteRow(note) {
-        // todo: optimize?
-        var shawzinMd = Metadata.shawzinList[Model.getShawzin()];
-        var scaleMd = shawzinMd.scales[Model.getScale()];
-        var noteName = note.toNoteName();
+    class NoteView {
+        constructor(note) {
+            this.note = note;
+            note.view = this;
 
-        note.rollNoteList = null;
-        if (!note.isChord()) {
-            var noteLength = trimToNextNonPolyphonicNote(note, shawzinMd.notes.length, shawzinMd.config.type);
-            note.rollNoteList = [buildRollNote(scaleMd.notes[noteName], noteLength, Metadata.fretToRollColors[note.fret], false)];
+            this.dot = null;
+            this.fret1 = null;
+            this.fret2 = null;
+            this.fret3 = null;
+            this.rollRow = null;
+            this.rollNoteList = null;
+        }
+        
+        build() {
+            this.buildTab();
+            this.buildRoll();
+        }
 
-        } else if (shawzinMd.config.slap) {
-            var noteLength = trimToNextNonPolyphonicNote(note, shawzinMd.slap.length, shawzinMd.config.type);
-            var rollNoteName = scaleMd.slap.notes ? scaleMd.slap.notes[noteName] : scaleMd.notes[Metadata.slapMap[noteName]];
-            note.rollNoteList = [buildRollNote(rollNoteName, noteLength, Metadata.fretToRollColors[note.fret], false)];
+        clear() {
+            this.clearTab();
+            this.clearRoll();
+        }
 
-        } else {
-            note.rollNoteList = [];
-            var chord = scaleMd.chords[noteName];
-            var noteLength = trimToNextNonPolyphonicNote(note, chord.length, shawzinMd.config.type);
-            for (var n = 0; n < chord.notes.length; n++) {
-                var rollNoteName = chord.notes[n];
-                note.rollNoteList.push(buildRollNote(rollNoteName, noteLength, Metadata.fretToRollColors[note.fret], false));
+        buildTabNote() {
+            var dot = makeImage("tab-note-dot.png");
+            var fret1 = makeImage(this.note.fret.indexOf("1") >= 0 ? "tab-note-fret-1-pc.png" : "tab-note-fret-0.png");
+            var fret2 = makeImage(this.note.fret.indexOf("2") >= 0 ? "tab-note-fret-2-pc.png" : "tab-note-fret-0.png");
+            var fret3 = makeImage(this.note.fret.indexOf("3") >= 0 ? "tab-note-fret-3-pc.png" : "tab-note-fret-0.png");
+
+            dot.style.left = "0px";
+            dot.style.top = "0px" ;
+            fret1.style.left = Metadata.tabFretXOffsets["1"] + "px";
+            fret1.style.top = Metadata.tabFretYOffset + "px" ;
+            fret2.style.left = Metadata.tabFretXOffsets["2"] + "px";
+            fret2.style.top = Metadata.tabFretYOffset + "px" ;
+            fret3.style.left = Metadata.tabFretXOffsets["3"] + "px";
+            fret3.style.top = Metadata.tabFretYOffset + "px" ;
+
+            var div = document.createElement("div");
+            div.style.position = "absolute";
+            div.appendChild(dot);
+            div.appendChild(fret1);
+            div.appendChild(fret2);
+            div.appendChild(fret3);
+
+            div.style.left = (Metadata.tabStringXOffsets[this.note.string]) + "px";
+            div.style.top = ((this.note.tick + tickOffset) * tickSpacing) + "px" ;
+            return div;
+        }
+
+        buildTab() {
+            this.tabDiv = this.buildTabNote();
+            tab.append(this.tabDiv);
+
+            ensureTickCapacity(this.note.tick);
+        }
+    
+        clearTab() {
+            if (this.tabDiv) { this.tabDiv.remove(); this.tabDiv = null; }
+        }
+
+        buildRollNote(name, length, color, outline) {
+            var div = document.createElement("div");
+            div.className = outline ? "roll-note-outline" : "roll-note";
+            div.style.left = Metadata.noteToRollOffsets[name] + "px";
+            div.style.top = "0px";
+            div.style.width = "12px"; // todo: metadata
+            div.style.height = (length * tickSpacing) + "px";
+            div.style.backgroundColor = color;
+            div.style.borderColor = "#202020";
+            // save for later
+            div.noteName = name;
+            div.noteLength = length;
+            div.noteColor = color;
+            return div;
+        }
+
+        buildBounceRollNote(rollNoteDiv) {
+            var name = rollNoteDiv.noteName;
+            var length = rollNoteDiv.noteLength;
+            var color = rollNoteDiv.noteColor;
+
+            var div = document.createElement("div");
+            div.className = "roll-note playRollNote";
+            div.style.left = (Metadata.noteToRollOffsets[name] + 6) + "px";
+            div.style.top = "0px";
+            div.style.width = "12px"; // todo: metadata
+            div.style.height = (length * tickSpacing) + "px";
+            div.style.backgroundColor = color;
+            return div;
+        }
+
+        buildRollRow() {
+            var rollRow = document.createElement("div");
+            rollRow.className = "roll-note-row";
+            rollRow.style.left = "0px";
+            rollRow.style.top = ((this.note.tick + tickOffset) * tickSpacing) + "px";
+            return rollRow;
+        }
+
+        buildRoll() {
+            // todo: optimize?
+            var shawzinMd = Metadata.shawzinList[Model.getShawzin()];
+            var scaleMd = shawzinMd.scales[Model.getScale()];
+            var noteName = this.note.toNoteName();
+            var color = Metadata.fretToRollColors[this.note.fret];
+            var noteLength = null;
+
+            var rollRow = this.buildRollRow();
+            var rollNoteList = [];
+            if (!this.note.isChord()) {
+                noteLength = trimToNextNonPolyphonicNote(this.note, shawzinMd.notes.length, shawzinMd.config.type);
+                var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color, false);
+                rollRow.appendChild(rollNote);
+                rollNoteList.push(rollNote);
+
+            } else if (shawzinMd.config.slap) {
+                noteLength = trimToNextNonPolyphonicNote(this.note, shawzinMd.slap.length, shawzinMd.config.type);
+                var rollNoteName = scaleMd.slap.notes ? scaleMd.slap.notes[noteName] : scaleMd.notes[Metadata.slapMap[noteName]];
+                var rollNote = this.buildRollNote(rollNoteName, noteLength, color, false);
+                rollRow.appendChild(rollNote);
+                rollNoteList.push(rollNote);
+
+            } else {
+                var chord = scaleMd.chords[noteName];
+                noteLength = trimToNextNonPolyphonicNote(this.note, chord.length, shawzinMd.config.type);
+                for (var n = 0; n < chord.notes.length; n++) {
+                    var rollNoteName = chord.notes[n];
+                    var rollNote = this.buildRollNote(rollNoteName, noteLength, color, false);
+                    rollRow.appendChild(rollNote);
+                    rollNoteList.push(rollNote);
+                }
+            }
+    
+            // save for later;
+            rollRow.noteList = rollNoteList;
+
+            this.rollRow = rollRow;
+            roll.append(this.rollRow);
+    
+            ensureTickCapacity(this.note.tick);
+        }
+    
+        clearRoll() {
+            if (this.rollRow) {
+                this.rollRow.remove();
+                this.rollRow = null;
+                this.rollNoteList = null;
             }
         }
 
-        note.rollRow = document.createElement("div");
-        note.rollRow.className = "roll-note-row";
-        note.rollRow.style.left = "0px";
-        note.rollRow.style.top = ((note.time + tickOffset) * tickSpacing) + "px";
-        for (var n = 0; n < note.rollNoteList.length; n++) {
-            note.rollRow.appendChild(note.rollNoteList[n]);
+        play() {
+            console.log("playing " + this.note);
+
+            // tab note
+            var tabDiv = this.buildTabNote();
+            tabDiv.classList.add("playTabNote");
+            tab.appendChild(tabDiv);
+
+            // roll notes
+            var rollRow = this.buildRollRow();
+            var rollDivs = [];
+            for (var i = 0; i < this.rollRow.noteList.length; i++) {
+                var noteEntry = this.rollRow.noteList[i];
+                var rollDiv = this.buildBounceRollNote(noteEntry)
+                rollDivs.push(rollDiv);
+                rollRow.appendChild(rollDiv);
+            }
+            roll.appendChild(rollRow);
+
+            // cleanup
+            setTimeout(() => {
+                tabDiv.remove();
+                rollRow.remove();
+            }, 1000);
         }
-        note.rollRow.rollNoteList = note.rollNoteList;
-        roll.append(note.rollRow);
-
-        ensureTickCapacity(note.time);
     }
 
-    function clearRollNoteRow(note) {
-        if (note.rollRow) {
-            note.rollRow.remove();
-            note.rollRow = null;
+    class PlaybackMarker {
+        constructor(playTick) {
+            this.build();
+            this.setPlayTick(playTick);
+            this.nextNote = song.getFirstNoteAfter(Math.ceil(this.playTick));
         }
-    }
 
-    function buildRollNote(name, length, color, outline) {
-        var div = document.createElement("div");
-        div.className = outline ? "roll-note-outline" : "roll-note";
-        div.style.left = Metadata.noteToRollOffsets[name] + "px";
-        div.style.top = "0px";
-        div.style.width = "12px"; // todo: metadata
-        div.style.height = (length * tickSpacing) + "px";
-        div.style.backgroundColor = color;
-        div.style.borderColor = "#202020";
-        return div;
-    }
+        build() {
+            this.tabImg = makeImage("play-marker-tab.png", "centerYImg");
+            this.tabImg.style.left = "0px";
+            tab.appendChild(this.tabImg);
+            
+            this.rollImg = makeImage("play-marker-roll.png", "centerYImg");
+            this.rollImg.style.left = "0px";
+            roll.appendChild(this.rollImg);
+        }
 
+        // playtick can be fractional
+        setPlayTick(playTick) {
+            this.playTick = playTick;
+            this.tabImg.style.top = ((this.playTick + tickOffset) * tickSpacing) + "px";
+            this.rollImg.style.top = ((this.playTick + tickOffset) * tickSpacing) + "px";
+            while (this.nextNote != null && this.nextNote.tick <= this.playTick) {
+                this.nextNote.view.play();
+                this.nextNote = this.nextNote.next;
+            }
+        }
+
+        clear() {
+            this.tabImg.remove();
+            this.rollImg.remove();
+        }
+
+    }
 
     // public members
     return  {
         registerEventListeners: registerEventListeners,
         setSong: setSong,
         updateShawzin: rebuildRollNotes,
-        updateScale: rebuildRollNotes
-    };
+        updateScale: rebuildRollNotes,
+        setPlaybackTick: setPlaybackTick,
+        getPlaybackTick: getPlaybackTick,
+        clearPlayback: clearPlayback,
+    }
 })();
 
 

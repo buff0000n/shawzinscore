@@ -29,6 +29,20 @@ var Controls = (function() {
                 commitSongCodeChange();
             }
         }, { passive: false });
+
+        document.getElementById("pasteCodeButton").addEventListener("click", (e) => {
+            navigator.clipboard.readText().then((text) => {
+                document.getElementById("metadata-settings-code-text").value = text;
+                commitSongCodeChange();
+            });
+        }, { passive: false });
+
+        document.getElementById("copyCodeButton").addEventListener("click", (e) => {
+        navigator.clipboard.writeText(document.getElementById("metadata-settings-code-text").value).then(
+          () => { /* popup? */ },
+          () => {}
+        );
+        }, { passive: false });
     }
 
     function doShawzinSelect() {
