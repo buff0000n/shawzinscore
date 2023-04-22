@@ -17,14 +17,21 @@ var Playback = (function() {
     var loopTimeout = null;
 
     function registerEventListeners() {
-        document.getElementById("song-buttons-play").addEventListener("click", togglePlay);
+        document.getElementById("song-buttons-play").addEventListener("click", togglePlay, { passive: false });
 
-        document.getElementById("song-buttons-stop").addEventListener("click", stop);
+        document.getElementById("song-buttons-stop").addEventListener("click", stop, { passive: false });
 
-        Events.addKeyDownListener("Space", () => {
-            togglePlay();
+        Events.addKeyDownListener("Space", (e) => {
+            if (e.shiftKey) {
+                // shift-spacebar plays from the beginning regardless of the current state
+                stop();
+                start();
+            } else {
+                // regular spacebar starts from wherever it left off if paused, otherwise starts from the beginning
+                togglePlay();
+            }
             return true;
-        });
+        }, { passive: false });
 
     }
 
@@ -68,9 +75,7 @@ var Playback = (function() {
     }
 
     function setSong(newSong) {
-        if (playing) {
-            stop();
-        }
+        stop();
         song = newSong;
     }
 

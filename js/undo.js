@@ -42,7 +42,7 @@ var Undo = (function() {
 				}
 //			}
 			return false;
-        });
+        }, { passive: false });
         Events.addKeyDownListener("KeyY", (e) => {
 			// only enable undo/redo key shortcut if there is no menu visible and no dragging operation
 //			if (nothingElseGoingOn()) {
@@ -54,7 +54,7 @@ var Undo = (function() {
 				}
 //			}
 			return false;
-        });
+        }, { passive: false });
     }
 
     function updateUndoRedoButton(button, stack, prefix) {
@@ -150,6 +150,7 @@ var Undo = (function() {
             // update UI
             updateButtons();
         }
+        PageUtils.clearErrors();
     }
     
     function doRedo() {
@@ -164,6 +165,7 @@ var Undo = (function() {
             // update UI
             updateButtons();
         }
+        PageUtils.clearErrors();
     }
     
     class CompositeAction extends Action {

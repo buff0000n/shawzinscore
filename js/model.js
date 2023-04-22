@@ -98,14 +98,13 @@ var Model = (function() {
     }
 
     function doSetSong(newSong) {
-//        Track.clearSong();
+        // update playback first so it stops any playback in progress
+        Playback.setSong(newSong);
 
         song = newSong;
         updateScale();
 
         Track.setSong(song);
-        Playback.setSong(song);
-//        Track.setSong(this.song );
     }
 
    // public members

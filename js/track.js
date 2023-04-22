@@ -27,7 +27,7 @@ var Track = (function() {
         tab = document.getElementById("song-scroll-tab");
         roll = document.getElementById("song-scroll-roll");
 
-        scroll.addEventListener("scroll", onscroll);
+        scroll.addEventListener("scroll", onscroll, { passive: false });
 
         resize();
         startBar = [
@@ -72,6 +72,7 @@ var Track = (function() {
                 noteView.build();
             }
         }
+        scrollToTick(0);
     }
 
     function rebuildRollNotes() {
@@ -106,11 +107,15 @@ var Track = (function() {
         } else {
             playbackMarker.setPlayTick(tick);
         }
+        scrollToTick(tick);
+    }
 
+    function scrollToTick(tick) {
         // scroll to location
         var pos = (tick + tickOffset) * tickSpacing;
         scroll.scrollTo(0, pos - (viewHeight/2));
     }
+
 
     function getPlaybackTick() {
         return playbackMarker != null ? playbackMarker.playTick : null;
@@ -369,7 +374,7 @@ var Track = (function() {
         }
 
         play() {
-            console.log("playing " + this.note);
+            //console.log("playing " + this.note);
 
             // tab note
             var tabDiv = this.buildTabNote();

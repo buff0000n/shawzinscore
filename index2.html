@@ -611,24 +611,11 @@
 
 </script>
 
-<!--<div id="imageLoaderContainer" style="display: none">-->
-    <!--&lt;!&ndash; For some reason Canvas requires actual HTML elements to load the images, they will go in here &ndash;&gt;-->
-<!--</div>-->
-
-<div id="title-bar" class="titleBar">
-    <div class="mainTitle">Shawzinscore</div>
-</div>
-
-<div id="error-bar">
-    <div id="error">
-        <div class="errorLine">Javascript not enabled.</div>
-    </div>
-</div>
-
-<div id="debug-bar">
-</div>
-
 <div id="toolbar" style="width: 340px;">
+    <div id="title-bar" class="titleBar">
+        <div class="mainTitle">Shawzinscore</div>
+    </div>
+
     <div id="toolbar-shawzin">
         <img id="toolbar-shawzin-img" src="img/shawzin-dax-large.png" srcset="img2x/shawzin-dax-large.png 2x"/>
     </div>
@@ -644,13 +631,15 @@ trol
 geru
 6KAACACJAEMAGSAKhAOSASUAUiAWkAYZBAZBCZBGZBIZBKZBMZBQZBSZBWZBYZBaZBc0Bg0Bi0Bm0Bo0Bq0Bs0Bw0By0B20B40B60B88CA8CC8CG8CI8CK8CM8CQ8CS8CW8CY8Ca8CcyCgyCiyCmyCoyCqyCsyCwyCyyC2yC4yC6yC8ZDAZDCZDGZDIZDKZDMZDQZDSZDWZDYZDaZDc0Dg0Di0Dm0Do0Dq0Ds0Dw0Dy0D20D40D60D88EA8EC8EG8EI8EK8EM8EQ8ES8EW8EY8Ea8EcyEgyEiyEmyEoyEqyEsyEwyEyyE2yE4yE6yE8KFCSFEUFGhFIKFOSFQUFShFUMFiSFkUFmhFoMFuSFwUFyhF0JGCRGESGGUGIJGORGQSGSUGUhGiiGkhGmUGoKHCSHEUHGhHIKHOSHQUHShHUMHiSHkUHmhHoMHuSHwUHyhH0JICRIESIGUIIJIORIQSISUIUhIgiIihIkUImKJEhJKUJQSJWKJcRJgRJoSJqRJsMJuJKEUKKSKQRKWMKcKKgMKoRKqMKsKKuKLEhLKULQSLWKLcRLgRLoSLqRLsMLuEL8JMASMMRMQMMcKMghNEUNKhNQUNWKNcRNgMNqKNsMNuUOESOKUOQROWMOcKOgMOoROqMOsKOuBPCCPEEPGKPIBPOCPQEPSKPUBPiCPkEPmMPoBPuCPwEPyMP0EP8JQAUQMSQQJQcKQghRAURChRESRUURWhRYiRahRcURehRgURihRkUSASSCUSERSUSSWUSYhSaUScSSeUSgSSiUSkhTAUTChTESTUUTWhTYiTahTcUTehTgUTihTkJUAEUCJUECUUEUWJUYKUaMUcRUeKUgMUiKUkKVCSVEUVGhVIKVOSVQUVShVUMViSVkUVmhVoMVuSVwUVyhV0JWCRWESWGUWIJWORWQSWSUWUhWiiWkhWmUWoKXCSXEUXGhXIKXOSXQUXShXUMXiSXkUXmhXoMXuSXwUXyhX0EX8JYASYMRYQMYcKYgZZAZZCZZGZZIZZKZZMZZQ
 saria
-5JAAMAERAIJAQMAURAYJAgMAkRAohAsUAwRA4SA8RBAKBEEBICBcEBgKBkEBoJCAMCERCIJCQMCURCYJCgMCkRCohCsUCwRC4SC8hDARDEKDIRDcKDgCDkEDoCEAEEEJEIKEQMEUREYSEgREkEEoCFAEFEJFIKFQMFURFYSFgUFkhFoCGAEGEJGIKGQMGURGYSGgRGkEGoCHABHEJHIEHMKHQJHUMHYKHcRHgMHkSHoRHsUHwSH0hH4iH6UH+hIAJJAMJERJIJJQMJURJYJJgMJkRJohJsUJwRJ4SJ8RKAKKEEKICKcEKgKKkEKoJLAMLERLIJLQMLURLYJLgMLkRLohLsULwRL4SL8hMARMEKMIRMcKMgCMkEMoCNAENEJNIKNQMNURNYSNgRNkENoCOAEOEJOIKOQMOUROYSOgUOkhOoCPAEPEJPIKPQMPURPYSPgRPkEPoCQABQEJQIEQMKQQJQUMQYKQcRQgMQkSQoRQsUQwSQ0hQ4iQ6UQ+hRA
+5JAAMAERAIJAQMAURAYJAgMAkRAohAsUAwRA4SA8RBAKBEEBICBcEBgKBkEBoJCAMCERCIJCQMCURCYJCgMCkRCohCsUCwRC4SC8hDARDEKDIRDcKDgCDkEDoCEAEEEJEIKEQMEUREYSEgREkEEoCFAEFEJFIKFQMFURFYSFgUFkhFoCGAEGEJGIKGQMGURGYSGgRGkEGoCHABHEJHIEHMKHQJHUMHYKHcRHgMHkSHoRHsUHwSH0hH4iH6UH+hIA
 freeb
 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
 stroms
 5CAAaAGCAMEASKAVcAYJAkxAqxAwEA2KA5cA8CBIaBOaBUEBaKBdcBgJBsxByxB4EB+KCBcCECCQJCTUCWCCiJClUCohC0iC9hDAiDDhDGSDJMDMMDYCDeJDkKDnMDqMD8CECJEIKELEEOCEgJEjUEmCEyJE1UE4hFEiFNhFQiFThFWSFZMFcMFoCFuJF0KF3MF6MGGCGMaGSaGYEGeKGhcGkJGwxG2xG8EHCcHICHUaHaaHgEHmcHsJH4xH+xIEEIKcIQCIcaIiaIoEIucI0JJAxJGxJMEJScJYMJkaJqaJwJJ2xJ8MKIaKOaKUMKa6KgCKsaKyaK4EK+cLEJLQxLWxLcELicLnML0aL6aMAMMG6MMCMY
 slamp
 6yAA8AMKAV6Ab8AhKAnaAqcAw8A8EBF6BL8BRkBXxBayBg8BsKB16B78CBKCHaCKcCQ8CcECl6Cr8CxkC3cC6ZDAqDMqDVBDYqDbqDhSDnZDqcDw5D85EFEEI5ELpERREXyEaKEdyEg8EsKE16E78FBKFHaFKcFQ8FcEFl6Fr8FxkF3xF6yGA
+pachel
+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
 -->
@@ -714,6 +703,14 @@ slamp
         </div>
     </div>
 
+    <div id="error-bar">
+        <div id="error">
+            <div class="errorLine">Javascript not enabled.</div>
+        </div>
+    </div>
+
+    <div id="debug-bar">
+    </div>
 </div>
 
 
@@ -732,6 +729,7 @@ slamp
                         -->
                     </div>
 
+                    <!--
                     <div id="song-buttons-select" class="smallButton">
                         <img src="img/icon-select.png" srcset="img2x/icon-select.png 2x" alt="select" class="icon"/>
                     </div>
@@ -744,21 +742,19 @@ slamp
                     <div id="song-buttons-cut" class="smallButton">
                         <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="cut" class="icon"/>
                     </div>
-
+                    -->
                     <div id="song-buttons-play" class="smallButton">
                         <img src="img/icon-play.png" srcset="img2x/icon-play.png 2x" alt="play" class="icon"/>
                     </div>
                     <div id="song-buttons-stop" class="smallButton-disabled">
                         <img src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x" alt="stop" class="icon-disabled"/>
                     </div>
-                    <!--
                     <div id="song-buttons-rewind" class="smallButton">
                         <img src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x" alt="rewind" class="icon"/>
                     </div>
                     <div id="song-buttons-ff" class="smallButton">
                         <img src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x" alt="fast forward" class="icon"/>
                     </div>
-                    -->
                 </td>
                 <td></td>
             </tr>
@@ -788,92 +784,6 @@ slamp
                 </td>
                 <td id="song-header-roll" style="width: 340px; position: relative;">
                     <img id="roll-keyboard" src="img/keys-plain.png" srcset="img2x/keys-plain.png 2x"/>
-                    <!--
-                    <div class="roll-keyboard-note"
-                         style="left: 2px; top: 55px; width: 20px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 9px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 22px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 32px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 43px; top: 55px; width: 20px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 63px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 71px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 84px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 94px; top: 0px; width: 22px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 105px; top: 55px; width: 20px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 116px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 125px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 146px; top: 55px; width: 20px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 154px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 166px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 177px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 187px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 208px; top: 55px; width: 20px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 215px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 228px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 238px; top: 0px; width: 22px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 249px; top: 55px; width: 20px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 260px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 269px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 290px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 298px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    <div class="roll-keyboard-note"
-                         style="left: 311px; top: 55px; width: 21px; height: 41px; background-color: #BF834080;"
-                    ></div>
-                        <div class="roll-keyboard-note"
-                             style="left: 321px; top: 0px; width: 23px; height: 55px; background-color: #BF834080;"
-                        ></div>
-                    -->
                 </td>
             </tr>
         </table>
@@ -882,19 +792,8 @@ slamp
         <table id="song-scroll-table" style="width: 680px;">
             <tr>
                 <td id="song-scroll-tab" style="background-image: url('img/tab-bg.png'); width: 340px; position: relative;">
-                    <!--
-                    <img id="playback-marker-tab" src="img/play-marker-tab.png" srcset="img2x/play-marker-tab.png 2x"
-                         style="position: absolute; top: 225px; left: 0px; transform: translateY(-50%);"
-                    />
-                    -->
                 </td>
                 <td id="song-scroll-roll" style="background-image: url('img/keys-bg.png'); width: 340px; position: relative; z-index: 0;">
-                    <!--
-                    <img id="playback-marker-roll" src="img/play-marker-roll.png" srcset="img2x/play-marker-roll.png 2x"
-                         style="position: absolute; top: 225px; left: 0px; transform: translateY(-50%); z-index: 100;"
-                    />
-                    -->
-
                 </td>
             </tr>
         </table>
@@ -1053,18 +952,33 @@ slamp
 
             <h1>Table of Contents</h1>
             <ul id="TOC">
-                <li><a href="#tocGettingStarted">Getting Started</a>
-                    <ul>
-                        <li><a href="#tocEnterSongInfo">Enter your song's information</a>
-                    </ul>
-                </li>
+                <li><a href="#tocGettingStarted">Getting Started</a></li>
+                <li><a href="#tocTodo">Todo</a></li>
             </ul>
 
             <h1 id="tocGettingStarted">Getting Started</h1>
 
-            <h2 id="tocEnterSongInfo">Enter your song's information:</h2>
+            <h1 id="tocTodo">Todo</h1>
             <ul>
-                <li><strong>Title</strong>: Enter a title for your song here.  This will appear at the top of the generated image.</li>
+                <li>Better icons, shawzintab icon, reverse icons</li>
+                <li>FF, RW</li>
+                <li>Scale images</li>
+                <li>Reverse direction</li>
+
+                <li>playback cursor moving/setting
+                    <ul>
+                        <li>
+                            playback time/measure display?
+                        </li>
+                    </ul>
+                </li>
+                <li>Better auto-scrolling</li>
+                <li>meter/tempo/lead in</li>
+                <li>Embed Shawzintab</li>
+                <li>Copy Link</li>
+                <li>Zoom Level</li>
+                <li>Docs</li>
+                <li><strong>EDITING</strong></li>
             </ul>
         </div>
     </div>

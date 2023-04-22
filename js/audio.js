@@ -112,7 +112,7 @@ var Audio = (function() {
             this.gain.connect(context.destination);
 
             // schedule the sound
-            console.log("Playing at " + this.startTime + ": " + this.name);
+            //console.log("Playing at " + this.startTime + ": " + this.name);
             this.source.start(this.startTime);
         }
 
@@ -129,7 +129,7 @@ var Audio = (function() {
             // don't include the fade time, so it doesn't try to reset its end time to later and cause audio glitches
             this.endTime = time
 
-            console.log("Stopping at " + time + ": " + this.name);
+            //console.log("Stopping at " + time + ": " + this.name);
         }
 
         cancelStop() {
@@ -220,13 +220,11 @@ var Audio = (function() {
                 // with mono, the end time of the last sound in the queue is the overall end time.
                 if (index == this.queue.length - 1) {
                     this.endTime = soundEvent.endTime;
-                    console.log("New end time: " + this.endTime);
                 }
 
                 // if it's not mono, then just track the latest end time as the overall end time
             } else if (this.endTime < soundEvent.endTime) {
                 this.endTime = soundEvent.endTime;
-                console.log("New end time: " + this.endTime);
             }
         }
 
