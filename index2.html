@@ -22,6 +22,7 @@
 <script type="text/javascript" language="javascript" src="js/undo.js"></script>
 <script type="text/javascript" language="javascript" src="js/model.js"></script>
 <script type="text/javascript" language="javascript" src="js/track.js"></script>
+<script type="text/javascript" language="javascript" src="js/trackbar.js"></script>
 <script type="text/javascript" language="javascript" src="js/playback.js"></script>
 <script type="text/javascript" language="javascript" src="js/menus.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
@@ -645,16 +646,16 @@ pachel
 -->
             <input id="metadata-settings-code-text" type="text" value="" size="15"/>
             <div class="tooltip">
-                <span id="copyCodeButton" class="smallButton icon">
-                    <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" >
-                </span>
-                <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
-            </div>
-            <div class="tooltip">
                 <span id="pasteCodeButton" class="smallButton icon">
-                    <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" >
+                    <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" class="icon"/>
                 </span>
                 <span class="tooltiptextbottom">Paste a song code from the clipboard</span>
+            </div>
+            <div class="tooltip">
+                <span id="copyCodeButton" class="smallButton-disabled icon">
+                    <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon-disabled"/>
+                </span>
+                <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
             </div>
         </div>
         <div id="metadata-settings-title" class="toolbarSection">
@@ -662,11 +663,11 @@ pachel
             <input id="metadata-settings-title-text" type="text" value="" size="25"/>
         </div>
         <div id="select-shawzin" class="selectButton">
-            <img src="img/icon-dropdpwn.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+            <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
             <span id="select-shawzin-text"></span>
         </div>
         <div id="select-scale" class="selectButton">
-            <img src="img/icon-dropdpwn.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+            <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
             <span id="select-scale-text"></span>
         </div>
         <div id="toolbar-buttons">
@@ -690,6 +691,20 @@ pachel
                 </span>
                 <span class="tooltiptextbottom">Generate a URL for this song</span>
             </div>
+            <div class="tooltip">
+                <span id="createPngButton" class="smallButton urlButton popup" onclick="runShawzinTab(this)">
+                    <img src="img/icon-png.png" srcset="img2x/icon-png.png 2x" alt="Shawzintab" class="icon"/>
+                </span>
+                <span class="tooltiptextbottom">Generate a tablature image for this song</span>
+            </div>
+            <!--
+            <div class="tooltip">
+                <span id="createWavButton" class="smallButton urlButton popup" onclick="generateWav(this)">
+                    <img src="img/icon-wav.png" srcset="img2x/icon-wav.png 2x" alt="WAV" class="icon"/>
+                </span>
+                <span class="tooltiptextbottom">Generate a sound file for this song</span>
+            </div>
+            -->
             <div class="tooltip">
                 <div id="button-undo" class="smallButton-disabled">
                     <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
@@ -759,7 +774,7 @@ pachel
                 <td></td>
             </tr>
             <tr>
-                <td id="song-header-tab" style="width: 340px; text-align: center;">
+                <td id="song-header-tab" style="width: 340px; text-align: center; position: relative;">
                     <div id="tab-fret-0" class="tab-fret">
                         <img id="tab-fret-0-img" src="img/fret-0.png" srcset="img2x/fret-0.png 2x"/>
                     </div>
@@ -781,6 +796,22 @@ pachel
                         <img id="tab-fret-3-img" src="img/fret-3.png" srcset="img2x/fret-3.png 2x"/>
                         <img id="tab-note-fret-3" src="img/tab-note-fret-button-3-pc.png" srcset="img2x/tab-note-fret-button-3-pc.png 2x" class="tab-fret-button"/>
                     </div>
+
+                    <div id="track-direction-up" class="smallButton" style="position: absolute; right: 0px; top: 0px;">
+                        <img src="img/icon-dropup.png" srcset="img2x/icon-dropup.png 2x" class="icon"/>
+                    </div>
+                    <div id="roll-chord-button" class="smallButton" style="position: absolute; right: 0px; bottom: 0px;">
+                        <img src="img/icon-chord-down.png" srcset="img2x/icon-chord-down.png 2x" class="icon"/>
+                    </div>
+
+                    <!--
+                    <div id="roll-chord-button" class="smallButton" style="position: absolute; right: 0px; top: 0px;">
+                        <img src="img/icon-chord-up.png" srcset="img2x/icon-chord-up.png 2x" class="icon"/>
+                    </div>
+                    <div id="track-direction-down" class="smallButton" style="position: absolute; right: 0px; bottom: 0px;">
+                        <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                    </div>
+                    -->
                 </td>
                 <td id="song-header-roll" style="width: 340px; position: relative;">
                     <img id="roll-keyboard" src="img/keys-plain.png" srcset="img2x/keys-plain.png 2x"/>
@@ -960,10 +991,14 @@ pachel
 
             <h1 id="tocTodo">Todo</h1>
             <ul>
-                <li>Better icons, shawzintab icon, reverse icons</li>
-                <li>FF, RW</li>
-                <li>Scale images</li>
                 <li>Reverse direction</li>
+                <li>resize handing</li>
+                <li>meter/tempo/lead in</li>
+                <li>Embed Shawzintab</li>
+                <li>Copy Link</li>
+                <li>Console fret icons</li>
+                <li>Docs</li>
+                <li>1.0</li>
 
                 <li>playback cursor moving/setting
                     <ul>
@@ -973,11 +1008,8 @@ pachel
                     </ul>
                 </li>
                 <li>Better auto-scrolling</li>
-                <li>meter/tempo/lead in</li>
-                <li>Embed Shawzintab</li>
-                <li>Copy Link</li>
                 <li>Zoom Level</li>
-                <li>Docs</li>
+                <li>where does the scale button go</li>
                 <li><strong>EDITING</strong></li>
             </ul>
         </div>

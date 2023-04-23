@@ -20,8 +20,14 @@ var Controls = (function() {
 
         function commitSongCodeChange() {
             var input = document.getElementById("metadata-settings-code-text");
-            input.blur();
-            Model.setSongCode(input.value);
+            var value = input.value;
+
+            if (value != Model.getSongCode()) {
+                Model.setSongCode(value);
+                // do this after checking if the code has changed, this kicks off another change event for some reason
+                input.blur();
+                updateSongCode(value);
+            }
         }
         document.getElementById("metadata-settings-code-text").addEventListener("change", commitSongCodeChange, { passive: false });
         document.getElementById("metadata-settings-code-text").addEventListener("keydown", (e) => {
@@ -32,8 +38,12 @@ var Controls = (function() {
 
         document.getElementById("pasteCodeButton").addEventListener("click", (e) => {
             navigator.clipboard.readText().then((text) => {
-                document.getElementById("metadata-settings-code-text").value = text;
-                commitSongCodeChange();
+                try {
+                    document.getElementById("metadata-settings-code-text").value = text;
+                    commitSongCodeChange();
+                } catch (e) {
+                    PageUtils.showError(e);
+                }
             });
         }, { passive: false });
 
@@ -43,6 +53,22 @@ var Controls = (function() {
           () => {}
         );
         }, { passive: false });
+    }
+
+    function updateSongCode(songCode) {
+        var codeField = document.getElementById("metadata-settings-code-text");
+        if (codeField.value != songCode) {
+            codeField.value = songCode;
+        }
+        if (songCode && songCode.length > 0) {
+            var button = document.getElementById("copyCodeButton");
+            button.className = "smallButton";
+            button.children[0].className = "icon";
+        } else {
+            var button = document.getElementById("copyCodeButton");
+            button.className = "smallButton-disabled";
+            button.children[0].className = "icon-disabled";
+        }
     }
 
     function doShawzinSelect() {
@@ -113,7 +139,8 @@ var Controls = (function() {
 
     // public members
     return  {
-        registerEventListeners: registerEventListeners
+        registerEventListeners: registerEventListeners,
+        updateSongCode: updateSongCode,
     };
 })();
 

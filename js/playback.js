@@ -21,6 +21,10 @@ var Playback = (function() {
 
         document.getElementById("song-buttons-stop").addEventListener("click", stop, { passive: false });
 
+        document.getElementById("song-buttons-rewind").addEventListener("click", rewind, { passive: false });
+
+        document.getElementById("song-buttons-ff").addEventListener("click", fastForward, { passive: false });
+
         Events.addKeyDownListener("Space", (e) => {
             if (e.shiftKey) {
                 // shift-spacebar plays from the beginning regardless of the current state
@@ -64,6 +68,21 @@ var Playback = (function() {
         div.className = enabled ? "smallButton" : "smallButton-disabled";
         img.className = enabled ? "icon" : "icon-disabled";
         stopEnabled = enabled;
+    }
+
+    function rewind() {
+        var wasPlaying = playing;
+        stop();
+        if (wasPlaying) {
+            start();
+        } else {
+            Track.scrollToTick(0);
+        }
+    }
+
+    function fastForward() {
+        stop();
+        Track.scrollToTick(song ? song.getEndTick() : 0);
     }
 
     function updateSoundBank() {

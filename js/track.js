@@ -444,6 +444,7 @@ var Track = (function() {
         setPlaybackTick: setPlaybackTick,
         getPlaybackTick: getPlaybackTick,
         clearPlayback: clearPlayback,
+        scrollToTick: scrollToTick,
     }
 })();
 

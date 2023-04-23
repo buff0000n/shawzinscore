@@ -2,6 +2,7 @@ var Model = (function() {
 
     var shawzin = null;
     var song = null;
+    var songCode = null;
     var songName = null;
 
     var updateDelay = 1000;
@@ -38,12 +39,12 @@ var Model = (function() {
             doUpdate();
             scheduledUpdate = null;
         }, updateDelay);
+        songCode = null;
     }
 
     function doUpdateSongCode() {
         var songCode = doGetSongCode();
-        var codeField = document.getElementById("metadata-settings-code-text");
-        codeField.value = songCode;
+        Controls.updateSongCode(songCode);
         return songCode;
     }
 
@@ -78,6 +79,7 @@ var Model = (function() {
         text.innerHTML = Metadata.shawzinList[shawzin].scales[scale].config.name;
 
         Track.updateScale();
+        TrackBar.updateScale();
         Playback.updateScale();
     }
 
@@ -94,14 +96,18 @@ var Model = (function() {
     }
 
     function doGetSongCode() {
-        return song ? song.toString() : "";
+        if (!songCode) {
+            songCode = song ? song.toString() : "";
+        }
+        return songCode;
     }
 
-    function doSetSong(newSong) {
+    function doSetSong(newSong, newSongCode=null) {
         // update playback first so it stops any playback in progress
         Playback.setSong(newSong);
 
         song = newSong;
+        songCode = newSongCode;
         updateScale();
 
         Track.setSong(song);
@@ -149,7 +155,7 @@ var Model = (function() {
 
         getSongCode: doGetSongCode,
         setSongCode: function(newCode) {
-            if (newCode.length == 0) {
+            if (!newCode || newCode.length == 0) {
                 newCode = "1";
             }
             // create a new Song and parse the code first thing
@@ -164,8 +170,8 @@ var Model = (function() {
             if (newCode != currentCode) {
                 Undo.doAction(
                     // set the song object directly, to preserve and references in the undo/redo lists.
-                    () => { doSetSong(newSong); scheduleUpdate(); },
-                    () => { doSetSong(currentSong); scheduleUpdate(); },
+                    () => { doSetSong(newSong, newCode); scheduleUpdate(); },
+                    () => { doSetSong(currentSong, currentCode); scheduleUpdate(); },
                     "Set Song Code"
                 );
             }
