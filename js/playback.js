@@ -116,8 +116,6 @@ var Playback = (function() {
             setStopEnabled(true);
             playbackLoop();
         });
-
-
     }
     
     function playbackLoop() {
@@ -171,6 +169,11 @@ var Playback = (function() {
         }
     }
 
+    function playNote(noteName) {
+        soundBank.checkInit(() => {
+            soundBank.play(noteName);
+        });
+    }
 
     return {
         registerEventListeners: registerEventListeners,
@@ -181,5 +184,6 @@ var Playback = (function() {
         start: start,
         pause: pause,
         stop: stop,
+        playNote: playNote,
     }
 })();

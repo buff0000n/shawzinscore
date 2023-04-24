@@ -182,6 +182,7 @@
         Events.registerEventListeners();
         Undo.registerEventListeners();
         Track.registerEventListeners();
+        TrackBar.registerEventListeners();
         Playback.registerEventListeners();
 
         Model.init();
@@ -775,29 +776,23 @@ pachel
             </tr>
             <tr>
                 <td id="song-header-tab" style="width: 340px; text-align: center; position: relative;">
-                    <div id="tab-fret-0" class="tab-fret">
+                    <div id="tab-fret-0" class="tab-fret-div">
                         <img id="tab-fret-0-img" src="img/fret-0.png" srcset="img2x/fret-0.png 2x"/>
                     </div>
-                    <div id="tab-fret-1" class="tab-fret">
+                    <div id="tab-fret-1" class="tab-fret-div">
                         <img id="tab-fret-1-img" src="img/fret-1.png" srcset="img2x/fret-1.png 2x"/>
                         <img id="tab-note-fret-1" src="img/tab-note-fret-button-1-pc.png" srcset="img2x/tab-note-fret-button-1-pc.png 2x" class="tab-fret-button"/>
                     </div>
-                    <div id="tab-fret-2" class="tab-fret">
+                    <div id="tab-fret-2" class="tab-fret-div">
                         <img id="tab-fret-2-img" src="img/fret-2.png" srcset="img2x/fret-2.png 2x"/>
                         <img id="tab-note-fret-2" src="img/tab-note-fret-button-2-pc.png" srcset="img2x/tab-note-fret-button-2-pc.png 2x" class="tab-fret-button"/>
                     </div>
-                    <!--
-                    <div id="tab-fret-3" class="tab-fret">
-                        <img id="tab-fret-3-img" src="img/fret-enabled-3.png" srcset="img2x/fret-enabled-3.png 2x"/>
-                        <img id="tab-note-fret-3" src="img/tab-note-fret-button-3-pc.png" srcset="img2x/tab-note-fret-button-3-pc.png 2x" class="tab-fret-button-enabled"/>
-                    </div>
-                    -->
-                    <div id="tab-fret-3" class="tab-fret">
+                    <div id="tab-fret-3" class="tab-fret-div">
                         <img id="tab-fret-3-img" src="img/fret-3.png" srcset="img2x/fret-3.png 2x"/>
                         <img id="tab-note-fret-3" src="img/tab-note-fret-button-3-pc.png" srcset="img2x/tab-note-fret-button-3-pc.png 2x" class="tab-fret-button"/>
                     </div>
 
-                    <div id="track-direction-up" class="smallButton" style="position: absolute; right: 0px; top: 0px;">
+                    <div id="track-direction" class="smallButton" style="position: absolute; right: 0px; top: 0px;">
                         <img src="img/icon-dropup.png" srcset="img2x/icon-dropup.png 2x" class="icon"/>
                     </div>
                     <div id="roll-chord-button" class="smallButton" style="position: absolute; right: 0px; bottom: 0px;">
@@ -813,7 +808,7 @@ pachel
                     </div>
                     -->
                 </td>
-                <td id="song-header-roll" style="width: 340px; position: relative;">
+                <td id="song-header-roll" style="width: 340px;">
                     <img id="roll-keyboard" src="img/keys-plain.png" srcset="img2x/keys-plain.png 2x"/>
                 </td>
             </tr>
@@ -1000,6 +995,7 @@ pachel
                 <li>Docs</li>
                 <li>1.0</li>
 
+                <li>loading bar</li>
                 <li>playback cursor moving/setting
                     <ul>
                         <li>

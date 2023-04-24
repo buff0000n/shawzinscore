@@ -135,6 +135,7 @@ td {
         #song-header-roll {
             background-color: #404040;
             border-radius: 1ex;
+            position: relative;
         }
         #roll-keyboard {}
 
@@ -179,10 +180,13 @@ td {
 
 .roll-keyboard-note {
     position: absolute;
+    cursor: pointer;
+/*
     border: solid;
     border-width: 1px;
     transform: translate(-1px, -1px);
     border-color: #00FF00;
+*/
 }
 .roll-note-row {
     position: absolute;
@@ -243,10 +247,11 @@ td {
     transform: translateY(-50%);
 }
 
-.tab-fret {
+.tab-fret-div {
     position: relative;
     margin: 0px;
     padding: 0px;
+    cursor: pointer;
 }
 .tab-fret-button, .tab-fret-button-enabled {
     position: absolute;
