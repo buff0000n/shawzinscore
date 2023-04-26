@@ -105,7 +105,7 @@ var Track = (function() {
 
     function onscroll() {
         var scrollTop = scroll.scrollTop;
-        console.log("START scrollTop: " + scrollTop);
+        //console.log("START scrollTop: " + scrollTop);
         var endTick = reversed
                       ? (tickCapacity + tickOffset - (Math.floor(scrollTop / tickSpacing)))
                       : (Math.ceil(scrollTop / tickSpacing) - tickOffset) + visibleTicks
@@ -118,7 +118,7 @@ var Track = (function() {
             // check for notes present
             trimTickCapacity(endTick + visibleTicks);
         }
-        console.log("END   scrollTop: " + scroll.scrollTop);
+        //console.log("END   scrollTop: " + scroll.scrollTop);
     }
 
     function setPlaybackTick(tick) {
@@ -209,7 +209,7 @@ var Track = (function() {
     function ensureTickCapacity(ticks) {
         var count = 0;
         while (tickCapacity < Metadata.maxTickLength && tickCapacity <= ticks) {
-            console.log("ensuring: " + tickCapacity + " > " + ticks + "(" + (++count) + ")");
+            //console.log("ensuring: " + tickCapacity + " > " + ticks + "(" + (++count) + ")");
             insertBar();
         }
     }
@@ -217,7 +217,7 @@ var Track = (function() {
     function trimTickCapacity(ticks) {
         var count = 0;
         while (tickCapacity > ticks + visibleTicks) {
-            console.log("trimming: " + tickCapacity + " <? " + ticks + "(" + (++count) + ")");
+            //console.log("trimming: " + tickCapacity + " <? " + ticks + "(" + (++count) + ")");
             removeBar();
         }
     }
@@ -519,10 +519,10 @@ var Track = (function() {
         }
 
         build() {
-            this.tabImg = makeImage("play-marker-tab.png", "centerYImg");
+            this.tabImg = makeImage("play-marker-tab.png", "centerYImg playback-marker");
             this.tabImg.style.left = "0px";
 
-            this.rollImg = makeImage("play-marker-roll.png", "centerYImg");
+            this.rollImg = makeImage("play-marker-roll.png", "centerYImg playback-marker");
             this.rollImg.style.left = "0px";
         }
 

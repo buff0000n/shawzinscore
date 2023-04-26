@@ -114,8 +114,8 @@ var Controls = (function() {
             var tr = document.createElement("div");
             tr.className = "selection-item";
 
-            // todo: get icon file name from metadata?
             tr.innerHTML = `
+                <img src="img/${sm.scales[name].config.img}" srcset="img2x/${sm.scales[name].config.img} 2x" class="icon" style="height: 2ex; width: auto; margin: 0.5ex;"/>
                 ${sm.scales[name].config.name}
             `;
 

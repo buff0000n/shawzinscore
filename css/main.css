@@ -38,6 +38,7 @@ td {
     border-radius: 1ex;
     text-align: left;
     box-shadow: 0 0 3px 3px #000000;
+    z-index: 100;
 }
 .menu-title-bar {
     background-color: #808080;
@@ -260,6 +261,10 @@ td {
     left: 0px;
     transform: translateY(-50%);
     z-index: 0;
+}
+
+.playback-marker {
+    z-index: 10;
 }
 
 .tab-fret-div {
