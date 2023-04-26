@@ -63,34 +63,34 @@ var Metadata = (function() {
     ];
 
     var noteKeyboardBoxes = {
-        "c1": "left: 2px; top: 55px; width: 20px; height: 41px;",
-            "cs1": "left: 9px; top: 0px; width: 23px; height: 55px;",
-        "d1": "left: 22px; top: 55px; width: 21px; height: 41px;",
-            "ds1": "left: 32px; top: 0px; width: 23px; height: 55px;",
-        "e1": "left: 43px; top: 55px; width: 20px; height: 41px;",
-        "f1": "left: 63px; top: 55px; width: 21px; height: 41px;",
-            "fs1": "left: 71px; top: 0px; width: 23px; height: 55px;",
-        "g1": "left: 84px; top: 55px; width: 21px; height: 41px;",
-            "gs1": "left: 94px; top: 0px; width: 22px; height: 55px;",
-        "a1": "left: 105px; top: 55px; width: 20px; height: 41px;",
-            "as1": "left: 116px; top: 0px; width: 23px; height: 55px;",
-        "b1": "left: 125px; top: 55px; width: 21px; height: 41px;",
-        "c2": "left: 146px; top: 55px; width: 20px; height: 41px;",
-            "cs2": "left: 154px; top: 0px; width: 23px; height: 55px;",
-        "d2": "left: 166px; top: 55px; width: 21px; height: 41px;",
-            "ds2": "left: 177px; top: 0px; width: 23px; height: 55px;",
-        "e2": "left: 187px; top: 55px; width: 21px; height: 41px;",
-        "f2": "left: 208px; top: 55px; width: 20px; height: 41px;",
-            "fs2": "left: 215px; top: 0px; width: 23px; height: 55px;",
-        "g2": "left: 228px; top: 55px; width: 21px; height: 41px;",
-            "gs2": "left: 238px; top: 0px; width: 22px; height: 55px;",
-        "a2": "left: 249px; top: 55px; width: 20px; height: 41px;",
-            "as2": "left: 260px; top: 0px; width: 23px; height: 55px;",
-        "b2": "left: 269px; top: 55px; width: 21px; height: 41px;",
-        "c3": "left: 290px; top: 55px; width: 21px; height: 41px;",
-            "cs3": "left: 298px; top: 0px; width: 23px; height: 55px;",
-        "d3": "left: 311px; top: 55px; width: 21px; height: 41px;",
-            "ds3": "left: 321px; top: 0px; width: 23px; height: 55px;",
+        "c1": {"left": 2, "top": 55, "width": 20, "height": 41},
+            "cs1": {"left": 9, "top": 0, "width": 23, "height": 55},
+        "d1": {"left": 22, "top": 55, "width": 21, "height": 41},
+            "ds1": {"left": 32, "top": 0, "width": 23, "height": 55},
+        "e1": {"left": 43, "top": 55, "width": 20, "height": 41},
+        "f1": {"left": 63, "top": 55, "width": 21, "height": 41},
+            "fs1": {"left": 71, "top": 0, "width": 23, "height": 55},
+        "g1": {"left": 84, "top": 55, "width": 21, "height": 41},
+            "gs1": {"left": 94, "top": 0, "width": 22, "height": 55},
+        "a1": {"left": 105, "top": 55, "width": 20, "height": 41},
+            "as1": {"left": 116, "top": 0, "width": 23, "height": 55},
+        "b1": {"left": 125, "top": 55, "width": 21, "height": 41},
+        "c2": {"left": 146, "top": 55, "width": 20, "height": 41},
+            "cs2": {"left": 154, "top": 0, "width": 23, "height": 55},
+        "d2": {"left": 166, "top": 55, "width": 21, "height": 41},
+            "ds2": {"left": 177, "top": 0, "width": 23, "height": 55},
+        "e2": {"left": 187, "top": 55, "width": 21, "height": 41},
+        "f2": {"left": 208, "top": 55, "width": 20, "height": 41},
+            "fs2": {"left": 215, "top": 0, "width": 23, "height": 55},
+        "g2": {"left": 228, "top": 55, "width": 21, "height": 41},
+            "gs2": {"left": 238, "top": 0, "width": 22, "height": 55},
+        "a2": {"left": 249, "top": 55, "width": 20, "height": 41},
+            "as2": {"left": 260, "top": 0, "width": 23, "height": 55},
+        "b2": {"left": 269, "top": 55, "width": 21, "height": 41},
+        "c3": {"left": 290, "top": 55, "width": 21, "height": 41},
+            "cs3": {"left": 298, "top": 0, "width": 23, "height": 55},
+        "d3": {"left": 311, "top": 55, "width": 21, "height": 41},
+            "ds3": {"left": 321, "top": 0, "width": 23, "height": 55},
     }
 
     var tickSpacing = 20;
@@ -130,6 +130,7 @@ var Metadata = (function() {
     for (var n = 0; n < noteOrder.length; n++) {
         noteToRollOffsets[noteOrder[n]] = noteRollOffset + (noteRollWidth * n);
     }
+    var noteRollWidth = 12;
 
     var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void" ];
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
@@ -2318,6 +2319,7 @@ var Metadata = (function() {
         tabFretYOffset: tabFretYOffset,
         tabFretXOffsets: tabFretXOffsets,
         noteToRollOffsets: noteToRollOffsets,
+        noteRollWidth: noteRollWidth,
         fretToRollColors: fretToRollColors,
         noteKeyboardBoxes: noteKeyboardBoxes,
     }

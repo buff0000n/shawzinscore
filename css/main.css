@@ -84,98 +84,106 @@ td {
     display: inline-block;
     vertical-align: top;
 }
-    #toolbar-shawzin {
-        display: inline-block;
-    }
-    #toolbar-settings {
-        display: inline-block;
-        vertical-align: top;
-    }
-    .toolbarSection {
-        background-color: #404040;
-        margin: 1ex;
-        padding: 1ex;
-        border-radius: 1ex;
-        text-align: center;
-    }
+#toolbar-shawzin {
+    display: inline-block;
+}
+#toolbar-settings {
+    display: inline-block;
+    vertical-align: top;
+}
+.toolbarSection {
+    background-color: #404040;
+    margin: 1ex;
+    padding: 1ex;
+    border-radius: 1ex;
+    text-align: center;
+}
 
-    #toolbar-buttons {
-        text-align: center;
-        padding: 0;
-        margin: 0;
-    }
-    #toolbar-buttons > div {
-        display: inline-block;
-    }
-        #toolbar-buttons-burger {}
-            #toolbar-buttons-burger-menu {}
-            #toolbar-buttons-burger-menu > div {}
+#toolbar-buttons {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+#toolbar-buttons > div {
+    display: inline-block;
+}
+#toolbar-buttons-burger {}
+#toolbar-buttons-burger-menu {}
+#toolbar-buttons-burger-menu > div {}
 
 #song-container {
     display: inline-block;
     height: 80%
 }
-    #song-buttons {
-        text-align: center;
-    }
-    #song-buttons > div {
-        display: inline-block;
-    }
+#song-buttons {
+    text-align: center;
+}
+#song-buttons > div {
+    display: inline-block;
+}
 
-    #song-header {}
-        #song-header-tab {
-            background-color: #404040;
-            border-radius: 1ex;
-        }
-        #song-header-tab > div {
-            /* display: inline-block; */
-            /* this fixes it?! frickin' voodoo */
-            display: inline-flex;
-        }
-        #song-header-roll {
-            background-color: #404040;
-            border-radius: 1ex;
-            position: relative;
-        }
-        #roll-keyboard {}
+#song-bar {
+    /* no idea why this is necessary */
+    display: flex;
+}
+#song-bar-tab {
+    background-color: #404040;
+    border-radius: 1ex;
+}
+#song-bar-tab > div {
+    /* display: inline-block; */
+    /* this fixes it?! frickin' voodoo */
+    display: inline-flex;
+}
+#song-bar-roll {
+    background-color: #404040;
+    border-radius: 1ex;
+    position: relative;
+}
+#roll-keyboard {}
 
-    #song-scroll {
-        height: 100%;
-        overflow-y: scroll;
-        /*
-        padding-right: 17px;
-        box-sizing: content-box;
-        */
-        /*
-        -ms-overflow-style: none;  /* Internet Explorer 10+ *
-        scrollbar-width: none;  /* Firefox *
-        */
-        margin: 0px;
-        padding: 0px;
-        border-width: 0ex;
-        background-color: #337799;
-    }
+#song-scroll {
+    height: 100%;
+    overflow-y: scroll;
+    /*
+    padding-right: 17px;
+    box-sizing: content-box;
+    */
+    /*
+    -ms-overflow-style: none;  /* Internet Explorer 10+ *
+    scrollbar-width: none;  /* Firefox *
+    */
+    margin: 0px;
+    padding: 0px;
+    border-width: 0ex;
+    background-color: #337799;
+}
     /*
     #song-scroll::-webkit-scrollbar {
         display: none;  /* Safari and Chrome */
     }
 */
 
-        #song-scroll-table {
-            height: 100%;
-        }
-            #song-scroll-tab {
-                background-color: #004000;
-            }
-            #song-scroll-roll {
-                background-color: #000040;
-            }
+#song-scroll-table {
+    height: 100%;
+}
+#song-scroll-tab {
+    background-color: #004000;
+}
+#song-scroll-roll {
+    background-color: #000040;
+}
 
-#song-header-table, #song-scroll-table {
+#song-bar-table, #song-scroll-table {
     margin: 0ex;
     padding: 0ex;
     border-width: 0ex;
     border-spacing: 0px;
+}
+
+.tab-dot {
+    position: absolute;
+    z-index: 1;
 }
 
 .roll-keyboard-note {
@@ -198,12 +206,14 @@ td {
     border-width: 2px 1px;
     border-color: #202020;
     transform: translate(-1px, -1px);
+    z-index: 1;
 }
 .roll-note-outline {
     position: absolute;
     border: solid;
     border-width: 1px;
     transform: translate(-1px, -1px);
+    z-index: 1;
 }
 .centerImg {
     position: absolute;
@@ -223,6 +233,8 @@ td {
     animation-name: tabNoteBounce;
     animation-duration: 1.0s;
     animation-fill-mode: forwards;
+    pointer-events: none;
+    touch-events: none;
 }
 
 @keyframes rollNoteBounce {
@@ -235,6 +247,8 @@ td {
     animation-name: rollNoteBounce;
     animation-duration: 1.0s;
     animation-fill-mode: forwards;
+    pointer-events: none;
+    touch-events: none;
 }
 
 .measure-spacer {
@@ -245,6 +259,7 @@ td {
     position: absolute;
     left: 0px;
     transform: translateY(-50%);
+    z-index: 0;
 }
 
 .tab-fret-div {
