@@ -6,8 +6,10 @@ from pathlib import Path
 import argparse
 
 parser = argparse.ArgumentParser(description="yeah")
+parser.add_argument("--srcdir", dest="srcdir", action="store", required=True)
 parser.add_argument("--destdir", dest="destdir", action="store", required=True)
 args = parser.parse_args()
+srcdir = args.srcdir
 destdir = args.destdir
 
 shawzinNoteMap = {
@@ -64,7 +66,9 @@ shawzinNameMap = {
     "NarmerShawzin": "narmer",
     "GrineerShawzin": "corbu",
     "ZarimanVoidShawzin": "void",
-    "ZarimanShawzin": "kira"
+    "ZarimanShawzin": "kira",
+    "DuviriErsatzShawzin": "lonesome",
+    "DuviriShawzin": "courtly"
 }
 
 shawzinScaleNameMap = {
@@ -123,14 +127,14 @@ def convertfilename(path):
     return "unknown"
 
 
-currentDir = "."
-walkdir = os.path.abspath(currentDir)
+walkdir = os.path.abspath(srcdir)
 ffmpegline = "ffmpeg -i {0} -vn -b:a 192k {1}"
 
 for root, subdirs, files in os.walk(walkdir):
     for filename in files:
         filepath = os.path.join(root, filename)
         newfilepath = os.path.join(destdir, convertfilename(filepath) + ".mp3")
+        print("Comverting {} to {}".format(filepath, newfilepath))
         if not os.path.isfile(newfilepath):
             newdir = os.path.dirname(newfilepath)
             Path(newdir).mkdir(parents=True, exist_ok=True)
