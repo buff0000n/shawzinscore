@@ -823,7 +823,7 @@ var Metadata = (function() {
                         "name": "C",
                         "img": "standard/phry/chord-12-1.png",
                         "length": 2, "monoFadeTime": 0.5,
-                        "notes": [note.C1, note.E1, note.G2]
+                        "notes": [note.C1, note.E1, note.G1]
                     },
                     "12-2": {
                         "name": "D\u266D",
