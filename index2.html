@@ -15,6 +15,7 @@
 <script type="text/javascript" language="javascript" src="js/lib/binarySearch.js"></script>
 <script type="text/javascript" language="javascript" src="js/util.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
+<script type="text/javascript" language="javascript" src="js/metadata_ui.js"></script>
 <script type="text/javascript" language="javascript" src="js/settings.js"></script>
 <script type="text/javascript" language="javascript" src="js/song.js"></script>
 <script type="text/javascript" language="javascript" src="js/audio.js"></script>
@@ -529,6 +530,10 @@ pachel
             <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
             <span id="select-scale-text"></span>
         </div>
+        <div id="select-control-scheme" class="selectButton">
+            <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+            <span id="select-control-scheme-text"></span>
+        </div>
         <div id="toolbar-buttons">
             <div id="toolbar-buttons-burger" class="smallButton">
                 <img src="img/icon-burger.png" srcset="img2x/icon-burger.png 2x" alt="Burger" class="icon"/>
@@ -643,15 +648,15 @@ pachel
                     </div>
                     <div id="tab-fret-1" class="tab-fret-div">
                         <img id="tab-fret-1-img" src="img/fret-1.png" srcset="img2x/fret-1.png 2x"/>
-                        <img id="tab-note-fret-1" src="img/tab-note-fret-button-1-pc.png" srcset="img2x/tab-note-fret-button-1-pc.png 2x" class="tab-fret-button"/>
+                        <img id="tab-note-fret-1" src="img/tab-note-fret-0.png" srcset="img2x/tab-note-fret-0.png 2x" class="tab-fret-button"/>
                     </div>
                     <div id="tab-fret-2" class="tab-fret-div">
                         <img id="tab-fret-2-img" src="img/fret-2.png" srcset="img2x/fret-2.png 2x"/>
-                        <img id="tab-note-fret-2" src="img/tab-note-fret-button-2-pc.png" srcset="img2x/tab-note-fret-button-2-pc.png 2x" class="tab-fret-button"/>
+                        <img id="tab-note-fret-2" src="img/tab-note-fret-0.png" srcset="img2x/tab-note-fret-0.png 2x" class="tab-fret-button"/>
                     </div>
                     <div id="tab-fret-3" class="tab-fret-div">
                         <img id="tab-fret-3-img" src="img/fret-3.png" srcset="img2x/fret-3.png 2x"/>
-                        <img id="tab-note-fret-3" src="img/tab-note-fret-button-3-pc.png" srcset="img2x/tab-note-fret-button-3-pc.png 2x" class="tab-fret-button"/>
+                        <img id="tab-note-fret-3" src="img/tab-note-fret-0.png" srcset="img2x/tab-note-fret-0.png 2x" class="tab-fret-button"/>
                     </div>
 
                     <div id="track-direction" class="smallButton" style="position: absolute; left: 0px; bottom: 0px;">
@@ -874,6 +879,7 @@ pachel
                 <li>Playback audio sometimes pauses noticeably when the very first note plays, no idea why.</li>
                 <li>Playback in reversed mode sometimes twitches the scroll position at the very end.</li>
                 <li>Playback marker is ever so slightly jittery on Windows Chrome</li>
+                <li>Playback scrolling with a very busy song is pretty jittery.</li>
             </ul>
         </div>
     </div>

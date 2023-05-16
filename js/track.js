@@ -4,7 +4,7 @@ var Track = (function() {
     var roll = null;
     var viewHeight = null;
     var visibleTicks = null;
-    var tickSpacing = Metadata.tickSpacing;
+    var tickSpacing = MetadataUI.tickSpacing;
     var reversed = false;
 
     var bpm = null;
@@ -23,7 +23,7 @@ var Track = (function() {
     var scrollThrottleMs = 250;
 
     // hard-coded 2-second buffer at beginning
-    var tickOffset = Metadata.leadInTicks;
+    var tickOffset = MetadataUI.leadInTicks;
 
     var song = null;
     var playbackMarker = null;
@@ -88,12 +88,40 @@ var Track = (function() {
         scrollToTick(0);
     }
 
+    function setBpm(newBpm) {
+        if (this.bpm != newBpm) {
+            this.bpm = newBpm;
+            if (this.meterBar) {
+                rebuildRollNotes();
+            }
+        }
+    }
+
+    function setMeter(measure, beats) {
+        if (this.bpm != newBpm) {
+            this.bpm = newBpm;
+            if (this.meterBar) {
+                rebuildRollNotes();
+            }
+        }
+    }
+
     function rebuildRollNotes() {
         if (song) {
             for (var n = 0; n < song.notes.length; n++) {
                 var noteView = getView(song.notes[n]);
                 noteView.clearRoll();
                 noteView.buildRoll();
+            }
+        }
+    }
+
+    function rebuildTabNotes() {
+        if (song) {
+            for (var n = 0; n < song.notes.length; n++) {
+                var noteView = getView(song.notes[n]);
+                noteView.clearTab();
+                noteView.buildTab();
             }
         }
     }
@@ -289,14 +317,6 @@ var Track = (function() {
         return div;
     }
 
-    function makeImage(png, className="centerImg") {
-        var img = document.createElement("img");
-        img.src = "img/" + png;
-        img.srcset = "img2x/" + png + " 2x";
-        img.className = className;
-        return img;
-    }
-
     function trimToNextNonPolyphonicNote(note, noteLength, poly) {
         if (poly == "polyphonic") return noteLength;
 
@@ -348,32 +368,44 @@ var Track = (function() {
         }
 
         buildTabNote() {
-            var dot = makeImage("tab-note-dot.png");
-            dot.classList.add("tab-dot");
-            var fret1 = makeImage(this.note.fret.indexOf("1") >= 0 ? "tab-note-fret-1-pc.png" : "tab-note-fret-0.png");
-            fret1.classList.add("tab-dot");
-            var fret2 = makeImage(this.note.fret.indexOf("2") >= 0 ? "tab-note-fret-2-pc.png" : "tab-note-fret-0.png");
-            fret2.classList.add("tab-dot");
-            var fret3 = makeImage(this.note.fret.indexOf("3") >= 0 ? "tab-note-fret-3-pc.png" : "tab-note-fret-0.png");
-            fret3.classList.add("tab-dot");
-
-            dot.style.left = "0px";
-            dot.style.top = "0px" ;
-            fret1.style.left = Metadata.tabFretXOffsets["1"] + "px";
-            fret1.style.top = Metadata.tabFretYOffset + "px" ;
-            fret2.style.left = Metadata.tabFretXOffsets["2"] + "px";
-            fret2.style.top = Metadata.tabFretYOffset + "px" ;
-            fret3.style.left = Metadata.tabFretXOffsets["3"] + "px";
-            fret3.style.top = Metadata.tabFretYOffset + "px" ;
-
+            var controlScheme = Model.getControlScheme();
             var div = document.createElement("div");
             div.style.position = "absolute";
-            div.appendChild(dot);
-            div.appendChild(fret1);
-            div.appendChild(fret2);
-            div.appendChild(fret3);
 
-            div.style.left = (Metadata.tabStringXOffsets[this.note.string]) + "px";
+            var dot = PageUtils.makeImage("tab-note-dot.png", "centerImg");
+            dot.classList.add("tab-dot");
+            dot.style.left = "0px";
+            dot.style.top = "0px" ;
+            div.appendChild(dot);
+
+            var string = PageUtils.makeImage("key_" + controlScheme.strings[this.note.string] + "_b.png", "centerImg");
+            string.classList.add("tab-dot");
+            string.style.left = "0px";
+            string.style.top = "0px" ;
+            div.appendChild(string);
+
+            if (this.note.fret != "") {
+                var fret1 = PageUtils.makeImage(this.note.fret.indexOf("1") >= 0 ? ("key_" + controlScheme.frets["1"] + "_s.png") : "tab-note-fret-0.png", "leftImg");
+                fret1.classList.add("tab-dot");
+                fret1.style.left = MetadataUI.tabFretOffsets["1"][0] + "px";
+                fret1.style.top = MetadataUI.tabFretOffsets["1"][1] + "px" ;
+                div.appendChild(fret1);
+
+                var fret2 = PageUtils.makeImage(this.note.fret.indexOf("2") >= 0 ? ("key_" + controlScheme.frets["2"] + "_s.png") : "tab-note-fret-0.png", "bottomImg");
+                fret2.classList.add("tab-dot");
+                fret2.style.left = MetadataUI.tabFretOffsets["2"][0] + "px";
+                fret2.style.top = MetadataUI.tabFretOffsets["2"][1] + "px" ;
+                div.appendChild(fret2);
+
+                var fret3 = PageUtils.makeImage(this.note.fret.indexOf("3") >= 0 ? ("key_" + controlScheme.frets["3"] + "_s.png") : "tab-note-fret-0.png", "rightImg");
+                fret3.classList.add("tab-dot");
+                fret3.style.left = MetadataUI.tabFretOffsets["3"][0] + "px";
+                fret3.style.top = MetadataUI.tabFretOffsets["3"][1] + "px" ;
+                div.appendChild(fret3);
+            }
+
+
+            div.style.left = (MetadataUI.tabStringXOffsets[this.note.string]) + "px";
             div.style.top = (reversed
                             ? ((this.getBar(0).startTick + this.getBar(0).ticks - this.note.tick) * tickSpacing)
                             : ((this.note.tick - this.getBar(0).startTick) * tickSpacing)
@@ -393,7 +425,7 @@ var Track = (function() {
         buildRollNote(name, length, color, outline) {
             var div = document.createElement("div");
             div.className = outline ? "roll-note-outline" : "roll-note";
-            div.style.left = Metadata.noteToRollOffsets[name] + "px";
+            div.style.left = MetadataUI.noteToRollOffsets[name] + "px";
             div.style.top = (reversed ? -(length * tickSpacing) : 0) + "px";
             div.style.width = "12px";
             div.style.height = (length * tickSpacing) + "px";
@@ -413,9 +445,9 @@ var Track = (function() {
 
             var div = document.createElement("div");
             div.className = "roll-note playRollNote";
-            div.style.left = (Metadata.noteToRollOffsets[name] + 6) + "px";
+            div.style.left = (MetadataUI.noteToRollOffsets[name] + 6) + "px";
             div.style.top = (reversed ? -(length * tickSpacing) : 0) + "px";
-            div.style.width = Metadata.noteRollWidth + "px";
+            div.style.width = MetadataUI.noteRollWidth + "px";
             div.style.height = (length * tickSpacing) + "px";
             div.style.backgroundColor = color;
             return div;
@@ -437,7 +469,7 @@ var Track = (function() {
             var shawzinMd = Metadata.shawzinList[Model.getShawzin()];
             var scaleMd = shawzinMd.scales[Model.getScale()];
             var noteName = this.note.toNoteName();
-            var color = Metadata.fretToRollColors[this.note.fret];
+            var color = MetadataUI.fretToRollColors[this.note.fret];
             var noteLength = null;
 
             var rollRow = this.buildRollRow();
@@ -506,7 +538,7 @@ var Track = (function() {
             setTimeout(() => {
                 tabDiv.remove();
                 rollRow.remove();
-            }, 1000);
+            }, 500);
         }
     }
 
@@ -519,10 +551,10 @@ var Track = (function() {
         }
 
         build() {
-            this.tabImg = makeImage("play-marker-tab.png", "centerYImg playback-marker");
+            this.tabImg = PageUtils.makeImage("play-marker-tab.png", "centerYImg playback-marker");
             this.tabImg.style.left = "0px";
 
-            this.rollImg = makeImage("play-marker-roll.png", "centerYImg playback-marker");
+            this.rollImg = PageUtils.makeImage("play-marker-roll.png", "centerYImg playback-marker");
             this.rollImg.style.left = "0px";
         }
 
@@ -561,8 +593,13 @@ var Track = (function() {
     return  {
         registerEventListeners: registerEventListeners,
         setSong: setSong,
+        setBpm: setBpm,
+        setMeter: setMeter,
         updateShawzin: rebuildRollNotes,
         updateScale: rebuildRollNotes,
+        updateLeadIn: rebuildRollNotes,
+        updateControlScheme: rebuildTabNotes,
+
         setPlaybackTick: setPlaybackTick,
         getPlaybackTick: getPlaybackTick,
         clearPlayback: clearPlayback,

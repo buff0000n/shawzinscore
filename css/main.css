@@ -220,6 +220,22 @@ td {
     position: absolute;
     transform: translate(-50%, -50%);
 }
+.leftImg {
+    position: absolute;
+    transform: translate(-100%, -50%);
+}
+.rightImg {
+    position: absolute;
+    transform: translate(0%, -50%);
+}
+.bottomImg {
+    position: absolute;
+    transform: translate(-50%, 0%);
+}
+.topImg {
+    position: absolute;
+    transform: translate(-50%, -100%);
+}
 .centerYImg {
     position: absolute;
     transform: translateY(-50%);
@@ -227,12 +243,12 @@ td {
 
 @keyframes tabNoteBounce {
     0%   { transform: scale(1.0); opacity: 1; }
-    100% { transform: scale(2.0); opacity: 0; }
+    100% { transform: scale(3.0); opacity: 0; }
 }
 
 .playTabNote {
     animation-name: tabNoteBounce;
-    animation-duration: 1.0s;
+    animation-duration: 0.5s;
     animation-fill-mode: forwards;
     pointer-events: none;
     touch-events: none;
@@ -240,13 +256,13 @@ td {
 
 @keyframes rollNoteBounce {
     0%   { transform: translateX(-50%) scale(1.0, 1.0); opacity: 1; }
-    100% { transform: translateX(-50%) scale(4.0, 1.0); opacity: 0; }
+    100% { transform: translateX(-50%) scale(5.0, 1.0); opacity: 0; }
 }
 
 .playRollNote {
     border: none;
     animation-name: rollNoteBounce;
-    animation-duration: 1.0s;
+    animation-duration: 0.5s;
     animation-fill-mode: forwards;
     pointer-events: none;
     touch-events: none;

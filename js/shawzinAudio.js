@@ -8,25 +8,29 @@ var ShawzinAudio = (function() {
     var altFileSuffix = "-alt";
 
     // build mappings from sound name to mono groups
+    var polyphonicGroups = {};
     var monophonicGroups = {};
     var duophonicGroups = {};
 
     for (var i = 0; i < Metadata.scaleNoteOrder.length; i++) {
+        // no group for polyphonic notes
         // monophonic puts notes into a single group
         monophonicGroups[Metadata.scaleNoteOrder[i]] = 1;
         // duophonic puts notes into a single group
         duophonicGroups[Metadata.scaleNoteOrder[i]] = 1;
     }
     for (var i = 0; i < Metadata.scaleChordOrder.length; i++) {
+        // polyphonic still puts chords into a group
+        polyphonicGroups[Metadata.scaleChordOrder[i]] = 1;
         // monophonic puts chords into the same group as notes
         monophonicGroups[Metadata.scaleChordOrder[i]] = 1;
-        // duophonic puts chordsinto a a separate group
+        // duophonic puts chords into a a separate group
         duophonicGroups[Metadata.scaleChordOrder[i]] = 2;
     }
 
     // easy mapping from the metadata constants
     var typeToMonoGroups = {
-        "polyphonic": {},
+        "polyphonic": polyphonicGroups,
         "monophonic": monophonicGroups,
         "duophonic": duophonicGroups
     };
@@ -146,6 +150,37 @@ var ShawzinAudio = (function() {
         };
     }());
 
+    function scaleTest(time, shawz, scale, next=null) {
+        var sb = ShawzinAudio.getSoundBank(shawz, scale);
+
+        sb.checkInit(() => {
+            if (time == null) {
+                ShawzinAudio.setTimeOffset();
+                time = 0;
+            }
+            for (var i = 0; i < Metadata.scaleNoteOrder.length; i++) {
+                sb.play(Metadata.scaleNoteOrder[i], time);
+                time += 0.25;
+            }
+            for (var i = 0; i < Metadata.scaleChordOrder.length; i++) {
+                sb.play(Metadata.scaleChordOrder[i], time);
+                time += 0.25;
+            }
+            if (next) next(time);
+        });
+    }
+
+    function shawzTest(shawz) {
+        var j = 0;
+        var thing = (time) => {
+            if (j < Metadata.scaleOrder.length) {
+                scale = Metadata.scaleOrder[j];
+                j++;
+                scaleTest(time, shawz, scale, thing);
+            }
+        };
+        thing(null);
+    }
 
 
     // public members
@@ -154,6 +189,7 @@ var ShawzinAudio = (function() {
             return SoundBankCache.getSoundBank(shawzinName, scaleName);
         },
         setTimeOffset: Audio.setTimeOffset,
+        shawzTest: shawzTest,
     };
 })();
 

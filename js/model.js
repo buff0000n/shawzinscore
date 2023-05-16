@@ -4,11 +4,16 @@ var Model = (function() {
     var song = null;
     var songCode = null;
     var songName = null;
+    // todo: configurable
+    var controlScheme = null;
 
     var updateDelay = 1000;
     var scheduledUpdate = null;
 
     function init(url) {
+        // gotta do this before filling in the track
+        doSetControlScheme(Settings.getControlScheme());
+
         shawzin = PageUtils.getQueryParam("s");
         if (!shawzin) shawzin = Metadata.shawzinOrder[0];
         doSetShawzin(shawzin);
@@ -28,7 +33,6 @@ var Model = (function() {
             newSong.setScale(Metadata.scaleOrder[0]);
             doSetSong(newSong);
         }
-
     }
 
     function scheduleUpdate() {
@@ -87,6 +91,27 @@ var Model = (function() {
         song.setScale(name);
         updateScale();
     }
+    
+    function getControlScheme() {
+        return controlScheme;
+    }
+
+    function doSetControlScheme(newControlScheme) {
+        controlScheme = newControlScheme;
+
+        var text = document.getElementById("select-control-scheme-text");
+        text.innerHTML = `
+            <img src="img/${controlScheme.img}" srcset="img2x/${controlScheme.img} 2x" class="icon"/>
+            ${controlScheme.name}
+        `;
+        for (i = 1; i <= 3; i++) {
+            var img = document.getElementById("tab-note-fret-" + i);
+            PageUtils.setImgSrc(img, "key_"  + controlScheme.frets["" + i] + "_w.png");
+        }
+
+        Settings.setControlScheme(controlScheme);
+        Track.updateControlScheme();
+    }
 
     function doSetSongName(name) {
         if (name && name.length == 0) name = null;
@@ -137,6 +162,18 @@ var Model = (function() {
                     () => { doSetScale(newScale); scheduleUpdate(); },
                     () => { doSetScale(current); scheduleUpdate(); },
                     "Set Scale"
+                );
+            }
+        },
+
+        getControlScheme: getControlScheme,
+        setControlScheme: function(newControlScheme) {
+            var current = getControlScheme();
+            if (newControlScheme != current) {
+                Undo.doAction(
+                    () => { doSetControlScheme(newControlScheme); scheduleUpdate(); },
+                    () => { doSetControlScheme(current); scheduleUpdate(); },
+                    "Set Control Scheme"
                 );
             }
         },

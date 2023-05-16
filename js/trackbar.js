@@ -58,7 +58,7 @@ var TrackBar = (function() {
         rollKeyButtonDiv.style.position="relative;";
         for (var noteName in scaleMd.notes) {
             var note = scaleMd.notes[noteName];
-            var boxStyle = Metadata.noteKeyboardBoxes[note];
+            var boxStyle = MetadataUI.noteKeyboardBoxes[note];
             var box = document.createElement("div");
             box.className = "roll-keyboard-note";
             box.style.left = boxStyle.left + "px";
@@ -74,7 +74,7 @@ var TrackBar = (function() {
                 var noteBoxStyle = e.target.boxStyle;
                 var playBox = document.createElement("div");
                 // todo: better way to get the fret and color
-                var color = Metadata.fretToRollColors[noteName.split("-")[0]];
+                var color = MetadataUI.fretToRollColors[noteName.split("-")[0]];
                 playBox.className = "roll-note playRollNote";
                 playBox.style.left = (noteBoxStyle.left + (noteBoxStyle.width/2))+ "px";
                 playBox.style.top = noteBoxStyle.top + "px";

@@ -62,77 +62,12 @@ var Metadata = (function() {
             note.Ds3
     ];
 
-    var noteKeyboardBoxes = {
-        "c1": {"left": 2, "top": 55, "width": 20, "height": 41},
-            "cs1": {"left": 9, "top": 0, "width": 23, "height": 55},
-        "d1": {"left": 22, "top": 55, "width": 21, "height": 41},
-            "ds1": {"left": 32, "top": 0, "width": 23, "height": 55},
-        "e1": {"left": 43, "top": 55, "width": 20, "height": 41},
-        "f1": {"left": 63, "top": 55, "width": 21, "height": 41},
-            "fs1": {"left": 71, "top": 0, "width": 23, "height": 55},
-        "g1": {"left": 84, "top": 55, "width": 21, "height": 41},
-            "gs1": {"left": 94, "top": 0, "width": 22, "height": 55},
-        "a1": {"left": 105, "top": 55, "width": 20, "height": 41},
-            "as1": {"left": 116, "top": 0, "width": 23, "height": 55},
-        "b1": {"left": 125, "top": 55, "width": 21, "height": 41},
-        "c2": {"left": 146, "top": 55, "width": 20, "height": 41},
-            "cs2": {"left": 154, "top": 0, "width": 23, "height": 55},
-        "d2": {"left": 166, "top": 55, "width": 21, "height": 41},
-            "ds2": {"left": 177, "top": 0, "width": 23, "height": 55},
-        "e2": {"left": 187, "top": 55, "width": 21, "height": 41},
-        "f2": {"left": 208, "top": 55, "width": 20, "height": 41},
-            "fs2": {"left": 215, "top": 0, "width": 23, "height": 55},
-        "g2": {"left": 228, "top": 55, "width": 21, "height": 41},
-            "gs2": {"left": 238, "top": 0, "width": 22, "height": 55},
-        "a2": {"left": 249, "top": 55, "width": 20, "height": 41},
-            "as2": {"left": 260, "top": 0, "width": 23, "height": 55},
-        "b2": {"left": 269, "top": 55, "width": 21, "height": 41},
-        "c3": {"left": 290, "top": 55, "width": 21, "height": 41},
-            "cs3": {"left": 298, "top": 0, "width": 23, "height": 55},
-        "d3": {"left": 311, "top": 55, "width": 21, "height": 41},
-            "ds3": {"left": 321, "top": 0, "width": 23, "height": 55},
-    }
-
-    var tickSpacing = 20;
     var ticksPerSecond = 16;
-    var leadInTicks = 2 * ticksPerSecond;
     // technically the song code format can support 4m16s, but the game caps it at exactly 4m
     var maxTickLength = 4 * 60 * ticksPerSecond;
     var maxNotes = 1000;
 
-    var tabStringXOffsets = {
-        "1": 58,
-        "2": 170,
-        "3": 282,
-    }
-    var tabFretYOffset = -38;
-    var tabFretXOffsets = {
-        "1": -34,
-        "2": 0,
-        "3": 34,
-    };
-
-    var fretToRollColors = {
-        "": "#BF8340",
-        "0": "#BF8340",
-        "1": "#C03F3F",
-        "2": "#3FC03F",
-        "3": "#00B4FF",
-        "12": "#D4D41B",
-        "23": "#20BA9F",
-        "13": "#7B609F",
-        "123": "#E27119",
-    };
-    
-    var noteRollOffset = 2;
-    var noteRollWidth = 12;
-    var noteToRollOffsets = {};
-    for (var n = 0; n < noteOrder.length; n++) {
-        noteToRollOffsets[noteOrder[n]] = noteRollOffset + (noteRollWidth * n);
-    }
-    var noteRollWidth = 12;
-
-    var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void" ];
+    var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void", "lonesome", "courtly" ];
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
     var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
     var scaleChordOrder = [ "12-1", "12-2", "12-3", "23-1", "23-2", "23-3", "13-1", "13-2", "13-3", "123-1", "123-2", "123-3" ];
@@ -221,73 +156,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "Cm7sus4",
                         "img": "standard/pmin/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.F1, note.Bb1]
                     },
                     "12-2": {
                         "name": "Cm/E\u266D",
                         "img": "standard/pmin/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.G1, note.C2]
                     },
                     "12-3": {
                         "name": "Fm7sus4",
                         "img": "standard/pmin/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.Bb1, note.Eb2]
                     },
                     "23-1": {
                         "name": "Gm7sus4",
                         "img": "standard/pmin/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.C2, note.F2]
                     },
                     "23-2": {
                         "name": "E\u266D/B\u266D",
                         "img": "standard/pmin/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Bb1, note.Eb2, note.G2]
                     },
                     "23-3": {
                         "name": "Cm7sus4",
                         "img": "standard/pmin/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C2, note.F2, note.Bb2]
                     },
                     "13-1": {
                         "name": "Cm",
                         "img": "standard/pmin/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.Eb1, note.G1]
                     },
                     "13-2": {
                         "name": "E\u266Dsus2",
                         "img": "standard/pmin/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.F1, note.Bb1]
                     },
                     "13-3": {
                         "name": "Fmsus2",
                         "img": "standard/pmin/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.G1, note.C2]
                     },
                     "123-1": {
                         "name": "E\u266D/G",
                         "img": "standard/pmin/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Bb1, note.Eb2]
                     },
                     "123-2": {
                         "name": "B\u266D/sus2",
                         "img": "standard/pmin/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Bb1, note.C2, note.F2]
                     },
                     "123-3": {
                         "name": "Cm",
                         "img": "standard/pmin/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C2, note.Eb2, note.G2]
                     }
                 }
@@ -316,73 +251,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "Am/C",
                         "img": "standard/pmaj/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.E1, note.A1]
                     },
                     "12-2": {
                         "name": "Dm7sus4",
                         "img": "standard/pmaj/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.D1, note.G1, note.C2]
                     },
                     "12-3": {
                         "name": "Em7sus4",
                         "img": "standard/pmaj/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.E1, note.A1, note.D2]
                     },
                     "23-1": {
                         "name": "C/G",
                         "img": "standard/pmaj/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.C2, note.E2]
                     },
                     "23-2": {
                         "name": "Am7sus4",
                         "img": "standard/pmaj/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.A1, note.D2, note.G2]
                     },
                     "23-3": {
                         "name": "Am/C",
                         "img": "standard/pmaj/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C2, note.E2, note.A2]
                     },
                     "13-1": {
                         "name": "Csus2",
                         "img": "standard/pmaj/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.D1, note.G1]
                     },
                     "13-2": {
                         "name": "Dmsus2",
                         "img": "standard/pmaj/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.D1, note.E1, note.A1]
                     },
                     "13-3": {
                         "name": "C/E",
                         "img": "standard/pmaj/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.E1, note.G1, note.C2]
                     },
                     "123-1": {
                         "name": "Gsus2",
                         "img": "standard/pmaj/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.A1, note.D2]
                     },
                     "123-2": {
                         "name": "Am",
                         "img": "standard/pmaj/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.A1, note.C2, note.E2]
                     },
                     "123-3": {
                         "name": "Csus2",
                         "img": "standard/pmaj/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C2, note.D2, note.G2]
                     }
                 }
@@ -411,74 +346,74 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "standard/chrom/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "C\u266F",
                         "img": "standard/chrom/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gs1, note.Gs1, note.Cs2]
                     },
                     "12-3": {
                         "name": "D",
                         "img": "standard/chrom/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.D1, note.A1, note.D2]
                     },
                     "23-1": {
                         "name": "D\u266F",
                         "img": "standard/chrom/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Ds1, note.As1, note.Ds2]
                     },
                     "23-2": {
                         "name": "E",
                         "img": "standard/chrom/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.E1, note.B1, note.E2]
                     },
                     "23-3": {
                         "name": "F",
                         "img": "standard/chrom/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.C2, note.F2]
                     },
                     "13-1": {
                         "name": "F\u266F",
                         "img": "standard/chrom/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Cs1, note.Fs1, note.Cs2],
                         "comment": "Not sure why this one is different"
                     },
                     "13-2": {
                         "name": "G",
                         "img": "standard/chrom/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.D2, note.G2]
                     },
                     "13-3": {
                         "name": "G\u266F",
                         "img": "standard/chrom/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gs1, note.Ds2, note.Gs2]
                     },
                     "123-1": {
                         "name": "A",
                         "img": "standard/chrom/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.A1, note.E2, note.A2]
                     },
                     "123-2": {
                         "name": "A\u266F",
                         "img": "standard/chrom/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.As1, note.F2, note.As2]
                     },
                     "123-3": {
                         "name": "B",
                         "img": "standard/chrom/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.B1, note.Fs2, note.B2]
                     }
                 }
@@ -507,73 +442,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "Cm",
                         "img": "standard/hex/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.Eb1, note.G1]
                     },
                     "12-2": {
                         "name": "E\u266D",
                         "img": "standard/hex/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.G1, note.Bb1]
                     },
                     "12-3": {
                         "name": "Fmsus2",
                         "img": "standard/hex/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.G1, note.C2]
                     },
                     "23-1": {
                         "name": "E\u266D/G\u266D",
                         "img": "standard/hex/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gb1, note.Bb1, note.Eb2]
                     },
                     "23-2": {
                         "name": "E\u266D/G",
                         "img": "standard/hex/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Bb1, note.Eb2]
                     },
                     "23-3": {
                         "name": "B\u266Dsus4",
                         "img": "standard/hex/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Bb1, note.F2, note.G2]
                     },
                     "13-1": {
                         "name": "Cdim",
                         "img": "standard/hex/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.Eb1, note.Gs1]
                     },
                     "13-2": {
                         "name": "E\u266Dsus2",
                         "img": "standard/hex/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.F1, note.Bb1]
                     },
                     "13-3": {
                         "name": "Gm7/F",
                         "img": "standard/hex/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.G1, note.Bb1]
                     },
                     "123-1": {
                         "name": "Cm7\u266D5/G\u266D",
                         "img": "standard/hex/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gb1, note.Bb1, note.C2]
                     },
                     "123-2": {
                         "name": "Gm7sus4",
                         "img": "standard/hex/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Bb1, note.C2]
                     },
                     "123-3": {
                         "name": "Cm7/B\u266D",
                         "img": "standard/hex/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Bb2, note.C2]
                     }
                 }
@@ -602,73 +537,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "standard/maj/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.E1, note.G1]
                     },
                     "12-2": {
                         "name": "Dm",
                         "img": "standard/maj/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.D1, note.F1, note.A1]
                     },
                     "12-3": {
                         "name": "Em",
                         "img": "standard/maj/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.E1, note.G1, note.B1]
                     },
                     "23-1": {
                         "name": "F",
                         "img": "standard/maj/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.A1, note.C2]
                     },
                     "23-2": {
                         "name": "G",
                         "img": "standard/maj/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.B1, note.D2]
                     },
                     "23-3": {
                         "name": "Am",
                         "img": "standard/maj/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.A1, note.C2, note.E2]
                     },
                     "13-1": {
                         "name": "Dm7/C",
                         "img": "standard/maj/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.D1, note.F1]
                     },
                     "13-2": {
                         "name": "Em7/C",
                         "img": "standard/maj/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.D1, note.E1, note.G1]
                     },
                     "13-3": {
                         "name": "Fmaj7/E",
                         "img": "standard/maj/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.E1, note.F1, note.A1]
                     },
                     "123-1": {
                         "name": "G7/F",
                         "img": "standard/maj/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.G1, note.B1]
                     },
                     "123-2": {
                         "name": "Am7/G",
                         "img": "standard/maj/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.A1, note.C2]
                     },
                     "123-3": {
                         "name": "Gsus2/A",
                         "img": "standard/maj/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.A1, note.C2]
                     }
                 }
@@ -697,73 +632,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "Cm",
                         "img": "standard/min/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.Eb1, note.G1]
                     },
                     "12-2": {
                         "name": "B\u266D/D",
                         "img": "standard/min/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.D1, note.F1, note.Ab1]
                     },
                     "12-3": {
                         "name": "E\u266D",
                         "img": "standard/min/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.G1, note.Bb1]
                     },
                     "23-1": {
                         "name": "Fm",
                         "img": "standard/min/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.Bb1, note.D2]
                     },
                     "23-2": {
                         "name": "Gm",
                         "img": "standard/min/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Bb1, note.D2]
                     },
                     "23-3": {
                         "name": "A\u266D",
                         "img": "standard/min/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Ab1, note.C2, note.Eb2]
                     },
                     "13-1": {
                         "name": "Cmsus2sus4",
                         "img": "standard/min/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.D1, note.F1]
                     },
                     "13-2": {
                         "name": "E\u266Dmaj7/D",
                         "img": "standard/min/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.D1, note.Eb1, note.G1]
                     },
                     "13-3": {
                         "name": "Fm7/E\u266D",
                         "img": "standard/min/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.F1, note.Ab1]
                     },
                     "123-1": {
                         "name": "Gm7/F",
                         "img": "standard/min/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.G1, note.Bb1]
                     },
                     "123-2": {
                         "name": "A\u266Dmaj7/G",
                         "img": "standard/min/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Ab1, note.C2]
                     },
                     "123-3": {
                         "name": "B\u266D7/A\u266D",
                         "img": "standard/min/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Ab1, note.Bb1, note.D2]
                     }
                 }
@@ -792,73 +727,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "Cm7sus4",
                         "img": "standard/hira/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.F1, note.Bb1]
                     },
                     "12-2": {
                         "name": "G\u266Daug4/D\u266D",
                         "img": "standard/hira/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.Gb1, note.C2]
                     },
                     "12-3": {
                         "name": "B\u266Dm/F",
                         "img": "standard/hira/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.Bb1, note.Db2]
                     },
                     "23-1": {
                         "name": "A\u266D7sus6/G\u266D",
                         "img": "standard/hira/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gb1, note.C2, note.F2]
                     },
                     "23-2": {
                         "name": "G\u266D/B\u266D",
                         "img": "standard/hira/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Bb1, note.Db2, note.Gb2]
                     },
                     "23-3": {
                         "name": "Cm7sus4",
                         "img": "standard/hira/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C2, note.F2, note.Bb2]
                     },
                     "13-1": {
                         "name": "???",
                         "img": "standard/hira/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.Db1, note.Gb1]
                     },
                     "13-2": {
                         "name": "B\u266Dm/D\u266D",
                         "img": "standard/hira/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db1, note.F1, note.Bb1]
                     },
                     "13-3": {
                         "name": "???",
                         "img": "standard/hira/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.Gb1, note.C2]
                     },
                     "123-1": {
                         "name": "G\u266D",
                         "img": "standard/hira/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gb1, note.Bb1, note.Db2]
                     },
                     "123-2": {
                         "name": "B\u266Dmsus2",
                         "img": "standard/hira/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Bb1, note.C2, note.F2]
                     },
                     "123-3": {
                         "name": "???",
                         "img": "standard/hira/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C2, note.Db2, note.Gb2]
                     }
                 }
@@ -887,73 +822,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "img": "standard/phry/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.E1, note.G2]
                     },
                     "12-2": {
                         "name": "D\u266D",
                         "img": "standard/phry/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db1, note.F1, note.Ab1]
                     },
                     "12-3": {
                         "name": "C7/E",
                         "img": "standard/phry/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.E1, note.G1, note.Bb1]
                     },
                     "23-1": {
                         "name": "Fm",
                         "img": "standard/phry/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.Ab1, note.C2]
                     },
                     "23-2": {
                         "name": "Gdim",
                         "img": "standard/phry/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Bb1, note.Db2]
                     },
                     "23-3": {
                         "name": "A\u266Daug",
                         "img": "standard/phry/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Ab1, note.C2, note.E2]
                     },
                     "13-1": {
                         "name": "D\u266Dmaj7/C",
                         "img": "standard/phry/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.Db1, note.F1]
                     },
                     "13-2": {
                         "name": "D\u266Ddim",
                         "img": "standard/phry/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db1, note.E1, note.G1]
                     },
                     "13-3": {
                         "name": "D\u266D",
                         "img": "standard/phry/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db1, note.F1, note.Ab1]
                     },
                     "123-1": {
                         "name": "Fmsus2sus4",
                         "img": "standard/phry/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.F1, note.G1, note.Bb1]
                     },
                     "123-2": {
                         "name": "A\u266Dmaj7/G",
                         "img": "standard/phry/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.G1, note.Ab1, note.C2]
                     },
                     "123-3": {
                         "name": "B\u266Dm7/A\u266D",
                         "img": "standard/phry/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Ab1, note.Bb1, note.Db2]
                     }
                 }
@@ -982,73 +917,73 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "G\u266D/D\u266D",
                         "img": "standard/yo/chord-12-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db1, note.Gb1, note.Bb1]
                     },
                     "12-2": {
                         "name": "E\u266Dm7sus4",
                         "img": "standard/yo/chord-12-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.Ab1, note.Db2]
                     },
                     "12-3": {
                         "name": "E\u266Dm/G\u266D",
                         "img": "standard/yo/chord-12-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gb1, note.Bb1, note.Eb2]
                     },
                     "23-1": {
                         "name": "A\u266Dm7sus4",
                         "img": "standard/yo/chord-23-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Ab1, note.Db2, note.Gb2]
                     },
                     "23-2": {
                         "name": "B\u266Dm7sus4",
                         "img": "standard/yo/chord-23-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Bb1, note.Eb2, note.Ab2]
                     },
                     "23-3": {
                         "name": "G\u266D/D\u266D",
                         "img": "standard/yo/chord-23-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db2, note.Gb2, note.Bb2]
                     },
                     "13-1": {
                         "name": "D\u266Dmsus2sus4",
                         "img": "standard/yo/chord-13-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db1, note.Eb1, note.Gb1]
                     },
                     "13-2": {
                         "name": "E\u266Dmsus4",
                         "img": "standard/yo/chord-13-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Eb1, note.Gb1, note.Ab1]
                     },
                     "13-3": {
                         "name": "G\u266D",
                         "img": "standard/yo/chord-13-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Gb1, note.Bb1, note.Db1]
                     },
                     "123-1": {
                         "name": "A\u266Dmsus2sus4",
                         "img": "standard/yo/chord-123-1.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Ab1, note.Bb1, note.Db1]
                     },
                     "123-2": {
                         "name": "B\u266Dmsus4",
                         "img": "standard/yo/chord-123-2.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Bb1, note.Db2, note.Eb2]
                     },
                     "123-3": {
                         "name": "D\u266Dmsus2sus4",
                         "img": "standard/yo/chord-123-3.png",
-                        "length": 2,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.Db2, note.Eb2, note.Gb2]
                     }
                 }
@@ -2289,6 +2224,20 @@ var Metadata = (function() {
         }
     });
 
+    var lonesomeShawzin = ObjectUtils.merge(standardShawzin, {
+        "config": {
+            "name": "Lonesome Shawzin",
+            "comment": "Based on bells, I guess?",
+        }
+    });
+
+    var courtlyShawzin = ObjectUtils.merge(standardShawzin, {
+        "config": {
+            "name": "Courtly Shawzin",
+            "comment": "Based on a Chinese Dulcimer",
+        }
+    });
+
     // public members
     return  {
         // shawzin metadata
@@ -2306,21 +2255,13 @@ var Metadata = (function() {
             "aristei": aristeiShawzin,
             "narmer" :narmerShawzin,
             "kira": kiraShawzin,
-            "void": voidShawzin
+            "void": voidShawzin,
+            "lonesome": lonesomeShawzin,
+            "courtly": courtlyShawzin,
         },
         // more general song format metadata
         ticksPerSecond: ticksPerSecond,
         maxTickLength: maxTickLength,
         maxNotes: maxNotes,
-        // UI metadata
-        tickSpacing: tickSpacing,
-        leadInTicks: leadInTicks,
-        tabStringXOffsets: tabStringXOffsets,
-        tabFretYOffset: tabFretYOffset,
-        tabFretXOffsets: tabFretXOffsets,
-        noteToRollOffsets: noteToRollOffsets,
-        noteRollWidth: noteRollWidth,
-        fretToRollColors: fretToRollColors,
-        noteKeyboardBoxes: noteKeyboardBoxes,
     }
 })();

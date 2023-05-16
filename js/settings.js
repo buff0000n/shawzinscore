@@ -7,6 +7,7 @@ var Settings = (function() {
 
     // default setting values
     var trackReversed = false;
+    var controlScheme = MetadataUI.controlSchemes["pc"];
 
     function load() {
         // load the local storage item
@@ -19,6 +20,9 @@ var Settings = (function() {
             if (props.trackReversed != null) {
                 trackReversed = props.trackReversed;
             }
+            if (props.controlScheme != null) {
+                controlScheme = props.controlScheme;
+            }
         }
     }
 
@@ -29,7 +33,8 @@ var Settings = (function() {
     function save() {
         // build something we can JSONify
         var props = {
-            "trackReversed": trackReversed
+            "trackReversed": trackReversed,
+            "controlScheme": controlScheme,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -40,5 +45,7 @@ var Settings = (function() {
         clear: clear,
         isTrackReversed: function() { return trackReversed; },
         setTrackReversed: function(v) { if (v != trackReversed) { trackReversed = v; save(); } },
+        getControlScheme: function() { return controlScheme; },
+        setControlScheme: function(v) { if (v != controlScheme) { controlScheme = v; save(); } },
     }
 })()

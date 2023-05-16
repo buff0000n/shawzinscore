@@ -5,6 +5,7 @@ var Controls = (function() {
 
         document.getElementById("select-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
         document.getElementById("select-scale").addEventListener("click", doScaleSelect, { passive: false });
+        document.getElementById("select-control-scheme").addEventListener("click", doControlSchemeSelect, { passive: false });
 
         function commitNameChange() {
             var input = document.getElementById("metadata-settings-title-text");
@@ -136,6 +137,50 @@ var Controls = (function() {
         var close = Menus.showMenu(selectionDiv, this, "Select Scale");
     }
 
+    function doControlSchemeSelect() {
+        var sm = MetadataUI.controlSchemes;
+
+        var selectionDiv = document.createElement("div");
+        selectionDiv.className = "selection-div";
+
+        function createSelection(name) {
+            var tr = document.createElement("div");
+            tr.className = "selection-item";
+
+            tr.innerHTML = `
+                <img src="img/${sm[name].img}" srcset="img2x/${sm[name].img} 2x" class="icon" style="margin: 0.5ex;"/>
+                ${sm[name].name}
+            `;
+
+            tr.onclick = () => {
+                Model.setControlScheme(sm[name]);
+                close();
+            };
+
+            return tr;
+        }
+
+
+        for (var csn in sm) {
+            selectionDiv.appendChild(createSelection(csn));
+        }
+
+        var close = Menus.showMenu(selectionDiv, this, "Select Control Scheme");
+    }
+
+    function trackChangeMeter(meter, bpm, leadin) {
+
+
+
+    }
+
+    // callback has changeMeter(meter, bpm, lead-in)
+    function buildMeterControls(changeCallback) {
+        var div = document.createElement("div");
+
+
+        return div;
+    }
 
     // public members
     return  {

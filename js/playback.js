@@ -1,7 +1,7 @@
 var Playback = (function() {
 
     // meh
-    var playbackLoopInterval = Math.floor(1000/20);
+    var playbackLoopInterval = Math.floor(1000/60);
     var soundScheduleBufferTime = 1.0;
 
     var shawzin = null;
@@ -103,7 +103,7 @@ var Playback = (function() {
 
         playbackStartTick = Track.getPlaybackTick();
         if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
-            playbackStartTick = -Metadata.leadInTicks;
+            playbackStartTick = -MetadataUI.leadInTicks;
             Track.clearPlayback();
         }
 

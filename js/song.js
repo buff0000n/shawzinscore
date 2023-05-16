@@ -80,7 +80,7 @@ class Note {
         return (this.fret.length == 0 ? "0" : this.fret) + "-" + this.string;
     }
 
-    toString() {
+    toString(offsetTicks = 0) {
         var b1 = 0;
         for (var c = 0; c < this.string.length; c++) {
             switch (this.string.charAt(c)) {
@@ -97,9 +97,11 @@ class Note {
             }
         }
 
-        var b2 = Math.floor(this.tick / 64);
+        var saveTick = this.tick + offsetTicks;
 
-        var b3 = this.tick - (b2 * 64);
+        var b2 = Math.floor(saveTick / 64);
+
+        var b3 = saveTick - (b2 * 64);
 
         return SongUtils.intToBase64(b1) + SongUtils.intToBase64(b2) + SongUtils.intToBase64(b3);
     }
@@ -112,14 +114,8 @@ class Note {
         return "[" + this.tick + " : " + this.string + "-" + this.fret + "]";
     }
 
-    offsetTick(offset) {
-        // construct a new note with the same note value but an offset tick
-        var n = new Note();
-        n.string = this.string;
-        n.fret = this.fret;
-        n.tick = this.tick + offset;
-
-        return n;
+    offset(offsetTicks) {
+        this.tick += offsetTicks;
     }
 }
 
@@ -281,8 +277,11 @@ class Song {
         var scaleCode = Metadata.scaleOrder.indexOf(this.scale) + 1;
         buffer += scaleCode;
 
+        // All codes have to start at time 0
+        var offsetTicks = this.notes[0].ticks;
+
         for (var n = 0; n < this.notes.length; n++) {
-            buffer += this.notes[n].toString();
+            buffer += this.notes[n].toString(offsetTicks);
         }
         return buffer;
     }
@@ -291,15 +290,23 @@ class Song {
         return this.notes.length == 0;
     }
 
-    applyLeadIn(leadInLength, measureLength) {
-        var leadInOffset = measureLength - leadInLength;
+    setLeadInTicks(leadInTicks) {
+        // sanity check
+        if (notes.length == 0) return;
+
+        // if there's already a lead-in, subtract it and then add the new one.
+        var leadInOffset = leadInTicks - notes[0].tick;
 
         // iterate over all the notes
         for (var i = 0; i < this.notes.length; i++) {
-            this.notes[i] = this.notes[i].offsetTick(leadInOffset);
+            this.notes[i].offset(leadInOffset);
         }
 
         return this;
+    }
+
+    getLeadInTicks() {
+        return this.notes.length == 0 ? 0 : this.notes[i].ticks;
     }
 
     getEndTick() {
