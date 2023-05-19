@@ -12,7 +12,6 @@ var Track = (function() {
     var meterBeat = null;
 
     var startBar = null;
-    var endBar = null;
 
     var bars = [];
     var tickCapacity = 0;
@@ -22,13 +21,16 @@ var Track = (function() {
     var playbackOffset = 0.35;
     var scrollThrottleMs = 250;
 
-    // hard-coded 2-second buffer at beginning
-    var tickOffset = MetadataUI.leadInTicks;
+    // hard-coded 2.75-second buffer at beginning
+    var tickOffset = Metadata.leadInTicks;
 
     var song = null;
     var playbackMarker = null;
 
     function registerEventListeners() {
+        // set this directly to start with, before doing any layouts
+        reversed = Settings.isTrackReversed();
+
         scroll = document.getElementById("song-scroll");
         tab = document.getElementById("song-scroll-tab");
         roll = document.getElementById("song-scroll-roll");
@@ -53,14 +55,6 @@ var Track = (function() {
         }, { passive: false });
 
         resize();
-        setReversed(Settings.isTrackReversed());
-
-        buildStartEndBars();
-
-        bpm = 120;
-        meterBar = 4;
-        meterBeat = 4;
-        ensureTickCapacity(visibleTicks - 1);
     }
 
     function getView(note) {
@@ -77,6 +71,7 @@ var Track = (function() {
             }
         }
         clearBars();
+        ensureTickCapacity(0);
         song = newSong;
         if (song) {
             for (var n = 0; n < song.notes.length; n++) {
@@ -135,7 +130,7 @@ var Track = (function() {
         var scrollTop = scroll.scrollTop;
         //console.log("START scrollTop: " + scrollTop);
         var endTick = reversed
-                      ? (tickCapacity + tickOffset - (Math.floor(scrollTop / tickSpacing)))
+                      ? (tickCapacity - (Math.floor(scrollTop / tickSpacing)))
                       : (Math.ceil(scrollTop / tickSpacing) - tickOffset) + visibleTicks
                       ;
 
@@ -144,7 +139,7 @@ var Track = (function() {
 
         } else if (endTick < tickCapacity && endTick > song.getLastTick()) {
             // check for notes present
-            trimTickCapacity(endTick + visibleTicks);
+            trimTickCapacity(endTick);
         }
         //console.log("END   scrollTop: " + scroll.scrollTop);
     }
@@ -162,7 +157,7 @@ var Track = (function() {
     function scrollToTick(tick) {
         // scroll to location
         var pos = reversed
-                  ? (tickOffset + tickCapacity - tick) * tickSpacing
+                  ? (tickCapacity - tick) * tickSpacing
                   : (tickOffset + tick) * tickSpacing;
         var halfHeight = (viewHeight/2);
         if (pos < halfHeight) {
@@ -191,8 +186,6 @@ var Track = (function() {
             return
         }
 
-        // yeah this is not going to work
-        //tickSpacing = -tickSpacing;
         reversed = newReversed;
 
         setSong(song);
@@ -201,13 +194,17 @@ var Track = (function() {
 
     function insertBar() {
         var bar = [
-            buildBar(bars.length == 0, "tab"),
-            buildBar(bars.length == 0, "roll")
+            buildBar(false, "tab"),
+            buildBar(false, "roll")
         ];
 
-        var insertBeforeBar = (reversed && bars.length > 0) ? bars[bars.length - 1] : endBar;
-        tab.insertBefore(bar[0], insertBeforeBar[0]);
-        roll.insertBefore(bar[1], insertBeforeBar[1]);
+        if (reversed) {
+            tab.prepend(bar[0]);
+            roll.prepend(bar[1]);
+        } else {
+            tab.append(bar[0]);
+            roll.append(bar[1]);
+        }
 
         bars.push(bar);
         bar[0].startTick = tickCapacity;
@@ -220,21 +217,30 @@ var Track = (function() {
         }
     }
 
-    function removeBar() {
-        var bar = bars.pop();
+    function removeBar(bar) {
+        if (!bar) {
+            bar = bars.pop();
+        }
         bar[0].remove();
         bar[1].remove();
-        tickCapacity -= bar[0].ticks;
-        pixelCapacity -= bar[0].ticks * tickSpacing;
+        tickCapacity = Math.max(0, tickCapacity - bar[0].ticks);
+        pixelCapacity = Math.max(0, pixelCapacity - (bar[0].ticks * tickSpacing));
     }
 
     function clearBars() {
         while (tickCapacity > 0) {
             removeBar();
         }
+        if (startBar) {
+            removeBar(startBar);
+            startBar = null;
+        }
     }
 
     function ensureTickCapacity(ticks) {
+        if (!startBar) {
+            buildStartBar();
+        }
         var count = 0;
         while (tickCapacity < Metadata.maxTickLength && tickCapacity <= ticks) {
             //console.log("ensuring: " + tickCapacity + " > " + ticks + "(" + (++count) + ")");
@@ -245,20 +251,20 @@ var Track = (function() {
     function trimTickCapacity(ticks) {
         var count = 0;
         while (tickCapacity > ticks + visibleTicks) {
-            //console.log("trimming: " + tickCapacity + " <? " + ticks + "(" + (++count) + ")");
+            //console.log("trimming: " + tickCapacity + " < " + ticks + "(" + (++count) + ")");
             removeBar();
         }
     }
 
     function getBarForTick(tick) {
         if (tick < 0) {
-            return reversed ? endBar : startBar;
+            return startBar;
         }
         ensureTickCapacity(tick);
         return bars[Math.floor(tick / barTicks)];
     }
 
-    function buildStartEndBars() {
+    function buildStartBar() {
         startBar = [
             buildBar(true, "tab", tickOffset),
             buildBar(true, "roll", tickOffset)
@@ -268,16 +274,7 @@ var Track = (function() {
         tab.appendChild(startBar[0]);
         roll.appendChild(startBar[1]);
 
-        endBar = [
-            buildBar(true, "tab", tickOffset),
-            buildBar(true, "roll", tickOffset)
-        ];
-        endBar[0].startTick = -tickOffset;
-        endBar[1].startTick = -tickOffset;
-        tab.appendChild(endBar[0]);
-        roll.appendChild(endBar[1]);
-
-        pixelCapacity = (startBar[0].ticks + endBar[0].ticks) * tickSpacing;
+        pixelCapacity = startBar[0].ticks * tickSpacing;
 
     }
 
@@ -297,7 +294,7 @@ var Track = (function() {
             if (!ticks) ticks = barTicks;
             div.style.height = (ticks * tickSpacing) + "px";
             if (first) {
-                div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", 0));
+                div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", reversed ? 0 : ticks * tickSpacing));
             }
             div.ticks = ticks;
 
@@ -305,7 +302,7 @@ var Track = (function() {
             var ticksPerBeat = (60 * Metadata.ticksPerSecond) / bpm;
             var beats = meterBar;
             div.style.height = (beats * ticksPerBeat * tickSpacing) + "px";
-            div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", 0));
+            div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", reversed ? 0 : ticks * tickSpacing));
 
             for (var b = 1; b < beats; b++) {
                 div.appendChild(buildMarker("measure-marker-2-" + pngSuffix + ".png", b * ticksPerBeat * tickSpacing));

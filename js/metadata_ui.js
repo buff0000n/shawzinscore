@@ -48,8 +48,6 @@ var MetadataUI = (function() {
     }
     var noteRollWidth = 12;
 
-    var leadInTicks = 2 * Metadata.ticksPerSecond;
-
     var noteKeyboardBoxes = {
         "c1": {"left": 2, "top": 55, "width": 20, "height": 41},
             "cs1": {"left": 9, "top": 0, "width": 23, "height": 55},
@@ -138,7 +136,6 @@ var MetadataUI = (function() {
     return {
         // UI metadata
         tickSpacing: tickSpacing,
-        leadInTicks: leadInTicks,
         tabStringXOffsets: tabStringXOffsets,
         tabFretOffsets: tabFretOffsets,
         noteToRollOffsets: noteToRollOffsets,

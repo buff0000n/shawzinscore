@@ -103,7 +103,7 @@ var Playback = (function() {
 
         playbackStartTick = Track.getPlaybackTick();
         if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
-            playbackStartTick = -MetadataUI.leadInTicks;
+            playbackStartTick = -Metadata.leadInTicks;
             Track.clearPlayback();
         }
 

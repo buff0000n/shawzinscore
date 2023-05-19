@@ -66,6 +66,8 @@ var Metadata = (function() {
     // technically the song code format can support 4m16s, but the game caps it at exactly 4m
     var maxTickLength = 4 * 60 * ticksPerSecond;
     var maxNotes = 1000;
+    // the UI gives you about a 2.75 second lead-in before the song starts
+    var leadInTicks = Math.ceil(2.75 * ticksPerSecond);
 
     var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void", "lonesome", "courtly" ];
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
@@ -2263,5 +2265,6 @@ var Metadata = (function() {
         ticksPerSecond: ticksPerSecond,
         maxTickLength: maxTickLength,
         maxNotes: maxNotes,
+        leadInTicks: leadInTicks,
     }
 })();
