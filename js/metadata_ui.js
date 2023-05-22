@@ -1,3 +1,11 @@
+class ControlKey {
+    constructor(name, altText, imgBase = ("key_" + name)) {
+        this.name = name;
+        this.altText = altText;
+        this.imgBase = imgBase;
+    }
+}
+
 class ControlScheme {
     constructor(name, img, string1, string2, string3, fret1, fret2, fret3) {
         this.name = name;
@@ -79,57 +87,105 @@ var MetadataUI = (function() {
             "ds3": {"left": 321, "top": 0, "width": 23, "height": 55},
     }
 
-    var key = {
-        // common
-        up: "u",
-        down: "d",
-        left: "l",
-        right: "r",
-        // pc
-        one: "1",
-        two: "2",
-        three: "3",
-        // console common
-        l1: "l1",
-        l2: "l2",
-        r1: "r1",
-        r2: "r2",
-        // psn
-        square: "square",
-        cross: "cross",
-        circle: "circle",
-        triangle: "triangle",
-        // xbx, nsw
-        a: "a",
-        b: "b",
-        x: "x",
-        y: "y",
+    var key_pc = {
+        up: new ControlKey("u", "\u2191"),
+        down: new ControlKey("d", "\u2193"),
+        left: new ControlKey("l", "\u2190"),
+        right: new ControlKey("r", "\u2192"),
+        one: new ControlKey("1", "1"),
+        two: new ControlKey("2", "2"),
+        three: new ControlKey("2", "2"),
+        // I'm not putting in one for every dang key.
+    }
+
+    // Thanks to (XBOX)cubeof11 for these
+    var key_xbx = {
+        up: new ControlKey("u", "\uE3E1"),
+        down: new ControlKey("d", "\uE3DF"),
+        left: new ControlKey("l", "\uE3DE"),
+        right: new ControlKey("r", "\uE3E0"),
+        l1: new ControlKey("l1", "\uE3ED"),
+        l2: new ControlKey("l2", "\uE3E6"),
+        r1: new ControlKey("r1", "\uE3EB"),
+        r2: new ControlKey("r2", "\uE3E4"),
+        a: new ControlKey("a", "\uE3CE"),
+        b: new ControlKey("b", "\uE3CD"),
+        x: new ControlKey("x", "\uE3CB"),
+        y: new ControlKey("y", "\uE3CC"),
+    }
+
+    var key_psn = {
+        up: new ControlKey("u", "\u2191"),
+        down: new ControlKey("d", "\u2193"),
+        left: new ControlKey("l", "\u2190"),
+        right: new ControlKey("r", "\u2192"),
+        l1: new ControlKey("l1", "LB"),
+        l2: new ControlKey("l2", "LT"),
+        r1: new ControlKey("r1", "RB"),
+        r2: new ControlKey("r2", "RT"),
+        square: new ControlKey("square", "\u25A1"),
+        cross: new ControlKey("cross", "\u2A2F"),
+        circle: new ControlKey("circle", "\u25EF"),
+        triangle: new ControlKey("triangle", "\u25B3"),
+    }
+
+    var key_nsw = {
+        up: new ControlKey("u", "\u2191"),
+        down: new ControlKey("d", "\u2193"),
+        left: new ControlKey("l", "\u2190"),
+        right: new ControlKey("r", "\u2192"),
+        l1: new ControlKey("l1", "LB"),
+        l2: new ControlKey("l2", "LT"),
+        r1: new ControlKey("r1", "RB"),
+        r2: new ControlKey("r2", "RT"),
+        a: new ControlKey("a", "A"),
+        b: new ControlKey("b", "B"),
+        x: new ControlKey("x", "X"),
+        y: new ControlKey("y", "Y"),
     };
 
     var controlSchemes = {
         "pc": new ControlScheme(
             "PC Standard",
             "icon-control-scheme-pc.png",
-            key.one, key.two, key.three,
-            key.left, key.down, key.right
+            key_pc.one, key_pc.two, key_pc.three,
+            key_pc.left, key_pc.down, key_pc.right
         ),
         "psn": new ControlScheme(
-            "PSN Standard",
+            "PSN (Old)",
             "icon-control-scheme-psn.png",
-            key.square, key.cross, key.circle,
-            key.l1, key.r1, key.r2
+            key_psn.square, key_psn.cross, key_psn.circle,
+            key_psn.l1, key_psn.r1, key_psn.r2
+        ),
+        "psn2": new ControlScheme(
+            "PSN (New)",
+            "icon-control-scheme-psn.png",
+            key_psn.square, key_psn.cross, key_psn.circle,
+            key_psn.left, key_psn.down, key_psn.right
         ),
         "xbx": new ControlScheme(
-            "XBX Standard",
+            "XBX (Old)",
             "icon-control-scheme-xbx.png",
-            key.x, key.a, key.b,
-            key.l1, key.r1, key.r2
+            key_xbx.x, key_xbx.a, key_xbx.b,
+            key_xbx.l1, key_xbx.r1, key_xbx.r2
+        ),
+        "xbx2": new ControlScheme(
+            "XBX (New)",
+            "icon-control-scheme-xbx.png",
+            key_xbx.x, key_xbx.a, key_xbx.b,
+            key_xbx.left, key_xbx.down, key_xbx.right
         ),
         "nsw": new ControlScheme(
-            "NSW Standard",
+            "NSW (Old)",
             "icon-control-scheme-nsw.png",
-            key.y, key.b, key.a,
-            key.l1, key.r1, key.r2
+            key_nsw.y, key_nsw.b, key_nsw.a,
+            key_nsw.l1, key_nsw.r1, key_nsw.r2
+        ),
+        "nsw2": new ControlScheme(
+            "NSW (New)",
+            "icon-control-scheme-nsw.png",
+            key_nsw.y, key_nsw.b, key_nsw.a,
+            key_nsw.left, key_nsw.down, key_nsw.right
         ),
     };
 

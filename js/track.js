@@ -375,32 +375,31 @@ var Track = (function() {
             dot.style.top = "0px" ;
             div.appendChild(dot);
 
-            var string = PageUtils.makeImage("key_" + controlScheme.strings[this.note.string] + "_b.png", "centerImg");
-            string.classList.add("tab-dot");
-            string.style.left = "0px";
-            string.style.top = "0px" ;
-            div.appendChild(string);
-
             if (this.note.fret != "") {
-                var fret1 = PageUtils.makeImage(this.note.fret.indexOf("1") >= 0 ? ("key_" + controlScheme.frets["1"] + "_s.png") : "tab-note-fret-0.png", "leftImg");
-                fret1.classList.add("tab-dot");
-                fret1.style.left = MetadataUI.tabFretOffsets["1"][0] + "px";
-                fret1.style.top = MetadataUI.tabFretOffsets["1"][1] + "px" ;
-                div.appendChild(fret1);
+                var classes = ["leftImg", "bottomImg", "rightImg"];
+                for (var i = 1; i <= 3; i++) {
+                    var fretKey = "" + i;
+                    var fretImg;
+                    if (this.note.fret.indexOf(fretKey) >= 0) {
+                        fretImg = PageUtils.makeImage(controlScheme.frets[fretKey].imgBase + "_s.png", classes[i - 1]);
+                        fretImg.alt = controlScheme.frets[fretKey].altText;
 
-                var fret2 = PageUtils.makeImage(this.note.fret.indexOf("2") >= 0 ? ("key_" + controlScheme.frets["2"] + "_s.png") : "tab-note-fret-0.png", "bottomImg");
-                fret2.classList.add("tab-dot");
-                fret2.style.left = MetadataUI.tabFretOffsets["2"][0] + "px";
-                fret2.style.top = MetadataUI.tabFretOffsets["2"][1] + "px" ;
-                div.appendChild(fret2);
-
-                var fret3 = PageUtils.makeImage(this.note.fret.indexOf("3") >= 0 ? ("key_" + controlScheme.frets["3"] + "_s.png") : "tab-note-fret-0.png", "rightImg");
-                fret3.classList.add("tab-dot");
-                fret3.style.left = MetadataUI.tabFretOffsets["3"][0] + "px";
-                fret3.style.top = MetadataUI.tabFretOffsets["3"][1] + "px" ;
-                div.appendChild(fret3);
+                    } else {
+                        fretImg = PageUtils.makeImage("tab-note-fret-0.png", classes[i - 1])
+                    }
+                    fretImg.classList.add("tab-dot");
+                    fretImg.style.left = MetadataUI.tabFretOffsets[fretKey][0] + "px";
+                    fretImg.style.top = MetadataUI.tabFretOffsets[fretKey][1] + "px" ;
+                    div.appendChild(fretImg);
+                }
             }
 
+            var stringImg = PageUtils.makeImage(controlScheme.strings[this.note.string].imgBase + "_b.png", "centerImg");
+            stringImg.alt = controlScheme.strings[this.note.string].altText + "\n";
+            stringImg.classList.add("tab-dot");
+            stringImg.style.left = "0px";
+            stringImg.style.top = "0px" ;
+            div.appendChild(stringImg);
 
             div.style.left = (MetadataUI.tabStringXOffsets[this.note.string]) + "px";
             div.style.top = (reversed
