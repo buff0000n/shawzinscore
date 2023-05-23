@@ -1,41 +1,23 @@
 var Controls = (function() {
 
     function registerEventListeners() {
+        var autoBlurLister = (e) => {
+            if ("Enter" == e.code) {
+                e.target.blur();
+            }
+        };
+
         document.body.addEventListener("resize", PageUtils.doonresize);
 
         document.getElementById("select-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
         document.getElementById("select-scale").addEventListener("click", doScaleSelect, { passive: false });
         document.getElementById("select-control-scheme").addEventListener("click", doControlSchemeSelect, { passive: false });
 
-        function commitNameChange() {
-            var input = document.getElementById("metadata-settings-title-text");
-            input.blur();
-            Model.setSongName(input.value);
-        }
         document.getElementById("metadata-settings-title-text").addEventListener("change", commitNameChange, { passive: false });
-        document.getElementById("metadata-settings-title-text").addEventListener("keydown", (e) => {
-            if ("Enter" == e.code) {
-                commitNameChange();
-            }
-        }, { passive: false });
+        document.getElementById("metadata-settings-title-text").addEventListener("keydown", autoBlurLister, { passive: false });
 
-        function commitSongCodeChange() {
-            var input = document.getElementById("metadata-settings-code-text");
-            var value = input.value;
-
-            if (value != Model.getSongCode()) {
-                Model.setSongCode(value);
-                // do this after checking if the code has changed, this kicks off another change event for some reason
-                input.blur();
-                updateSongCode(value);
-            }
-        }
         document.getElementById("metadata-settings-code-text").addEventListener("change", commitSongCodeChange, { passive: false });
-        document.getElementById("metadata-settings-code-text").addEventListener("keydown", (e) => {
-            if ("Enter" == e.code) {
-                commitSongCodeChange();
-            }
-        }, { passive: false });
+        document.getElementById("metadata-settings-code-text").addEventListener("keydown", autoBlurLister, { passive: false });
 
         document.getElementById("pasteCodeButton").addEventListener("click", (e) => {
             navigator.clipboard.readText().then((text) => {
@@ -49,11 +31,59 @@ var Controls = (function() {
         }, { passive: false });
 
         document.getElementById("copyCodeButton").addEventListener("click", (e) => {
-        navigator.clipboard.writeText(document.getElementById("metadata-settings-code-text").value).then(
-          () => { /* popup? */ },
-          () => {}
-        );
+            navigator.clipboard.writeText(document.getElementById("metadata-settings-code-text").value).then(
+              () => { /* popup? */ },
+              () => {}
+            );
         }, { passive: false });
+
+        document.getElementById("song-buttons-config").addEventListener("click", doConfigMenu, { passive: false });
+
+        document.getElementById("config-meter-input").addEventListener("change", commitMeterChange, { passive: false });
+        document.getElementById("config-meter-input").addEventListener("keydown", autoBlurLister, { passive: false });
+
+        document.getElementById("config-tempo-input").addEventListener("change", commitTempoChange, { passive: false });
+
+        document.getElementById("config-leadin-input").addEventListener("change", commitLeadinChange, { passive: false });
+        document.getElementById("config-leadin-input").addEventListener("keydown", autoBlurLister, { passive: false });
+
+        initTempoControl();
+    }
+
+    function commitNameChange() {
+        var input = document.getElementById("metadata-settings-title-text");
+        input.blur();
+        Model.setSongName(input.value);
+    }
+
+    function commitSongCodeChange() {
+        var input = document.getElementById("metadata-settings-code-text");
+        var value = input.value;
+
+        if (value != Model.getSongCode()) {
+            Model.setSongCode(value);
+            // do this after checking if the code has changed, this kicks off another change event for some reason
+            input.blur();
+            updateSongCode(value);
+        }
+    }
+
+    function initTempoControl() {
+        var input = document.getElementById("config-tempo-input");
+
+        var option = document.createElement("option");
+        option.selected = true;
+        option.value = "";
+        option.innerHTML = `None`;
+        input.appendChild(option);
+
+        for (var i = 0; i < MetadataUI.tempoList.length; i++) {
+            var tempo = MetadataUI.tempoList[i];
+            var option = document.createElement("option");
+            option.value = `${tempo}`;
+            option.innerHTML = option.value;
+            input.appendChild(option);
+        }
     }
 
     function updateSongCode(songCode) {
@@ -168,21 +198,44 @@ var Controls = (function() {
         var close = Menus.showMenu(selectionDiv, this, "Select Control Scheme");
     }
 
-    function trackChangeMeter(meter, bpm, leadin) {
+    function commitMeterChange() {
+        var input = document.getElementById("config-meter-input");
+        var value = input.value ? input.value.trim() : null;
 
-
-
+        Model.setMeter(value == null ? null : value.trim());
     }
 
-    // callback has changeMeter(meter, bpm, lead-in)
-    function buildMeterControls(changeCallback) {
-        var div = document.createElement("div");
+    function commitTempoChange() {
+        var input = document.getElementById("config-tempo-input");
+        var value = input.value ? input.value.trim() : null;
+        var intValue = (value == null || value.length == 0) ? null : MiscUtils.parseInt(value.trim());
 
+        Model.setTempo(intValue);
+    }
 
-        return div;
+    function commitLeadinChange() {
+        var input = document.getElementById("config-leadin-input");
+        var value = input.value ? input.value.trim() : null;
+
+        Model.setLeadin(value);
+    }
+
+    function doConfigMenu() {
+        var menuDiv = document.createElement("div");
+        menuDiv.className = "selection-div";
+
+        var tempoMeterDiv = document.getElementById("config-tempo-meter");
+        tempoMeterDiv.remove();
+        menuDiv.appendChild(tempoMeterDiv);
+
+        var close = Menus.showMenu(menuDiv, this, "Config", false, () => {
+            tempoMeterDiv.remove();
+            document.getElementById("hidden-things").appendChild(tempoMeterDiv);
+        });
     }
 
     // public members
+
     return  {
         registerEventListeners: registerEventListeners,
         updateSongCode: updateSongCode,

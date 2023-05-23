@@ -600,12 +600,6 @@ pachel
                 <td id="song-buttons" style="width: 340px; text-align: center;">
                     <div id="song-buttons-config" class="smallButton">
                         <img src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x" class="icon"/>
-                        <!--<div id="song-buttons-config-menu" class="menu">
-                            <div id="song-buttons-config-tempo">Tempo</div>
-                            <div id="song-buttons-config-meter">Meter</div>
-                            <div id="song-buttons-config-lead-in">Lead In</div>
-                        </div>
-                        -->
                     </div>
 
                     <!--
@@ -693,140 +687,6 @@ pachel
     </div>
 </div>
 
-<!--
-<div class="songContainer">
-    <div class="songDiv">
-        <div class="util" id="songTitleDiv">
-            <div class="tooltip">
-                <span class="label">Song Title:</span>
-                <input id="songTitle" class="songTitle" type="text" size="50" onchange="valueChanged(this);"/>
-                <span class="tooltiptextbottom">Give your song a name</span>
-            </div>
-        </div>
-        <div class="util" id="authorDiv">
-            <div class="tooltip">
-                <span class="label">Author:</span>
-                <input id="author" class="author" type="text" size="50" onchange="valueChanged(this);"/>
-                <span class="tooltiptextbottom">Who is the author?  Be honest :)</span>
-            </div>
-        </div>
-        <div class="util" id="songCodeDiv">
-            <div class="tooltip">
-                <div class="label">Song Code:</div>
-                <textarea id="songCode" rows="5" cols="64" onchange="valueChanged(this);"></textarea>
-                <span class="tooltiptextbottom">Paste the song code in here</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="businessDiv">
-    <div class="utilGroup">
-        <div class="util" id="platformDiv">
-            <div class="tooltip">
-                <span class="label">Platform:</span>
-                <select id="platform" class="platform" onchange="platformChanged(this);">
-                    <option value="ps4" selected>PS4</option>
-                    <option value="xb1">XB1</option>
-                    <option value="nsw">NSW</option>
-                    <option value="pc">PC</option>
-                    <option value="none">None</option>
-                </select>
-                <span class="tooltiptextbottom">Select which platform's controls to display.  Choose <strong>None</strong> to use the old numeric display.</span>
-            </div>
-        </div>
-
-        <div class="util" id="meteredDiv">
-            <div class="tooltip">
-                <input id="metered" class="button" type="checkbox" onchange="meteredChanged(this);"/>
-                <span class="label">Metered</span>
-                <span class="tooltiptextbottom">Enable if the Shzawzin song follows a specific meter.</span>
-            </div>
-        </div>
-
-        <div class="util" id="secondsPerLineDiv">
-            <div class="tooltip">
-                <span class="label">Seconds per line:</span>
-                <input id="secondsPerLine" class="secondsPerLine" type="number" step="0.01" value="4" min="1" placeholder="4" onchange="valueChanged(this);"/>
-                <span class="tooltiptextbottom">How many seconds on each line</span>
-            </div>
-        </div>
-
-        <div class="util" id="meterDiv">
-            <div class="tooltip">
-                <span class="label">Time Signature:</span>
-                <input id="meter" class="meter" type="text" value="4/4" placeholder="4/4" onchange="valueChanged(this);"/>
-                <span class="tooltiptextbottom">The meter of the song</span>
-            </div>
-        </div>
-        <div class="util" id="tempoDiv">
-            <div class="tooltip">
-                <span class="label">Tempo:</span>
-                <select id="tempo" class="tempo" onchange="valueChanged(this);">
-                    <option value="120" selected>120 bps</option>
-                    <option value="160">160 bps</option>
-                    <option value="240">240 bps</option>
-                    <option value="192">192 bps</option>
-                    <option value="96">96 bps</option>
-                    <option value="80">80 bps</option>
-                    <option value="60">60 bps</option>
-                </select>
-                <span class="tooltiptextbottom">The Tempo of the song</span>
-            </div>
-        </div>
-        <div class="util" id="measuresPerLineDiv">
-            <div class="tooltip">
-                <span class="label">Measures per line:</span>
-                <input id="measuresPerLine" class="measuresPerLine" type="number" value="4" size="3" min="1" placeholder="4" onchange="valueChanged(this);"/>
-                <span class="tooltiptextbottom">How many measures per line</span>
-            </div>
-        </div>
-        <div class="util" id="leadInBeatsDiv">
-            <div class="tooltip">
-                <span class="label">Lead in beats:</span>
-                <input id="leadInBeats" class="leadInBeats" type="number" value="0" step="0.125" size="5" min="0" placeholder="0" onchange="valueChanged(this);"/>
-                <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
-            </div>
-        </div>
-
-        <div class="util" id="darkModeDiv">
-            <div class="tooltip">
-                <input id="darkMode" class="button" type="checkbox" onchange="darkModeChanged(this);"/>
-                <span class="label">Dark</span>
-                <span class="tooltiptextbottom">Enable for a dark-colored image intead of a light one.</span>
-            </div>
-        </div>
-        <div class="util" id="hiDPIDiv">
-            <div class="tooltip">
-                <input id="hiDPI" class="button" type="checkbox" onchange="hiDPIChanged(this);"/>
-                <span class="label">High DPI</span>
-                <span class="tooltiptextbottom">Enable for a higher-resolution tab image.</span>
-            </div>
-        </div>
-
-        <div id="generateDiv" class="util">
-            <span class="tooltip">
-                <input id="generateButton" class="button generate" type="submit" value="Generate Tab" onClick="startRun()"/>
-                <span class="tooltiptextbottom">Generate tablature</span>
-            </span>
-        </div>
-        <div class="util">
-            <div class="popup">
-                <input id="copyUrlButton" class="button urlButton popup" type="submit" value="Generate Link"
-                       onClick="copyModelUrl()"/>
-                <div class="popuptext" id="popupBox">
-                    <input id="urlHolder" type="text" size="60" onblur="hideUrlPopup()"/>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
--->
-
-<div id="tabArea">
-
-</div>
-
 <div class="titleBar">
     <div class="utilGroup">
         <div class="util">
@@ -840,7 +700,7 @@ pachel
         <div class="lotsOfWords">
             <h1>What is this?</h1>
             <p>
-                <a href="?c=5KAAMACSAEMAGhAIhAOUAUKAgMAiSAkMAmUAoUAuSA0RA4MA6KBAMBCSBEMBGSBIUBQRBUMBaKBcKBkUBoSBwKCAMCCSCEMCGhCIhCOUCUKCgMCiSCkMCmkCoRCuSC0RC4MC6KDAMDCSDEMDGSDIUDQRDUMDaKDcKDkUDoSDw&n=Best%20Song%20Ever">BEST SONG EVER</a>.
+                <a href="?n=Best%20Song%20Ever&s=dax&m=4%2F4&t=120&l=1&c=5KAAMACSAEMAGhAIhAOUAUKAgMAiSAkMAmUAoUAuSA0RA4MA6KBAMBCSBEMBGSBIUBQRBUMBaKBcKBkUBoSBwKCAMCCSCEMCGhCIhCOUCUKCgMCiSCkMCmkCoRCuSC0RC4MC6KDAMDCSDEMDGSDIUDQRDUMDaKDcKDkUDoSDw">BEST SONG EVER</a>.
             </p>
 
             <h1>Table of Contents</h1>
@@ -904,6 +764,34 @@ pachel
             <div><a href="https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/">u/Empyrrhus</a></div>
         </div>
     </div>
+</div>
+
+<div id="hidden-things" style="display: none;">
+    <div id="config-tempo-meter" class="field-div">
+        <div class="field-entry" id="config-meter">
+            <div class="tooltip">
+                <div class="fieldTitle">Time Signature:</div>
+                <input id="config-meter-input" class="meter" type="text" value="" placeholder="4/4"/>
+                <span class="tooltiptextbottom">The meter of the song</span>
+            </div>
+        </div>
+        <div class="field-entry" id="config-tempo">
+            <div class="tooltip">
+                <div class="fieldTitle">Tempo:</div>
+                <select id="config-tempo-input" >
+                </select>
+                <span class="tooltiptextbottom">The Tempo of the song</span>
+            </div>
+        </div>
+        <div class="field-entry" id="config-leadin">
+            <div class="tooltip">
+                <div class="fieldTitle">Lead-in beats:</div>
+                <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
+                <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <p>

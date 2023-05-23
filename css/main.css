@@ -72,6 +72,18 @@ td {
     background-color: #808080;
     color: #FFFFFF;
 }
+.field-entry {
+    padding: 0.5ex;
+    margin: 0.5ex;
+    border-radius: 1ex;
+    background-color: #404040;
+}
+
+.field-div {
+    border-radius: 1ex;
+    background-color: #202020;
+    text-align: left;
+}
 
 #title-bar {
 }

@@ -7,17 +7,13 @@ var Track = (function() {
     var tickSpacing = MetadataUI.tickSpacing;
     var reversed = false;
 
-    var bpm = null;
-    var meterBar = null;
-    var meterBeat = null;
-
     var startBar = null;
 
     var bars = [];
     var tickCapacity = 0;
     var pixelCapacity = 0;
-    // todo: default, changed when there is a meter
-    var barTicks = 32;
+    var defaultBarTicks = 32;
+    var barTicks = null;
     var playbackOffset = 0.35;
     var scrollThrottleMs = 250;
 
@@ -71,34 +67,39 @@ var Track = (function() {
             }
         }
         clearBars();
-        ensureTickCapacity(0);
         song = newSong;
         if (song) {
+            ensureTickCapacity(0);
             for (var n = 0; n < song.notes.length; n++) {
                 var noteView = getView(song.notes[n]);
                 noteView.clear();
                 noteView.build();
             }
-        }
-        scrollToTick(0);
-    }
-
-    function setBpm(newBpm) {
-        if (this.bpm != newBpm) {
-            this.bpm = newBpm;
-            if (this.meterBar) {
-                rebuildRollNotes();
-            }
+            scrollToTick(0);
         }
     }
 
-    function setMeter(measure, beats) {
-        if (this.bpm != newBpm) {
-            this.bpm = newBpm;
-            if (this.meterBar) {
-                rebuildRollNotes();
+    function getBarTicks() {
+        // lazily initialize this
+        if (barTicks == null) {
+            var tempo = Model.getTempo();
+            if (tempo == null) {
+                barTicks = defaultBarTicks;
+
+            } else {
+                barTicks = ((60 * Metadata.ticksPerSecond) / tempo) * Model.getMeterTop();
             }
         }
+        return barTicks;
+    }
+
+    function updateStructure() {
+        barTicks = null;
+        var tick = getScrollTick();
+        // MEH
+        setSong(song);
+        ensureTickCapacity(tick);
+        scrollToTick(tick);
     }
 
     function rebuildRollNotes() {
@@ -168,6 +169,14 @@ var Track = (function() {
         scroll.scrollTo(0, pos - halfHeight);
     }
 
+    function getScrollTick() {
+        var halfHeight = (viewHeight/2);
+        var pos = scroll.scrollTop + halfHeight;
+        var tick = reversed
+                  ? tickCapacity - (pos / tickSpacing)
+                  : (pos / tickSpacing) - tickOffset
+        return tick;
+    }
 
     function getPlaybackTick() {
         return playbackMarker != null ? playbackMarker.playTick : null;
@@ -250,7 +259,8 @@ var Track = (function() {
 
     function trimTickCapacity(ticks) {
         var count = 0;
-        while (tickCapacity > ticks + visibleTicks) {
+        // Need to add a barTicks buffer to prevent thrashing on a measure boundary
+        while (tickCapacity > ticks + visibleTicks + getBarTicks()) {
             //console.log("trimming: " + tickCapacity + " < " + ticks + "(" + (++count) + ")");
             removeBar();
         }
@@ -261,7 +271,7 @@ var Track = (function() {
             return startBar;
         }
         ensureTickCapacity(tick);
-        return bars[Math.floor(tick / barTicks)];
+        return bars[Math.floor(tick / getBarTicks())];
     }
 
     function buildStartBar() {
@@ -275,7 +285,6 @@ var Track = (function() {
         roll.appendChild(startBar[1]);
 
         pixelCapacity = startBar[0].ticks * tickSpacing;
-
     }
 
     function buildMarker(png, top) {
@@ -290,8 +299,10 @@ var Track = (function() {
         var div = document.createElement("div");
         div.className = "measure-spacer";
 
-        if (ticks || !bpm) {
-            if (!ticks) ticks = barTicks;
+        var tempo = Model.getTempo();
+
+        if (ticks || !tempo) {
+            if (!ticks) ticks = getBarTicks();
             div.style.height = (ticks * tickSpacing) + "px";
             if (first) {
                 div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", reversed ? 0 : ticks * tickSpacing));
@@ -299,8 +310,8 @@ var Track = (function() {
             div.ticks = ticks;
 
         } else {
-            var ticksPerBeat = (60 * Metadata.ticksPerSecond) / bpm;
-            var beats = meterBar;
+            var ticksPerBeat = (60 * Metadata.ticksPerSecond) / tempo;
+            var beats = Model.getMeterTop();
             div.style.height = (beats * ticksPerBeat * tickSpacing) + "px";
             div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", reversed ? 0 : ticks * tickSpacing));
 
@@ -308,7 +319,7 @@ var Track = (function() {
                 div.appendChild(buildMarker("measure-marker-2-" + pngSuffix + ".png", b * ticksPerBeat * tickSpacing));
             }
 
-            div.ticks = ticksPerBeat * beats;
+            div.ticks = getBarTicks(); // should be the same as ticksPerBeat * beats;
         }
 
         return div;
@@ -589,12 +600,10 @@ var Track = (function() {
     return  {
         registerEventListeners: registerEventListeners,
         setSong: setSong,
-        setBpm: setBpm,
-        setMeter: setMeter,
         updateShawzin: rebuildRollNotes,
         updateScale: rebuildRollNotes,
-        updateLeadIn: rebuildRollNotes,
         updateControlScheme: rebuildTabNotes,
+        updateStructure: updateStructure,
 
         setPlaybackTick: setPlaybackTick,
         getPlaybackTick: getPlaybackTick,

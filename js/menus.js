@@ -10,6 +10,9 @@ var Menus = (function() {
     function clearMenus(leave = 0) {
         while (getCurrentMenuLevel() > leave) {
             var menu = menus.pop();
+            if (menu.closeCallback) {
+                menu.closeCallback();
+            }
             menu.remove();
             // check if the menu had an undo action associated with it
 //            if (menu.undoAction) {
@@ -25,9 +28,6 @@ var Menus = (function() {
 //            }
 //
 //            // check if the menu had a close callback associated with it
-//            if (menu.closeCallback) {
-//                menu.closeCallback();
-//            }
         }
         // might as well clear all popups
 //        clearErrors();
@@ -81,9 +81,10 @@ var Menus = (function() {
     });
 
     function doCloseMenu(e) {
-        if (e) {
-            e.preventDefault();
-        }
+        // just let the event play through in case someone clicks on an input
+//        if (e) {
+//            e.preventDefault();
+//        }
         // "this" is the element that was clicked, which should have a menu level set
         clearMenus(this.menuLevel);
     }
@@ -132,9 +133,10 @@ var Menus = (function() {
         menuDiv.onclose = () => {
             clearMenus(menuDiv.menuLevel - 1);
         };
-        menuDiv.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-        });
+        // todo: why?
+//        menuDiv.addEventListener("mousedown", (e) => {
+//            e.preventDefault();
+//        });
 
         return menuDiv;
     }
@@ -245,11 +247,13 @@ var Menus = (function() {
             var left = fullWidth ? 0 : elementBcr.right;
             var top = elementBcr.top;
         }
-        return [left, top];
+        var s = document.scrollingElement;
+        return [left + s.scrollLeft, top + s.scrollTop];
     }
 
-    function showMenu(contentDiv, element, title, fullWidth = false) {
+    function showMenu(contentDiv, element, title, fullWidth = false, closeCallback = null) {
         var menuDiv = buildMenu(contentDiv, title);
+        menuDiv.closeCallback = closeCallback;
         var [left, top] = getMenuCoordsFromElement(element, fullWidth);
         showMenuAt(menuDiv, left, top);
         return menuDiv.onclose;

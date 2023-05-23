@@ -4,8 +4,13 @@ var Model = (function() {
     var song = null;
     var songCode = null;
     var songName = null;
-    // todo: configurable
     var controlScheme = null;
+
+    var meter = null;
+    var meterArray = null;
+    var tempo = null;
+    var leadin = null;
+    var leadinTicks = null;
 
     var updateDelay = 1000;
     var scheduledUpdate = null;
@@ -14,15 +19,22 @@ var Model = (function() {
         // gotta do this before filling in the track
         doSetControlScheme(Settings.getControlScheme());
 
-        shawzin = PageUtils.getQueryParam("s");
+        var shawzin = PageUtils.getQueryParam("s");
+        var songName = PageUtils.getQueryParam("n");
+        var songCode = PageUtils.getQueryParam("c");
+        var songTempo = PageUtils.getQueryParam("t");
+        var songMeter = PageUtils.getQueryParam("m");
+        var songLeadin = PageUtils.getQueryParam("l");
+
         if (!shawzin) shawzin = Metadata.shawzinOrder[0];
         doSetShawzin(shawzin);
 
-        songName = PageUtils.getQueryParam("n");
         doSetSongName(songName); // can be null
 
+        var songTempoInt = (songTempo && songTempo != "") ? MiscUtils.parseInt(songTempo) : null;
+        doSetStructure(songMeter, songTempoInt, songLeadin);
+
         // todo: compressed format?
-        songCode = PageUtils.getQueryParam("c");
         if (songCode) {
             var newSong = new Song();
             newSong.fromString(songCode);
@@ -54,10 +66,14 @@ var Model = (function() {
 
     function doUpdate() {
         var songCode = doUpdateSongCode();
-        PageUtils.setQueryParam("n", songName);
-        PageUtils.setQueryParam("s", shawzin);
-        // todo: compressed format?
-        PageUtils.setQueryParam("c", songCode);
+        PageUtils.setQueryParamMap({
+            "n": songName,
+            "s": shawzin,
+            "m": meter,
+            "t": tempo,
+            "l": leadin,
+            // todo: compressed format?
+            "c": songCode});
     }
 
     function doSetShawzin(name) {
@@ -106,7 +122,7 @@ var Model = (function() {
         `;
         for (i = 1; i <= 3; i++) {
             var img = document.getElementById("tab-note-fret-" + i);
-            PageUtils.setImgSrc(img, "key_"  + controlScheme.frets["" + i] + "_w.png");
+            PageUtils.setImgSrc(img, controlScheme.frets["" + i].imgBase + "_w.png");
         }
 
         Settings.setControlScheme(controlScheme);
@@ -128,6 +144,10 @@ var Model = (function() {
     }
 
     function doSetSong(newSong, newSongCode=null) {
+        if (tempo != null) {
+            setLeadInTicksOnSong(newSong);
+        }
+
         // update playback first so it stops any playback in progress
         Playback.setSong(newSong);
 
@@ -136,6 +156,103 @@ var Model = (function() {
         updateScale();
 
         Track.setSong(song);
+    }
+
+    // easiest to just handle threse three parameters all at the same time
+    function doSetStructure(newMeter, newTempo, newLeadin) {
+        if (newMeter == meter && newTempo == tempo && newLeadin == leadin) return;
+
+        // standardize non-values
+        if (newMeter == "") newMeter = null;
+        if (newTempo == 0) newTempo = null;
+        if (newLeadin == "") newLeadin = null;
+        // just parse tempo, it's simple
+
+        // if we're transition from no structure to some structure, fill in any missing values with defaults
+        if (!meter && (newMeter || newTempo || newLeadin)) {
+            if (!newMeter) newMeter = MetadataUI.defaultMeter;
+            if (!newTempo) newTempo = MetadataUI.detaultTempo;
+            // if leadin is null then it can stay null
+
+        // if we're transition from having structure no structure, clear everything out
+        } else if (meter && (!newMeter || !newTempo)) {
+            newMeter = null;
+            newTempo = null;
+            newLeadin = null;
+        }
+
+        if (!newMeter) {
+            // clear everything
+            meter = null;
+            meterArray = null;
+            tempo = null;
+            leadin = null;
+            leadinTicks = null;
+
+        } else {
+            // parse meter
+            var newMeterStringArray = newMeter.split("/");
+            if (newMeterStringArray.length != 2) {
+                throw "Invalid meter format: '" + newMeter + "'";
+            }
+            var newMeterArray = [MiscUtils.parseInt(newMeterStringArray[0]), MiscUtils.parseInt(newMeterStringArray[1])];
+
+            // parse leadin and convert from beats to ticks
+            var newLeadInTicks = !newLeadin ? 0 :
+                Math.round(MiscUtils.parseFloat(newLeadin) * ((Metadata.ticksPerSecond * 60) / newTempo));
+
+            // after all the parsing/checking is done, save the values
+            meter = newMeter;
+            meterArray = newMeterArray;
+            tempo = newTempo;
+            leadin = newLeadin;
+            leadinTicks = newLeadInTicks;
+        }
+
+        // update UI controls
+        var meterInput = document.getElementById("config-meter-input");
+        meterInput.value = meter ? meter : "";
+
+        var tempoInput = document.getElementById("config-tempo-input");
+        tempoInput.value = tempo ? tempo : "";
+
+        var leadinInput = document.getElementById("config-leadin-input");
+        leadinInput.value = leadin ? leadin : "";
+
+        // apply the leadin to the song
+        setLeadInTicksOnSong(song);
+
+        // update the Track
+        Track.updateStructure();
+    }
+
+    function setLeadInTicksOnSong(song) {
+        if (!song) return;
+        
+        if (leadinTicks && tempo && meterArray) {
+            var beatsPerMeasure = meterArray[0];
+            var ticksPerMeasure = (60.0 / tempo) * Metadata.ticksPerSecond * beatsPerMeasure;
+            if (leadinTicks < ticksPerMeasure / 2) {
+                song.setLeadInTicks(-leadinTicks);
+            } else {
+                song.setLeadInTicks(ticksPerMeasure - leadinTicks);
+            }
+        } else {
+            song.setLeadInTicks(0);
+        }
+    }
+
+    function setStructure(newMeter, newTempo, newLeadin) {
+        var currentMeter = meter;
+        var currentTempo = tempo;
+        var currentLeadin = leadin;
+        if (newMeter != currentMeter || newTempo != currentTempo || newLeadin != currentLeadin) {
+            Undo.doAction(
+                () => { doSetStructure(newMeter, newTempo, newLeadin); scheduleUpdate(); },
+                () => { doSetStructure(currentMeter, currentTempo, currentLeadin); scheduleUpdate(); },
+                "Set Struture"
+            );
+        }
     }
 
    // public members
@@ -190,6 +307,17 @@ var Model = (function() {
             }
         },
 
+        getMeter: function() { return meter; },
+        getMeterTop: function() { return meterArray ? meterArray[0] : null; },
+        getMeterBottom: function() { return meterArray ? meterArray[1] : null; },
+        setMeter: function(newMeter) { setStructure(newMeter, tempo, leadin); },
+        getTempo: function() { return tempo; },
+        setTempo: function(newTempo) { setStructure(meter, newTempo, leadin); },
+        getLeadin: function() { return leadin; },
+        setLeadin: function(newLeadin) { setStructure(meter, tempo, newLeadin); },
+        setStructure: setStructure,
+
+        getSong: function() { return song; },
         getSongCode: doGetSongCode,
         setSongCode: function(newCode) {
             if (!newCode || newCode.length == 0) {

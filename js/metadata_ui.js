@@ -189,6 +189,18 @@ var MetadataUI = (function() {
         ),
     };
 
+    var defaultMeter = "4/4";
+    var defaultTempo = 120;
+    var tempoList = [
+        120,
+        160,
+        240,
+        192,
+        96,
+        80,
+        60
+    ];
+
     return {
         // UI metadata
         tickSpacing: tickSpacing,
@@ -199,5 +211,8 @@ var MetadataUI = (function() {
         fretToRollColors: fretToRollColors,
         noteKeyboardBoxes: noteKeyboardBoxes,
         controlSchemes: controlSchemes,
+        defaultMeter: defaultMeter,
+        defaultTempo: defaultTempo,
+        tempoList: tempoList,
     }
 })()

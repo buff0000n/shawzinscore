@@ -97,7 +97,7 @@ class Note {
             }
         }
 
-        var saveTick = this.tick + offsetTicks;
+        var saveTick = this.tick - offsetTicks;
 
         var b2 = Math.floor(saveTick / 64);
 
@@ -278,7 +278,7 @@ class Song {
         buffer += scaleCode;
 
         // All codes have to start at time 0
-        var offsetTicks = this.notes[0].ticks;
+        var offsetTicks = this.notes[0].tick;
 
         for (var n = 0; n < this.notes.length; n++) {
             buffer += this.notes[n].toString(offsetTicks);
@@ -292,14 +292,16 @@ class Song {
 
     setLeadInTicks(leadInTicks) {
         // sanity check
-        if (notes.length == 0) return;
+        if (this.notes.length == 0) return;
 
         // if there's already a lead-in, subtract it and then add the new one.
-        var leadInOffset = leadInTicks - notes[0].tick;
+        var leadInOffset = leadInTicks - this.notes[0].tick;
 
-        // iterate over all the notes
-        for (var i = 0; i < this.notes.length; i++) {
-            this.notes[i].offset(leadInOffset);
+        if (leadInOffset != 0) {
+            // iterate over all the notes
+            for (var i = 0; i < this.notes.length; i++) {
+                this.notes[i].offset(leadInOffset);
+            }
         }
 
         return this;

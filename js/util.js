@@ -383,6 +383,17 @@ var PageUtils = (function() {
         updateHref(href);
     }
 
+    function setQueryParamMap(map) {
+        // todo: optimize
+        for (key in map) {
+            removeUrlQueryParam(key);
+        }
+        for (key in map) {
+            var value = map[key];
+            setQueryParam(key, value);
+        }
+    }
+
     function getHref() {
         return hrefToUpdate ? hrefToUpdate : window.location.href;
     }
@@ -436,6 +447,7 @@ var PageUtils = (function() {
         urlDecodeString: urlDecodeString,
         getQueryParam: getQueryParam,
         setQueryParam: setQueryParam,
+        setQueryParamMap: setQueryParamMap,
 
         setImgSrc: setImgSrc,
         makeImage: makeImage,
@@ -579,7 +591,7 @@ var ExportUtils = (function() {
     }
 })();
 
-var Misc = (function(){
+var MiscUtils = (function(){
     function parseInt(s) {
         var i = Number.parseInt(s);
         if (Number.isNaN(i)) {
