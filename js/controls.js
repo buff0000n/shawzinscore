@@ -1,23 +1,17 @@
 var Controls = (function() {
 
     function registerEventListeners() {
-        var autoBlurLister = (e) => {
-            if ("Enter" == e.code) {
-                e.target.blur();
-            }
-        };
-
         document.body.addEventListener("resize", PageUtils.doonresize);
 
         document.getElementById("select-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
         document.getElementById("select-scale").addEventListener("click", doScaleSelect, { passive: false });
         document.getElementById("select-control-scheme").addEventListener("click", doControlSchemeSelect, { passive: false });
 
+        Events.setupTextInput(document.getElementById("metadata-settings-title-text"));
         document.getElementById("metadata-settings-title-text").addEventListener("change", commitNameChange, { passive: false });
-        document.getElementById("metadata-settings-title-text").addEventListener("keydown", autoBlurLister, { passive: false });
 
+        Events.setupTextInput(document.getElementById("metadata-settings-code-text"), true);
         document.getElementById("metadata-settings-code-text").addEventListener("change", commitSongCodeChange, { passive: false });
-        document.getElementById("metadata-settings-code-text").addEventListener("keydown", autoBlurLister, { passive: false });
 
         document.getElementById("pasteCodeButton").addEventListener("click", (e) => {
             navigator.clipboard.readText().then((text) => {
@@ -39,14 +33,15 @@ var Controls = (function() {
 
         document.getElementById("song-buttons-config").addEventListener("click", doConfigMenu, { passive: false });
 
+        Events.setupTextInput(document.getElementById("config-meter-input"), true);
         document.getElementById("config-meter-input").addEventListener("change", commitMeterChange, { passive: false });
-        document.getElementById("config-meter-input").addEventListener("keydown", autoBlurLister, { passive: false });
 
         document.getElementById("config-tempo-input").addEventListener("change", commitTempoChange, { passive: false });
 
+        Events.setupTextInput(document.getElementById("config-leadin-input"), true);
         document.getElementById("config-leadin-input").addEventListener("change", commitLeadinChange, { passive: false });
-        document.getElementById("config-leadin-input").addEventListener("keydown", autoBlurLister, { passive: false });
 
+        document.getElementById("toolbar-buttons-copyurl").addEventListener("click", doCopyUrlMenu, { passive: false });
         initTempoControl();
     }
 
@@ -232,6 +227,22 @@ var Controls = (function() {
             tempoMeterDiv.remove();
             document.getElementById("hidden-things").appendChild(tempoMeterDiv);
         });
+    }
+
+    function doCopyUrlMenu() {
+        var menuDiv = document.createElement("div");
+        menuDiv.className = "selection-div";
+
+        var textField = document.createElement("input");
+        textField.size = 30;
+        textField.value = Model.buildUrl();
+        menuDiv.appendChild(textField);
+
+        var close = Menus.showMenu(menuDiv, this, "Copy Link", false);
+
+        textField.focus();
+        textField.select();
+        textField.addEventListener("blur", close, { passive: false });
     }
 
     // public members

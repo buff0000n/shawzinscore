@@ -312,15 +312,28 @@ var PageUtils = (function() {
 	    return string;
 	}
 
-//    function buildQueryUrl(query) {
-//        // get the current URL and strip out any query string
-//        var url = window.location.href;
-//        url = url.replace(/\?.*/, "");
-//        // append our parameters
-//        url += query;
-//
-//        return url;
-//    }
+    function buildQueryUrlWithMap(map, plusIsSpace=true) {
+        // yowza
+        var terms = [];
+        for (var key in map) {
+            var value = map[key];
+            if (value) {
+                terms.push(`${key}=${urlEncodeString(value, plusIsSpace)}`);
+            }
+        }
+        var query = "?" + terms.join("&");
+        return buildQueryUrl(query);
+    }
+
+    function buildQueryUrl(query) {
+        // get the current URL and strip out any query string
+        var url = window.location.href;
+        url = url.replace(/\?.*/, "");
+        // append our parameters
+        url += query;
+
+        return url;
+    }
 
     function getQueryParam(name, plusIsSpace=true) {
         // from https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
@@ -448,6 +461,7 @@ var PageUtils = (function() {
         getQueryParam: getQueryParam,
         setQueryParam: setQueryParam,
         setQueryParamMap: setQueryParamMap,
+        buildQueryUrlWithMap: buildQueryUrlWithMap,
 
         setImgSrc: setImgSrc,
         makeImage: makeImage,

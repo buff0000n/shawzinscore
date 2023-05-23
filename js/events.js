@@ -47,10 +47,34 @@ var Events = (function() {
         runListeners(e, mouseDownListeners);
     }
 
+    function setupTextInput(textInput, autoSelect=false) {
+        textInput.addEventListener("focus", autoSelect ? textInputFocusSelect : textInputFocus);
+        textInput.addEventListener("keydown", textInputKeyDown);
+    }
+
+    function textInputFocus(e) {
+        e.target.lastValue = e.target.value;
+    }
+
+    function textInputFocusSelect(e) {
+        textInputFocus(e);
+        e.target.select();
+    }
+
+    function textInputKeyDown(e) {
+        if ("Enter" == e.code) {
+            e.target.blur();
+        } else if ("Escape" == e.code) {
+            e.target.value = e.target.lastValue;
+            e.target.blur();
+        }
+    };
+
     // public members
     return  {
         registerEventListeners: registerEventListeners,
         addKeyDownListener: addKeyDownListener,
         addMouseDownListener: addMouseDownListener,
+        setupTextInput: setupTextInput,
     }
 })();

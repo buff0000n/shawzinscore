@@ -64,16 +64,27 @@ var Model = (function() {
         return songCode;
     }
 
-    function doUpdate() {
+    function getQueryParamMap() {
         var songCode = doUpdateSongCode();
-        PageUtils.setQueryParamMap({
+        return {
             "n": songName,
             "s": shawzin,
             "m": meter,
             "t": tempo,
             "l": leadin,
             // todo: compressed format?
-            "c": songCode});
+            // any of the usual compression formats are going to have to be base64 encoded anyway,
+            // saving us very little at best over the default base64-esque format
+            "c": songCode
+        };
+    }
+
+    function doUpdate() {
+        PageUtils.setQueryParamMap(getQueryParamMap());
+    }
+
+    function buildUrl() {
+        return PageUtils.buildQueryUrlWithMap(getQueryParamMap());
     }
 
     function doSetShawzin(name) {
@@ -198,8 +209,26 @@ var Model = (function() {
             var newMeterArray = [MiscUtils.parseInt(newMeterStringArray[0]), MiscUtils.parseInt(newMeterStringArray[1])];
 
             // parse leadin and convert from beats to ticks
-            var newLeadInTicks = !newLeadin ? 0 :
-                Math.round(MiscUtils.parseFloat(newLeadin) * ((Metadata.ticksPerSecond * 60) / newTempo));
+            var newLeadInTicks;
+            if (!newLeadin || newLeadin == "") {
+                newLeadin = null;
+                newLeadInTicks = 0;
+
+            } else {
+                var newLeadinParts = newLeadin.split(".");
+                if (newLeadinParts.length > 2) {
+                    throw "Invalid number format: '" + newLeadin + "'";
+                }
+                var newLeadinBeats = MiscUtils.parseInt(newLeadinParts[0]);
+                while (newLeadinBeats > newMeterArray[0]) {
+                    newLeadinBeats -= newMeterArray[0];
+                }
+                var newLeadinFloat = newLeadinBeats;
+                if (newLeadinParts.length == 2) {
+                   newLeadinFloat += MiscUtils.parseFloat("0." + newLeadinParts[1]);
+                }
+                newLeadInTicks = Math.round(newLeadinFloat * ((Metadata.ticksPerSecond * 60) / newTempo));
+            }
 
             // after all the parsing/checking is done, save the values
             meter = newMeter;
@@ -341,6 +370,7 @@ var Model = (function() {
                 );
             }
         },
+        buildUrl: buildUrl,
 
         stupidPlay: function() {
             // let's just hear something I don't care how dumb this is
@@ -356,7 +386,6 @@ var Model = (function() {
             });
             return sb;
         },
-
     };
 })();
 

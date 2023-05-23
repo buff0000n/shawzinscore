@@ -23,12 +23,6 @@ var MetadataUI = (function() {
         "2": 170,
         "3": 282,
     }
-//    var tabFretYOffset = -38;
-//    var tabFretXOffsets = {
-//        "1": -34,
-//        "2": 0,
-//        "3": 34,
-//    };
 
     var tabFretOffsets = {
         "1": [-22, 0],
@@ -152,37 +146,37 @@ var MetadataUI = (function() {
             key_pc.left, key_pc.down, key_pc.right
         ),
         "psn": new ControlScheme(
-            "PSN (Old)",
+            "PSN 1",
             "icon-control-scheme-psn.png",
             key_psn.square, key_psn.cross, key_psn.circle,
             key_psn.l1, key_psn.r1, key_psn.r2
         ),
         "psn2": new ControlScheme(
-            "PSN (New)",
+            "PSN 2",
             "icon-control-scheme-psn.png",
             key_psn.square, key_psn.cross, key_psn.circle,
             key_psn.left, key_psn.down, key_psn.right
         ),
         "xbx": new ControlScheme(
-            "XBX (Old)",
+            "XBX 1",
             "icon-control-scheme-xbx.png",
             key_xbx.x, key_xbx.a, key_xbx.b,
             key_xbx.l1, key_xbx.r1, key_xbx.r2
         ),
         "xbx2": new ControlScheme(
-            "XBX (New)",
+            "XBX 2",
             "icon-control-scheme-xbx.png",
             key_xbx.x, key_xbx.a, key_xbx.b,
             key_xbx.left, key_xbx.down, key_xbx.right
         ),
         "nsw": new ControlScheme(
-            "NSW (Old)",
+            "NSW 1",
             "icon-control-scheme-nsw.png",
             key_nsw.y, key_nsw.b, key_nsw.a,
             key_nsw.l1, key_nsw.r1, key_nsw.r2
         ),
         "nsw2": new ControlScheme(
-            "NSW (New)",
+            "NSW 2",
             "icon-control-scheme-nsw.png",
             key_nsw.y, key_nsw.b, key_nsw.a,
             key_nsw.left, key_nsw.down, key_nsw.right
