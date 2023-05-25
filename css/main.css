@@ -39,6 +39,7 @@ td {
     text-align: left;
     box-shadow: 0 0 3px 3px #000000;
     z-index: 100;
+    overflow: auto;
 }
 .menu-title-bar {
     background-color: #808080;
@@ -72,11 +73,15 @@ td {
     background-color: #808080;
     color: #FFFFFF;
 }
-.field-entry {
+.field-entry, .field-entry-span {
     padding: 0.5ex;
     margin: 0.5ex;
     border-radius: 1ex;
     background-color: #404040;
+}
+
+.field-entry-span {
+    display: inline-block;
 }
 
 .field-div {
@@ -310,4 +315,10 @@ td {
 
 .tab-fret-button {
     filter: brightness(0%);
+}
+
+#shawzintab-div {
+    /* Why can't I get the height of the menu to work like this? */
+    /*overflow: auto;
+    height: 500px;*/
 }

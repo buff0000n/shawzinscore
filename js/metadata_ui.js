@@ -88,7 +88,7 @@ var MetadataUI = (function() {
         right: new ControlKey("r", "\u2192"),
         one: new ControlKey("1", "1"),
         two: new ControlKey("2", "2"),
-        three: new ControlKey("2", "2"),
+        three: new ControlKey("3", "3"),
         // I'm not putting in one for every dang key.
     }
 
@@ -145,6 +145,12 @@ var MetadataUI = (function() {
             key_pc.one, key_pc.two, key_pc.three,
             key_pc.left, key_pc.down, key_pc.right
         ),
+        "pc2": new ControlScheme(
+            "PC Reversed",
+            "icon-control-scheme-pc.png",
+            key_pc.left, key_pc.down, key_pc.right,
+            key_pc.one, key_pc.two, key_pc.three
+        ),
         "psn": new ControlScheme(
             "PSN 1",
             "icon-control-scheme-psn.png",
@@ -183,6 +189,9 @@ var MetadataUI = (function() {
         ),
     };
 
+    var noFret = new ControlKey("f0", "no fret", "fret_0");
+    var noFretImg = noFret.imgBase + "_s.png";
+
     var defaultMeter = "4/4";
     var defaultTempo = 120;
     var tempoList = [
@@ -195,11 +204,15 @@ var MetadataUI = (function() {
         60
     ];
 
+    var defaultUnitsPerLine = 4;
+
     return {
         // UI metadata
         tickSpacing: tickSpacing,
         tabStringXOffsets: tabStringXOffsets,
         tabFretOffsets: tabFretOffsets,
+        noFret: noFret,
+        noFretImg: noFretImg,
         noteToRollOffsets: noteToRollOffsets,
         noteRollWidth: noteRollWidth,
         fretToRollColors: fretToRollColors,
@@ -208,5 +221,6 @@ var MetadataUI = (function() {
         defaultMeter: defaultMeter,
         defaultTempo: defaultTempo,
         tempoList: tempoList,
+        defaultUnitsPerLine: defaultUnitsPerLine,
     }
 })()

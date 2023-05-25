@@ -41,7 +41,17 @@ var Controls = (function() {
         Events.setupTextInput(document.getElementById("config-leadin-input"), true);
         document.getElementById("config-leadin-input").addEventListener("change", commitLeadinChange, { passive: false });
 
+        document.getElementById("toolbar-buttons-shawzintab-download").addEventListener("click", doShawzinTabLink, { passive: false });
+        Events.setupTextInput(document.getElementById("config-line-units-input"), true);
+        document.getElementById("config-line-units-input").addEventListener("change", commitLineUnitsChange, { passive: false });
+        document.getElementById("config-darkmode-input").addEventListener("change", commitDarkModeChange, { passive: false });
+        document.getElementById("config-darkmode-input").checked = Settings.getDarkMode();
+        document.getElementById("config-oldmode-input").addEventListener("change", commitOldModeChange, { passive: false });
+        document.getElementById("config-oldmode-input").checked = Settings.getOldMode();
+
         document.getElementById("toolbar-buttons-copyurl").addEventListener("click", doCopyUrlMenu, { passive: false });
+        document.getElementById("toolbar-buttons-shawzintab").addEventListener("click", doShawzinTab, { passive: false });
+
         initTempoControl();
     }
 
@@ -215,17 +225,44 @@ var Controls = (function() {
         Model.setLeadin(value);
     }
 
+    function commitLineUnitsChange() {
+        var input = document.getElementById("config-line-units-input");
+        var value = input.value ? input.value.trim() : null;
+
+        Model.setUnitsPerLine(value);
+        ShawzinTab.setUnitsPerLine(Model.getUnitsPerLine());
+        ShawzinTab.render();
+    }
+
+    function commitDarkModeChange() {
+        var input = document.getElementById("config-darkmode-input");
+        var value = input.checked;
+
+        Settings.setDarkMode(value);
+        ShawzinTab.setDarkMode(value);
+        ShawzinTab.render();
+    }
+
+    function commitOldModeChange() {
+        var input = document.getElementById("config-oldmode-input");
+        var value = input.checked;
+
+        Settings.setOldMode(value);
+        ShawzinTab.setOldMode(value);
+        ShawzinTab.render();
+    }
+
     function doConfigMenu() {
         var menuDiv = document.createElement("div");
         menuDiv.className = "selection-div";
 
-        var tempoMeterDiv = document.getElementById("config-tempo-meter");
-        tempoMeterDiv.remove();
-        menuDiv.appendChild(tempoMeterDiv);
+        var structureDiv = document.getElementById("config-structure");
+        structureDiv.remove();
+        menuDiv.appendChild(structureDiv);
 
         var close = Menus.showMenu(menuDiv, this, "Config", false, () => {
-            tempoMeterDiv.remove();
-            document.getElementById("hidden-things").appendChild(tempoMeterDiv);
+            structureDiv.remove();
+            document.getElementById("hidden-things").appendChild(structureDiv);
         });
     }
 
@@ -243,6 +280,62 @@ var Controls = (function() {
         textField.focus();
         textField.select();
         textField.addEventListener("blur", close, { passive: false });
+    }
+
+    function doShawzinTab() {
+        var menuDiv = document.createElement("div");
+        menuDiv.className = "selection-div";
+
+        var ticksPerBeat = Model.getTempo() ? ((Metadata.ticksPerSecond * 60) / Model.getTempo()) : null;
+        if (ticksPerBeat) {
+            document.getElementById("config-line-units-label-measures").style.display = "block";
+            document.getElementById("config-line-units-label-seconds").style.display = "none";
+        } else {
+            document.getElementById("config-line-units-label-measures").style.display = "none";
+            document.getElementById("config-line-units-label-seconds").style.display = "block";
+        }
+
+        var canvas = document.createElement("canvas");
+        canvas.width = 1000;
+        canvas.height = 1000;
+        var container = document.getElementById("shawzintab-container");
+        container.innerHTML = "";
+        container.appendChild(canvas);
+
+        ShawzinTab.init(
+            canvas,
+            Model.getSong(),
+            Model.getControlScheme(),
+            Model.getSongName(),
+            ticksPerBeat,
+            Model.getMeterTop()
+        );
+
+        var unitsPerLine = Model.getUnitsPerLine();
+        ShawzinTab.setUnitsPerLine(unitsPerLine ? unitsPerLine : MetadataUI.defaultUnitsPerLine);
+        ShawzinTab.setDarkMode(Settings.getDarkMode());
+        ShawzinTab.setOldMode(Settings.getOldMode());
+
+        var shawzinTabDiv = document.getElementById("config-shawzintab");
+        shawzinTabDiv.remove();
+        menuDiv.appendChild(shawzinTabDiv);
+
+
+        var close = Menus.showMenu(menuDiv, this, "Shawzin Tab", true, () => {
+            shawzinTabDiv.remove();
+            ShawzinTab.close();
+            document.getElementById("hidden-things").appendChild(shawzinTabDiv);
+        });
+
+        setTimeout(() => { ShawzinTab.render(); }, 200);
+    }
+
+    function doShawzinTabLink() {
+        var menuDiv = document.createElement("div");
+        menuDiv.className = "selection-div";
+        var link = ShawzinTab.generateLink();
+        menuDiv.appendChild(link);
+        var close = Menus.showMenu(menuDiv, this, "Download Shawzin Tab", false);
     }
 
     // public members

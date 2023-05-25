@@ -11,6 +11,7 @@ var Model = (function() {
     var tempo = null;
     var leadin = null;
     var leadinTicks = null;
+    var unitsPerLine = null;
 
     var updateDelay = 1000;
     var scheduledUpdate = null;
@@ -25,6 +26,7 @@ var Model = (function() {
         var songTempo = PageUtils.getQueryParam("t");
         var songMeter = PageUtils.getQueryParam("m");
         var songLeadin = PageUtils.getQueryParam("l");
+        var tabUnitsPerLine = PageUtils.getQueryParam("u");
 
         if (!shawzin) shawzin = Metadata.shawzinOrder[0];
         doSetShawzin(shawzin);
@@ -33,6 +35,8 @@ var Model = (function() {
 
         var songTempoInt = (songTempo && songTempo != "") ? MiscUtils.parseInt(songTempo) : null;
         doSetStructure(songMeter, songTempoInt, songLeadin);
+
+        doSetUnitsPerLine(tabUnitsPerLine); // can be null
 
         // todo: compressed format?
         if (songCode) {
@@ -72,6 +76,7 @@ var Model = (function() {
             "m": meter,
             "t": tempo,
             "l": leadin,
+            "u": unitsPerLine,
             // todo: compressed format?
             // any of the usual compression formats are going to have to be base64 encoded anyway,
             // saving us very little at best over the default base64-esque format
@@ -284,6 +289,16 @@ var Model = (function() {
         }
     }
 
+    function doSetUnitsPerLine(newUnitsPerLine) {
+        if (newUnitsPerLine == unitsPerLine) return;
+        newUnitsPerLine = (newUnitsPerLine != null && newUnitsPerLine > 0) ? newUnitsPerLine : MetadataUI.defaultUnitsPerLine;
+
+        var unitsInput = document.getElementById("config-line-units-input");
+        unitsInput.value = newUnitsPerLine;
+
+        unitsPerLine = newUnitsPerLine;
+    }
+
    // public members
     return  {
         init: init,
@@ -345,6 +360,10 @@ var Model = (function() {
         getLeadin: function() { return leadin; },
         setLeadin: function(newLeadin) { setStructure(meter, tempo, newLeadin); },
         setStructure: setStructure,
+
+        getUnitsPerLine: function() { return unitsPerLine; },
+        // no undo
+        setUnitsPerLine: function(newUnitsPerLine) { doSetUnitsPerLine(newUnitsPerLine); scheduleUpdate(); },
 
         getSong: function() { return song; },
         getSongCode: doGetSongCode,

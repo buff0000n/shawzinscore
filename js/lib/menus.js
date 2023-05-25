@@ -2,6 +2,7 @@
 var Menus = (function() {
     
     var menus = Array();
+    var lastMenuEvent = null;
 
     function getCurrentMenuLevel() {
         return menus.length;
@@ -85,6 +86,9 @@ var Menus = (function() {
 //        if (e) {
 //            e.preventDefault();
 //        }
+        // okay, I guess we do have to prevent the same click from closing the same menu it just opened
+        if (e == lastMenuEvent) return;
+
         // "this" is the element that was clicked, which should have a menu level set
         clearMenus(this.menuLevel);
     }
@@ -210,30 +214,46 @@ var Menus = (function() {
 
         setTimeout(function() { menuPlacementHack1(menuDiv) }, 100);
     }
+    
+    var placementMargin = 10;
 
     function menuPlacementHack1(menuDiv) {
-        var bcr = menuDiv.getBoundingClientRect();
-        // pulled from events.js
-    //	var windowWidth;
-    //	var windowHeight;
+        var se = document.scrollingElement;
 
-        if (bcr.right > PageUtils.getWindowWidth()) {
-            menuDiv.style.left = "";
-            menuDiv.style.right = "0px";
+        var bcr = menuDiv.getBoundingClientRect();
+        var mTop = bcr.top + se.scrollTop;
+        var mLeft = bcr.left + se.scrollLeft;
+        var mHeight = bcr.height;
+        var mWidth = bcr.width;
+
+        var seTop = se.scrollTop + placementMargin;
+        var seLeft = se.scrollLeft + placementMargin;
+        // todo: why x5?
+        var seHeight = window.innerHeight - (placementMargin * 5);
+        var seWidth = window.innerWidth - (placementMargin * 5);
+        
+        if (mHeight > seHeight) mHeight = seHeight;
+        
+        if (mWidth > seWidth) mWidth = seWidth;
+
+        if (mTop < seTop) {
+            mTop = seTop;
+        } else if (mTop + mHeight > seTop + seHeight) {
+            mTop = seTop + seHeight - mHeight;
+        }
+        
+        if (mLeft < seLeft) {
+            mLeft = seLeft;
+        } else if (mLeft + mWidth > seLeft + seWidth) {
+            mLeft = seLeft + seWidth - mWidth;
         }
 
-        setTimeout(function() { menuPlacementHack2(menuDiv) }, 100);
-    }
-
-    function menuPlacementHack2(menuDiv) {
-        var bcr = menuDiv.getBoundingClientRect();
-        // pulled from events.js
-    //	var windowWidth;
-    //	var windowHeight;
-
-        if (bcr.bottom > PageUtils.getWindowHeight()) {
-            menuDiv.style.top = "";
-            menuDiv.style.bottom = "0px";
+        if (mTop != bcr.top || mLeft != bcr.left || mHeight != bcr.height || mWidth != bcr.width) {
+            //console.log(`Moved menu from ${bcr.left + se.scrollLeft}, ${bcr.top + se.scrollTop} (${bcr.width} x ${bcr.height}) to ${mLeft}, ${mTop} (${mWidth} x ${mHeight})`);
+            menuDiv.style.top = mTop + "px";
+            menuDiv.style.left = mLeft + "px";
+            menuDiv.style.height = mHeight + "px";
+            menuDiv.style.width = mWidth + "px";
         }
     }
 
@@ -256,6 +276,7 @@ var Menus = (function() {
         menuDiv.closeCallback = closeCallback;
         var [left, top] = getMenuCoordsFromElement(element, fullWidth);
         showMenuAt(menuDiv, left, top);
+        lastMenuEvent = window.event;
         return menuDiv.onclose;
     }
 

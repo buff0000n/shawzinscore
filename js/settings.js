@@ -8,6 +8,8 @@ var Settings = (function() {
     // default setting values
     var trackReversed = false;
     var controlScheme = MetadataUI.controlSchemes["pc"];
+    var darkMode = false;
+    var oldMode = false;
 
     function load() {
         // load the local storage item
@@ -23,6 +25,12 @@ var Settings = (function() {
             if (props.controlScheme != null) {
                 controlScheme = props.controlScheme;
             }
+            if (props.darkMode != null) {
+                darkMode = props.darkMode;
+            }
+            if (props.oldMode != null) {
+                oldMode = props.oldMode;
+            }
         }
     }
 
@@ -35,6 +43,8 @@ var Settings = (function() {
         var props = {
             "trackReversed": trackReversed,
             "controlScheme": controlScheme,
+            "darkMode": darkMode,
+            "oldMode": oldMode,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -47,5 +57,9 @@ var Settings = (function() {
         setTrackReversed: function(v) { if (v != trackReversed) { trackReversed = v; save(); } },
         getControlScheme: function() { return controlScheme; },
         setControlScheme: function(v) { if (v != controlScheme) { controlScheme = v; save(); } },
+        getDarkMode: function() { return darkMode; },
+        setDarkMode: function(v) { if (v != darkMode) { darkMode = v; save(); } },
+        getOldMode: function() { return oldMode; },
+        setOldMode: function(v) { if (v != oldMode) { oldMode = v; save(); } },
     }
 })()

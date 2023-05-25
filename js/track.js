@@ -396,7 +396,7 @@ var Track = (function() {
                         fretImg.alt = controlScheme.frets[fretKey].altText;
 
                     } else {
-                        fretImg = PageUtils.makeImage("tab-note-fret-0.png", classes[i - 1])
+                        fretImg = PageUtils.makeImage(MetadataUI.noFretImg, classes[i - 1])
                     }
                     fretImg.classList.add("tab-dot");
                     fretImg.style.left = MetadataUI.tabFretOffsets[fretKey][0] + "px";

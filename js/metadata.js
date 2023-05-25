@@ -73,6 +73,18 @@ var Metadata = (function() {
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
     var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
     var scaleChordOrder = [ "12-1", "12-2", "12-3", "23-1", "23-2", "23-3", "13-1", "13-2", "13-3", "123-1", "123-2", "123-3" ];
+    
+    var scaleName = {
+        "pmin": "Pentatonic Minor",
+        "pmaj": "Pentatonic Major",
+        "chrom": "Chromatic",
+        "hex": "Hexatonic",
+        "maj": "Major",
+        "min": "Minor",
+        "hira": "Hirajoshi",
+        "phry": "Phrygian Dominant",
+        "yo": "Yo",
+    }
 
     var slapMap = {};
     for (var n = 0; n < scaleNoteOrder.length; n++) {
@@ -138,7 +150,7 @@ var Metadata = (function() {
             "pmin": {
                 "config": {
                     "img": "standard/pmin/scale.png",
-                    "name": "Pentatonic Minor"
+                    "name": scaleName["pmin"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -233,7 +245,7 @@ var Metadata = (function() {
             "pmaj": {
                 "config": {
                     "img": "standard/pmaj/scale.png",
-                    "name": "Pentatonic Major"
+                    "name": scaleName["pmaj"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -328,7 +340,7 @@ var Metadata = (function() {
             "chrom": {
                 "config": {
                     "img": "standard/chrom/scale.png",
-                    "name": "Chromatic"
+                    "name": scaleName["chrom"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -424,7 +436,7 @@ var Metadata = (function() {
             "hex": {
                 "config": {
                     "img": "standard/hex/scale.png",
-                    "name": "Hexatonic"
+                    "name": scaleName["hex"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -519,7 +531,7 @@ var Metadata = (function() {
             "maj": {
                 "config": {
                     "img": "standard/maj/scale.png",
-                    "name": "Major"
+                    "name": scaleName["maj"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -614,7 +626,7 @@ var Metadata = (function() {
             "min": {
                 "config": {
                     "img": "standard/min/scale.png",
-                    "name": "Minor"
+                    "name": scaleName["min"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -709,7 +721,7 @@ var Metadata = (function() {
             "hira": {
                 "config": {
                     "img": "standard/hira/scale.png",
-                    "name": "Hirajoshi"
+                    "name": scaleName["hira"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -804,7 +816,7 @@ var Metadata = (function() {
             "phry": {
                 "config": {
                     "img": "standard/phry/scale.png",
-                    "name": "Phrygian Dominant"
+                    "name": scaleName["phry"],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -899,7 +911,7 @@ var Metadata = (function() {
             "yo": {
                 "config": {
                     "img": "standard/yo/scale.png",
-                    "name": "Yo"
+                    "name": scaleName["yo"],
                 },
                 "notes": {
                     "0-1": note.Db1,
@@ -2246,6 +2258,7 @@ var Metadata = (function() {
         shawzinOrder: shawzinOrder,
         noteOrder: noteOrder,
         scaleOrder: scaleOrder,
+        scaleName: scaleName,
         scaleNoteOrder: scaleNoteOrder,
         scaleChordOrder: scaleChordOrder,
         slapMap: slapMap,
