@@ -7,8 +7,9 @@ class ControlKey {
 }
 
 class ControlScheme {
-    constructor(name, img, string1, string2, string3, fret1, fret2, fret3) {
+    constructor(name, description, img, string1, string2, string3, fret1, fret2, fret3) {
         this.name = name;
+        this.description = description;
         this.img = img;
         this.strings = {"1": string1, "2": string2, "3": string3};
         this.frets = {"1": fret1, "2": fret2, "3": fret3};
@@ -141,48 +142,56 @@ var MetadataUI = (function() {
     var controlSchemes = {
         "pc": new ControlScheme(
             "PC Standard",
+            "Standard PC control scheme".
             "icon-control-scheme-pc.png",
             key_pc.one, key_pc.two, key_pc.three,
             key_pc.left, key_pc.down, key_pc.right
         ),
         "pc2": new ControlScheme(
             "PC Reversed",
+            "Reversed PC control scheme with numbers for frets and arrows for strings".
             "icon-control-scheme-pc.png",
             key_pc.left, key_pc.down, key_pc.right,
             key_pc.one, key_pc.two, key_pc.three
         ),
         "psn": new ControlScheme(
             "PSN 1",
+            "Standard Playstation control scheme before Duviri",
             "icon-control-scheme-psn.png",
             key_psn.square, key_psn.cross, key_psn.circle,
             key_psn.l1, key_psn.r1, key_psn.r2
         ),
         "psn2": new ControlScheme(
             "PSN 2",
+            "Standard Playstation control scheme after Duviri",
             "icon-control-scheme-psn.png",
             key_psn.square, key_psn.cross, key_psn.circle,
             key_psn.left, key_psn.down, key_psn.right
         ),
         "xbx": new ControlScheme(
             "XBX 1",
+            "Standard XBox control scheme before Duviri",
             "icon-control-scheme-xbx.png",
             key_xbx.x, key_xbx.a, key_xbx.b,
             key_xbx.l1, key_xbx.r1, key_xbx.r2
         ),
         "xbx2": new ControlScheme(
             "XBX 2",
+            "Standard XBox control scheme after Duviri",
             "icon-control-scheme-xbx.png",
             key_xbx.x, key_xbx.a, key_xbx.b,
             key_xbx.left, key_xbx.down, key_xbx.right
         ),
         "nsw": new ControlScheme(
             "NSW 1",
+            "Standard Nintendo Switch control scheme before Duviri",
             "icon-control-scheme-nsw.png",
             key_nsw.y, key_nsw.b, key_nsw.a,
             key_nsw.l1, key_nsw.r1, key_nsw.r2
         ),
         "nsw2": new ControlScheme(
             "NSW 2",
+            "Standard Nintendo Switch control scheme after Duviri",
             "icon-control-scheme-nsw.png",
             key_nsw.y, key_nsw.b, key_nsw.a,
             key_nsw.left, key_nsw.down, key_nsw.right

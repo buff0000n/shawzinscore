@@ -25,10 +25,7 @@ var Controls = (function() {
         }, { passive: false });
 
         document.getElementById("copyCodeButton").addEventListener("click", (e) => {
-            navigator.clipboard.writeText(document.getElementById("metadata-settings-code-text").value).then(
-              () => { /* popup? */ },
-              () => {}
-            );
+            copyToClipboard(document.getElementById("metadata-settings-code-text").value);
         }, { passive: false });
 
         document.getElementById("song-buttons-config").addEventListener("click", doConfigMenu, { passive: false });
@@ -53,6 +50,14 @@ var Controls = (function() {
         document.getElementById("toolbar-buttons-shawzintab").addEventListener("click", doShawzinTab, { passive: false });
 
         initTempoControl();
+    }
+
+    function copyToClipboard(value) {
+        // wat
+        navigator.clipboard.writeText(value).then(
+          () => { /* popup? */ },
+          () => {}
+        );
     }
 
     function commitNameChange() {
@@ -275,11 +280,18 @@ var Controls = (function() {
         textField.value = Model.buildUrl();
         menuDiv.appendChild(textField);
 
+        var copyDiv = document.createElement("span");
+        copyDiv.classList.add("smallButton");
+        copyDiv.classList.add("icon");
+        copyDiv.innerHTML = `<img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon"/>`;
+        copyDiv.addEventListener("click", (e) => { copyToClipboard(textField.value); });
+        menuDiv.appendChild(copyDiv);
+
         var close = Menus.showMenu(menuDiv, this, "Copy Link", false);
 
         textField.focus();
         textField.select();
-        textField.addEventListener("blur", close, { passive: false });
+        textField.scrollLeft = 0;
     }
 
     function doShawzinTab() {

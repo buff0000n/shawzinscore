@@ -263,18 +263,32 @@ pachel
         <table id="song-bar-table" style="width: 680px; height: 96px;">
             <tr>
                 <td id="song-bar-tab" style="width: 340px; text-align: center; position: relative;">
-                    <div id="tab-fret-0" class="tab-fret-div">
+                    <!-- I'd really like to group these in a div but it makes positioning super awkward -->
+                    <div id="tab-string-1" class="tab-string-div" style="position: absolute; left: 58px; top: 50%; transform: translate(-50%,-50%);">
+                        <img id="tab-string-1-img" src="img/tab-string.png" srcset="img2x/tab-string.png 2x"/>
+                        <img id="tab-note-string-1" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-string-button"/>
+                    </div>
+                    <div id="tab-string-2" class="tab-string-div" style="position: absolute; left: 170px; top: 50%; transform: translate(-50%,-50%);">
+                        <img id="tab-string-2-img" src="img/tab-string.png" srcset="img2x/tab-string.png 2x"/>
+                        <img id="tab-note-string-2" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-string-button"/>
+                    </div>
+                    <div id="tab-string-3" class="tab-string-div" style="position: absolute; left: 282px; top: 50%; transform: translate(-50%,-50%);">
+                        <img id="tab-string-3-img" src="img/tab-string.png" srcset="img2x/tab-string.png 2x"/>
+                        <img id="tab-note-string-3" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-string-button"/>
+                    </div>
+
+                    <div id="tab-fret-0" class="tab-fret-div" style="display: none;">
                         <img id="tab-fret-0-img" src="img/fret-0.png" srcset="img2x/fret-0.png 2x"/>
                     </div>
-                    <div id="tab-fret-1" class="tab-fret-div">
+                    <div id="tab-fret-1" class="tab-fret-div" style="display: none;">
                         <img id="tab-fret-1-img" src="img/fret-1.png" srcset="img2x/fret-1.png 2x"/>
                         <img id="tab-note-fret-1" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-fret-button"/>
                     </div>
-                    <div id="tab-fret-2" class="tab-fret-div">
+                    <div id="tab-fret-2" class="tab-fret-div" style="display: none;">
                         <img id="tab-fret-2-img" src="img/fret-2.png" srcset="img2x/fret-2.png 2x"/>
                         <img id="tab-note-fret-2" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-fret-button"/>
                     </div>
-                    <div id="tab-fret-3" class="tab-fret-div">
+                    <div id="tab-fret-3" class="tab-fret-div"style="display: none;">
                         <img id="tab-fret-3-img" src="img/fret-3.png" srcset="img2x/fret-3.png 2x"/>
                         <img id="tab-note-fret-3" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-fret-button"/>
                     </div>
@@ -282,16 +296,12 @@ pachel
                     <div id="track-direction" class="smallButton" style="position: absolute; left: 0px; bottom: 0px;">
                         <img src="img/icon-dropup.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                     </div>
-                    <div id="roll-chord-button" class="smallButton" style="position: absolute; right: 0px; top: 0px;">
-                        <img src="img/icon-chord-down.png" srcset="img2x/icon-chord-down.png 2x" class="icon"/>
+                    <div id="trackbar-switch" class="smallButton" style="position: absolute; left: 0px; top: 0px;">
+                        <img src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x" class="icon"/>
                     </div>
-
                     <!--
                     <div id="roll-chord-button" class="smallButton" style="position: absolute; right: 0px; top: 0px;">
-                        <img src="img/icon-chord-up.png" srcset="img2x/icon-chord-up.png 2x" class="icon"/>
-                    </div>
-                    <div id="track-direction-down" class="smallButton" style="position: absolute; right: 0px; bottom: 0px;">
-                        <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                        <img src="img/icon-chord-down.png" srcset="img2x/icon-chord-down.png 2x" class="icon"/>
                     </div>
                     -->
                 </td>
@@ -340,12 +350,13 @@ pachel
 
             <h1 id="tocTodo">To do</h1>
             <ul>
-                <li>Embed Shawzintab</li>
-                <li>Docs</li>
                 <li>disable scrolling while playing</li>
                 <li>click + drag on roll keyboard</li>
+                <li>mobile testing</li>
+                <li>Docs</li>
+                <li>sample songs</li>
                 <li>1.0</li>
-                <li>loading bar</li>
+                <li>loading bars</li>
                 <li>playback cursor moving/setting
                     <ul>
                         <li>
@@ -366,6 +377,7 @@ pachel
                 <li>Playback in reversed mode sometimes twitches the scroll position at the very end.</li>
                 <li>Playback marker is ever so slightly jittery on Windows Chrome</li>
                 <li>Playback scrolling with a very busy song is pretty janky.</li>
+                <li>Tooltips on pop-up menus are disabled while I figure out how to make that work.</li>
             </ul>
         </div>
     </div>
@@ -397,7 +409,7 @@ pachel
             <div class="tooltip">
                 <div class="fieldTitle">Time Signature:</div>
                 <input id="config-meter-input" class="meter" type="text" value="" placeholder="4/4"/>
-                <span class="tooltiptextbottom">The meter of the song</span>
+                <!--<span class="tooltiptextbottom">The meter of the song</span>-->
             </div>
         </div>
         <div class="field-entry" id="config-tempo">
@@ -405,14 +417,14 @@ pachel
                 <div class="fieldTitle">Tempo:</div>
                 <select id="config-tempo-input" >
                 </select>
-                <span class="tooltiptextbottom">The Tempo of the song</span>
+                <!--<span class="tooltiptextbottom">The Tempo of the song</span>-->
             </div>
         </div>
         <div class="field-entry" id="config-leadin">
             <div class="tooltip">
                 <div class="fieldTitle">Lead-in beats:</div>
                 <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
-                <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
+                <!--<span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>-->
             </div>
         </div>
     </div>

@@ -1,6 +1,7 @@
 var TrackBar = (function() {
 
     trackReversed = false;
+    showFrets = false;
     fretEnabled = [false, false, false, false];
 
     rollKeyButtonDiv = null;
@@ -13,8 +14,15 @@ var TrackBar = (function() {
             Settings.setTrackReversed(newReversed);
         });
 
-        var chordDiv = document.getElementById("roll-chord-button");
-        chordDiv.addEventListener("click", selectChord);
+        var switchDiv = document.getElementById("trackbar-switch");
+        switchDiv.addEventListener("click", () => {
+            var newShowFrets = !Settings.isShowFrets();
+            setShowFrets(newShowFrets);
+            Settings.setShowFrets(newShowFrets);
+        });
+
+//        var chordDiv = document.getElementById("roll-chord-button");
+//        chordDiv.addEventListener("click", selectChord);
 
         for (var fret = 0; fret < 4; fret++) {
             var fretDiv = document.getElementById("tab-fret-" + fret);
@@ -39,6 +47,7 @@ var TrackBar = (function() {
         }, { passive: false });
 
         setTrackDirection(Settings.isTrackReversed());
+        setShowFrets(Settings.isShowFrets());
     }
 
     function updateScale() {
@@ -98,7 +107,8 @@ var TrackBar = (function() {
         if (trackReversed == reverse) return;
 
         var dirDiv = document.getElementById("track-direction");
-        var chordDiv = document.getElementById("roll-chord-button");
+        var switchDiv = document.getElementById("trackbar-switch");
+//        var chordDiv = document.getElementById("roll-chord-button");
 
         var songBarDiv = document.getElementById("song-bar");
         var songScrollDiv = document.getElementById("song-scroll");
@@ -107,8 +117,10 @@ var TrackBar = (function() {
             PageUtils.setImgSrc(dirDiv.children[0], "icon-dropup.png");
             dirDiv.style.top = "0px";
             dirDiv.style.bottom = "";
+            switchDiv.style.top = "";
+            switchDiv.style.bottom = "0px";
 
-            PageUtils.setImgSrc(chordDiv.children[0], "icon-chord-up.png");
+//            PageUtils.setImgSrc(chordDiv.children[0], "icon-chord-up.png");
 
             songBarDiv.remove();
             DomUtils.insertAfter(songBarDiv, songScrollDiv);
@@ -117,8 +129,10 @@ var TrackBar = (function() {
             PageUtils.setImgSrc(dirDiv.children[0], "icon-dropdown.png");
             dirDiv.style.top = "";
             dirDiv.style.bottom = "0px";
+            switchDiv.style.top = "0px";
+            switchDiv.style.bottom = "";
 
-            PageUtils.setImgSrc(chordDiv.children[0], "icon-chord-down.png");
+//            PageUtils.setImgSrc(chordDiv.children[0], "icon-chord-down.png");
 
             songBarDiv.remove();
             DomUtils.insertBefore(songBarDiv, songScrollDiv);
@@ -128,9 +142,26 @@ var TrackBar = (function() {
         Track.setReversed(reverse);
     }
 
-    function selectChord() {
-        console.log("select chord");
+    function setShowFrets(newShowFrets) {
+        if (showFrets == newShowFrets) return;
+
+        var switchDiv = document.getElementById("trackbar-switch");
+        PageUtils.setImgSrc(switchDiv.children[0], newShowFrets ? "icon-trackbar-switch-strings.png" : "icon-trackbar-switch-frets.png");
+
+        for (var i = 1; i <= 3; i++) {
+            document.getElementById(`tab-string-${i}`).style.display = newShowFrets ? "none" : "inline-block";
+        }
+        for (var i = 0; i <= 3; i++) {
+            document.getElementById(`tab-fret-${i}`).style.display = newShowFrets ? "inline-block" : "none";
+        }
+
+        showFrets = newShowFrets;
     }
+    
+
+//    function selectChord() {
+//        console.log("select chord");
+//    }
 
     function toggleFretEnabled(fret) {
         setFretEnabled(fret, !fretEnabled[fret]);

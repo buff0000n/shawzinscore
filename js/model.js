@@ -140,6 +140,10 @@ var Model = (function() {
             var img = document.getElementById("tab-note-fret-" + i);
             PageUtils.setImgSrc(img, controlScheme.frets["" + i].imgBase + "_w.png");
         }
+        for (i = 1; i <= 3; i++) {
+            var img = document.getElementById("tab-note-string-" + i);
+            PageUtils.setImgSrc(img, controlScheme.strings["" + i].imgBase + "_w.png");
+        }
 
         Settings.setControlScheme(controlScheme);
         Track.updateControlScheme();

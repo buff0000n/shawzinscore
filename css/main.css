@@ -145,8 +145,8 @@ td {
     display: flex;
 }
 #song-bar-tab {
-    background-color: #404040;
-    border-radius: 1ex;
+    background-color: #101010;
+    /*border-radius: 1ex;*/
 }
 #song-bar-tab > div {
     /* display: inline-block; */
@@ -154,8 +154,8 @@ td {
     display: inline-flex;
 }
 #song-bar-roll {
-    background-color: #404040;
-    border-radius: 1ex;
+    background-color: #101010;
+    /*border-radius: 1ex;*/
     position: relative;
 }
 #roll-keyboard {}
@@ -306,6 +306,11 @@ td {
     padding: 0px;
     cursor: pointer;
 }
+.tab-string-div {
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+}
 .tab-fret-button, .tab-fret-button-enabled {
     position: absolute;
     left: 50%;
@@ -315,6 +320,13 @@ td {
 
 .tab-fret-button {
     filter: brightness(0%);
+}
+
+.tab-string-button {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #shawzintab-div {

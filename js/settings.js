@@ -7,6 +7,7 @@ var Settings = (function() {
 
     // default setting values
     var trackReversed = false;
+    var showFrets = false;
     var controlScheme = MetadataUI.controlSchemes["pc"];
     var darkMode = false;
     var oldMode = false;
@@ -21,6 +22,9 @@ var Settings = (function() {
             // check for each setting and override the default if present
             if (props.trackReversed != null) {
                 trackReversed = props.trackReversed;
+            }
+            if (props.showFrets != null) {
+                showFrets = props.showFrets;
             }
             if (props.controlScheme != null) {
                 controlScheme = props.controlScheme;
@@ -42,6 +46,7 @@ var Settings = (function() {
         // build something we can JSONify
         var props = {
             "trackReversed": trackReversed,
+            "showFrets": showFrets,
             "controlScheme": controlScheme,
             "darkMode": darkMode,
             "oldMode": oldMode,
@@ -55,6 +60,8 @@ var Settings = (function() {
         clear: clear,
         isTrackReversed: function() { return trackReversed; },
         setTrackReversed: function(v) { if (v != trackReversed) { trackReversed = v; save(); } },
+        isShowFrets: function() { return showFrets; },
+        setShowFrets: function(v) { if (v != showFrets) { showFrets = v; save(); } },
         getControlScheme: function() { return controlScheme; },
         setControlScheme: function(v) { if (v != controlScheme) { controlScheme = v; save(); } },
         getDarkMode: function() { return darkMode; },
