@@ -142,14 +142,14 @@ var MetadataUI = (function() {
     var controlSchemes = {
         "pc": new ControlScheme(
             "PC Standard",
-            "Standard PC control scheme".
+            "Standard PC control scheme",
             "icon-control-scheme-pc.png",
             key_pc.one, key_pc.two, key_pc.three,
             key_pc.left, key_pc.down, key_pc.right
         ),
         "pc2": new ControlScheme(
             "PC Reversed",
-            "Reversed PC control scheme with numbers for frets and arrows for strings".
+            "Reversed PC control scheme with numbers for frets and arrows for strings",
             "icon-control-scheme-pc.png",
             key_pc.left, key_pc.down, key_pc.right,
             key_pc.one, key_pc.two, key_pc.three

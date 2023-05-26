@@ -39,8 +39,19 @@ var Playback = (function() {
 
     }
 
+    function setPlaying(newPlaying) {
+        if (playing == newPlaying) return;
+
+        playing = newPlaying;
+        Track.setPlaying(playing);
+    }
+
+    function isPlaying() {
+        return playing;
+    }
+
     function togglePlay() {
-        if (!playing) {
+        if (!isPlaying()) {
             start();
 
         } else {
@@ -71,7 +82,7 @@ var Playback = (function() {
     }
 
     function rewind() {
-        var wasPlaying = playing;
+        var wasPlaying = isPlaying();
         stop();
         if (wasPlaying) {
             start();
@@ -99,7 +110,7 @@ var Playback = (function() {
     }
 
     function start() {
-        if (playing) return;
+        if (isPlaying()) return;
 
         playbackStartTick = Track.getPlaybackTick();
         if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
@@ -111,7 +122,7 @@ var Playback = (function() {
         soundBank.checkInit(() => {
             ShawzinAudio.setTimeOffset();
             playbackNote = song.getFirstNoteAfter(playbackStartTick);
-            playing = true;
+            setPlaying(true);
             setPauseEnabled();
             setStopEnabled(true);
             playbackLoop();
@@ -119,7 +130,7 @@ var Playback = (function() {
     }
     
     function playbackLoop() {
-        if (!playing) return;
+        if (!isPlaying()) return;
 
         var currentTime = soundBank.getCurrentTime();
         updateTrack(currentTime);
@@ -149,7 +160,7 @@ var Playback = (function() {
 
     function pause() {
         if (playing) {
-            playing = false;
+            setPlaying(false);
             soundBank.stop();
             updateTrack(soundBank.getCurrentTime());
             setPlayEnabled();
@@ -161,7 +172,7 @@ var Playback = (function() {
             if (playing) {
                 soundBank.stop();
                 updateTrack(soundBank.getCurrentTime());
-                playing = false;
+                setPlaying(false);
             }
             Track.clearPlayback();
             setPlayEnabled();
@@ -180,7 +191,7 @@ var Playback = (function() {
         updateShawzin: updateSoundBank,
         updateScale: updateSoundBank,
         setSong: setSong,
-        isPlaying: function() { return playing; },
+        isPlaying: isPlaying,
         start: start,
         pause: pause,
         stop: stop,

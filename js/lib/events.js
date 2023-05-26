@@ -20,6 +20,10 @@ var Events = (function() {
         mouseDownListeners.push(listener);
     }
 
+    function preventDefault(e) {
+        e.preventDefault();
+    }
+
     function runListeners(e, listeners) {
         if (listeners) {
             for (var i = 0; i < listeners.length; i++) {
@@ -70,11 +74,27 @@ var Events = (function() {
         }
     };
 
+    function disableScrollEvents(element) {
+        element.addEventListener('DOMMouseScroll', preventDefault, { passive: false }); // older FF
+        element.addEventListener('wheel', preventDefault, { passive: false }); // modern desktop
+        element.addEventListener('mousewheel', preventDefault, { passive: false }); // modern desktop
+        element.addEventListener('touchmove', preventDefault, { passive: false }); // mobile
+    }
+
+    function enableScrollEvents(element) {
+        element.removeEventListener('DOMMouseScroll', preventDefault, { passive: false }); // older FF
+        element.removeEventListener('wheel', preventDefault, { passive: false }); // modern desktop
+        element.removeEventListener('mousewheel', preventDefault, { passive: false }); // modern desktop
+        element.removeEventListener('touchmove', preventDefault, { passive: false }); // mobile
+    }
+
     // public members
     return  {
         registerEventListeners: registerEventListeners,
         addKeyDownListener: addKeyDownListener,
         addMouseDownListener: addMouseDownListener,
         setupTextInput: setupTextInput,
+        disableScrollEvents: disableScrollEvents,
+        enableScrollEvents: enableScrollEvents,
     }
 })();

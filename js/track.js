@@ -21,6 +21,7 @@ var Track = (function() {
     var tickOffset = Metadata.leadInTicks;
 
     var song = null;
+    var playing = false;
     var playbackMarker = null;
 
     function registerEventListeners() {
@@ -143,6 +144,16 @@ var Track = (function() {
             trimTickCapacity(endTick);
         }
         //console.log("END   scrollTop: " + scroll.scrollTop);
+    }
+
+    function setPlaying(newPlaying) {
+        if (playing == newPlaying) return;
+        playing = newPlaying;
+        if (playing) {
+            Events.disableScrollEvents(scroll);
+        } else {
+            Events.enableScrollEvents(scroll);
+        }
     }
 
     function setPlaybackTick(tick) {
@@ -605,6 +616,7 @@ var Track = (function() {
         updateControlScheme: rebuildTabNotes,
         updateStructure: updateStructure,
 
+        setPlaying: setPlaying,
         setPlaybackTick: setPlaybackTick,
         getPlaybackTick: getPlaybackTick,
         clearPlayback: clearPlayback,
