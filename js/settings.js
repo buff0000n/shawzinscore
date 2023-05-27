@@ -6,7 +6,7 @@ var Settings = (function() {
     var key = "shawzinscore:settings";
 
     // default setting values
-    var trackReversed = false;
+    var trackReversed = true;
     var showFrets = false;
     var controlScheme = MetadataUI.controlSchemes["pc"];
     var darkMode = false;

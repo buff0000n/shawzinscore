@@ -50,6 +50,64 @@ var TrackBar = (function() {
         setShowFrets(Settings.isShowFrets());
     }
 
+    class ScaleRollDragDropListener extends DragDropListener {
+        constructor() {
+            super();
+            this.lastTarget = null;
+        }
+
+        checkPlay(e, target) {
+            //console.log(`checkplay: ${e.target.tagName}`);
+
+            if (!target || !target.play) {
+                //console.log("clearing");
+                this.lastTarget = null;
+
+            } else if (target != this.lastTarget) {
+                ///console.log("playing");
+                target.play(target);
+                this.lastTarget = target;
+            }
+        }
+
+        onStart(e, target) {
+            this.checkPlay(e, target);
+        }
+
+        onDrag(e, target) {
+            this.checkPlay(e, target);
+        }
+
+        onDrop(e, target) {
+            //console.log("storped");
+            this.lastTarget = null;
+        }
+    }
+
+    var scaleRollDragDropListener = new ScaleRollDragDropListener();
+
+    function playRollNote(box) {
+        var noteName = box.noteName;
+        Playback.playNote(noteName);
+
+        var noteBoxStyle = box.boxStyle;
+        var playBox = document.createElement("div");
+        // todo: better way to get the fret and color
+        var color = MetadataUI.fretToRollColors[noteName.split("-")[0]];
+        playBox.className = "roll-note playRollNote";
+        playBox.style.left = (noteBoxStyle.left + (noteBoxStyle.width/2))+ "px";
+        playBox.style.top = noteBoxStyle.top + "px";
+        playBox.style.width = noteBoxStyle.width + "px";
+        playBox.style.height = noteBoxStyle.height + "px";
+        playBox.style.backgroundColor = color;
+        rollKeyButtonDiv.appendChild(playBox);
+
+        // cleanup
+        setTimeout(() => {
+            playBox.remove();
+        }, 1000);
+    }
+
     function updateScale() {
         var shawzin = Model.getShawzin();
         var scale = Model.getScale();
@@ -62,7 +120,7 @@ var TrackBar = (function() {
         if (rollKeyButtonDiv) {
             rollKeyButtonDiv.remove();
         }
-        // todo: optimize this mess
+
         rollKeyButtonDiv = document.createElement("div");
         rollKeyButtonDiv.style.position="relative;";
         for (var noteName in scaleMd.notes) {
@@ -76,28 +134,8 @@ var TrackBar = (function() {
             box.style.height = boxStyle.height + "px";
             box.noteName = noteName;
             box.boxStyle = boxStyle;
-            box.addEventListener("click", (e) => {
-                var noteName = e.target.noteName;
-                Playback.playNote(noteName);
-
-                var noteBoxStyle = e.target.boxStyle;
-                var playBox = document.createElement("div");
-                // todo: better way to get the fret and color
-                var color = MetadataUI.fretToRollColors[noteName.split("-")[0]];
-                playBox.className = "roll-note playRollNote";
-                playBox.style.left = (noteBoxStyle.left + (noteBoxStyle.width/2))+ "px";
-                playBox.style.top = noteBoxStyle.top + "px";
-                playBox.style.width = noteBoxStyle.width + "px";
-                playBox.style.height = noteBoxStyle.height + "px";
-                playBox.style.backgroundColor = color;
-                rollKeyButtonDiv.appendChild(playBox);
-
-                // cleanup
-                setTimeout(() => {
-                    playBox.remove();
-                }, 1000);
-
-            });
+            box.play = playRollNote;
+            DragEvents.addDragDropListener(box, scaleRollDragDropListener);
             rollKeyButtonDiv.appendChild(box);
         }
         document.getElementById("song-bar-roll").appendChild(rollKeyButtonDiv);

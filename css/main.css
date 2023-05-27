@@ -272,8 +272,14 @@ td {
 }
 
 @keyframes rollNoteBounce {
-    0%   { transform: translateX(-50%) scale(1.0, 1.0); opacity: 1; }
-    100% { transform: translateX(-50%) scale(5.0, 1.0); opacity: 0; }
+    0%   {
+        transform: translateX(-50%) scale(1.0, 1.0); opacity: 1;
+        filter: brightness(400%);
+    }
+    100% {
+        transform: translateX(-50%) scale(5.0, 1.0); opacity: 0;
+        filter: brightness(100%);
+    }
 }
 
 .playRollNote {
