@@ -39,7 +39,7 @@ td {
     text-align: left;
     box-shadow: 0 0 3px 3px #000000;
     z-index: 100;
-    overflow: auto;
+    /*overflow: auto;*/
 }
 .menu-title-bar {
     background-color: #808080;
@@ -71,6 +71,9 @@ td {
 }
 .selection-item:hover {
     background-color: #808080;
+    color: #FFFFFF;
+}
+.selection-item:hover > * {
     color: #FFFFFF;
 }
 .field-entry, .field-entry-span {

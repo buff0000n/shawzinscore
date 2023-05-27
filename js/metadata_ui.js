@@ -155,42 +155,42 @@ var MetadataUI = (function() {
             key_pc.one, key_pc.two, key_pc.three
         ),
         "psn": new ControlScheme(
-            "PSN 1",
+            "PSN 2018",
             "Standard Playstation control scheme before Duviri",
             "icon-control-scheme-psn.png",
             key_psn.square, key_psn.cross, key_psn.circle,
             key_psn.l1, key_psn.r1, key_psn.r2
         ),
         "psn2": new ControlScheme(
-            "PSN 2",
+            "PSN 2023",
             "Standard Playstation control scheme after Duviri",
             "icon-control-scheme-psn.png",
             key_psn.square, key_psn.cross, key_psn.circle,
             key_psn.left, key_psn.down, key_psn.right
         ),
         "xbx": new ControlScheme(
-            "XBX 1",
+            "XBX 2018",
             "Standard XBox control scheme before Duviri",
             "icon-control-scheme-xbx.png",
             key_xbx.x, key_xbx.a, key_xbx.b,
             key_xbx.l1, key_xbx.r1, key_xbx.r2
         ),
         "xbx2": new ControlScheme(
-            "XBX 2",
+            "XBX 2023",
             "Standard XBox control scheme after Duviri",
             "icon-control-scheme-xbx.png",
             key_xbx.x, key_xbx.a, key_xbx.b,
             key_xbx.left, key_xbx.down, key_xbx.right
         ),
         "nsw": new ControlScheme(
-            "NSW 1",
+            "NSW 2018",
             "Standard Nintendo Switch control scheme before Duviri",
             "icon-control-scheme-nsw.png",
             key_nsw.y, key_nsw.b, key_nsw.a,
             key_nsw.l1, key_nsw.r1, key_nsw.r2
         ),
         "nsw2": new ControlScheme(
-            "NSW 2",
+            "NSW 2023",
             "Standard Nintendo Switch control scheme after Duviri",
             "icon-control-scheme-nsw.png",
             key_nsw.y, key_nsw.b, key_nsw.a,

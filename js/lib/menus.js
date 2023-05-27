@@ -254,6 +254,7 @@ var Menus = (function() {
             menuDiv.style.left = mLeft + "px";
             menuDiv.style.height = mHeight + "px";
             menuDiv.style.width = mWidth + "px";
+            menuDiv.style.overflow = "auto";
         }
     }
 

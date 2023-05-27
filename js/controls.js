@@ -125,8 +125,11 @@ var Controls = (function() {
             // todo: get icon file name from metadata?
             // todo: tooltip with description?
             tr.innerHTML = `
-                <img class="icon" src="img/icon-shawzin-${name}.png" srcset="img2x/icon-shawzin-${name}.png 2x"/>
-                ${sm.config.name}
+                <div class="tooltip">
+                    <img class="icon" src="img/icon-shawzin-${name}.png" srcset="img2x/icon-shawzin-${name}.png 2x"/>
+                    ${sm.config.name}
+                    <span class="tooltiptextbottom">${sm.config.comment}</span>
+                </div>
             `;
 
             tr.onclick = () => {
@@ -188,8 +191,11 @@ var Controls = (function() {
             tr.className = "selection-item";
 
             tr.innerHTML = `
-                <img src="img/${sm[name].img}" srcset="img2x/${sm[name].img} 2x" class="icon" style="margin: 0.5ex;"/>
-                ${sm[name].name}
+                <div class="tooltip">
+                    <img src="img/${sm[name].img}" srcset="img2x/${sm[name].img} 2x" class="icon"/>
+                    ${sm[name].name}
+                    <span class="tooltiptextbottom">${sm[name].description}</span>
+                </div>
             `;
 
             tr.onclick = () => {
