@@ -255,31 +255,6 @@ var Audio = (function() {
         isIdle(currentTime) {
             // This is way easier
             return currentTime >= this.endTime;
-
-            // now that I've written it out, this is far too much to be doing 20 times a second
-//            // check if there's a queue and there's any event scheduled to start in the future
-//            if (this.queue != null || this.queue[this.queue.length - 1].startTime >= currentTime) {
-//                // not idle
-//                return false;
-//            }
-//
-//            // for mono, we just have to check the last one to see if it ends before the current time
-//            if (mono) {
-//                // idle if the last mono sound in the queue is finished
-//                return (this.queue[this.queue.length - 1].endTime <= currentTime);
-//
-//            } else {
-//                // For poly, we gotta check every damn thing we got scheduled
-//                // start from the end for a better chance of finding one early
-//                for (var e = this.queue.length - 1; e >= 0; e--) {
-//                    if (this.queue[e].endTime > currentTime) {
-//                        // not idle
-//                        return false;
-//                    }
-//                }
-//                // idle, finally
-//                return true;
-//            }
         }
     }
 
@@ -1062,10 +1037,12 @@ var Audio = (function() {
 
     // public members
     return  {
+        // create a new, blank sound back
         createSoundBank: function() {
             return new SoundBank()
         },
-        setTimeOffset: setTimeOffset
+        // set the global time offset for scheduling sounds
+        setTimeOffset: setTimeOffset // (offset=0)
     };
 })();
 

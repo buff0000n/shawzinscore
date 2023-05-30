@@ -109,16 +109,17 @@ var DomUtils = (function() {
 
     // public members
     return  {
-        getParent: getParent,
-        getFirstChild: getFirstChild,
-        getLastChild: getLastChild,
-        getAllChildren: getAllChildren,
-        getAllChildren0: getAllChildren0,
-        deleteNode: deleteNode,
-        removeFromList: removeFromList,
-        addToListIfNotPresent: addToListIfNotPresent,
-        insertAfter: insertAfter,
-        insertBefore: insertBefore,
+        getParent: getParent, // (node, parentClass)
+        getFirstChild: getFirstChild, // (node, childClass)
+        getLastChild: getLastChild, // (node, childClass)
+        getAllChildren: getAllChildren, // (node, childClass)
+        deleteNode: deleteNode, // (node)
+        // returns the index of the item was removed, or -1 if nothing was removed
+        removeFromList: removeFromList, // (list, item)
+        // returns true if the list was changed
+        addToListIfNotPresent: addToListIfNotPresent, // (list, item)
+        insertAfter: insertAfter, // (el, referenceNode)
+        insertBefore: insertBefore, // (el, referenceNode)
     };
 })();
 
@@ -230,10 +231,6 @@ var PageUtils = (function() {
     //==============================================================
     // error display
     //==============================================================
-    
-    function showError(error) {
-        showErrors([error]);
-    }
     
     function showErrors(errors) {
         // find the error bar
@@ -396,14 +393,14 @@ var PageUtils = (function() {
         updateHref(href);
     }
 
-    function setQueryParamMap(map) {
+    function setQueryParamMap(map, plusIsSpace=true) {
         // todo: optimize
         for (key in map) {
             removeUrlQueryParam(key);
         }
         for (key in map) {
             var value = map[key];
-            setQueryParam(key, value);
+            setQueryParam(key, value, plusIsSpace);
         }
     }
 
@@ -446,25 +443,25 @@ var PageUtils = (function() {
 
     // public members
     return  {
-        doonresize: doonresize,
-        windowSizeChanged: windowSizeChanged,
+        doonresize: doonresize, // ()
+        windowSizeChanged: windowSizeChanged, // ()
         getWindowWidth: function() { return windowWidth; },
         getWindowHeight: function() { return windowHeight; },
-        showError: showError,
-        showErrors: showErrors,
-        clearErrors: clearErrors,
-        windowOnError: windowOnError,
-        showDebug: showDebug,
+        showError: function(error) {
+            showErrors([error]);
+        },
+        showErrors: showErrors, // (errors)
+        clearErrors: clearErrors, // ()
+        windowOnError: windowOnError, // (msg, url, lineNo, columnNo, error)
+        showDebug: showDebug, // (msg)
 
-        urlEncodeString: urlEncodeString,
-        urlDecodeString: urlDecodeString,
-        getQueryParam: getQueryParam,
-        setQueryParam: setQueryParam,
-        setQueryParamMap: setQueryParamMap,
-        buildQueryUrlWithMap: buildQueryUrlWithMap,
+        getQueryParam: getQueryParam, // (name, plusIsSpace=true)
+        setQueryParam: setQueryParam, // (name, value, plusIsSpace=true)
+        setQueryParamMap: setQueryParamMap, // (map, plusIsSpace=true)
+        buildQueryUrlWithMap: buildQueryUrlWithMap, // (map, plusIsSpace=true)
 
-        setImgSrc: setImgSrc,
-        makeImage: makeImage,
+        setImgSrc: setImgSrc, // (img, png)
+        makeImage: makeImage, // (png, className="centerImg")
     }
 })();
 
@@ -505,40 +502,6 @@ var ExportUtils = (function() {
             var parent = link.parentNode;
             parent.innerHTML = "";
             parent.appendChild(img);
-        }
-    }
-
-    function loadImages(paths, callback) {
-        new imageLoader(paths, callback).load();
-    }
-
-    class imageLoader {
-        constructor(pathMap, callback) {
-            this.pathMap = pathMap;
-            this.callback = callback;
-            this.count = 0;
-            this.imageMap = {};
-        }
-
-        load() {
-            for (var key in this.pathMap) {
-                this.count++;
-                var img = new Image();
-                img.loader = this;
-                img.key = key;
-                img.onload = function() {
-                    this.loader.onload(this);
-                }
-                img.src = this.pathMap[key];
-            }
-        }
-
-        onload(img) {
-            this.imageMap[img.key] = img;
-            this.count--;
-            if (this.count <= 0) {
-                this.callback(this.imageMap);
-            }
         }
     }
 
@@ -597,11 +560,8 @@ var ExportUtils = (function() {
 
     // public members
     return  {
-        loadImages: loadImages,
-        convertToPngLink: convertToPngLink,
-        doPngClick: doPngClick,
-        convertToWavLink: convertToWavLink,
-        doWavClick: doWavClick,
+        convertToPngLink: convertToPngLink, // (canvas, name)
+        convertToWavLink: convertToWavLink, // (buffer, name)
     }
 })();
 
@@ -623,8 +583,8 @@ var MiscUtils = (function(){
 	    return i;
 	}
 	return {
-	    parseInt: parseInt,
-	    parseFloat: parseFloat,
+	    parseInt: parseInt, // (s)
+	    parseFloat: parseFloat, // (s)
 	}
 })();
 

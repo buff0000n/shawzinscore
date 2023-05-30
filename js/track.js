@@ -163,10 +163,10 @@ var Track = (function() {
             playbackMarker.setPlayTick(tick);
         }
         // offset the center tick
-        scrollToTick(tick + (visibleTicks * playbackOffset));
+        scrollToTick(tick + (visibleTicks * playbackOffset), true);
     }
 
-    function scrollToTick(tick) {
+    function scrollToTick(tick, smooth=false) {
         // scroll to location
         var pos = reversed
                   ? (tickCapacity - tick) * tickSpacing
@@ -178,6 +178,8 @@ var Track = (function() {
             pos = pixelCapacity - halfHeight;
         }
         scroll.scrollTo(0, pos - halfHeight);
+        // Firefox's smooth scrolling is awesome but jesus christ Chrome's is either a train wreck or nonexistent
+//        scroll.scrollTo({ top: (pos - halfHeight), behavior: (smooth ? "smooth" : "instant") });
     }
 
     function getScrollTick() {

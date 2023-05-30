@@ -178,6 +178,7 @@ td {
     padding: 0px;
     border-width: 0ex;
     background-color: #337799;
+    /*scroll-behavior: smooth !important;*/
 }
     /*
     #song-scroll::-webkit-scrollbar {
