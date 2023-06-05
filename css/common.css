@@ -130,10 +130,10 @@
         color: A0C0F0;
     }
     strong {
-        color: 6080B0;
+        color: #6080B0;
     }
     .warn, .warn * {
-        color: D06040;
+        color: #D06040;
     }
     #TOC li {
         margin: 0;
