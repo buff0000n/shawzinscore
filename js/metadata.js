@@ -91,6 +91,10 @@ var Metadata = (function() {
         slapMap[scaleChordOrder[n]] = scaleNoteOrder[n];
     }
 
+    var polyTypePolyphonic = 1;
+    var polyTypeMonophonic = 2;
+    var polyTypeDuophonic = 3;
+
     var flat = "\u266D";
     var sharp = "\u266F";
 
@@ -100,7 +104,7 @@ var Metadata = (function() {
             "name": "",
             "comment": "",
             // options
-            "type": "polyphonic", // (polyphonic, monophonic, duophonic)
+            "type": polyTypePolyphonic,
             "slap": false, // tiamat is its own thing
         },
         "notes": {
@@ -1024,7 +1028,7 @@ var Metadata = (function() {
         "config": {
             "name": "Corbu Shawzin",
             "comment": "Based on djent-style electric guitar.",
-            "type": "monophonic",
+            "type": polyTypeMonophonic,
         },
         "notes": {
             "length": 10,
@@ -1736,7 +1740,7 @@ var Metadata = (function() {
         "config": {
             "name": "Tiamat Shawzin",
             "comment": "Based on an electric bass.",
-            "type": "monophonic",
+            "type": polyTypeMonophonic,
             "slap": true,
         },
         "notes": {
@@ -1894,7 +1898,7 @@ var Metadata = (function() {
         "config": {
             "name": "Narmer Shawzin",
             "comment": "Based on a lead electric guitar.",
-            "type": "monophonic",
+            "type": polyTypeMonophonic,
         },
         "notes": {
             "length": 10,
@@ -2060,7 +2064,7 @@ var Metadata = (function() {
         "config": {
             "name": "Void's Song Shawzin",
             "comment": "Based on vocals/vocaloid.",
-            "type": "duophonic",
+            "type": polyTypeDuophonic,
         },
         "notes": {
             "length": 22,
@@ -2262,6 +2266,9 @@ var Metadata = (function() {
         scaleNoteOrder: scaleNoteOrder,
         scaleChordOrder: scaleChordOrder,
         slapMap: slapMap,
+        polyTypePolyphonic: polyTypePolyphonic,
+        polyTypeMonophonic: polyTypeMonophonic,
+        polyTypeDuophonic: polyTypeDuophonic,
         shawzinList: {
             "dax": daxShawzin,
             "nelumbo": nelumboShawzin,

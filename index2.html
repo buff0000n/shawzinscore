@@ -350,8 +350,8 @@ pachel
 
             <h1 id="tocTodo">To do</h1>
             <ul>
-                <li>mobile testing</li>
                 <li>Docs</li>
+                <li>mobile testing</li>
                 <li>sample songs</li>
                 <li>1.0</li>
                 <li>loading bars</li>
@@ -362,12 +362,15 @@ pachel
                         </li>
                     </ul>
                 </li>
+                <li>sort options for shawzin list</li>
                 <li>Zoom Level</li>
                 <li>Custom keybindings</li>
                 <li><strong>EDITING</strong></li>
                 <li>Library</li>
                 <li>Wav export</li>
                 <li>Sleep</li>
+                <li>Support meter/tempo changing mid-song</li>
+                <li>Less dumb animation for piano roll notes</li>
             </ul>
 
             <h1 id="tocKnownIssues">Known Issues</h1>
@@ -377,6 +380,7 @@ pachel
                 <li>Playback marker is ever so slightly jittery on Windows Chrome</li>
                 <li>Playback scrolling with a very busy song is pretty janky.</li>
                 <li>Playback scrolling with mobile Chrome is a shit show, I don't know what to do about it</li>
+                <li>Scrolling with the Shawzintab popup is a little wonky</li>
             </ul>
         </div>
     </div>
@@ -391,13 +395,14 @@ pachel
         <div>
             <a href="https://github.com/buff0000n/shawzinscore">Source</a>
             <a href="https://github.com/buff0000n/shawzinscore/issues/1">Feedback</a>
+            <a href="notechart.html">Shawzin Note Chart</a>
         </div>
         <div>
             v0.0.1: 2023-03-21
         </div>
         <div>Thanks:
-            <div><a href="https://forums.warframe.com/profile/3060756-ps4poison___insect/">(PS4)Poison___Insect</a></div>
-            <div><a href="https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/">u/Empyrrhus</a></div>
+            <span><a href="https://forums.warframe.com/profile/3060756-ps4poison___insect/">(PS4)Poison___Insect</a></span>
+            <span><a href="https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/">u/Empyrrhus</a></span>
         </div>
     </div>
 </div>
@@ -460,7 +465,7 @@ pachel
                 </div>
             </div>
         </div>
-        <div id="shawzintab-container"></div>
+        <div id="shawzintab-container" style="overflow: auto;"></div>
     </div>
 
 <p>

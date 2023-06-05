@@ -1,3 +1,4 @@
+// wrapper lib for the generic audio lib
 var ShawzinAudio = (function() {
 
     // base URL for sound files
@@ -29,11 +30,10 @@ var ShawzinAudio = (function() {
     }
 
     // easy mapping from the metadata constants
-    var typeToMonoGroups = {
-        "polyphonic": polyphonicGroups,
-        "monophonic": monophonicGroups,
-        "duophonic": duophonicGroups
-    };
+    var typeToMonoGroups = []
+    typeToMonoGroups[Metadata.polyTypePolyphonic] = polyphonicGroups;
+    typeToMonoGroups[Metadata.polyTypeMonophonic] = monophonicGroups;
+    typeToMonoGroups[Metadata.polyTypeDuophonic] = duophonicGroups;
 
     function createSoundBank(shawzinName, scaleName) {
         // get the shawzin's metadata
@@ -146,50 +146,68 @@ var ShawzinAudio = (function() {
 
         // public members
         return {
-            getSoundBank: getSoundBank
+            getSoundBank: getSoundBank // (shawzinName, scaleName)
         };
     }());
 
     function scaleTest(time, shawz, scale, next=null) {
+        // get the sound bank for the given shawzin and scale
         var sb = ShawzinAudio.getSoundBank(shawz, scale);
 
+        // initialiez the bank and run a callback
         sb.checkInit(() => {
+            // initialize the start time if it hasn't been
             if (time == null) {
                 ShawzinAudio.setTimeOffset();
                 time = 0;
             }
+            // loop over and play every single note, a quarter second per note
             for (var i = 0; i < Metadata.scaleNoteOrder.length; i++) {
                 sb.play(Metadata.scaleNoteOrder[i], time);
                 time += 0.25;
             }
+            // loop over and play every chord note, a quarter second per note
             for (var i = 0; i < Metadata.scaleChordOrder.length; i++) {
                 sb.play(Metadata.scaleChordOrder[i], time);
                 time += 0.25;
             }
+            // call the callback if there is one, giving it the current end time as the next start time
+            // this allows us to schedule each scale one after the other
             if (next) next(time);
         });
     }
 
     function shawzTest(shawz) {
+        // scale counter
         var j = 0;
+        // define a function to run the test for a single scale starting at a particular time, or null to initialize the time
         var thing = (time) => {
+            // check if we're not at the end of the scales
             if (j < Metadata.scaleOrder.length) {
+                // get the scale
                 scale = Metadata.scaleOrder[j];
+                // increase the counter
                 j++;
+                // run the scale test, using this function as the callback to run the next scale
                 scaleTest(time, shawz, scale, thing);
             }
         };
+        // start off with no start time so it gets initialized
         thing(null);
     }
 
-
     // public members
     return  {
+        // get a sound back for the given shawzin and scale combination
         getSoundBank: function(shawzinName, scaleName) {
+            // go to the cache
             return SoundBankCache.getSoundBank(shawzinName, scaleName);
         },
-        setTimeOffset: Audio.setTimeOffset,
-        shawzTest: shawzTest,
+        // initizize the time offset for scheduling sounds
+        setTimeOffset: Audio.setTimeOffset, // (offset=0)
+
+        // run a sound test for every scale on the given shawzin, just for testing
+        shawzTest: shawzTest, // (shawz)
     };
 })();
 

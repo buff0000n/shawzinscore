@@ -1,5 +1,4 @@
 // Wrapper class for persistent settings
-
 var Settings = (function() {
 
     // local storage key
@@ -38,6 +37,7 @@ var Settings = (function() {
         }
     }
 
+    // clear all settings, doesn't take effect until a reload
     function clear() {
         window.localStorage.removeItem(key);
     }
@@ -56,16 +56,23 @@ var Settings = (function() {
     }
 
     return {
+        // load settings, called once when the page is loaded
         load: load,
+        // clear all settings, not actually called from the UI but useful for testing
         clear: clear,
+        // getter/setter for track direction setting
         isTrackReversed: function() { return trackReversed; },
         setTrackReversed: function(v) { if (v != trackReversed) { trackReversed = v; save(); } },
+        // getter/setter for show frets/strings setting
         isShowFrets: function() { return showFrets; },
         setShowFrets: function(v) { if (v != showFrets) { showFrets = v; save(); } },
+        // getter/setter for control scheme setting
         getControlScheme: function() { return controlScheme; },
         setControlScheme: function(v) { if (v != controlScheme) { controlScheme = v; save(); } },
+        // getter/setter for shawzin tab dark mode setting
         getDarkMode: function() { return darkMode; },
         setDarkMode: function(v) { if (v != darkMode) { darkMode = v; save(); } },
+        // getter/setter for shawzin tab old mode setting
         getOldMode: function() { return oldMode; },
         setOldMode: function(v) { if (v != oldMode) { oldMode = v; save(); } },
     }

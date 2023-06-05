@@ -425,6 +425,32 @@ var PageUtils = (function() {
     }
 
     //==============================================================
+    // clipboard
+    //==============================================================
+
+    function pasteFromClipboard(textbox, callback) {
+        // reading the clipboard involves a weird callback
+        navigator.clipboard.readText().then((text) => {
+            try {
+                // put in the value from the clipboard directly
+                textbox.value = text;
+                callback(text);
+            } catch (e) {
+                // bad things happen if we let any errors bubble out
+                PageUtils.showError(e);
+            }
+        });
+    }
+
+    function copyToClipboard(value) {
+        // wat
+        navigator.clipboard.writeText(value).then(
+          () => { /* popup? */ },
+          () => {}
+        );
+    }
+
+    //==============================================================
     // Misc
     //==============================================================
 
@@ -459,6 +485,9 @@ var PageUtils = (function() {
         setQueryParam: setQueryParam, // (name, value, plusIsSpace=true)
         setQueryParamMap: setQueryParamMap, // (map, plusIsSpace=true)
         buildQueryUrlWithMap: buildQueryUrlWithMap, // (map, plusIsSpace=true)
+
+        pasteFromClipboard: pasteFromClipboard, // (textbox, callback)
+        copyToClipboard: copyToClipboard, // (value)
 
         setImgSrc: setImgSrc, // (img, png)
         makeImage: makeImage, // (png, className="centerImg")

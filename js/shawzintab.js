@@ -1,58 +1,72 @@
 var ShawzinTab = (function() {
 
+    // copies of the model data
     var song = null;
     var controlScheme = null;
     var title = null;
     var ticksPerBeat = null;
     var beatsPerMeasure = null;
 
+    // shawzintab-specific settings
     var darkMode = null;
     var oldMode = null;
     var unitsPerLine = null;
-
-    var canvas = null;
-    var imageLoader = null;
+    // decided not to make this configurable right now
     var stringThreeOnTop = true;
-
+    // scaling for the fret images
     var fretScale = 0.5;
 
+    // rendering state
+    var canvas = null;
+    var imageLoader = null;
+
     function init(newCanvas, newSong, newControlScheme, newTitle, newTicksPerBeat, newBeatsPerMeasure) {
+        // save the model data
         song = newSong;
         controlScheme = newControlScheme;
         title = newTitle;
         ticksPerBeat = newTicksPerBeat;
         beatsPerMeasure = newBeatsPerMeasure;
 
+        // init rendering state
         canvas = newCanvas;
         imageLoader = null;
     }
 
     function setUnitsPerLine(newUnitsPerLine) {
+        // save
         unitsPerLine = newUnitsPerLine;
     }
 
     function setDarkMode(newDarkMode) {
+        // save
         darkMode = newDarkMode;
+        // we'll need a new image loader
         imageLoader = null;
     }
 
     function setOldMode(newOldMode) {
+        // save
         oldMode = newOldMode;
     }
 
     function close() {
+        // clear rendering state
         canvas = null;
     }
 
     function getStringImagePath(controlKey) {
+        // images for the string labels are the normal white-on-black or black-on-white images
         return "img2x/" + controlKey.imgBase + (darkMode ? "_w.png" : "_b.png");
     }
 
     function getFretImagePath(controlKey) {
+        // images for the fret labels need to be the filled versions of the white-on-black or black-on-white images
         return "img2x/" + controlKey.imgBase + (darkMode ? "_wf.png" : "_bf.png");
     }
 
     function buildImageKeyToPath() {
+        // build a map of image keys and paths
         return {
             "plat": "img2x/" + controlScheme.img,
             "s1": getStringImagePath(controlScheme.strings["1"]),
@@ -66,6 +80,7 @@ var ShawzinTab = (function() {
     }
 
     function buildImageLoader() {
+        // lazily initialize the image loader
         if (!imageLoader) {
             imageLoader = controlScheme ? new ImageLoader(buildImageKeyToPath()) : null;
         }
@@ -73,13 +88,16 @@ var ShawzinTab = (function() {
     }
 
     function render() {
+        // sanity check
         if (!canvas) {
             return;
         }
+        // hard-coded to hi-DPI scale
         var scale = 2;
 
         // set a few constants for the image
         // todo: pull these from CSS like I do with rngsim
+        // with dark mode lines are generally thicker and bolder
         if (darkMode) {
             var sideMargin = 15 * scale;
             var topBottomMargin = 15 * scale;
@@ -90,6 +108,7 @@ var ShawzinTab = (function() {
             var fontSize = 18 * scale;
             var lineSeparation = 60 * scale;
 
+        // light mode settings
         } else {
             var sideMargin = 15 * scale;
             var topBottomMargin = 15 * scale;
@@ -101,42 +120,48 @@ var ShawzinTab = (function() {
             var lineSeparation = 60 * scale;
         }
 
+        // old-mode rendering treats fret separation differently
         if (oldMode) {
             var fretSep = 0;
 
+        // a little more fret spacing in dark mode
         } else if (darkMode) {
             var fretSep = 14 * scale;
 
+        // light more separation
         } else {
             var fretSep = 12 * scale;
         }
 
-        var ticksPerMeasure = ticksPerBeat ? (ticksPerBeat * beatsPerMeasure) : null;
-        var lineTicks = ticksPerMeasure ? (ticksPerMeasure * unitsPerLine) : (Metadata.ticksPerSecond * unitsPerLine);
+        // calculate ticks per measure, if there is structure
+        var measureTicks = ticksPerBeat ? (ticksPerBeat * beatsPerMeasure) : null;
+        // calculate ticks per line, units per line means measures if there is structure, otherwise it means seconds
+        var lineTicks = measureTicks ? (measureTicks * unitsPerLine) : (Metadata.ticksPerSecond * unitsPerLine);
 
+        // calculate the total number of lines
         var numLines;
-        if (ticksPerMeasure) {
-            numLines = Math.ceil((Math.ceil(song.getEndTick() / ticksPerMeasure) + (song.getStartTick() < 0 ? 1 : 0)) * (ticksPerMeasure / lineTicks));
+        // one calculation method if there's structure
+        if (measureTicks) {
+            // calculate the number of measures in the song, adding one if there's lead-in, divide by units per line, then ceiling
+            numLines = Math.ceil((Math.ceil(song.getEndTick() / measureTicks) + (song.getStartTick() < 0 ? 1 : 0)) / unitsPerLine);
         } else {
+            // easier method if there's no structure, total tick length divided by line ticks
             numLines = Math.ceil((song.getEndTick() - Math.min(song.getStartTick(), 0)) / lineTicks);
         }
 
-
-        // these are calculated
+        // calculate page height and line width in pixels
         var pageHeight = headerHeight + footerHeight + (lineHeight * numLines) + (lineSeparation * (numLines- 1)) + (topBottomMargin * 2);
         var lineWidth = pageWidth - (sideMargin * 2);
 
-        // create a canvas element under the tab container with the dimensions we calculated
+        // resize the canvas
         // if you configure something stupid like a thousand-line tab you're probably going to crash something.
-//        if (canvas == null || canvas.width != pageWidth || canvas.height != pageHeight) {
-//            canvas = document.createElement("canvas");
-            canvas.width = pageWidth;
-            canvas.height = pageHeight;
-            if (scale != 1) {
-                canvas.style.height = (pageHeight/scale) + 'px';
-                canvas.style.width = (pageWidth/scale) + 'px';
-            }
-//        }
+        canvas.width = pageWidth;
+        canvas.height = pageHeight;
+        // hi-DPI scaling
+        if (scale != 1) {
+            canvas.style.height = (pageHeight/scale) + 'px';
+            canvas.style.width = (pageWidth/scale) + 'px';
+        }
 
         // save the title to the canvas element for convertToPng() to pick up for a file name
         canvas.saveName = title;
@@ -176,26 +201,29 @@ var ShawzinTab = (function() {
             context.font = fontSize + "px Arial";
             context.textAlign = "center";
 
+            // if were not old mode, then slap the control scheme icon and name in the lower left corner
             if (imageMap) {
                 drawCenteredImage(context, imageMap["plat"], sideMargin*1.5, pageHeight - (topBottomMargin + footerHeight * 0.25));
                 context.textAlign = "left";
                 placeText(context, fontSize, controlScheme.name, sideMargin * 2.5, pageHeight - (topBottomMargin + footerHeight * 0.25));
-//                context.fillText(controlScheme.name, sideMargin * 2.5, pageHeight - (topBottomMargin + footerHeight * 0.20));
             }
 
-            var measureTicks = ticksPerBeat ? (ticksPerBeat * beatsPerMeasure) : null;
-
-            var lineStart;
+            // initialize the starting tick
+            // if there's structure
             if (measureTicks != null) {
+                // start at 0, and back off by a measure until we're at or before the start of the song
                 lineStart = 0;
                 while (lineStart > song.getStartTick()) {
                     lineStart -= measureTicks;
                 }
             } else {
+                // No structure, just start at the beginning of the song
                 lineStart = song.getStartTick();
             }
+            // init the line end
             var lineEnd = lineStart + lineTicks;
 
+            // note counter
             var noteIndex = 0;
             // iterate over the sub-songs
             for (var line = 0; line < numLines; line++) {
@@ -213,7 +241,8 @@ var ShawzinTab = (function() {
                 var y2 = y1 + lineHeight;
 
                 // draw the song line
-                buildSongLine(context, x1, y1, x2, y2, fontSize, lineNotes, lineStart, unitsPerLine, ticksPerMeasure, ticksPerBeat,
+                buildSongLine(context, x1, y1, x2, y2, fontSize,
+                              lineNotes, lineStart, unitsPerLine, measureTicks, ticksPerBeat,
                               imageMap, fretSep)
 
                 lineStart = lineEnd;
@@ -231,7 +260,7 @@ var ShawzinTab = (function() {
         return canvas;
     }
 
-    function buildSongLine(context, x1, y1, x2, y3, fontSize, lineNotes, lineStart, unitsPerLine, ticksPerMeasure, ticksPerBeat, imageMap, fretSep) {
+    function buildSongLine(context, x1, y1, x2, y3, fontSize, lineNotes, lineStart, unitsPerLine, measureTicks, ticksPerBeat, imageMap, fretSep) {
         //(`buildSongLine() starting at ${lineStart}`)
         // margin around the start/end bars and measure bars if present
         var barMargin = fontSize;
@@ -265,7 +294,7 @@ var ShawzinTab = (function() {
             drawCenteredImage(context, stringThreeOnTop ? imageMap["s1"] : imageMap["s3"], x1-(fontSize*1), y3);
         }
 
-        if (ticksPerMeasure) {
+        if (measureTicks) {
             // draw measure lines
             for (var i = 0; i <= unitsPerLine; i+= 1) {
                 var x3 = x1 + (((x2 - x1) * i) / unitsPerLine);
@@ -279,7 +308,7 @@ var ShawzinTab = (function() {
             }
 
             var measureStart = lineStart;
-            var measureEnd = measureStart + ticksPerMeasure;
+            var measureEnd = measureStart + measureTicks;
 
             var noteIndex = 0;
             // iterate over the sub-songs
@@ -301,7 +330,7 @@ var ShawzinTab = (function() {
                 }
 
                 measureStart = measureEnd;
-                measureEnd += ticksPerMeasure;
+                measureEnd += measureTicks;
             }
 
         } else {
@@ -426,7 +455,8 @@ var ShawzinTab = (function() {
     }
 
     return {
-        init: init,
+        // initialize shawzin tab
+        init: init, // (newCanvas, newSong, newControlScheme, newTitle, newTicksPerBeat, newBeatsPerMeasure)
         setUnitsPerLine: setUnitsPerLine,
         setDarkMode: setDarkMode,
         setOldMode: setOldMode,
