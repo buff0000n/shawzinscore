@@ -97,6 +97,7 @@ var Metadata = (function() {
 
     var flat = "\u266D";
     var sharp = "\u266F";
+    var natural = "\u266E";
 
     var standardShawzin  = {
         "config": {

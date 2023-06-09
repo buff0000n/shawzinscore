@@ -21,6 +21,14 @@ td {
     padding: 0px;
     border-width: 0ex;
 }
+.listTable td {
+    vertical-align: top;
+}
+
+.centeredTable td {
+    vertical-align: middle;
+    text-align: center;
+}
 
 .menu {
     position: absolute;
@@ -117,7 +125,7 @@ td {
     margin: 1ex;
     padding: 1ex;
     border-radius: 1ex;
-    text-align: center;
+    text-align: left;
 }
 
 #toolbar-buttons {
@@ -344,3 +352,12 @@ td {
     /*overflow: auto;
     height: 500px;*/
 }
+
+.fret0 { color: #BF8340; }
+.fret1 { color: #C03F3F; }
+.fret2 { color: #3FC03F; }
+.fret3 { color: #00B4FF; }
+.fret12 { color: #D4D41B; }
+.fret23 { color: #20BA9F; }
+.fret13 { color: #7B609F; }
+.fret123 { color: #E27119; }

@@ -322,14 +322,28 @@ var PageUtils = (function() {
         return buildQueryUrl(query);
     }
 
+    function extractUrlAnchor(url) {
+        var m = url.match(/#.*/);
+        var anchor = m ? m[0] : null;
+        if (anchor) {
+            url = url.substring(0, url.length - anchor.length);
+        }
+        return [url, anchor];
+    }
+
+    function removeUrlAnchor() {
+        var [url, anchor] = extractUrlAnchor(getHref());
+        if (anchor) {
+            updateHref(url);
+        }
+    }
+
     function buildQueryUrl(query) {
         // get the current URL and strip out any query string
-        var url = window.location.href;
-        url = url.replace(/\?.*/, "");
+        var [url, anchor] = extractUrlAnchor(getHref());
         // append our parameters
         url += query;
-
-        return url;
+        return url + (anchor ? anchor : "");
     }
 
     function getQueryParam(name, plusIsSpace=true) {
@@ -369,28 +383,29 @@ var PageUtils = (function() {
 
     // modify a URL parameter directly in the browser location bar
     function modifyUrlQueryParam(key, value) {
-        var href = getHref();
+        var [href, anchor] = extractUrlAnchor(getHref());
 
         if (href.match(new RegExp("[?&]" + key + "="))) {
             href = href.replace(new RegExp("([?&]" + key + "=)[^&#]*"), "$1" + value);
 
-        } else if (href.indexOf("?") > 0) {
-            href += "&" + key + "=" + value;
         } else {
-            href += "?" + key + "=" + value;
+            if (href.indexOf("?") > 0) {
+                href += "&" + key + "=" + value;
+            } else {
+                href += "?" + key + "=" + value;
+            }
         }
-
-        updateHref(href);
+        updateHref(href + (anchor ? anchor : ""));
     }
 
     function removeUrlQueryParam(key) {
-        var href = getHref();
+        var [href, anchor] = extractUrlAnchor(getHref());
 
         // corner cases the stupid way
         href = href.replace(new RegExp("([?&])" + key + "=[^&#]*&"), "$1");
         href = href.replace(new RegExp("[&?]" + key + "=[^&#]*"), "");
 
-        updateHref(href);
+        updateHref(href + (anchor ? anchor : ""));
     }
 
     function setQueryParamMap(map, plusIsSpace=true) {
@@ -481,10 +496,12 @@ var PageUtils = (function() {
         windowOnError: windowOnError, // (msg, url, lineNo, columnNo, error)
         showDebug: showDebug, // (msg)
 
+        urlEncodeString: urlEncodeString, // (string, plusIsSpace=true)
         getQueryParam: getQueryParam, // (name, plusIsSpace=true)
         setQueryParam: setQueryParam, // (name, value, plusIsSpace=true)
         setQueryParamMap: setQueryParamMap, // (map, plusIsSpace=true)
         buildQueryUrlWithMap: buildQueryUrlWithMap, // (map, plusIsSpace=true)
+        removeUrlAnchor: removeUrlAnchor, // ()
 
         pasteFromClipboard: pasteFromClipboard, // (textbox, callback)
         copyToClipboard: copyToClipboard, // (value)

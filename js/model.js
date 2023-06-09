@@ -38,13 +38,14 @@ var Model = (function() {
         doSetControlScheme(Settings.getControlScheme());
 
         // load settings from the URL query parameters
-        var shawzin = PageUtils.getQueryParam("s");
+        var shawzin = PageUtils.getQueryParam("s", false);
         var songName = PageUtils.getQueryParam("n");
-        var songCode = PageUtils.getQueryParam("c");
-        var songTempo = PageUtils.getQueryParam("t");
-        var songMeter = PageUtils.getQueryParam("m");
-        var songLeadin = PageUtils.getQueryParam("l");
-        var tabUnitsPerLine = PageUtils.getQueryParam("u");
+        // don't parse '+' in the song code as a space
+        var songCode = PageUtils.getQueryParam("c", false);
+        var songTempo = PageUtils.getQueryParam("t", false);
+        var songMeter = PageUtils.getQueryParam("m", false);
+        var songLeadin = PageUtils.getQueryParam("l", false);
+        var tabUnitsPerLine = PageUtils.getQueryParam("u", false);
 
         // default shawzin
         if (!shawzin) shawzin = Metadata.shawzinOrder[0];
@@ -112,7 +113,7 @@ var Model = (function() {
         var songCode = doUpdateSongCode();
         // build an ordered parameter map, putting the song code last
         return {
-            "n": songName,
+            "n": PageUtils.urlEncodeString(songName),
             "s": shawzin,
             "m": meter,
             "t": tempo,
@@ -127,12 +128,12 @@ var Model = (function() {
 
     function doUpdate() {
         // get or re-generate the song code, update it in the UI, build a parameter map, and update the URL
-        PageUtils.setQueryParamMap(getQueryParamMap());
+        PageUtils.setQueryParamMap(getQueryParamMap(), false);
     }
 
     function buildUrl() {
         // generate an up-to-date paramter map and use it to build a modified version of the current URL
-        return PageUtils.buildQueryUrlWithMap(getQueryParamMap());
+        return PageUtils.buildQueryUrlWithMap(getQueryParamMap(), false);
     }
 
     function doSetShawzin(name) {

@@ -23,11 +23,10 @@
         background-color: #000000;
     }
 
-    .button, .selectButton {
+    .button, .selectButton, .lightButton {
         margin: 1ex 1ex 1ex 1ex;
         cursor: pointer;
-        /*background-color: #808080;*/
-        background-color: #404040;
+        cursor: pointer;
         border: none;
         color: #FFFFFF;
         padding: 1ex;
@@ -36,8 +35,14 @@
         border-radius: 1ex;
         display: block-inline;
     }
-    .button {
+    .button, .lightButton {
         text-align: center;
+    }
+    .button, .selectButton {
+        background-color: #404040;
+    }
+    .lightButton {
+        background-color: #808080;
     }
     .selectButton {
         text-align: left;
@@ -126,14 +131,22 @@
     .about {
         text-align: center;
     }
-    h1, h2, h3, h4 {
-        color: A0C0F0;
+    h1, h2, h3, h4, h5, h6 {
+        color: #A0C0F0;
     }
     strong {
         color: #6080B0;
     }
     .warn, .warn * {
         color: #D06040;
+    }
+    .info, .info * {
+        color: #40D060;
+    }
+    ul.qa {
+        list-style-type: none; /* Remove bullets */
+        padding: 0;
+        margin: 3ex 0;
     }
     #TOC li {
         margin: 0;
@@ -304,7 +317,7 @@
         margin-left: -1ex;
         border-width: 1ex;
         border-style: solid;
-        border-color: transparent transparent #C0C0C0 transparent;
+        border-color: #C0C0C0;
     }
     .popup .show {
         visibility: visible;
