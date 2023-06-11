@@ -372,7 +372,7 @@ var Metadata = (function() {
                         "name": "C\u266F",
                         "img": "standard/chrom/chord-12-2.png",
                         "length": 2, "monoFadeTime": 0.5,
-                        "notes": [note.Gs1, note.Gs1, note.Cs2]
+                        "notes": [note.Cs1, note.Gs1, note.Cs2]
                     },
                     "12-3": {
                         "name": "D",

@@ -121,6 +121,14 @@ var Events = (function() {
         }
     };
 
+    function setupCheckbox(checkbox) {
+        checkbox.addEventListener("change", checkboxBlur, { passive: false });
+    }
+
+    function checkboxBlur(e) {
+        e.target.blur();
+    }
+
     function disableScrollEvents(element) {
         // we can't just dsable scrolling, we have to disable the events that trigger scrolling
         // disable various mousewheel events
@@ -200,6 +208,8 @@ var Events = (function() {
         //  * pressing enter blurs the text box and commits any changes
         //  * pressing escape blurs the text box and reverts any changes
         setupTextInput: setupTextInput, // (textInput, autoSelect=false)
+        // setup a checkbox because apparently it gets keyboard focus when you click on it
+        setupCheckbox: setupCheckbox, // (checkbox)
         // disable scroll events for an element
         disableScrollEvents: disableScrollEvents, // (element)
         // re-enable scroll events for an element

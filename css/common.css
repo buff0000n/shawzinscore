@@ -23,9 +23,7 @@
         background-color: #000000;
     }
 
-    .button, .selectButton, .lightButton {
-        margin: 1ex 1ex 1ex 1ex;
-        cursor: pointer;
+    .button, .button-disabled, .selectButton, .lightButton {
         cursor: pointer;
         border: none;
         color: #FFFFFF;
@@ -33,7 +31,6 @@
         text-decoration: none;
         font-size: 100%;
         border-radius: 1ex;
-        display: block-inline;
     }
     .button, .lightButton {
         text-align: center;
@@ -41,11 +38,18 @@
     .button, .selectButton {
         background-color: #404040;
     }
+    .selectButton {
+        margin: 1ex;
+    }
     .lightButton {
         background-color: #808080;
     }
     .selectButton {
         text-align: left;
+    }
+    .button, .button-disabled {
+        margin: 0;
+        padding: 0.5ex;
     }
     .urlButton, {
         background-color: #406080;

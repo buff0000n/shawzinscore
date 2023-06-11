@@ -30,6 +30,10 @@ td {
     text-align: center;
 }
 
+td.label {
+    text-align: right;
+}
+
 .menu {
     position: absolute;
 }
@@ -268,6 +272,11 @@ td {
 .centerYImg {
     position: absolute;
     transform: translateY(-50%);
+}
+img.showcase {
+    width: 5ex;
+    height: auto;
+    transform: rotate(30deg);
 }
 
 @keyframes tabNoteBounce {

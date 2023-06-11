@@ -190,7 +190,7 @@
         <table id="song-toolbar-table" style="width: 680px;">
             <tr>
                 <td id="song-buttons" style="width: 340px; text-align: center;">
-                    <div id="song-buttons-config" class="smallButton">
+                    <div id="song-buttons-config" class="button">
                         <img src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x" class="icon"/>
                     </div>
 
@@ -208,16 +208,16 @@
                         <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="cut" class="icon"/>
                     </div>
                     -->
-                    <div id="song-buttons-play" class="smallButton">
+                    <div id="song-buttons-play" class="button">
                         <img src="img/icon-play.png" srcset="img2x/icon-play.png 2x" alt="play" class="icon"/>
                     </div>
-                    <div id="song-buttons-stop" class="smallButton-disabled">
+                    <div id="song-buttons-stop" class="button-disabled">
                         <img src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x" alt="stop" class="icon-disabled"/>
                     </div>
-                    <div id="song-buttons-rewind" class="smallButton">
+                    <div id="song-buttons-rewind" class="button">
                         <img src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x" alt="rewind" class="icon"/>
                     </div>
-                    <div id="song-buttons-ff" class="smallButton">
+                    <div id="song-buttons-ff" class="button">
                         <img src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x" alt="fast forward" class="icon"/>
                     </div>
                 </td>
@@ -272,7 +272,7 @@
                     -->
                 </td>
                 <td id="song-bar-roll" style="width: 340px;">
-                    <img id="roll-keyboard" src="img/keys-plain.png" srcset="img2x/keys-plain.png 2x"/>
+                    <img id="roll-keyboard" src="img/keys-plain.png" srcset="img2x/keys-plain.png 2x" draggable="false"/>
                 </td>
             </tr>
         </table>
@@ -313,7 +313,7 @@
                 for the chosen scale and Shawzin.
             </p>
             <p>
-                You can scroll through the notes manually, or play them.
+                You can view the song in a couple of ways, and play the audio with the Shawzin of your choice.
             </p>
             <p>
                 <strong>Editing</strong> is coming <strong class="warn">NOT SOON (TM)</strong>.
@@ -339,26 +339,47 @@
             </ul>
             <h1>Table of Contents</h1>
             <ul id="TOC">
-                <li><a href="#tocGettingStarted">Getting Started</a></li>
-                <li><a href="#tocSongCodes">Song Codes</a>
+                <li><a href="#tocGettingStarted">Getting Started</a>
                     <ul>
-                        <li><a href="#tocScales">Scales</a></li>
+                        <li><a href="#tocSongCodes">Song Codes</a>
                     </ul>
                 </li>
-                <li><a href="#tocShawzins">Shawzins</a></li>
-                <li><a href="#tocControlSchemes">Control Schemes</a></li>
+                <li><a href="#tocBasicProperties">Basic Properties</a>
+                    <ul>
+                        <li><a href="#tocTitle">Title</a></li>
+                        <li><a href="#tocShawzins">Shawzin</a></li>
+                        <li><a href="#tocScales">Scale</a></li>
+                        <li><a href="#tocControlSchemes">Control Scheme</a></li>
+                    </ul>
+                </li>
+                <li><a href="#tocTrackArea">The Track Area</a>
+                    <ul>
+                        <li><a href="#tocTrackAreaLeft">The Tablature Section</a></li>
+                        <li><a href="#tocTrackAreaRight">The Piano Roll Section</a></li>
+                        <li><a href="#tocTrackAreaFret">Strings/Frets</a></li>
+                        <li><a href="#tocTrackAreaKeyboard">The Keyboard</a></li>
+                        <li><a href="#tocTrackAreaDirection">Direction</a></li>
+                    </ul>
+                </li>
                 <li><a href="#tocPlayback">Playback</a></li>
                 <li><a href="#tocSharing">Sharing</a>
                     <ul>
                         <li><a href="#tocGenerateLink">Generate Link</a></li>
-                        <li><a href="#tocShawzinTab">Shawzin Tab</a></li>
+                        <li><a href="#tocShawzinTab">Shawzin Tab</a>
+                            <ul>
+                                <li><a href="#tocShawzinTabDownload">Download</a></li>
+                                <li><a href="#tocShawzinTabUnits">Seconds per line/Measures per line</a></li>
+                                <li><a href="#tocShawzinTabDarkMode">Dark Mode</a></li>
+                                <li><a href="#tocShawzinTabOldMode">Old Mode</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li><a href="#tocAdvancedStructure">Advanced Structure</a>
                     <ul>
                         <li><a href="#tocMeter">Meter</a></li>
                         <li><a href="#tocTempo">Tempo</a></li>
-                        <li><a href="#tocLeadin">Lead-in</a></li>
+                        <li><a href="#tocLeadin">Lead-in beats</a></li>
                     </ul>
                 </li>
                 <li><a href="#tocGeneral">General Info</a>
@@ -456,52 +477,360 @@
                 <img class="smallButton icon" src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x"/>
                 copy button.
             </p>
-            <p>
 
+            <h2 id="tocSongCodes">Song Codes</h2>
+            <p>
+                Song codes are a text format for storing and sharing Shawzin songs. I'm not going to get super into
+                technical details here, but here's the basics:
+            </p>
+            <ul>
+                <li>
+                    The first character defines the scale the song is in.  There <a href="#tocScaleList">nine scales</a>,
+                    so this character is a digit from <strong>1</strong> to <strong>9</strong>
+                </li>
+                <li>
+                    After the first character, the rest of the code is has a group of three characters for each note
+                    in the song.
+                    <ul>
+                        <li>
+                            The first character defines the string and fret buttons that are pressed for the note.
+                        </li>
+                        <li>
+                            The second and third characters defines the time at which the note plays.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <p>
+                Song codes are limited to a maximum of <strong class="warn">1000 notes</strong> and a maximum of
+                <strong class="warn">four minutes</strong>.
+            </p>
+            <p>
+                The actual format is similar to <strong>base64</strong>, so it should be safe to copy and paste
+                pretty much anywhere just like normal text.
             </p>
 
-            <h1 id="tocSongCodes">Song Codes</h1>
+            <h1 id="tocBasicProperties">Basic Properties</h1>
             <p>
-                Song codes are the format for storing and sharing Shawzin songs.
+                Under the song code are four basic properties.
             </p>
 
-            <h1 id="tocScales">Scales</h1>
+            <h2 id="tocTitle">Title</h2>
+            <p>
+                This is a title given to the song.  It's not part of the song code, but it does get saved to any
+                Shawzinscore links.
+            </p>
 
-            <h1 id="tocShawzins">Shawzins</h1>
+            <h2 id="tocShawzins">Shawzin</h2>
+            <p>
+                Under the Title is a Shawzin selector.  Click here to change the currently active Shawzin.  There are
+                currently <a href="#tocShawzinList">ten Shawzins to choose from</a>.
+            </p>
+            <p>
+                The Shawzin section is not part of the song code, but it does get saved to any Shawzinscore links.
+            </p>
 
-            <h1 id="tocControlSchemes">Control Schemes</h1>
+            <h2 id="tocScales">Scale</h2>
+            <p>
+                Under the Shawzin selector is the Scale selector.  Click here to change the scale the song is using.
+                There are <a href="#tocScaleList">nine scales to choose from</a>.
+            </p>
+            <p>
+                The scale section is saved as part of the song code.
+            </p>
+
+            <h2 id="tocControlSchemes">Control Scheme</h2>
+            <p>
+                Finally, under the Scale selector is a Control Scheme selector.  Use this to change the controls
+                displayed in the <a href="#tocTrackAreaLeft">tablature section</a> of the track area.  There
+                are currently <a href="#tocControlSchemeList">eight control schemes available</a>.
+            </p>
 
             <p>
-                <strong class="info">Note</strong>: Your control scheme selection is stored in your browser's local
-                storage as a preference.  It will persist across browser sessions on any song you work with in
-                Shawzinscore.
+                Your control scheme selection is stored in your browser's local storage as a preference.  It will
+                persist across browser sessions on any song you work with in Shawzinscore.
+            </p>
+
+            <h1 id="tocTrackArea">The Track Area</h1>
+            <p>
+                Once loaded, the song code is decoded and displayed in the <strong class="info">track</strong> area.
+                This area is divided into two side-by-side sections.
+            </p>
+
+            <h2 id="tocTrackAreaLeft">The Tablature Section</h2>
+            <p>
+                The left side of the track area shows a recreation of the <a href="#generalSongCodePlayback">in-game
+                Shawzin screen.</a>
+            </p>
+
+            <h2 id="tocTrackAreaRight">The Piano Roll Section</h2>
+            <p>
+                The right side of the track shows an equivalent musical tone for every Shawzin note on the left.  This
+                is a <strong>piano-roll</strong> display with each tone appearing as a bar in line with a particular
+                piano key.
+            </p>
+            <p>
+                The piano roll tones are color-coded by fret:
+            </p>
+            <ul>
+                <li><strong class="fret0">(no fret)</strong></li>
+                <li><strong class="fret1">Sky Fret</strong></li>
+                <li><strong class="fret2">Earth Fret</strong></li>
+                <li><strong class="fret3">Water Fret</strong></li>
+                <li><strong class="fret12">Chord Frets</strong>: <strong class="fret1">Sky Fret</strong> + <strong class="fret2">Earth Fret</strong></li>
+                <li><strong class="fret23">Chord Frets</strong>: <strong class="fret2">Earth Fret</strong> + <strong class="fret3">Water Fret</strong></li>
+                <li><strong class="fret13">Chord Frets</strong>: <strong class="fret1">Sky Fret</strong> + <strong class="fret3">Water Fret</strong></li>
+                <li><strong class="fret123">Chord Frets</strong>: <strong class="fret1">Sky Fret</strong> + <strong class="fret2">Earth Fret</strong> + <strong class="fret3">Water Fret</strong></li>
+            </ul>
+            <p>
+                The length of the tones in the piano roll section are dependent on which Shawzin is selected.
+                Some Shawzins have shap, plucked sounds, which will appear as short bars in the piano roll are.  Others
+                have longer, sustained sounds, and the bars in the piano roll will be <i>roughly</i> accurate to how
+                long those tones last.  If a Shawzin is <strong>monophonic</strong>, then tone bars can cut off at the
+                beginning of the next note.
+            </p>
+
+            <h2 id="tocTrackAreaFret">Strings/Frets</h2>
+            <p>
+                Above/below the Tablature section is a display for the <strong>String</strong> controls and
+                <strong>Fret</strong> controls.  Click the
+                <img class="smallButton icon" src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x"/>
+                button to switch to frets, and click the
+                <img class="smallButton icon" src="img/icon-trackbar-switch-strings.png" srcset="img2x/icon-trackbar-switch-strings.png 2x"/>
+                button to switch back to strings.
+            </p>
+            <p>
+                <strong class="info">Note:</strong> This section doesn't really do anything right now, but it's going to
+                eventually be part of how editing works.
+            </p>
+            <h2 id="tocTrackAreaKeyboard">The Keyboard</h2>
+            <p>
+                Above/below the Piano Roll section is a piano keyboard.  The available notes for the currently selected
+                scale will be highlighted on the keyboard.  Clicking on a highlighted key will play that tone.
+            </p>
+
+            <h2 id="tocTrackAreaDirection">Direction</h2>
+            <p>
+                By default the notes in the track area are displayed from bottom to top, to mirror the direction notes
+                are shown in the in-game Shawzin screen.  Click the
+                <img class="smallButton icon" src="img/icon-dropup.png" srcset="img2x/icon-dropup.png 2x"/>
+                button underneath the Tablature area to switch this direction to top-down.  This will also move the
+                Fret/String and Keyboard sections so they are above the track.  Click
+                <img class="smallButton icon" src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x"/>
+                to flip the direction back to bottom-up.
+            </p>
+            <p>
+                While bottom-up is how the Shawzin screen is laid out in-game, top-down makes more sense to my brain
+                when I'm reading or editing music.  Playback and everything else will work in either direction.
             </p>
 
             <h1 id="tocPlayback">Playback</h1>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-play.png" srcset="img2x/icon-play.png 2x"/> button or
+                press the <strong>Space Bar</strong> to start playback.  Like the in-game Shawzin screen, the song
+                doesn't start immedaitely.  There will be some lead time while the first notes scroll in.
+            </p>
+            <p>
+                While the song is playing, click the
+                <img class="smallButton icon" src="img/icon-pause.png" srcset="img2x/icon-pause.png 2x"/> button or
+                press the <strong>Space Bar</strong> to pause playback.  If you start playback again then it will
+                start from where it left off.
+            </p>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x"/> button while
+                playing or paused to stop playback completely.  If you start playback again then it will restart
+                from the beginning.
+            </p>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x"/> button to rewind
+                the view back to the beginning of the song.  If it's currently playing then playback will restart
+                from teh beginning.
+            </p>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x"/> button to fast
+                forward the view to the end of the song.  If it's currently playing then playback will stop.
+            </p>
 
             <h1 id="tocSharing">Sharing</h1>
+            <p>
+                The browser's <strong>Location Bar</strong> is kept up to date, so if you want you can just copy or
+                bookmark that.  There are two other options for sharing:
+            </p>
 
             <h2 id="tocGenerateLink">Generate Link</h2>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-link.png" srcset="img2x/icon-link.png 2x"/>
+                button to bring up a text box containing a full Shawzinscore link to your song code and other
+                properties.  You can copy directly from the text box or click the
+                <img class="smallButton icon" src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x"/>
+                button to copy it to your clipboard.
+            </p>
 
             <h2 id="tocShawzinTab">Shawzin Tab</h2>
-
             <p>
-                <strong class="info">Note:</strong> If you have measures and a tempo specified (see
-                <a href="#tocAdvancedStructure">Advanced Structure</a>) then this field will be
-                <strong>Measures per line</strong> instead of <strong>seconds per line</strong>.
+                Click the
+                <img class="smallButton icon" src="img/icon-png.png" srcset="img2x/icon-png.png 2x"/> button to bring
+                up the Shawzin Tab. This is basically a port of <a href="/shawzintab">my original Shawzin app</a>.
+            </p>
+            <p>
+                The layout is closer to a standard guitar tablature format.  The music direction goes from left to
+                right across the page, with a line for each string.  Each note is represented by grouping of fret
+                controls centered on a string.  Frets that aren't pressed are represented as a small circle.
+            </p>
+            <p>
+                The controls displayed are determined by your selected <a href="#tocControlSchemes">control scheme</a>
+            </p>
+
+            <h3 id="tocShawzinTabDownload">Download</h3>
+            <p>
+                Click the <strong>Download</strong> button to generate a <strong class="info">PNG</strong> image
+                of the Shawzin Tab contents.  It will pop up a link to the image file.
+            </p>
+
+            <h3 id="tocShawzinTabUnits">Seconds per line/Measures per line</h3>
+            <p>
+                If you have measures and a tempo specified (see <a href="#tocAdvancedStructure">Advanced Structure</a>)
+                then this field will be <strong>Measures per line</strong>.  Otherwise it will be <strong>Seconds per
+                line</strong>.
+            </p>
+            <p>
+                Use this to determine how many seconds or measures are put on each line of the Shawzin Tab.  You may need
+                to adjust this down for faster-paced songs so the notes are spread out more.  Alternatively, adjust it
+                up for very slow songs to make the image smaller.  You want the Shawin tab for your song to be easily
+                readable.
+            </p>
+            <p>
+                If you make adjustments to Seconds per line/Measures per line then it will be saved to you URL and
+                Shawzinscore link, if you generate one.  It's tied to the song, similar to Title, Meter, and other
+                properties.
+            </p>
+
+            <h3 id="tocShawzinTabDarkMode">Dark Mode</h3>
+            <p>
+                By default the Shawzin Tab is generated as black on a white background. You can enable
+                <strong>Dark Mode</strong> to generate it as white on a black background instead.
+            </p>
+            <p>
+                Your Dark Mode setting is stored in your browser's local storage as a preference.
+            </p>
+
+            <h3 id="tocShawzinTabOldMode">Old Mode</h3>
+            <p>
+                When I first put out Shawzin Tab it just displayed numbers for the strings and frets.  I removed this
+                briefly when I updated Shawzin Tab to support control schemes, and got some complaints from poeple
+                who liked the numeric format.  So it's still here, you can enable it with the <strong>Old Mode</strong>
+                setting.
+            </p>
+            <p>
+                To avoid confusion, chords in Old Mode are shown with multiple fret numbers and an underline underneath
+                them to group them together as a chord.
+            </p>
+            <p>
+                Your Old Mode setting is stored in your browser's local storage as a preference.
             </p>
 
             <h1 id="tocAdvancedStructure">Advanced Structure</h1>
+            <p>
+                If you know a little about music and time signatures then you can configure some markers to delimit
+                measures and beats.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> If a song was recorded <i>without</i> a metronome or any other way of
+                keeping a strict tempo then adding structure is not likely to work very well.
+            </p>
 
             <h2 id="tocMeter">Meter</h2>
+            <p>
+                Use the <strong>Meter</strong> text box to enter a time signature.  Time signatures are formatted like
+                &quot;<strong class="info">N / N</strong>&quot;, where <strong class="info">N</strong> is a number.  The first number
+                can very, but the second one is typically either <strong class="info">4</strong> or
+                <strong class="info">8</strong>.
+            </p>
+            <p>
+                If you enter a Meter and there isn't a Tempo, then a default tempo of <strong class="info">120</strong>
+                BPM will be used.  Likewise, if you remove the Meter then the Tempo will be unset as well.  You can
+                either have both Meter and Tempo or neither of them.
+            </p>
+            <p>
+                <strong class="info">Note:</strong> Currently, Shawzinscore doesn't really care about the second number.
+                All it really needs is the first number, which determines the number of beats in a measure.  That will
+                change once it supports editing.
+            </p>
 
             <h2 id="tocTempo">Tempo</h2>
+            <p>
+                Use the <strong>Tempo</strong> drop down to select the number of
+                <strong class="info">Beats per Minute</strong>.  Together with the number of beats in your
+                <strong>Meter</strong>, this determines how long each measure is.
+            </p>
+            <p>
+                If you recorded your song using the in-game metronome then you probably want to use
+                <strong class="info">120</strong> as your Tempo. However, if it's a really slow song then you might want
+                to try <strong class="info">60</strong>.
+            </p>
+            <p>
+                There are a limited number of tempos available because of how Shawzin recording actually works.  In the
+                song code format, each second is divided into <strong class="info">16</strong> time increments, or
+                <strong>Ticks</strong>.  A note must fall on one of these sixteenth-of-a-second ticks.  While
+                recording in-game, each recorded note is assigned to the nearest tick.
+            </p>
+            <p>
+                In this system there are only a few tempos that will give you a whole number of ticks per beat, which
+                is further limited by possibly needing a whole number of ticks for eighth notes, sixteenth notes,
+                triplets.  If the shortest notes in your song don't align on a tick boundary then they will get
+                <strong>quantized</strong> to the nearest tick, which is going to sound really wonky.
+            </p>
+            <p>
+                If you choose a Tempo and there isn't a Meter, then a default meter of <strong class="info">4/4</strong>
+                will be used.  Likewise, if you remove the Tempo then the Meter will be unset as well.  You can either
+                have both Meter and Tempo or neither of them.
+            </p>
+            <h2 id="tocLeadin">Lead-in beats</h2>
+            <p>
+                Shawzin codes always start the first note at time zero, and the timing of subesquent notes is based off
+                that.  This is fine when there's no structure, but it's problem when you add the correct Meter and Tempo
+                but the measure and beat delimiters are still offset from how the song should be.
+            </p>
+            <p>
+                Use the <strong>Lead-in beats</strong> text box to correct this.  This tells Shawzinscore how many beats
+                of your song are considered "lead in", before getting to the first full measure.
+            </p>
+            <p>
+                This can be a fractional number of beats.  For example, if your Meter is 4/4 and you have an eighth-note
+                lead in, then then Lead-in beats should be set to <strong class="info">0.5</strong>, because an eighth
+                note is half a beat.
+            </p>
+            <p>
+                <strong class="info">Note:</strong> When I finally add editing I'll have a less hacky way to handle this
+                in the UI.
+            </p>
 
-            <h2 id="tocLeadin">Lead-in</h2>
-
-
+            <div style="text-align: center;">
+                <img class="showcase" src="img/shawzin-dax-large.png" srcset="img2x/shawzin-dax-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-nelumbo-large.png" srcset="img2x/shawzin-nelumbo-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-corbu-large.png" srcset="img2x/shawzin-corbu-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-tiamat-large.png" srcset="img2x/shawzin-tiamat-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-aristei-large.png" srcset="img2x/shawzin-aristei-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-narmer-large.png" srcset="img2x/shawzin-narmer-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-kira-large.png" srcset="img2x/shawzin-kira-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-void-large.png" srcset="img2x/shawzin-void-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-lonesome-large.png" srcset="img2x/shawzin-lonesome-large.png 2x"/>
+                <img class="showcase" src="img/shawzin-courtly-large.png" srcset="img2x/shawzin-courtly-large.png 2x"/>
+            </div>
 
             <h1 id="tocGeneral">General Info</h1>
+            <p>
+                I decided to separate out the general Shawzin documentation from the Shawzinscore documentation.  All
+                of this stuff applies even if you don't use Shawzinscore.
+            </p>
+            <p>
+                <i>I dunno, this feels like the script to a future video series...</i>
+            </p>
 
             <h2 id="tocMechanics">Shawzin Mechanics</h2>
             <p>
@@ -799,6 +1128,9 @@
             <p>
                 <strong class="warn">Note:</strong> Before you are allowed to share it in chat, you must have played
                 back the recorded song to an accuracy of at least 4 out of 5 Clems, or roughly 80% correct.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> Your song must have no more than 100 notes to be shared in chat.
             </p>
 
             <h4 id="generalSongCodeCopying">Copying</h4>
@@ -1300,7 +1632,7 @@
                             The Major scale is a <strong>mode</strong> of the more general <strong>Diatonic Scale</strong>.
                             It includes all the distinct tones of the <strong>Major Pentatonic</strong> scale, along
                             with two extra distinct tones.  The Major scale on the Shawzin is basically all the white
-                            keys in a piano.
+                            keys on a piano.
                         </p>
                         <p>
                             It's still limited to twelve notes, so its range is only about an octave and a half.  But
@@ -1326,9 +1658,9 @@
                     <td>
                         <h3 id="scale_min">Minor</h3>
                         <p>
-                            The Minor scale is another mode of the <strong>Diatonic Scale</strong>.  It includes all
-                            the distinct tones of the <strong>Minor Pentatonic</strong>, along with two exta distinct
-                            tones.
+                            The Minor scale is another <strong>mode</strong> of the <strong>Diatonic Scale</strong>.  It
+                            includes all the distinct tones of the <strong>Minor Pentatonic</strong>, along with two
+                            exta distinct tones.
                         </p>
                         <p>
                             Since it's just a mode of the Diatonic scale, you can also find a Major scale here.  Start
@@ -1386,10 +1718,10 @@
                             Man, they're really getting into the music theory weeds with this one.
                         </p>
                         <p>
-                            "Phrygian" just refers to another mode of the <strong>Diatonic Scale</strong>.  For the
-                            record, technically the <strong>Major</strong> scale is the <strong>Ionian mode</strong>
+                            "Phrygian" just refers to another <strong>mode</strong> of the <strong>Diatonic Scale</strong>.
+                            For the record, technically the <strong>Major</strong> scale is the <strong>Ionian mode</strong>
                             and the Minor scale is the <strong>Aeolian mode</strong>.  All these words come from Greek,
-                            and the phrygian mode shows up a lot in classial Greek music.
+                            and the Phrygian mode shows up a lot in classial Greek music.
                         </p>
                         <p>
                             Like the other Diatonic scales, you can start the Phrygian scale on other tones and get other
@@ -1482,13 +1814,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_1_w.png" srcset="img2x/key_1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_2_w.png" srcset="img2x/key_2_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_3_w.png" srcset="img2x/key_3_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_l_w.png" srcset="img2x/key_l_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_d_w.png" srcset="img2x/key_d_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r_w.png" srcset="img2x/key_r_w.png 2x"/></td>
@@ -1510,13 +1842,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_l_w.png" srcset="img2x/key_l_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_d_w.png" srcset="img2x/key_d_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r_w.png" srcset="img2x/key_r_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_1_w.png" srcset="img2x/key_1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_2_w.png" srcset="img2x/key_2_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_3_w.png" srcset="img2x/key_3_w.png 2x"/></td>
@@ -1537,13 +1869,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_square_w.png" srcset="img2x/key_square_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_cross_w.png" srcset="img2x/key_cross_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_circle_w.png" srcset="img2x/key_circle_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_l1_w.png" srcset="img2x/key_l1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r1_w.png" srcset="img2x/key_r1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r2_w.png" srcset="img2x/key_r2_w.png 2x"/></td>
@@ -1564,13 +1896,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_square_w.png" srcset="img2x/key_square_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_cross_w.png" srcset="img2x/key_cross_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_circle_w.png" srcset="img2x/key_circle_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_l_w.png" srcset="img2x/key_l_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_d_w.png" srcset="img2x/key_d_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r_w.png" srcset="img2x/key_r_w.png 2x"/></td>
@@ -1597,13 +1929,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_x_w.png" srcset="img2x/key_x_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_l1_w.png" srcset="img2x/key_l1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r1_w.png" srcset="img2x/key_r1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r2_w.png" srcset="img2x/key_r2_w.png 2x"/></td>
@@ -1624,13 +1956,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_x_w.png" srcset="img2x/key_x_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_l_w.png" srcset="img2x/key_l_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_d_w.png" srcset="img2x/key_d_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r_w.png" srcset="img2x/key_r_w.png 2x"/></td>
@@ -1657,13 +1989,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_y_w.png" srcset="img2x/key_y_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_l1_w.png" srcset="img2x/key_l1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r1_w.png" srcset="img2x/key_r1_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r2_w.png" srcset="img2x/key_r2_w.png 2x"/></td>
@@ -1684,13 +2016,13 @@
                         </p>
                         <table class="centeredTable">
                             <tr>
-                                <td><strong>Strings:</strong></td>
+                                <td class="label"><strong>Strings:</strong></td>
                                 <td><img class="icon" src="img/key_y_w.png" srcset="img2x/key_y_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
                             </tr>
                             <tr>
-                                <td><strong>Frets:</strong></td>
+                                <td class="label"><strong>Frets:</strong></td>
                                 <td><img class="icon" src="img/key_l_w.png" srcset="img2x/key_l_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_d_w.png" srcset="img2x/key_d_w.png 2x"/></td>
                                 <td><img class="icon" src="img/key_r_w.png" srcset="img2x/key_r_w.png 2x"/></td>
@@ -1714,7 +2046,7 @@
                 <li>
                     <strong class="info">A:</strong> It's on my todo list.  It will probably only support custom
                     control schems for consoles, because PC has a lot of controls and doesn't really need to follow
-                    the app since it can just use song codes.
+                    along with the app because it can just use song codes.
                 </li>
             </ul>
             <ul class="qa">
@@ -1776,6 +2108,7 @@
                 <li>Sleep</li>
                 <li>Support meter/tempo changing mid-song</li>
                 <li>Less dumb animation for piano roll notes</li>
+                <li><strong class="fret13">Concept Shawzins</strong></li>
             </ul>
 
             <h1 id="tocKnownIssues">Known Issues</h1>

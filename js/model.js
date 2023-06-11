@@ -39,7 +39,7 @@ var Model = (function() {
 
         // load settings from the URL query parameters
         var shawzin = PageUtils.getQueryParam("s", false);
-        var songName = PageUtils.getQueryParam("n");
+        var songName = PageUtils.urlDecodeString(PageUtils.getQueryParam("n"));
         // don't parse '+' in the song code as a space
         var songCode = PageUtils.getQueryParam("c", false);
         var songTempo = PageUtils.getQueryParam("t", false);
@@ -277,10 +277,19 @@ var Model = (function() {
         } else {
             // parse meter, throw an error if there's any format issues
             var newMeterStringArray = newMeter.split("/");
+            // check format
             if (newMeterStringArray.length != 2) {
                 throw "Invalid meter format: '" + newMeter + "'";
             }
+
+            // parse as two ints
             var newMeterArray = [MiscUtils.parseInt(newMeterStringArray[0]), MiscUtils.parseInt(newMeterStringArray[1])];
+
+            // range check
+            if (newMeterArray[0] > MetadataUI.maxBeatsPerMeasure) {
+                // meh, not worth trying to correct it and build another meter string.
+                throw "Invalid meter format: '" + newMeter + "'";
+            }
 
             // parse lead-in and convert from beats to ticks
             var newLeadInTicks;
@@ -367,6 +376,10 @@ var Model = (function() {
     function doSetUnitsPerLine(newUnitsPerLine) {
         // check for change
         if (newUnitsPerLine == unitsPerLine) return;
+        // can't have people putting in huge numbers and crashing the page
+        if (unitsPerLine > MetadataUI.maxUnitsPerLine) {
+            unitsPerLine = MetadataUI.maxUnitsPerLine;
+        }
         // apply default value if it's blank or 0
         newUnitsPerLine = (newUnitsPerLine != null && newUnitsPerLine > 0) ? newUnitsPerLine : MetadataUI.defaultUnitsPerLine;
 

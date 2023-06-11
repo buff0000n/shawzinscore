@@ -214,6 +214,8 @@ var MetadataUI = (function() {
     ];
 
     var defaultUnitsPerLine = 4;
+    var maxUnitsPerLine = 100;
+    var maxBeatsPerMeasure = 20;
 
     return {
         // UI metadata
@@ -231,5 +233,7 @@ var MetadataUI = (function() {
         defaultTempo: defaultTempo,
         tempoList: tempoList,
         defaultUnitsPerLine: defaultUnitsPerLine,
+        maxUnitsPerLine: maxUnitsPerLine,
+        maxBeatsPerMeasure: maxBeatsPerMeasure,
     }
 })()

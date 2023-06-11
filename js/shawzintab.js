@@ -143,7 +143,7 @@ var ShawzinTab = (function() {
         // one calculation method if there's structure
         if (measureTicks) {
             // calculate the number of measures in the song, adding one if there's lead-in, divide by units per line, then ceiling
-            numLines = Math.ceil((Math.ceil(song.getEndTick() / measureTicks) + (song.getStartTick() < 0 ? 1 : 0)) / unitsPerLine);
+            numLines = Math.ceil((Math.ceil((song.getEndTick() + 1) / measureTicks) + (song.getStartTick() < 0 ? 1 : 0)) / unitsPerLine);
         } else {
             // easier method if there's no structure, total tick length divided by line ticks
             numLines = Math.ceil((song.getEndTick() - Math.min(song.getStartTick(), 0)) / lineTicks);
@@ -295,6 +295,11 @@ var ShawzinTab = (function() {
         }
 
         if (measureTicks) {
+            // if we've putting so many measures per line that the usual margin around the barlines exceeds more than
+            // half the width of the bar, then remove the margin.  It's funnier this way.
+            if (barMargin > ((x2 - x1) / (unitsPerLine * 4))) {
+                barMargin = 0;
+            }
             // draw measure lines
             for (var i = 0; i <= unitsPerLine; i+= 1) {
                 var x3 = x1 + (((x2 - x1) * i) / unitsPerLine);

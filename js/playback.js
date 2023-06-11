@@ -56,6 +56,25 @@ var Playback = (function() {
 
         // set
         playing = newPlaying;
+
+        if (playing) {
+            // get the track container element
+            var container = document.getElementById("song-container");
+            // get the page-level scroll element
+            var se = document.scrollingElement;
+            // get the bounds of the track container
+            var bcr = container.getBoundingClientRect();
+            // getBoundingClientRect is in terms of the visible window, convert to absolute global position using the scroll state
+            var top = bcr.top + se.scrollTop;
+            var left = bcr.left + se.scrollLeft;
+            // scroll the main window so the track is in view
+            se.scrollTo(left, top);
+            // disable scrolling on the main window
+            Events.disableScrollEvents(document.documentElement);
+        } else {
+            // re-enable scrolling
+            Events.enableScrollEvents(document.documentElement);
+        }
         // update the track
         Track.setPlaying(playing);
     }
@@ -96,7 +115,7 @@ var Playback = (function() {
         // enable or disable the stop button
         var div = document.getElementById("song-buttons-stop");
         var img = div.children[0];
-        div.className = enabled ? "smallButton" : "smallButton-disabled";
+        div.className = enabled ? "button" : "button-disabled";
         img.className = enabled ? "icon" : "icon-disabled";
         // save the state
         stopEnabled = enabled;

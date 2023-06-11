@@ -497,6 +497,7 @@ var PageUtils = (function() {
         showDebug: showDebug, // (msg)
 
         urlEncodeString: urlEncodeString, // (string, plusIsSpace=true)
+        urlDecodeString: urlDecodeString, // (string, plusIsSpace=true)
         getQueryParam: getQueryParam, // (name, plusIsSpace=true)
         setQueryParam: setQueryParam, // (name, value, plusIsSpace=true)
         setQueryParamMap: setQueryParamMap, // (map, plusIsSpace=true)

@@ -124,13 +124,13 @@ var Undo = (function() {
 //        }
 //    }
 //
-//    function cancelUndoCombo() {
-//        var undoList = undoCombos.pop()
-//        for (var i = undoList.length - 1; i >= 0; i--) {
-//            undoList[i].undoAction();
-//        }
-//    }
-//
+    function cancelUndoCombo() {
+        var undoList = undoCombos.pop()
+        for (var i = undoList.length - 1; i >= 0; i--) {
+            undoList[i].undoAction();
+        }
+    }
+
 //    function cancelAllUndoCombos() {
 //        while (undoCombos.length > 0) {
 //            cancelUndoCombo();
@@ -245,10 +245,18 @@ var Undo = (function() {
         startUndoCombo();
         // add the action
         addUndoAction(action);
-        // perform the action
-        action.redoAction();
+        try {
+            // perform the action
+            action.redoAction();
+
+        } catch (error) {
+            // cancel the undo combo and undo any actions that might already be in it
+            cancelUndoCombo();
+            // propagate the error
+            throw error;
+        }
         // end the nested combo
-        endUndoCombo();
+        endUndoCombo(description);
         // seems like a good time to clear any errors
         PageUtils.clearErrors();
     }

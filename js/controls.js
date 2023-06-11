@@ -55,8 +55,10 @@ var Controls = (function() {
         Events.setupTextInput(document.getElementById("config-line-units-input"), true);
         document.getElementById("config-line-units-input").addEventListener("change", commitLineUnitsChange, { passive: false });
         // dark mode checkbox
+        Events.setupCheckbox(document.getElementById("config-darkmode-input"), true);
         document.getElementById("config-darkmode-input").addEventListener("change", commitDarkModeChange, { passive: false });
         // old school mode checkbox
+        Events.setupCheckbox(document.getElementById("config-oldmode-input"), true);
         document.getElementById("config-oldmode-input").addEventListener("change", commitOldModeChange, { passive: false });
         // initialize these from local storage. they are preferences and not part of the song model
         document.getElementById("config-darkmode-input").checked = Settings.getDarkMode();
