@@ -285,6 +285,10 @@ var PageUtils = (function() {
     //==============================================================
 
 	function urlEncodeString(string, plusIsSpace=true) {
+	    // check for null
+        if (!string) {
+            return string;
+        }
 	    // urlencode some things
 	    string = encodeURIComponent(string);
 
@@ -296,6 +300,10 @@ var PageUtils = (function() {
 	}
 
 	function urlDecodeString(string, plusIsSpace=true) {
+	    // check for null
+        if (!string) {
+            return string;
+        }
 	    if (plusIsSpace) {
             // un-replace '+' with a space
             string = string.replace(/\+/g, " ");
