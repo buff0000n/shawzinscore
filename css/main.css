@@ -277,6 +277,10 @@ img.showcase {
     width: 5ex;
     height: auto;
     transform: rotate(30deg);
+    transition: transform 0.125s ease-in-out 30ms;
+}
+img.showcase:hover {
+    transform: rotate(-30deg);
 }
 
 @keyframes tabNoteBounce {

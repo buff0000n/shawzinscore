@@ -59,7 +59,7 @@
             Track.registerEventListeners();
             TrackBar.registerEventListeners();
             Playback.registerEventListeners();
-            // initialize the model the the page URL
+            // initialize the model from the page URL
             Model.init();
         }, 100);
     }
@@ -88,7 +88,7 @@
 
 </script>
 
-<div id="toolbar" style="width: 340px;">
+<div id="toolbar"> <!-- style="width: 340px;" -->
     <div id="title-bar" class="titleBar">
         <div class="mainTitle">Shawzinscore</div>
     </div>
@@ -309,7 +309,7 @@
             </p>
             <p>
                 On the left is a reproduction of the in-game Shawzin screen, with the controls set to your choice
-                of control schemes.  On the right is a piano-roll style display showing the corresponsing musical notes
+                of control schemes.  On the right is a piano-roll style display showing the corresponding musical notes
                 for the chosen scale and Shawzin.
             </p>
             <p>
@@ -489,14 +489,14 @@
                     so this character is a digit from <strong>1</strong> to <strong>9</strong>
                 </li>
                 <li>
-                    After the first character, the rest of the code is has a group of three characters for each note
+                    After the first character, the rest of the code has a group of three characters for each note
                     in the song.
                     <ul>
                         <li>
                             The first character defines the string and fret buttons that are pressed for the note.
                         </li>
                         <li>
-                            The second and third characters defines the time at which the note plays.
+                            The second and third characters define the time at which the note plays.
                         </li>
                     </ul>
                 </li>
@@ -517,7 +517,7 @@
 
             <h2 id="tocTitle">Title</h2>
             <p>
-                This is a title given to the song.  It's not part of the song code, but it does get saved to any
+                This is the title given to the song.  It's not part of the song code, but it does get saved to any
                 Shawzinscore links.
             </p>
 
@@ -584,10 +584,10 @@
             </ul>
             <p>
                 The length of the tones in the piano roll section are dependent on which Shawzin is selected.
-                Some Shawzins have shap, plucked sounds, which will appear as short bars in the piano roll are.  Others
-                have longer, sustained sounds, and the bars in the piano roll will be <i>roughly</i> accurate to how
-                long those tones last.  If a Shawzin is <strong>monophonic</strong>, then tone bars can cut off at the
-                beginning of the next note.
+                Some Shawzins have sharp, plucked sounds, which will appear as short bars in the piano roll section.
+                Others have longer, sustained sounds, and the bars in the piano roll will be <i>roughly</i> accurate to
+                how long those tones last.  If a Shawzin is <strong>monophonic</strong>, then tone bars can cut off at
+                the beginning of the next note.
             </p>
 
             <h2 id="tocTrackAreaFret">Strings/Frets</h2>
@@ -629,7 +629,7 @@
                 Click the
                 <img class="smallButton icon" src="img/icon-play.png" srcset="img2x/icon-play.png 2x"/> button or
                 press the <strong>Space Bar</strong> to start playback.  Like the in-game Shawzin screen, the song
-                doesn't start immedaitely.  There will be some lead time while the first notes scroll in.
+                doesn't start immediately.  There will be some lead time while the first notes scroll in.
             </p>
             <p>
                 While the song is playing, click the
@@ -647,7 +647,7 @@
                 Click the
                 <img class="smallButton icon" src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x"/> button to rewind
                 the view back to the beginning of the song.  If it's currently playing then playback will restart
-                from teh beginning.
+                from the beginning.
             </p>
             <p>
                 Click the
@@ -679,7 +679,7 @@
             </p>
             <p>
                 The layout is closer to a standard guitar tablature format.  The music direction goes from left to
-                right across the page, with a line for each string.  Each note is represented by grouping of fret
+                right across the page, with a line for each string.  Each note is represented by a grouping of fret
                 controls centered on a string.  Frets that aren't pressed are represented as a small circle.
             </p>
             <p>
@@ -722,7 +722,7 @@
             <h3 id="tocShawzinTabOldMode">Old Mode</h3>
             <p>
                 When I first put out Shawzin Tab it just displayed numbers for the strings and frets.  I removed this
-                briefly when I updated Shawzin Tab to support control schemes, and got some complaints from poeple
+                briefly when I updated Shawzin Tab to support control schemes, and got some complaints from people
                 who liked the numeric format.  So it's still here, you can enable it with the <strong>Old Mode</strong>
                 setting.
             </p>
@@ -748,7 +748,7 @@
             <p>
                 Use the <strong>Meter</strong> text box to enter a time signature.  Time signatures are formatted like
                 &quot;<strong class="info">N / N</strong>&quot;, where <strong class="info">N</strong> is a number.  The first number
-                can very, but the second one is typically either <strong class="info">4</strong> or
+                can vary, but the second one is typically either <strong class="info">4</strong> or
                 <strong class="info">8</strong>.
             </p>
             <p>
@@ -793,7 +793,7 @@
             <h2 id="tocLeadin">Lead-in beats</h2>
             <p>
                 Shawzin codes always start the first note at time zero, and the timing of subesquent notes is based off
-                that.  This is fine when there's no structure, but it's problem when you add the correct Meter and Tempo
+                that.  This is fine when there's no structure, but it's a problem when you add the correct Meter and Tempo
                 but the measure and beat delimiters are still offset from how the song should be.
             </p>
             <p>
@@ -802,7 +802,7 @@
             </p>
             <p>
                 This can be a fractional number of beats.  For example, if your Meter is 4/4 and you have an eighth-note
-                lead in, then then Lead-in beats should be set to <strong class="info">0.5</strong>, because an eighth
+                lead in, then Lead-in beats should be set to <strong class="info">0.5</strong>, because an eighth
                 note is half a beat.
             </p>
             <p>
@@ -1095,8 +1095,10 @@
                 for that note.
             </p>
             <p>
-                At the end, you're given a score, from 0 to 5 Clems.  Each Clem is worth roughly 20% of the notes
-                played correctly, plus or minus a little bit for accuracy.
+                At the end, you're given a score, from 0 to
+                <img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/>.  Each
+                <img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/>.  is worth
+                roughly 20% of the notes played correctly, plus or minus a little bit for accuracy.
             </p>
             <p>
                 Like any musical instrument, the keys to sight-reading music are
@@ -1127,7 +1129,9 @@
             </p>
             <p>
                 <strong class="warn">Note:</strong> Before you are allowed to share it in chat, you must have played
-                back the recorded song to an accuracy of at least 4 out of 5 Clems, or roughly 80% correct.
+                back the recorded song to an accuracy of at least
+                <img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/>, or roughly
+                80% correct.
             </p>
             <p>
                 <strong class="warn">Note:</strong> Your song must have no more than 100 notes to be shared in chat.
@@ -1156,7 +1160,9 @@
             </p>
             <p>
                 <strong class="warn">Note:</strong> You cannot share loaded song codes in the chat, even if you perform
-                them to 4 Clems of accuracy.  Because of <i>reasons</i>.
+                them and score at least
+                <img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/><img class="icon" src="img/icon-clem.png" srcset="img2x/icon-clem.png 2x" alt="Clem"/>.
+                Because of <i>reasons</i>.
             </p>
             <p>
                 <strong class="warn">Note:</strong> Copying to and loading from the clipboard are only supported on PC.
@@ -1188,7 +1194,7 @@
                         </p>
                         <p>
                             The Dax Shawzin was first seen as a background object in the Sacrifice quest in Update 23.0 (2018), when
-                            it was also released as a static decoration.  It was released as a playable instument in Update 25.4 (2019).
+                            it was also released as a static decoration.  It was released as a playable instrument in Update 25.4 (2019).
                             Its sound and look are based on a <strong>Shamisen</strong>, a traditional Japanese instrument with
                             three strings.
                         </p>
@@ -1242,7 +1248,7 @@
                             40<img class="icon" src="img/icon-plat.png" srcset="img2x/icon-plat.png 2x" alt="plat"/>
                         </p>
                         <p>
-                            The Corbu Shawzin was released in Update 27.1 (2020). Its sound is based on an
+                            The Corbu Shawzin was released in Update 27.1 (2020). Its sound is based on a
                             heavy, "Djent"-style <strong>Electric Guitar</strong>.
                         </p>
                         <p>
@@ -1251,7 +1257,7 @@
                         </p>
                         <p>
                             The single notes on a Corbu have two different sounds, a shorter one, and a longer one that ends in a
-                            bit of vibrato.  A singe note alternates between these two sounds each time that note is played.
+                            bit of vibrato.  A single note alternates between these two sounds each time that note is played.
                         </p>
                         <p>
                             The Corbu has a unique set of chords.  The first six chords are essentially power chords based on the
@@ -1274,7 +1280,7 @@
                         </ul>
                         <p>
                             The Corbu is <strong>monophonic</strong>.  It can only play one note or chord at a time.  If a note is
-                            played while another one is still playing then the first one will be cut off immedately and the second
+                            played while another one is still playing then the first one will be cut off immediately and the second
                             one plays alone.
                         </p>
                     </td>
@@ -1424,7 +1430,7 @@
                         </p>
                         <p>
                             The single notes are <strong>monophonic</strong>; it can only play one note at a time.  If a note is
-                            played while another one is still playing then the first one will be cut off immedately and the second
+                            played while another one is still playing then the first one will be cut off immediately and the second
                             one plays alone.  The chords are also <strong>monophonic</strong>.  However, <strong class="info">the
                             notes and chords are not monophonic with each other</strong>.  A single note and a single
                             chord played close together will both sound at the same time.  This is unique among the current
@@ -1479,7 +1485,7 @@
                         </p>
                         <p>
                             Like the Kira, the Courtly Shawzin plays two tones for each note, separated by an octave.  However,
-                            with the Courtly Shawzin the second note is an octavia higher, giving it a cleaner, high-pitched
+                            with the Courtly Shawzin the second note is an octave higher, giving it a cleaner, high-pitched
                             sound.
                         </p>
                     </td>
@@ -1488,7 +1494,7 @@
 
             <h2 id="tocScaleList">Scale List</h2>
             <p>
-                There are nine scales.  This list is in the the order in which they appear in the UI.
+                There are nine scales.  This list is in the order in which they appear in the UI.
             </p>
             <p>
                 <strong class="info">Note:</strong> With the exception of <strong>Yo</strong>, all the scales start on a
@@ -1660,7 +1666,7 @@
                         <p>
                             The Minor scale is another <strong>mode</strong> of the <strong>Diatonic Scale</strong>.  It
                             includes all the distinct tones of the <strong>Minor Pentatonic</strong>, along with two
-                            exta distinct tones.
+                            extra distinct tones.
                         </p>
                         <p>
                             Since it's just a mode of the Diatonic scale, you can also find a Major scale here.  Start
@@ -1671,6 +1677,7 @@
                             also contain both minor and major scales within them, the only real difference is
                             the range.  A song in a minor key can be done in <strong>C Minor</strong> with the Minor
                             scale, or in <strong>A Minor</strong> with the Major scale, depending on what kind of range
+                            it needs.  Likewise, a song in a major key can be done in <strong>C Major </strong> with
                             it needs.  Likewise, a song in a major key can be done in <strong>C Major </strong> with
                             the Major scale, or <strong>E&#x266D; Major</strong> with the Minor scale.
                         </p>
@@ -1685,7 +1692,7 @@
                     <td>
                         <h3 id="scale_hira">Hirajoshi</h3>
                         <p>
-                            The Hirajoshi scale is kind of a Western aproximation to a scale that shows up in classical
+                            The Hirajoshi scale is kind of a Western approximation to a scale that shows up in classical
                             Japanese music.
                         </p>
                         <p>
@@ -1721,7 +1728,7 @@
                             "Phrygian" just refers to another <strong>mode</strong> of the <strong>Diatonic Scale</strong>.
                             For the record, technically the <strong>Major</strong> scale is the <strong>Ionian mode</strong>
                             and the Minor scale is the <strong>Aeolian mode</strong>.  All these words come from Greek,
-                            and the Phrygian mode shows up a lot in classial Greek music.
+                            and the Phrygian mode shows up a lot in classical Greek music.
                         </p>
                         <p>
                             Like the other Diatonic scales, you can start the Phrygian scale on other tones and get other
@@ -1738,7 +1745,7 @@
                         <p>
                             I usually use this scale as an <strong>F Harmonic Minor</strong>.  The major seventh
                             <strong>E&#x266E;</strong> likes to lead into the tonic <strong>F</strong> and adds
-                            tension.  You find this kind of scale a wide variety of genres, including swing music and
+                            tension.  You find this kind of scale in a wide variety of genres, including swing music and
                             spooky music.
                         </p>
                         <p>
@@ -1766,7 +1773,7 @@
                         <p>
                             The Shawzin's Yo scale is notable for <i>not</i> starting on <strong>C</strong>.  Instead,
                             it starts a half tone higher, on <strong>D&#x266D;</strong>.  This lines it up so it
-                            consistes of just the black keys on a piano. The Yo scale is tied with the <strong>Major
+                            consists of just the black keys on a piano. The Yo scale is tied with the <strong>Major
                             Pentatonic</strong> scale for the second largest range.
                         </p>
                         <p>
@@ -1775,7 +1782,7 @@
                             three weeks later.
                         </p>
                         <p>
-                            All that being said, the <strong>Yo</strong> scale is just a another
+                            All that being said, the <strong>Yo</strong> scale is just another
                             <strong>Pentatonic</strong> scale.  Start on the second note and you have the
                             <strong>E&#x266D; Minor Pentatonic</strong> scale.  Start on the third note and you have the
                             <strong>G&#x266D; Major Pentatonic</strong> scale.  It's named after another traditional
@@ -1787,7 +1794,7 @@
                             <strong>Chromatic</strong>.
                         </p>
                         <p>
-                            The Yo scale's standard chords follow the usual pattern for the first set of six, but is
+                            The Yo scale's standard chords follow the usual pattern for the first set of six, but it's
                             different for the second set of six.  Five of them consist of three consecutive scale
                             notes, and one of them, the third, is just a major triad out of nowhere.
                         </p>
@@ -1798,7 +1805,7 @@
             <h2 id="tocControlSchemeList">Control Scheme List</h2>
             <p>
                 I've included a number of preset control schemes to choose from.  These control which buttons are
-                displayed in the note track and in in the generated Shawzin Tab.
+                displayed in the note track and in the generated Shawzin Tab.
             </p>
             <table class="listTable">
                 <tr>
@@ -2045,7 +2052,7 @@
                 </li>
                 <li>
                     <strong class="info">A:</strong> It's on my todo list.  It will probably only support custom
-                    control schems for consoles, because PC has a lot of controls and doesn't really need to follow
+                    control schemes for consoles, because PC has a lot of controls and doesn't really need to follow
                     along with the app because it can just use song codes.
                 </li>
             </ul>

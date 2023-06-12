@@ -287,8 +287,8 @@ var Model = (function() {
 
             // range check
             if (newMeterArray[0] > MetadataUI.maxBeatsPerMeasure) {
-                // meh, not worth trying to correct it and build another meter string.
-                throw "Invalid meter format: '" + newMeter + "'";
+                newMeterArray[0] = MetadataUI.maxBeatsPerMeasure;
+                newMeter = newMeterArray[0] + "/" + newMeterArray[1];
             }
 
             // parse lead-in and convert from beats to ticks
@@ -377,8 +377,8 @@ var Model = (function() {
         // check for change
         if (newUnitsPerLine == unitsPerLine) return;
         // can't have people putting in huge numbers and crashing the page
-        if (unitsPerLine > MetadataUI.maxUnitsPerLine) {
-            unitsPerLine = MetadataUI.maxUnitsPerLine;
+        if (newUnitsPerLine > MetadataUI.maxUnitsPerLine) {
+            newUnitsPerLine = MetadataUI.maxUnitsPerLine;
         }
         // apply default value if it's blank or 0
         newUnitsPerLine = (newUnitsPerLine != null && newUnitsPerLine > 0) ? newUnitsPerLine : MetadataUI.defaultUnitsPerLine;

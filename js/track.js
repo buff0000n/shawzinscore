@@ -173,6 +173,10 @@ var Track = (function() {
     function resize() {
         viewHeight = scroll.getBoundingClientRect().height;
         visibleTicks = Math.ceil(viewHeight / tickSpacing);
+        // if we're playing, make sure the full track is onscreen
+        if (playing) {
+            showTrack();
+        }
     }
 
     // handle the onscroll event from the main scrolling container
@@ -204,13 +208,42 @@ var Track = (function() {
         if (playing == newPlaying) return;
         // set the flag
         playing = newPlaying;
+
         if (playing) {
             // if playback is started, disable manual scrolling of the scroll area
             Events.disableScrollEvents(scroll);
+
+            // disable scrolling on the main window
+            Events.disableScrollEvents(document.documentElement);
+
+            // make sure the full track is onscreen
+            showTrack();
+            // Some browsers have scroll lag that can keep it going after playback starts and scroll events
+            // are disabled, unfortunately, it doesn't produce scoll events and I have no idea how to fix it
+            // document.scrollingElement.addEventListener("scroll", showTrack, { passive: "false"});
+
         } else {
             // if playback is stopped, re-enable manual scrolling
             Events.enableScrollEvents(scroll);
+
+            // re-enable scrolling on main window
+            Events.enableScrollEvents(document.documentElement);
+            //document.scrollingElement.removeEventListener("scroll", showTrack, { passive: "false"});
         }
+    }
+
+    function showTrack() {
+        // get the track container element
+        var container = document.getElementById("song-container");
+        // get the page-level scroll element
+        var se = document.scrollingElement;
+        // get the bounds of the track container
+        var bcr = container.getBoundingClientRect();
+        // getBoundingClientRect is in terms of the visible window, convert to absolute global position using the scroll state
+        var top = bcr.top + se.scrollTop;
+        var left = bcr.left + se.scrollLeft;
+        // scroll the main window so the track is in view
+        se.scrollTo(left, top);
     }
 
     // scroll the view and the playback marker to match the given playback time, which can be in fractional ticks
