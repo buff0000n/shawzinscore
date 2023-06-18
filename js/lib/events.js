@@ -23,12 +23,19 @@ var Events = (function() {
     // global key and mouse listeners
     var keyDownListeners = {};
     var mouseDownListeners = [];
+    var resizeListeners = [];
+    var visualResizeListeners = [];
 
     function registerEventListeners() {
         var body = document.body;
         // Just have one main listener for document key and mouse events
         body.addEventListener("keydown", keyDown);
         body.addEventListener("mousedown", mouseDown);
+
+        // one listener for resize events
+        window.addEventListener("resize", resize);
+        // one listener for mobile visual resize events
+        window.visualViewport.addEventListener('resize', visualResize);
     }
 
     // add a global listener for a specific key
@@ -47,6 +54,46 @@ var Events = (function() {
     function addMouseDownListener(listener) {
         // add the listener
         mouseDownListeners.push(listener);
+    }
+
+    // add a global listener for resize events
+    // The listener takes (width, height) and returns true if it did something
+    function addResizeListener(listener) {
+        var wrapper = (e) => {
+            var w = Math.max(document.documentElement.clientWidth, window.innerWidth);
+            var h = Math.max(document.documentElement.clientHeight, window.innerHeight);
+            //PageUtils.showDebug("Layout: " + w + " x " + h);
+            return listener(w, h);
+        }
+        // add the listener
+        resizeListeners.push(wrapper);
+        // special: initialize the listener with a starting event
+        wrapper(null);
+    }
+
+    // add a global listener for visual viewport resize events (mobile pinch-zooming)
+    // The listener takes (width, height) and returns true if it did something
+    function addVisualResizeListener(listener) {
+        var wrapper = (e) => {
+            var w = window.visualViewport.width;
+            var h = window.visualViewport.height;
+            //PageUtils.showDebug("Visual: " + w + " x " + h);
+            return listener(w, h);
+        }
+        // add the listener
+        visualResizeListeners.push(wrapper);
+        // special: initialize the listener with a starting event
+        wrapper(null);
+    }
+
+    // add a global listener for both viewport and visual viewport size changes
+    // the minimum height and width between the view viewports will be send to the listener
+    // The listener takes (width, height) and returns true if it did something
+    function addCombinedResizeListener(listener) {
+        var wrapper = new CombinedResizeListener(listener);
+        // do the visual one first, as it's probably smaller
+        addVisualResizeListener((w, h) => { return wrapper.onVisualResize(w, h) });
+        addResizeListener((w, h) => { return wrapper.onResize(w, h) });
     }
 
     // convenient handler function to call preventDefault
@@ -91,6 +138,16 @@ var Events = (function() {
         runListeners(e, mouseDownListeners);
     }
 
+    function resize(e) {
+        // run the global resize listeners
+        runListeners(e, resizeListeners);
+    }
+
+    function visualResize(e) {
+        // run the global visual resize listeners
+        runListeners(e, visualResizeListeners);
+    }
+
     function setupTextInput(textInput, autoSelect=false) {
         // set up a listener for when the text box gets focus
         textInput.addEventListener("focus", autoSelect ? textInputFocusSelect : textInputFocus);
@@ -129,6 +186,13 @@ var Events = (function() {
         e.target.blur();
     }
 
+    function preventDefaultIfNotZoom(e) {
+        // we gotta allow pinch-zooming, which requires more than 1 touch
+        if (e.touches.length <= 1) {
+            preventDefault(e);
+        }
+    }
+
     function disableScrollEvents(element) {
         // we can't just dsable scrolling, we have to disable the events that trigger scrolling
         // disable various mousewheel events
@@ -136,7 +200,7 @@ var Events = (function() {
         element.addEventListener('wheel', preventDefault, { passive: false }); // modern desktop
         element.addEventListener('mousewheel', preventDefault, { passive: false }); // modern desktop
         // disable various touch scroll events
-        element.addEventListener('touchmove', preventDefault, { passive: false }); // mobile
+        element.addEventListener('touchmove', preventDefaultIfNotZoom, { passive: false }); // mobile
     }
 
     function enableScrollEvents(element) {
@@ -144,7 +208,7 @@ var Events = (function() {
         element.removeEventListener('DOMMouseScroll', preventDefault, { passive: false }); // older FF
         element.removeEventListener('wheel', preventDefault, { passive: false }); // modern desktop
         element.removeEventListener('mousewheel', preventDefault, { passive: false }); // modern desktop
-        element.removeEventListener('touchmove', preventDefault, { passive: false }); // mobile
+        element.removeEventListener('touchmove', preventDefaultIfNotZoom, { passive: false }); // mobile
     }
 
     // combined mouse/touch event handling
@@ -195,14 +259,82 @@ var Events = (function() {
         }
     }
 
+    // helper class to keep track of and reconcile the two different view dimensions, layout and visual
+    class CombinedResizeListener {
+        constructor(listener) {
+            // delegate listener
+            this.listener = listener;
+            // keep track of layout and visual dimensions
+            this.lastWidth = 0;
+            this.lastHeight = 0;
+            this.lastVisualWidth = 0;
+            this.lastVisualHeight = 0;
+        }
+
+        callListener() {
+            // todo: prevent double-calling when the resulting dimensons don't change
+            // if we have both layout and visual dimensions then use the smallest of each
+            if (this.lastWidth > 0 && this.lastVisualWidth > 0) {
+                var w = Math.min(this.lastWidth, this.lastVisualWidth);
+                var h = Math.min(this.lastHeight, this.lastVisualHeight);
+            // just layout dimensions
+            } else if (this.lastWidth > 0) {
+                var w = this.lastWidth;
+                var h = this.lastHeight;
+            // just visual dimensions
+            } else if (this.lastVisualWidth > 0) {
+                var w = this.lastVisualWidth;
+                var h = this.lastVisualHeight;
+            // no dimensions. how are we here?
+            } else {
+                return;
+            }
+            //PageUtils.showDebug("Resize: " + w + " x " + h);
+            // notify the delegate listener
+            this.listener(w, h);
+        }
+
+        // handle a layout resize event
+        onResize(w, h) {
+            // save the dimensions
+            this.lastWidth = w;
+            this.lastHeight = h;
+            // call the listener
+            this.callListener();
+            // allow other listeners to run
+            return false;
+        }
+
+        // handle a layout resize event
+        onVisualResize(w, h) {
+            // save the dimensions
+            this.lastVisualWidth = w;
+            this.lastVisualHeight = h;
+            // call the listener
+            this.callListener();
+            // allow other listeners to run
+            return false;
+        }
+    }
+
     // public members
     return  {
         // initialization
         registerEventListeners: registerEventListeners, // ()
         // add a global listener for a particular key
         addKeyDownListener: addKeyDownListener, // (key, listener)
-        // add a global listener for mosue events
+        // add a global listener for mouse events
         addMouseDownListener: addMouseDownListener, // (listener)
+        // add a global listener for resize events
+        // The listener takes (width, height) and returns true if it did something
+        addResizeListener: addResizeListener, // (function(width, height): Boolean)
+        // add a global listener for visual viewport resize events (mobile pinch-zooming)
+        // The listener takes (width, height) and returns true if it did something
+        addVisualResizeListener: addVisualResizeListener, // (function(width, height): Boolean)
+        // add a global listener for both viewport and visual viewport size changes
+        // the minimum height and width between the view viewports will be send to the listener
+        // The listener takes (width, height) and returns true if it did something
+        addCombinedResizeListener: addCombinedResizeListener, // (function(width, height): Boolean)
         // setup a text box so that:
         //  * focusing on the text box optionally selects its contents
         //  * pressing enter blurs the text box and commits any changes

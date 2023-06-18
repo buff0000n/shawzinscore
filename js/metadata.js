@@ -175,7 +175,7 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "Cm7sus4",
                         "img": "standard/pmin/chord-12-1.png",
-                        "length": 2, "monoFadeTime": 0.5, "monoFadeTime": 0.5,
+                        "length": 2, "monoFadeTime": 0.5,
                         "notes": [note.C1, note.F1, note.Bb1]
                     },
                     "12-2": {

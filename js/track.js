@@ -36,6 +36,8 @@ var Track = (function() {
     var playbackOffset = 0.35;
     // hack: prevent out of control creaion of bars by having a delay between scrolling to the end and adding new bars
     var scrollThrottleMs = 250;
+    // extra buffer to keep capacity ahead of the scrollbar
+    var tickBuffer = (2 * scrollThrottleMs / 1000) * Metadata.ticksPerSecond;
 
     // hard-coded 2.75-second buffer at beginning
     // this is roughly how long the in-game player gives you after starting a song
@@ -75,7 +77,8 @@ var Track = (function() {
             }
         }, { passive: false });
 
-        resize();
+        // resize listener on both the window viewport and the mobile visual viewport
+        Events.addCombinedResizeListener(resize);
     }
 
     // lazily build a view object tied to the given note object
@@ -169,8 +172,19 @@ var Track = (function() {
         }
     }
 
+    /// ugh
+    function getHeight(elementId) {
+        var element = document.getElementById(elementId)
+        var bcr = element.getBoundingClientRect();
+        return bcr.height;
+    }
+
     // recalculate visible pixels and ticks when the window size has changed
-    function resize() {
+    function resize(w, h) {
+        var container = document.getElementById("song-container");
+        container.style.height = h + "px";
+        // FFS goddammit I'm drunk but why is it so hard to make this the right height with CSS
+        scroll.style.height = (h - getHeight("song-toolbar") - getHeight("song-bar")) + "px";
         viewHeight = scroll.getBoundingClientRect().height;
         visibleTicks = Math.ceil(viewHeight / tickSpacing);
         // if we're playing, make sure the full track is onscreen
@@ -191,11 +205,11 @@ var Track = (function() {
                       ;
 
         // if it's past the end if the current capacity, make sure we have the bars to display the end tick time
-        if (endTick >= tickCapacity) {
+        if (endTick >= tickCapacity - tickBuffer) {
             ensureTickCapacity(endTick);
 
         // if it's less than the capacity, check if we can trim some empty bars
-        } else if (endTick < tickCapacity && endTick > song.getEndTick()) {
+        } else if (endTick < tickCapacity + tickBuffer && endTick > song.getEndTick()) {
             // check for notes present
             trimTickCapacity(endTick);
         }
@@ -210,24 +224,19 @@ var Track = (function() {
         playing = newPlaying;
 
         if (playing) {
-            // if playback is started, disable manual scrolling of the scroll area
-            Events.disableScrollEvents(scroll);
-
-            // disable scrolling on the main window
-            Events.disableScrollEvents(document.documentElement);
+            // disable scrolling on the tab/roll section while still allowing the page to be scrolled
+            // with this one weird trick
+            scroll.style.pointerEvents = "none";
 
             // make sure the full track is onscreen
             showTrack();
             // Some browsers have scroll lag that can keep it going after playback starts and scroll events
-            // are disabled, unfortunately, it doesn't produce scoll events and I have no idea how to fix it
+            // are disabled, unfortunately, it doesn't produce scroll events and I have no idea how to fix it
             // document.scrollingElement.addEventListener("scroll", showTrack, { passive: "false"});
 
         } else {
-            // if playback is stopped, re-enable manual scrolling
-            Events.enableScrollEvents(scroll);
+            scroll.style.pointerEvents = "unset";
 
-            // re-enable scrolling on main window
-            Events.enableScrollEvents(document.documentElement);
             //document.scrollingElement.removeEventListener("scroll", showTrack, { passive: "false"});
         }
     }
@@ -316,6 +325,9 @@ var Track = (function() {
 
     // add a new blank bar at the end of the song
     function insertBar() {
+        // save this before we insert a bar.  Some browsers will automatically
+        // fix the scroll location
+        var scrollTop = scroll.scrollTop;
         // build a new bar object, which is a 2-element array of the tablature and piano roll bars
         var bar = [
             buildBar(false, "tab"),
@@ -344,7 +356,7 @@ var Track = (function() {
         // todo: hinky
         // if direction is reversed, scroll down a bar so it looks like we haven't moved
         if (reversed) {
-            scroll.scrollTo(0, scroll.scrollTop + (bar[0].ticks * tickSpacing));
+            scroll.scrollTo(0, scrollTop + (bar[0].ticks * tickSpacing));
         }
     }
 
@@ -383,19 +395,19 @@ var Track = (function() {
         }
         //var count = 0;
         // add capacity while we're below the given tick and the maximum tick length
-        while (tickCapacity < Metadata.maxTickLength && tickCapacity <= ticks) {
-            //console.log("ensuring: " + tickCapacity + " > " + ticks + "(" + (++count) + ")");
+        while (tickCapacity < Metadata.maxTickLength && tickCapacity <= ticks + tickBuffer) {
+            //console.log("ensuring: " + tickCapacity + " > " + ticks + " + " + tickBuffer + " (" + (++count) + ")");
             insertBar();
         }
     }
 
     // make sure any extra capacity beyond the given tick plus the visible area is removed
     function trimTickCapacity(ticks) {
-        var count = 0;
+        //var count = 0;
         // remove capacity while it's beyond the given tick plus the visible area, and beyond the end of the song
         // Need to add a barTicks buffer to prevent thrashing on a measure boundary
-        while (tickCapacity > ticks + visibleTicks + getBarTicks()) {
-            //console.log("trimming: " + tickCapacity + " < " + ticks + "(" + (++count) + ")");
+        while (tickCapacity > ticks + visibleTicks + tickBuffer + getBarTicks()) {
+            //console.log("trimming: " + tickCapacity + " < " + ticks + " + " + tickBuffer + " (" + (++count) + ")");
             removeBar();
         }
     }
@@ -937,7 +949,7 @@ var Track = (function() {
         // set the track direction, top to bottom (false) or bottom to top (true)
         setReversed: setReversed, // (newReversed)
         // recalculate visible pixels and ticks when the window size has changed
-        resize: resize, // ()
+        resize: resize, // (width, height)
     }
 })();
 

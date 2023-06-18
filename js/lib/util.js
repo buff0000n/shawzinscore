@@ -211,24 +211,6 @@ var ObjectUtils = (function() {
 
 var PageUtils = (function() {
     //==============================================================
-    // window size tracking
-    //==============================================================
-    
-    var windowWidth;
-    var windowHeight;
-    
-    function doonresize() {
-        var h = Math.max(document.documentElement.clientHeight, window.innerHeight);
-        var w = Math.max(document.documentElement.clientWidth, window.innerWidth);
-        windowSizeChanged(h, w);
-    }
-    
-    function windowSizeChanged(h, w) {
-        windowHeight = h;
-        windowWidth = w;
-    }
-    
-    //==============================================================
     // error display
     //==============================================================
     
@@ -492,10 +474,6 @@ var PageUtils = (function() {
 
     // public members
     return  {
-        doonresize: doonresize, // ()
-        windowSizeChanged: windowSizeChanged, // ()
-        getWindowWidth: function() { return windowWidth; },
-        getWindowHeight: function() { return windowHeight; },
         showError: function(error) {
             showErrors([error]);
         },

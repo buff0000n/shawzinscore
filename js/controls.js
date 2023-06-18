@@ -3,9 +3,6 @@
 var Controls = (function() {
 
     function registerEventListeners() {
-        // todo: is this resize listener actually used?
-        document.body.addEventListener("resize", PageUtils.doonresize);
-
         // section shawzin action
         document.getElementById("select-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
         // select scale action
