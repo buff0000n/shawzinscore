@@ -22,6 +22,7 @@ class MTEvent {
 var Events = (function() {
     // global key and mouse listeners
     var keyDownListeners = {};
+    var keyUpListeners = {};
     var mouseDownListeners = [];
     var resizeListeners = [];
     var visualResizeListeners = [];
@@ -30,6 +31,7 @@ var Events = (function() {
         var body = document.body;
         // Just have one main listener for document key and mouse events
         body.addEventListener("keydown", keyDown);
+        body.addEventListener("keyup", keyUp);
         body.addEventListener("mousedown", mouseDown);
 
         // one listener for resize events
@@ -47,6 +49,17 @@ var Events = (function() {
         }
         // add the listener
         keyDownListeners[key].push(listener);
+    }
+
+    // add a global listener for a specific key
+    // The listener returns true if it did something
+    function addKeyUpListener(key, listener) {
+        // lazily create a listener list for this key
+        if (!keyUpListeners[key]) {
+            keyUpListeners[key] = [];
+        }
+        // add the listener
+        keyUpListeners[key].push(listener);
     }
 
     // add a global listener for mouse events
@@ -123,14 +136,30 @@ var Events = (function() {
         // is this necessary any more?
         e = e || window.event;
 
-        // ignore typing in a text box
+        // ignore typing in a text box or any input that's not a slider
         nodeName = e.target.nodeName;
-        if (nodeName == "TEXTAREA" || nodeName == "INPUT") {
+        if (nodeName == "TEXTAREA" || (nodeName == "INPUT" && e.target.type != 'range')) {
             return;
         }
 
         // run the global key listeners for this specific key
         runListeners(e, keyDownListeners[e.code]);
+    }
+
+    // main key event handler
+    function keyUp(e) {
+        // fallback to get events
+        // is this necessary any more?
+        e = e || window.event;
+
+        // ignore typing in a text box or any input that's not a slider
+        nodeName = e.target.nodeName;
+        if (nodeName == "TEXTAREA" || (nodeName == "INPUT" && e.target.type != 'range')) {
+            return;
+        }
+
+        // run the global key listeners for this specific key
+        runListeners(e, keyUpListeners[e.code]);
     }
 
     function mouseDown(e) {
@@ -323,6 +352,8 @@ var Events = (function() {
         registerEventListeners: registerEventListeners, // ()
         // add a global listener for a particular key
         addKeyDownListener: addKeyDownListener, // (key, listener)
+        // add a global listener for a particular key
+        addKeyUpListener: addKeyUpListener, // (key, listener)
         // add a global listener for mouse events
         addMouseDownListener: addMouseDownListener, // (listener)
         // add a global listener for resize events

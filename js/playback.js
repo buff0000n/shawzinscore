@@ -6,6 +6,7 @@ var Playback = (function() {
     var playbackLoopInterval = Math.floor(1000/60);
     // how many seconds ahead to schedule sounds
     // this limits the load on the audio system scheduler and how many sounds we have to cancel when playback is stopped early
+    // Note that this is in "song time", making it dependent on playback speed seems to make things worse
     var soundScheduleBufferTime = 1.0;
 
     // copies of the currently selected shawzin and scale
@@ -27,6 +28,13 @@ var Playback = (function() {
     var stopEnabled = false;
     // setTimeout cancel callback for the playback loop
     var loopTimeout = null;
+    // slider for playback speed selection
+    var speedSlider = null;
+    // playback speed
+    var playbackSpeed = null;
+    // internal playback speed variables
+    var newPlaybackSpeed = null;
+    var playbackSpeedOffset = 0;
 
     function registerEventListeners() {
         // set up button event listeners
@@ -46,8 +54,94 @@ var Playback = (function() {
                 togglePlay();
             }
             return true;
-        }, { passive: false });
+        });
 
+        // initialize the playback speed from settings
+        playbackSpeed = Settings.getPlaybackSpeed();
+        // the playback speed slider needs a bit of setup
+        setupSpeedSlider();
+    }
+
+    function setupSpeedSlider() {
+        // pull the list of speeds from metadata
+        var speedList = MetadataUI.playbackSpeeds;
+        // how granular the slider is
+        var granularity = 100;
+        // the maximum Value of the slider
+        var maxValue = (speedList.length - 1) * granularity;
+        
+        // define a function for converting slider value to speed
+        function sliderToSpeed(value) {
+            // special case: all the way to the right
+            if (value == maxValue) {
+                return speedList[speedList.length - 1].toFixed(2);
+            }
+            // divide by granularity
+            var v = value / granularity;
+            // get the index if the speed below the slider
+            var index = Math.floor(v);
+            // get the factional part between two speeds
+            var fraction = v - index;
+            // just a basic linear interpolation, anything fancier feels weird
+            // limit to two decimal places
+            return ((speedList[index] * (1 - fraction)) + (speedList[index + 1] * fraction)).toFixed(2);
+        }
+        
+        function speedToSlider(speed) {
+            // find the last entry in the list that is less than or equal to the given speed
+            var index = -1;
+            while (index < speedList.length - 1 && speedList[index + 1] < speed) index++;
+
+            // range checks
+            if (index == -1) {
+                return 0;
+
+            } else if (index >= speedList.length - 1) {
+                return maxValue;
+            }
+
+            // reverse linear interpolation is the name of my DEVO cover band
+            var fraction = (speed - speedList[index]) / (speedList[index + 1] - speedList[index]);
+            // straightforward now to convert to slider units
+            return granularity * (index + fraction);
+        }
+
+        var speedLabel = document.getElementById("speedLabel");
+        function updateUI(newSpeed) {
+            speedLabel.innerHTML = newSpeed + "x";
+        }
+        updateUI(playbackSpeed);
+
+        // generate a list of snap values in slider units
+        var snaps = [];
+        for (var i = 0; i < speedList.length; i++) {
+            snaps.push(granularity * i);
+        }
+
+        // build the slider controller
+        speedSlider = new Slider(
+            // elements
+            document.getElementById("speedRangeContainer"),
+            document.getElementById("speedRange"),
+            // range
+            maxValue,
+            // getter
+            () => {
+                return speedToSlider(playbackSpeed);
+            },
+            // setter
+            (value) => {
+                var newSpeed = sliderToSpeed(value);
+                setPlaybackSpeed(newSpeed);
+                updateUI(newSpeed);
+            },
+            // commiter
+            (value) => {
+                Settings.setPlaybackSpeed(sliderToSpeed(value));
+            },
+            // snap list and distance
+            snaps, 20
+        );
     }
 
     function setPlaying(newPlaying) {
@@ -152,6 +246,8 @@ var Playback = (function() {
         if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
             // start playback at the beginnine, minus the playback lead-in (which is different from the song lead-in)
             playbackStartTick = -Metadata.leadInTicks;
+            // reset any offset
+            playbackSpeedOffset = 0;
             // clear any lingering playback state in the track
             Track.clearPlayback();
         }
@@ -171,35 +267,78 @@ var Playback = (function() {
             playbackLoop();
         });
     }
-    
+
+    function setPlaybackSpeed(speed) {
+        if (isPlaying()) {
+            // todo: looser equality/
+            if (speed != (newPlaybackSpeed != null ? newPlaybackSpeed : playbackSpeed)) {
+                newPlaybackSpeed = speed;
+            }
+        } else {
+            playbackSpeed = speed;
+        }
+    }
+
+    function updateSpeed(realTime) {
+        // check if there's an updated playback speed
+        if (newPlaybackSpeed != null) {
+            // get the current song time
+            var songTime = toSongTime(realTime);
+            // recalculate the offset so toSongTime() still gives the same song time with the new playback speed
+            playbackSpeedOffset = songTime - (realTime * newPlaybackSpeed);
+            // update the playback speed
+            playbackSpeed = newPlaybackSpeed;
+            //console.log("NEWOFFSET: " + playbackSpeedOffset);
+            // unset the temp value
+            newPlaybackSpeed = null;
+        }
+    }
+
+    function toSongTime(realTime) {
+        // convert real time to song time
+        return (realTime * playbackSpeed) + playbackSpeedOffset;
+    }
+
+    function toRealTime(songTime) {
+        // convert song time to real time
+        return (songTime - playbackSpeedOffset) / playbackSpeed;
+    }
+
     function playbackLoop() {
         // sanity check, end the loop if we're no longer playing
         if (!isPlaying()) return;
 
         // get the current audio time, this is the most reliable time
-        var currentTime = soundBank.getCurrentTime();
+        var realTime = soundBank.getCurrentTime();
+        // check for a speed change
+        updateSpeed(realTime);
+        // convert real time to song time
+        var songTime = toSongTime(realTime);
         // update the track and playback marker positions
-        updateTrack(currentTime);
+        updateTrack(songTime);
 
         // while we have a next note
         while (playbackNote != null) {
             // calculate the note time relative to the start time
-            var time = (playbackNote.tick - playbackStartTick) / Metadata.ticksPerSecond;
+            var noteTime = (playbackNote.tick - playbackStartTick) / Metadata.ticksPerSecond;
             // if the next note is farther in the future than our schedule buffer, stop scheduling notes
-            if (time - currentTime > soundScheduleBufferTime) {
+            // adjust the schedule buffer to the playback speed
+            // todo: adjust for playback speed?  Seems to make it worse.
+            //if (noteTime - songTime > (soundScheduleBufferTime * playbackSpeed)) {
+            if (noteTime - songTime > soundScheduleBufferTime) {
                 break;
             }
 
             // get the note name
             var noteName = playbackNote.toNoteName();
             // schedule the note to play
-            soundBank.play(noteName, time);
+            soundBank.play(noteName, toRealTime(noteTime));
             // go to the next note
             playbackNote = playbackNote.next;
         }
 
         // check if the current time, adjusted for the starting time, is past the end of the song, and if all sounds have finished playing
-        if ((currentTime * Metadata.ticksPerSecond) + playbackStartTick > song.getEndTick() && soundBank.isIdle(currentTime)) {
+        if ((songTime * Metadata.ticksPerSecond) + playbackStartTick > song.getEndTick() && soundBank.isIdle(realTime)) {
             // stop playing at the end of the song
             stop();
 
@@ -209,9 +348,9 @@ var Playback = (function() {
         }
     }
 
-    function updateTrack(currentTime) {
+    function updateTrack(songTime) {
         // set the track playback marker position to the current playback time plus the start time
-        Track.setPlaybackTick((currentTime * Metadata.ticksPerSecond) + playbackStartTick);
+        Track.setPlaybackTick((songTime * Metadata.ticksPerSecond) + playbackStartTick);
     }
 
     function pause() {
@@ -224,7 +363,7 @@ var Playback = (function() {
             // get played again when playback is resumed
             soundBank.stop();
             // might as well update the track position one last time
-            updateTrack(soundBank.getCurrentTime());
+            updateTrack(toSongTime(soundBank.getCurrentTime()));
             // enable the play button
             setPlayEnabled();
         }
@@ -240,7 +379,7 @@ var Playback = (function() {
                 // there's some lag with this, so some sounds might still play, and then
                 soundBank.stop();
                 // might as well update the track position one last time
-                updateTrack(soundBank.getCurrentTime());
+                updateTrack(toSongTime(soundBank.getCurrentTime()));
                 // update state
                 setPlaying(false);
             }

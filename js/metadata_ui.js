@@ -217,6 +217,14 @@ var MetadataUI = (function() {
     var maxUnitsPerLine = 100;
     var maxBeatsPerMeasure = 20;
 
+    var playbackSpeeds = [
+        0.25,
+        0.50,
+        1.00,
+        1.50,
+        2.00
+    ];
+
     return {
         // UI metadata
         tickSpacing: tickSpacing,
@@ -235,5 +243,6 @@ var MetadataUI = (function() {
         defaultUnitsPerLine: defaultUnitsPerLine,
         maxUnitsPerLine: maxUnitsPerLine,
         maxBeatsPerMeasure: maxBeatsPerMeasure,
+        playbackSpeeds: playbackSpeeds,
     }
 })()

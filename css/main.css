@@ -366,6 +366,12 @@ img.showcase:hover {
     height: 500px;*/
 }
 
+#speedRangeContainer, #speedRange {
+    width: 25ex;
+}
+#speedLabel {
+    width: 5ex;
+}
 .fret0 { color: #BF8340; }
 .fret1 { color: #C03F3F; }
 .fret2 { color: #3FC03F; }

@@ -10,6 +10,7 @@ var Settings = (function() {
     var controlScheme = MetadataUI.controlSchemes["pc"];
     var darkMode = false;
     var oldMode = false;
+    var playbackSpeed = 1.0;
 
     function load() {
         // load the local storage item
@@ -34,6 +35,9 @@ var Settings = (function() {
             if (props.oldMode != null) {
                 oldMode = props.oldMode;
             }
+            if (props.playbackSpeed != null) {
+                playbackSpeed = props.playbackSpeed;
+            }
         }
     }
 
@@ -50,6 +54,7 @@ var Settings = (function() {
             "controlScheme": controlScheme,
             "darkMode": darkMode,
             "oldMode": oldMode,
+            "playbackSpeed": playbackSpeed,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -75,5 +80,8 @@ var Settings = (function() {
         // getter/setter for shawzin tab old mode setting
         getOldMode: function() { return oldMode; },
         setOldMode: function(v) { if (v != oldMode) { oldMode = v; save(); } },
+        // getter/setter for shawzin tab old mode setting
+        getPlaybackSpeed: function() { return playbackSpeed; },
+        setPlaybackSpeed: function(v) { if (v != playbackSpeed) { playbackSpeed = v; save(); } },
     }
 })()
