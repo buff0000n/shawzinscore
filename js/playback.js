@@ -244,8 +244,18 @@ var Playback = (function() {
         playbackStartTick = Track.getPlaybackTick();
         // check if the track's marker is missing or after the end of the song
         if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
-            // start playback at the beginnine, minus the playback lead-in (which is different from the song lead-in)
-            playbackStartTick = -Metadata.leadInTicks;
+            // If playback speed is 1x or greater, start playback at the beginning, minus the playback lead-in
+            // (which is different from the song lead-in)
+            if (playbackSpeed >= 1) {
+                playbackStartTick = -Metadata.leadInTicks;
+
+            // If playback speed < 1, adjust the lead-in, otherwise you just sit there for a long time waiting for it
+            // to start.
+            } else {
+                // we should adjust it relative to the song's starting tick
+                var startTick = song.getStartTick();
+                playbackStartTick = startTick - ((startTick + Metadata.leadInTicks) * playbackSpeed);
+            }
             // reset any offset
             playbackSpeedOffset = 0;
             // clear any lingering playback state in the track

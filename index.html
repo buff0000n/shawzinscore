@@ -485,6 +485,7 @@
                                         <li><a href="#generalSongCodeAutoPlay">Auto Play</a></li>
                                     </ul>
                                 </li>
+                                <li><a href="#tocSongCodeDetails">Song Code Details</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -533,6 +534,7 @@
                 <li><a href="#tocQA">Q & A</a></li>
                 <li><a href="#tocTodo">To do</a></li>
                 <li><a href="#tocKnownIssues">Known Issues</a></li>
+                <li><a href="#tocThanks">Thanks</a></li>
             </ul>
 
             <h1 id="tocGettingStarted">Getting Started</h1>
@@ -546,39 +548,20 @@
                 If you're come to Shawzinscore via a link, then you can copy the Shawzin song code from the
                 <strong>Song Code</strong> text box or by using the
                 <img class="smallButton icon" src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x"/>
-                copy button.
+                copy button.  I would recommend using the copy button, because there are special characters in
+                song codes that sometimes make it hard to select the whole thing.
             </p>
 
             <h2 id="tocSongCodes">Song Codes</h2>
             <p>
-                Song codes are a text format for storing and sharing Shawzin songs. I'm not going to get super into
-                technical details here, but here's the basics:
-            </p>
-            <ul>
-                <li>
-                    The first character defines the scale the song is in.  There <a href="#tocScaleList">nine scales</a>,
-                    so this character is a digit from <strong>1</strong> to <strong>9</strong>
-                </li>
-                <li>
-                    After the first character, the rest of the code has a group of three characters for each note
-                    in the song.
-                    <ul>
-                        <li>
-                            The first character defines the string and fret buttons that are pressed for the note.
-                        </li>
-                        <li>
-                            The second and third characters define the time at which the note plays.
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <p>
-                Song codes are limited to a maximum of <strong class="warn">1000 notes</strong> and a maximum of
-                <strong class="warn">four minutes</strong>.
+                Song codes are a text format for storing and sharing Shawzin songs. I'm not going to get into
+                technical details here, but song codes are limited to a maximum of
+                <strong class="warn">1000 notes</strong> and a maximum of <strong class="warn">four minutes</strong>.
             </p>
             <p>
-                The actual format is similar to <strong>base64</strong>, so it should be safe to copy and paste
-                pretty much anywhere just like normal text.
+                The actual format includes the characters <strong>0-9</strong>, <strong>A-Z</strong>,
+                <strong>a-z</strong>, <strong>+</strong>, and <strong>/</strong>, so it should be safe to copy and
+                paste pretty much anywhere just like normal text.
             </p>
 
             <h1 id="tocBasicProperties">Basic Properties</h1>
@@ -607,7 +590,7 @@
                 There are <a href="#tocScaleList">nine scales to choose from</a>.
             </p>
             <p>
-                The scale section is saved as part of the song code.
+                The scale selection is saved as part of the song code.
             </p>
 
             <h2 id="tocControlSchemes">Control Scheme</h2>
@@ -827,7 +810,9 @@
             <h1 id="tocAdvancedStructure">Advanced Structure</h1>
             <p>
                 If you know a little about music and time signatures then you can configure some markers to delimit
-                measures and beats.
+                measures and beats.  Use the
+                <img class="smallButton icon" src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x"/> button to bring
+                up the <strong>Advanced</strong> options
             </p>
             <p>
                 <strong class="warn">Note:</strong> If a song was recorded <i>without</i> a metronome or any other way of
@@ -872,7 +857,7 @@
             <p>
                 In this system there are only a few tempos that will give you a whole number of ticks per beat, which
                 is further limited by possibly needing a whole number of ticks for eighth notes, sixteenth notes,
-                triplets.  If the shortest notes in your song don't align on a tick boundary then they will get
+                triplets, etc.  If the shortest notes in your song don't align on a tick boundary then they will get
                 <strong>quantized</strong> to the nearest tick, which is going to sound really wonky.
             </p>
             <p>
@@ -1267,6 +1252,111 @@
                 song.
             </p>
 
+            <h3 id="tocSongCodeDetails">Song Code Details</h3>
+            <p>
+                The actual format is of a song code is mostly based on
+                <a href="https://en.wikipedia.org/wiki/Base64">base64</a>.  Each character represents up to
+                <strong>6 bits</strong> of binary data.
+            </p>
+            <ul>
+                <li>
+                    The <strong class="info">first character</strong> defines the scale the song is in.  There
+                    <a href="#tocScaleList">nine scales</a>, so this character is a digit from <strong>1</strong> to
+                    <strong>9</strong>
+                </li>
+                <li>
+                    After the first character, the rest of the code consists of
+                    <strong class="info">groups of three characters</strong>, one group for each note in the song.
+                    <ul>
+                        <li>
+                            The <strong class="info">first character</strong> defines the string and fret buttons that
+                            are pressed for the note.
+                            <ul>
+                                <li>
+                                    Decoded as <strong>base64</strong>, each of the six bits is a boolean flag, with
+                                    <strong>1</strong> meaning that string or fret is used, and
+                                    <strong>0</strong> meaning that string or fret is left alone:
+                                    <ol>
+                                        <li>String 1</li>
+                                        <li>String 2</li>
+                                        <li>String 3</li>
+                                        <li>Fret 1</li>
+                                        <li>Fret 2</li>
+                                        <li>Fret 3</li>
+                                    </ol>
+                                </li>
+                                <li>
+                                    Exactly one and only one of the string flags must be set to <strong>1</strong>,
+                                    with the others left at <strong>0</strong>, making three possible string
+                                    configurations.
+                                </li>
+                                <li>
+                                    Any of the fret flags can be set to <strong>1</strong> or <strong>0</strong>, making
+                                    eight possible fret configurations.
+                                </li>
+                                <li>
+                                    <strong class="warn">Note: </strong>This means there are <strong>3</strong> x
+                                    <strong>8</strong> = <strong>24</strong>, possible notes, 12 single notes and 12
+                                    chords.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            The second and third characters define the time at which the note plays.
+                            <ul>
+                                <li>
+                                    The <strong class="info">second character</strong> is decoded as
+                                    <strong>base64</strong> as a single 6-bit number, and defines a 4-second chunk of
+                                    time.
+                                    <ul>
+                                        <li>
+                                            The first chunk runs from <strong>0:00</strong> to <strong>0:04</strong>,
+                                            the second chunk runs from <strong>0:04</strong> to <strong>0:08</strong>,
+                                            all the way to the 60th chunk running from <strong>1:56</strong> to
+                                            <strong>2:00</strong>.
+                                        </li>
+                                        <li>
+                                            <strong class="warn">Note: </strong> You can technically fit in four more
+                                            4-second chunks, giving a total of 64 chunks and a maximum time of
+                                            <strong>4:16</strong>.  I'm assuming they're ignored in favor of having a
+                                            simpler, easier to understand maximum time.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    The <strong class="info">third character</strong> is decoded as
+                                    <strong>base64</strong> as a single 6-bit number, and breaks each 4-second chunk
+                                    further into 64 evenly spaced <strong>ticks</strong>.
+                                    <ul>
+                                        <li>
+                                            <strong class="warn">Note: </strong> This gives song codes a resolution of
+                                            <strong>16 ticks per second</strong>.  This is not as limiting as a
+                                            <strong>Mandachord's</strong> time scale, but it still limits things a lot
+                                            if you want the timing to come out evenly.
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <p>
+                On top of the four minute limit, the game limits song codes to <strong class="warn">1000 notes</strong>,
+                or a maximum of <strong>3001</strong> characters.  If you want to share your song in chat, then it's
+                limited to <strong class="warn">100</strong> notes.
+            </p>
+            <p>
+                Because it's using <strong>base64</strong>, the song code format can be copied directly to and from
+                your clipboard, and to and from any place where you can enter or read text.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> Unlike most things that use <strong>base64</strong>, you
+                <strong>cannot</strong> break a song code into multiple lines.  If you paste something with multiple
+                lines into the game then it will only read however many full notes are in the first line.  If you
+                paste a code with just extra spaces somewhere in the middle then it will refuse to read it outright.
+            </p>
+
             <h2 id="tocShawzinList">Shawzin List</h2>
             <p>
                 There are currently ten Shawzins.  This list is roughly in release order.
@@ -1620,9 +1710,10 @@
                         </p>
                         <p>
                             This version is called "minor" because it starts on the tonic of the
-                            <strong>C Minor scale</strong>.  The first two notes make a minor third interval, and the
-                            first, second, and fourth notes together make a minor chord. However, if you start on the
-                            second note then this scale becomes an <strong>E&#x266D; Major Pentatonic</strong> scale.
+                            <strong>C Minor scale</strong>.  The first two notes make a minor third
+                            <strong>interval</strong>, and the first, second, and fourth notes together make a minor
+                            <strong>traid</strong>. However, if you start on the second note then this scale becomes
+                            an <strong>E&#x266D; Major Pentatonic</strong> scale.
                         </p>
                         <p>
                             This scale covers two octaves plus a minor third.  It's the largest range of
@@ -1630,9 +1721,9 @@
                         </p>
                         <p>
                             Making a tune with the Minor Pentatonic scale is almost as hard as making a tune with the
-                            Mandachord.  It's basically equivalent to two and a half Mandachords stacked on top of each
-                            other.  Conversely, it's easy to just play random notes and come up with something that
-                            sounds decent.
+                            <strong>Mandachord</strong>.  It's basically equivalent to two and a half Mandachords
+                            stacked on top of each other.  Conversely, it's easy to just play random notes and come up
+                            with something that sounds decent.
                         </p>
                         <p>
                             The standard chords on this scale follow the standard pattern, which makes them sound pretty
@@ -1650,19 +1741,20 @@
                         <h3 id="scale_pmaj">Major Pentatonic</h3>
                         <p>
                             This version of the Pentatonic scale is called "major" because it starts on the tonic of
-                            the <strong>C Major</strong> scale.  The first and third notes make a major third interval,
-                            and the first, third, and fourth notes together make a major chord. However, if you start
-                            on the fifth note then this scale becomes an <strong>A Minor Pentatonic</strong> scale.
+                            the <strong>C Major</strong> scale.  The first and third notes make a major third
+                            <strong>interval</strong>, and the first, third, and fourth notes together make a major
+                            <strong>triad</strong>. However, if you start on the fifth note then this scale becomes an
+                            <strong>A Minor Pentatonic</strong> scale.
                         </p>
                         <p>
                             This scale covers two octaves plus a major second.  It's tied with <strong>Yo</strong> for
                             the second largest range of any scale on the Shawzin.
                         </p>
                         <p>
-                            This scale has a Mandachord scale embedded in the middle, with 80% of one below it and
-                            60% of one above it.  Like the Minor Pentatonic, it's easy to just play random notes and
-                            come up with something that sounds decent, but hard to find an existing song that can
-                            be played recognizably.
+                            This scale has a <strong>Mandachord</strong> scale embedded in the middle, with 80% of one
+                            below it and 60% of one above it.  Like the Minor Pentatonic, it's easy to just play random
+                            notes and come up with something that sounds decent, but hard to find an existing song that
+                            can be played recognizably.
                         </p>
                         <p>
                             Also like the Minor Pentatonic, the standard chords on this scale follow the standard
@@ -1750,8 +1842,8 @@
                             start on the sixth note of the Major scale, you will get the <strong>A Minor</strong> scale.
                         </p>
                         <p>
-                            The standard chords on this scale follow the pattern.  It creates a lot of useful chords;
-                            I think the pattern was created specifically for the Major and Minor scales.
+                            The standard chords on this scale follow the usual pattern.  It creates a lot of useful
+                            chords; I think the pattern was created specifically for the Major and Minor scales.
                         </p>
                     </td>
                 </tr>
@@ -1778,7 +1870,6 @@
                             the range.  A song in a minor key can be done in <strong>C Minor</strong> with the Minor
                             scale, or in <strong>A Minor</strong> with the Major scale, depending on what kind of range
                             it needs.  Likewise, a song in a major key can be done in <strong>C Major </strong> with
-                            it needs.  Likewise, a song in a major key can be done in <strong>C Major </strong> with
                             the Major scale, or <strong>E&#x266D; Major</strong> with the Minor scale.
                         </p>
                     </td>
@@ -1800,7 +1891,7 @@
                             you get basically a subset of the <strong>B&#x266D; Minor</strong> scale.  It's missing a
                             few tones, and has a goofball <strong>A&#x266E;</strong> in the second octave instead of a
                             <strong>B&#x266D;</strong>.  It you squint, you can analyze that as the major seventh of
-                            a harmonic minor scale, but without the high <strong>B&#x266D;</strong> to resolve to it
+                            a harmonic minor scale, but without the high <strong>B&#x266D;</strong> to resolve to, it's
                             really hard to use like that.
                         </p>
                         <p>
@@ -1840,7 +1931,7 @@
                             Here, the "Dominant" in the name modifies this scale so it's not <i>quite</i> diatonic.
                             The third note is raised a half-tone, from <strong>E&#x266D;</strong> to <strong>E</strong>.
                             This blows up its major scale, but you still get a <i>type</i> of minor scale,
-                            the <strong>F Harmonic Minor</strong> scale starting on the fourth tone.
+                            the <strong>F Harmonic Minor</strong> scale starting on the fourth note.
                         </p>
                         <p>
                             I usually use this scale as an <strong>F Harmonic Minor</strong>.  The major seventh
@@ -2203,15 +2294,15 @@
                 <li>Library</li>
                 <li>Local storage</li>
                 <li>Wav export</li>
-                <li>loading bars</li>
+                <li>loading bars?</li>
                 <li>sort options for shawzin list</li>
-                <li>Zoom Level</li>
-                <li>Custom keybindings</li>
+                <li>Zoom Level?</li>
+                <li>Custom control schemes</li>
                 <li>Support meter/tempo changing mid-song</li>
                 <li>Less dumb animation for piano roll notes</li>
                 <li>Revisit changing playback speed while the song is playing</li>
-                <li>Sleep</li>
                 <li><strong class="fret13">Concept Shawzins</strong></li>
+                <li>Sleep</li>
             </ul>
 
             <h1 id="tocKnownIssues">Known Issues</h1>
@@ -2225,10 +2316,22 @@
                 <li>If you start playback on Safari on a Mac while the system audio is muted then it won't even start
                     playing.</li>
                 <li>Just general not great with resizing/zooming on mobile.  I'll try harder later.</li>
+                <li>The playback speed slider is placed weird on Firefox.</li>
+            </ul>
+
+            <h1 id="tocThanks"><strong class="info">Thanks</strong></h1>
+            <ul>
+                <li>
+                    <a href="https://forums.warframe.com/profile/3060756-ps4poison___insect/">(PS4)Poison___Insect</a>:
+                    Initial idea
+                </li>
+                <li>
+                    <a href="https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/">u/Empyrrhus</a>:
+                    Figuring out the Shawzin Song Code format
+                </li>
             </ul>
         </div>
-
-</div>
+    </div>
 
     <div class="footerContainer">
         <div>
@@ -2238,13 +2341,15 @@
             v1.0.0: 2023-06-19
         </div>
         <div>
-            <a href="https://github.com/buff0000n/shawzinscore">Source</a>
-            <a href="https://github.com/buff0000n/shawzinscore/issues/1">Feedback</a>
-            <a href="notechart.html">Shawzin Note Chart</a>
+            Contact:
+            <a href="https://github.com/buff0000n/shawzinscore/issues/1">Github</a>
+            <a href="https://forums.warframe.com/messenger/compose/?to=1331202">Forums</a>
+            <a href="https://twitter.com/mw2mh">Twit</a>
+            <a href="https://www.reddit.com/user/buff0000n">Reddit</a>
         </div>
-        <div>Thanks:
-            <span><a href="https://forums.warframe.com/profile/3060756-ps4poison___insect/">(PS4)Poison___Insect</a></span>
-            <span><a href="https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/">u/Empyrrhus</a></span>
+        <div>
+            <a href="https://github.com/buff0000n/shawzinscore">Source</a>
+            <a href="notechart.html">Shawzin Note Chart</a>
         </div>
     </div>
 </div>

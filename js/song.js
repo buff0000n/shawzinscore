@@ -159,6 +159,8 @@ class Song {
 
     // parse a song code and store the data in this object
     fromString(code) {
+        // strip all whitespace
+        code = code.replace(/\s/g, '');
         // should be 3n+1 chars long
         if (code.length % 3 != 1) {
             throw "Code is an invalid length"
