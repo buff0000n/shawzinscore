@@ -5,6 +5,7 @@ var Controls = (function() {
     function registerEventListeners() {
         // section shawzin action
         document.getElementById("select-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
+        document.getElementById("toolbar-shawzin").addEventListener("click", doShawzinSelect, { passive: false });
         // select scale action
         document.getElementById("select-scale").addEventListener("click", doScaleSelect, { passive: false });
         // select control scheme action

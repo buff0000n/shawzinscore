@@ -366,6 +366,10 @@ img.showcase:hover {
     height: 500px;*/
 }
 
+#toolbar-shawzin {
+    cursor: pointer;
+}
+
 #speedRangeContainer, #speedRange {
     width: 25ex;
 }

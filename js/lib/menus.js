@@ -256,6 +256,20 @@ var Menus = (function() {
             var left = fullWidth ? 0 : elementBcr.right;
             var top = elementBcr.top;
         }
+
+        // check the last event
+        if (window.event && window.event.clientY) {
+            // get the vertical position
+            var eventY = window.event.clientY;
+            // if the last event's vertical position is really far above the menu starting position, move the menu
+            // so it starts at the event and not under the element
+            // the threshold here is arbitrary
+            if (top - eventY > 50) {
+                left = window.event.clientX;
+                top = eventY;
+            }
+        }
+
         // get the main scroll element
         var s = document.scrollingElement;
         // adjust the position to be in global page coordinates
