@@ -95,14 +95,14 @@ var MetadataUI = (function() {
 
     // Thanks to (XBOX)cubeof11 for these
     var key_xbx = {
-        up: new ControlKey("u", "\uE3E1"),
-        down: new ControlKey("d", "\uE3DF"),
-        left: new ControlKey("l", "\uE3DE"),
-        right: new ControlKey("r", "\uE3E0"),
-        l1: new ControlKey("l1", "\uE3ED"),
-        l2: new ControlKey("l2", "\uE3E6"),
-        r1: new ControlKey("r1", "\uE3EB"),
-        r2: new ControlKey("r2", "\uE3E4"),
+        up: new ControlKey("du", "\uE3E1"),
+        down: new ControlKey("dd", "\uE3DF"),
+        left: new ControlKey("dl", "\uE3DE"),
+        right: new ControlKey("dr", "\uE3E0"),
+        l1: new ControlKey("xl1", "\uE3ED"),
+        l2: new ControlKey("xl2", "\uE3E6"),
+        r1: new ControlKey("xr1", "\uE3EB"),
+        r2: new ControlKey("xr2", "\uE3E4"),
         a: new ControlKey("a", "\uE3CE"),
         b: new ControlKey("b", "\uE3CD"),
         x: new ControlKey("x", "\uE3CB"),
@@ -110,10 +110,10 @@ var MetadataUI = (function() {
     }
 
     var key_psn = {
-        up: new ControlKey("u", "\u2191"),
-        down: new ControlKey("d", "\u2193"),
-        left: new ControlKey("l", "\u2190"),
-        right: new ControlKey("r", "\u2192"),
+        up: new ControlKey("du", "\u2191"),
+        down: new ControlKey("dd", "\u2193"),
+        left: new ControlKey("dl", "\u2190"),
+        right: new ControlKey("dr", "\u2192"),
         l1: new ControlKey("l1", "LB"),
         l2: new ControlKey("l2", "LT"),
         r1: new ControlKey("r1", "RB"),
@@ -125,10 +125,10 @@ var MetadataUI = (function() {
     }
 
     var key_nsw = {
-        up: new ControlKey("u", "\u2191"),
-        down: new ControlKey("d", "\u2193"),
-        left: new ControlKey("l", "\u2190"),
-        right: new ControlKey("r", "\u2192"),
+        up: new ControlKey("du", "\u2191"),
+        down: new ControlKey("dd", "\u2193"),
+        left: new ControlKey("dl", "\u2190"),
+        right: new ControlKey("dr", "\u2192"),
         l1: new ControlKey("l1", "LB"),
         l2: new ControlKey("l2", "LT"),
         r1: new ControlKey("r1", "RB"),
