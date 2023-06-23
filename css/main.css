@@ -190,6 +190,7 @@ td.label {
     padding: 0px;
     border-width: 0ex;
     background-color: #337799;
+    cursor: pointer;
     /*scroll-behavior: smooth !important;*/
 }
     /*
@@ -329,6 +330,12 @@ img.showcase:hover {
 
 .playback-marker {
     z-index: 10;
+    pointer-events: none;
+}
+
+.playback-start-marker {
+    z-index: 0;
+    pointer-events: none;
 }
 
 .tab-fret-div {

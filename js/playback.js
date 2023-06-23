@@ -202,6 +202,8 @@ var Playback = (function() {
         var wasPlaying = isPlaying();
         // stop playing
         stop();
+        // clear the playback start marker, if present
+        Track.clearPlaybackStartTick();
         // if we were playing, then start playback over from the beginning
         if (wasPlaying) {
             start();
@@ -242,6 +244,10 @@ var Playback = (function() {
 
         // see if the track already has a playback marker placed somewhere
         playbackStartTick = Track.getPlaybackTick();
+        // otherwise, check for a playback start marker
+        if (playbackStartTick == null) {
+            playbackStartTick = Track.getPlaybackStartTick();
+        }
         // check if the track's marker is missing or after the end of the song
         if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
             // If playback speed is 1x or greater, start playback at the beginning, minus the playback lead-in
@@ -258,9 +264,11 @@ var Playback = (function() {
             }
             // reset any offset
             playbackSpeedOffset = 0;
-            // clear any lingering playback state in the track
-            Track.clearPlayback();
         }
+
+        // clear any lingering playback state in the track, this makes sure we don't animate a bunch of notes
+        // we didn't mean to
+        Track.clearPlayback();
 
         // todo: setLoading()
         // load the sound bank and start everything once its loaded

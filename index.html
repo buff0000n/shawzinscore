@@ -430,6 +430,7 @@
                 </li>
                 <li><a href="#tocPlayback">Playback</a>
                     <ul>
+                        <li><a href="#tocPlaybackStart">Playback Start</a></li>
                         <li><a href="#tocPlaybackSpeed">Playback Speed</a></li>
                     </ul>
                 </li>
@@ -533,6 +534,7 @@
                     </ul>
                 </li>
                 <li><a href="#tocQA">Q & A</a></li>
+                <li><a href="#tocUpdates">Update Notes</a></li>
                 <li><a href="#tocTodo">To do</a></li>
                 <li><a href="#tocKnownIssues">Known Issues</a></li>
                 <li><a href="#tocThanks">Thanks</a></li>
@@ -709,7 +711,23 @@
                 <img class="smallButton icon" src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x"/> button to fast
                 forward the view to the end of the song.  If it's currently playing then playback will stop.
             </p>
-            <h1 id="tocPlaybackSpeed">Playback Speed</h1>
+            <h2 id="tocPlaybackStart">Playback Start</h2>
+            <p>
+                By default, a fresh playback starts about two seconds before the beginning of the song.  Click anywhere
+                on the background of the tablature or piano roll sections to set a
+                <strong>Playback Start Marker</strong>.  When you start a new playback, or stop and restart playback,
+                then it will start at this marker instead of at the beginning.
+            </p>
+            <p>
+                Using the
+                <img class="smallButton icon" src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x"/> button to rewind
+                the song also clears the playback start marker.
+            </p>
+            <p>
+                <strong class="warn">Note: </strong> You can't place a playack start marker or change the playback
+                location while the song is playing.
+            </p>
+            <h2 id="tocPlaybackSpeed">Playback Speed</h2>
             <p>
                 Use the slider next to the playback buttons to adjust the playback speed.  The speed can be set
                 anywhere from <strong>0.25x</strong> to <strong>2x</strong>.
@@ -721,12 +739,12 @@
                 snapping.
             </p>
             <p>
-                <strong class="warn">Note: </strong> You can adjust the speed while the song is playing, but it's
-                still a little wonky.  Allow about a second for it to fully take effect.
-            </p>
-            <p>
                 Your current playback speed is stored in your browser's local storage as a preference.  It will
                 persist across browser sessions on any song you work with in Shawzinscore.
+            </p>
+            <p>
+                <strong class="warn">Note: </strong> You can adjust the speed while the song is playing, but it's
+                still a little wonky.  Allow about a second for it to fully take effect.
             </p>
 
             <h1 id="tocSharing">Sharing</h1>
@@ -1685,6 +1703,9 @@
 
             <h2 id="tocScaleList">Scale List</h2>
             <p>
+                <strong class="info">For all this in one picture: <a href="notechart.html">Shawzin Note Chart</a></strong>
+            </p>
+            <p>
                 There are nine scales.  This list is in the order in which they appear in the UI.
             </p>
             <p>
@@ -1696,6 +1717,7 @@
                 at least not without some serious musical knowledge and extreme care.  If you're trying to play Shawzins
                 together with a friend then it's better to stick to the same scale.
             </p>
+
             <table class="listTable">
                 <tr>
                     <td>
@@ -2297,17 +2319,16 @@
                 </li>
             </ul>
 
+            <h1 id="tocUpdates">Update Notes</h1>
+            <h3 id="tocUpdates1.0">v1.0: 2023-06-23</h3>
+            <ul>
+                <li>Oh shit it's released</li>
+            </ul>
 
             <h1 id="tocTodo">To do</h1>
             <ul>
-                <li>playback cursor moving/setting
-                    <ul>
-                        <li>
-                            playback time/measure display?
-                        </li>
-                    </ul>
-                </li>
                 <li><strong>EDITING</strong></li>
+                <li>playback time/measure display? </li>
                 <li>Library</li>
                 <li>Local storage</li>
                 <li>Wav export</li>
@@ -2355,7 +2376,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.0: 2023-06-19
+            v1.0.0: 2023-06-23
         </div>
         <div>
             Contact:
@@ -2366,6 +2387,7 @@
         </div>
         <div>
             <a href="https://github.com/buff0000n/shawzinscore">Source</a>
+            <a href="https://github.com/buff0000n/shawzinscore/issues/new">Bug report</a>
             <a href="notechart.html">Shawzin Note Chart</a>
         </div>
     </div>

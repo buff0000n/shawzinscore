@@ -49,6 +49,8 @@ var Track = (function() {
     var playing = false;
     // playback marker object
     var playbackMarker = null;
+    // playback start marker object
+    var playbackStartMarker = null;
 
     function registerEventListeners() {
         // set this directly to start with, before doing any layouts
@@ -79,6 +81,25 @@ var Track = (function() {
 
         // resize listener on both the window viewport and the mobile visual viewport
         Events.addCombinedResizeListener(resize);
+
+        scroll.addEventListener("click", trackClick, { "passive": true});
+    }
+
+    function trackClick(e) {
+        // screen y-position of the click
+        var y = e.clientY;
+        // get the bounds for the scroll area
+        var bcr = scroll.getBoundingClientRect();
+        // put the click y-position in scroll area coordinates, and translate to a tick location
+        var tick = getTickForScreenPosition(y - bcr.top);
+        // assume we're not playing
+        // clear any existing playback marker
+        clearPlaybackTick();
+        // create a new playback marker
+        updatePlaybackTick(tick);
+        // also create a playback start marker.  Playback will start here until the user rewinds or clicks
+        // somewhere else
+        setPlaybackStartTick(tick);
     }
 
     // lazily build a view object tied to the given note object
@@ -227,6 +248,7 @@ var Track = (function() {
             // disable scrolling on the tab/roll section while still allowing the page to be scrolled
             // with this one weird trick
             scroll.style.pointerEvents = "none";
+            scroll.style.cursor = "unset";
 
             // make sure the full track is onscreen
             showTrack();
@@ -236,6 +258,7 @@ var Track = (function() {
 
         } else {
             scroll.style.pointerEvents = "unset";
+            scroll.style.cursor = "pointer";
 
             //document.scrollingElement.removeEventListener("scroll", showTrack, { passive: "false"});
         }
@@ -255,8 +278,7 @@ var Track = (function() {
         se.scrollTo(left, top);
     }
 
-    // scroll the view and the playback marker to match the given playback time, which can be in fractional ticks
-    function setPlaybackTick(tick) {
+    function updatePlaybackTick(tick) {
         // build a new playback marker if there isn't one
         if (playbackMarker == null) {
             playbackMarker = new PlaybackMarker(tick);
@@ -264,6 +286,43 @@ var Track = (function() {
             // update the existing playback marker
             playbackMarker.setPlayTick(tick);
         }
+    }
+
+    function clearPlaybackTick() {
+        if (playbackMarker != null) {
+            // clear the existing playback marker
+            playbackMarker.clear();
+            playbackMarker = null;
+        }
+    }
+
+    function setPlaybackStartTick(tick) {
+        // build a new playback start marker if there isn't one
+        if (playbackStartMarker == null) {
+            playbackStartMarker = new PlaybackStartMarker(tick);
+        } else {
+            // update the existing playback start marker
+            playbackStartMarker.setPlayTick(tick);
+        }
+    }
+
+    function getPlaybackStartTick() {
+        // check for a playback start marker
+        return playbackStartMarker != null ? playbackStartMarker.playTick : null;
+    }
+
+    function clearPlaybackStartTick() {
+        if (playbackStartMarker != null) {
+            // clear the existing playback marker
+            playbackStartMarker.clear();
+            playbackStartMarker = null;
+        }
+    }
+
+    // scroll the view and the playback marker to match the given playback time, which can be in fractional ticks
+    function setPlaybackTick(tick) {
+        // update the marker position
+        updatePlaybackTick(tick);
         // offset the center tick
         scrollToTick(tick + (visibleTicks * playbackOffset), true);
     }
@@ -289,18 +348,27 @@ var Track = (function() {
     function getScrollTick() {
         // calculate half the view height in pixels
         var halfHeight = (viewHeight/2);
+        // translate to tick position
+        return getTickForScreenPosition(halfHeight);
+    }
+
+    function getTickForScreenPosition(y) {
         // calculate the absolute center view position in pixels
-        var pos = scroll.scrollTop + halfHeight;
+        var pos = scroll.scrollTop + y;
         // translate to ticks, depending on direction
-        var tick = reversed
+        return tick = reversed
                   ? tickCapacity - (pos / tickSpacing)
-                  : (pos / tickSpacing) - tickOffset
-        return tick;
+                  : (pos / tickSpacing) - tickOffset;
     }
 
     // get the current playback tick position
     function getPlaybackTick() {
         return playbackMarker != null ? playbackMarker.playTick : null;
+    }
+
+    // get the current playback tick position
+    function getPlaybackStartTick() {
+        return playbackStartMarker != null ? playbackStartMarker.playTick : null;
     }
 
     // remove the playback marker
@@ -855,27 +923,25 @@ var Track = (function() {
         }
     }
 
-    // object encapsulating the playback market and playback tracking
-    class PlaybackMarker {
+    // object encapsulating a playback marker and playback tracking
+    class AbstractMarker {
         // playtick can be fractional
-        constructor(playTick) {
+        constructor(playTick, tabImg, rollImg, className) {
             // build UI elements
-            this.build();
+            this.build(tabImg, rollImg, className);
             // current bar
             this.bar = null;
             // initialize the playback location
             this.setPlayTick(playTick);
-            // get the next note that will be played from our starting tick
-            this.nextNote = song.getFirstNoteAfter(Math.ceil(this.playTick));
         }
 
-        build() {
+        build(tabImg, rollImg, className) {
             // tablature side with the circles
-            this.tabImg = PageUtils.makeImage("play-marker-tab.png", "centerYImg playback-marker");
+            this.tabImg = PageUtils.makeImage(tabImg, "centerYImg " + className);
             this.tabImg.style.left = "0px";
 
             // piano roll side is just a line
-            this.rollImg = PageUtils.makeImage("play-marker-roll.png", "centerYImg playback-marker");
+            this.rollImg = PageUtils.makeImage(rollImg, "centerYImg " + className);
             this.rollImg.style.left = "0px";
         }
 
@@ -904,9 +970,31 @@ var Track = (function() {
             // same position for both elements, they're centered vertically on the tick location
             this.tabImg.style.top = top;
             this.rollImg.style.top = top;
+        }
+
+        clear() {
+            // cleanup
+            this.tabImg.remove();
+            this.rollImg.remove();
+        }
+    }
+
+    // normal playback marker, takes care of animating bar/roll notes
+    class PlaybackMarker extends AbstractMarker {
+        // playtick can be fractional
+        constructor(playTick) {
+            // init common stuff
+            super(playTick, "play-marker-tab.png", "play-marker-roll.png", "playback-marker");
+            // get the next note that will be played from our starting tick
+            this.nextNote = song.getFirstNoteAfter(Math.ceil(this.playTick));
+        }
+
+        setPlayTick(tick) {
+            // update UI
+            super.setPlayTick(tick);
 
             // given the current playback tick, find any notes that were passed since the last note was played
-            // and play their anomations
+            // and play their animations
             while (this.nextNote != null && this.nextNote.tick <= this.playTick) {
                 // play the tablature and piano roll animations
                 this.nextNote.view.play();
@@ -914,11 +1002,15 @@ var Track = (function() {
                 this.nextNote = this.nextNote.next;
             }
         }
+    }
 
-        clear() {
-            // cleanup
-            this.tabImg.remove();
-            this.rollImg.remove();
+    // playback start marker, just makes a spot where playback starts
+    class PlaybackStartMarker extends AbstractMarker {
+        // playtick can be fractional
+        constructor(playTick) {
+            // init common stuff
+            super(playTick, "measure-marker-playback-start.png", "measure-marker-playback-start.png", "playback-start-marker");
+            // that's it
         }
     }
 
@@ -944,6 +1036,12 @@ var Track = (function() {
         getPlaybackTick: getPlaybackTick, // ()
         // remove the playback marker
         clearPlayback: clearPlayback, // ()
+        // set the tick time at which playback should start, which can be in fractional ticks
+        setPlaybackStartTick: setPlaybackStartTick, // (tick)
+        // get the current playback start tick position
+        getPlaybackStartTick: getPlaybackStartTick, // ()
+        // clear the current playback start tick position, the next playback will start at the beginning
+        clearPlaybackStartTick: clearPlaybackStartTick, // ()
         // scroll so the center of the view is on the given tick
         scrollToTick: scrollToTick, // (tick, smooth=false)
         // set the track direction, top to bottom (false) or bottom to top (true)
