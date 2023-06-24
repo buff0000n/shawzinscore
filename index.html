@@ -21,6 +21,7 @@
 <script type="text/javascript" language="javascript" src="js/lib/undo.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/menus.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/slider.js"></script>
+<script type="text/javascript" language="javascript" src="js/lib/midi.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata_ui.js"></script>
 <script type="text/javascript" language="javascript" src="js/settings.js"></script>
@@ -60,6 +61,7 @@
             Track.registerEventListeners();
             TrackBar.registerEventListeners();
             Playback.registerEventListeners();
+            Midi.init();
 
             // initialize the model from the page URL
             Model.init();
@@ -2381,13 +2383,18 @@
         <div>
             Contact:
             <a href="https://github.com/buff0000n/shawzinscore/issues/1">Github</a>
+            &bull;
             <a href="https://forums.warframe.com/messenger/compose/?to=1331202">Forums</a>
+            &bull;
             <a href="https://twitter.com/mw2mh">Twit</a>
+            &bull;
             <a href="https://www.reddit.com/user/buff0000n">Reddit</a>
         </div>
         <div>
             <a href="https://github.com/buff0000n/shawzinscore">Source</a>
+            &bull;
             <a href="https://github.com/buff0000n/shawzinscore/issues/new">Bug report</a>
+            &bull;
             <a href="notechart.html">Shawzin Note Chart</a>
         </div>
     </div>

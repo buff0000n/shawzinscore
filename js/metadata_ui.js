@@ -225,6 +225,10 @@ var MetadataUI = (function() {
         2.00
     ];
 
+    var midiNoteC = 48;
+    var midiNoteChord1 = 44;
+    var midiNoteChord2 = 46
+
     return {
         // UI metadata
         tickSpacing: tickSpacing,
@@ -244,5 +248,8 @@ var MetadataUI = (function() {
         maxUnitsPerLine: maxUnitsPerLine,
         maxBeatsPerMeasure: maxBeatsPerMeasure,
         playbackSpeeds: playbackSpeeds,
+        midiNoteC: midiNoteC,
+        midiNoteChord1: midiNoteChord1,
+        midiNoteChord2: midiNoteChord2,
     }
 })()

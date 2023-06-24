@@ -73,6 +73,9 @@ var TrackBar = (function() {
             return true;
         }, { passive: true });
 
+        // oh god is this is a freakin' MIDI listener?!  What the hell.
+        Midi.addMidiListener(scaleMidiListener);
+
         // read preferences and apply them
         setTrackDirection(Settings.isTrackReversed());
         setShowFrets(Settings.isShowFrets());
@@ -126,6 +129,53 @@ var TrackBar = (function() {
     // just a single instance of this
     var scaleRollDragDropListener = new ScaleRollDragDropListener();
 
+    class ScaleMidiListener extends MidiListener {
+        constructor() {
+            super();
+            // map from midi notes to things with a play function
+            this.midiNoteMap = null;
+        }
+
+        setMidiNoteMap(map) {
+            // update the map when the scale changes
+            this.midiNoteMap = map;
+        }
+
+        deviceOn(device) {
+            // todo: some kind of UI indication that MIDI is a go?
+            console.log(device + ": on");
+        }
+
+        deviceOff(device) {
+            // todo: some kind of UI indication that MIDI is a no go?
+            console.log(device + ": off");
+        }
+
+        noteOn(device, note) {
+            //console.log(device + ": Note on: " + note);
+            // pull out the corresponding play object, if any
+            var box = this.midiNoteMap[note];
+            if (box != null) {
+                // play the note
+                box.play(box);
+            }
+            // todo: chord enable/disable
+        }
+
+        noteOff(device, note) {
+            //console.log(device + ": Note off: " + note);
+            // todo: chord enable/disable
+        }
+
+        pitchBend(device, value) {
+            //console.log(device + ": Pitch bend: " + value);
+            // todo: increment scale
+        }
+    }
+
+    // just a single instance of this
+    var scaleMidiListener = new ScaleMidiListener();
+
     function playRollNote(box) {
         // get the note name from the UI element
         var noteName = box.noteName;
@@ -167,6 +217,9 @@ var TrackBar = (function() {
         // get the base piano image path for the scale
         var src = scaleMd.config.img;
 
+        // build a map of midi notes to boxes
+        var midiMap = {};
+
         // set the base image on the existing image element
         var img = document.getElementById("roll-keyboard");
         PageUtils.setImgSrc(img, src);
@@ -204,9 +257,15 @@ var TrackBar = (function() {
             DragEvents.addDragDropListener(box, scaleRollDragDropListener);
             // add to the container
             rollKeyButtonDiv.appendChild(box);
+            // get the midi note number
+            var midiNote = MetadataUI.midiNoteC + Metadata.noteOrder.indexOf(note)
+            // save to a map
+            midiMap[midiNote] = box;
         }
         // add the button container to the piano roll header container
         document.getElementById("song-bar-roll").appendChild(rollKeyButtonDiv);
+        // update the midi listener with the new note map
+        scaleMidiListener.setMidiNoteMap(midiMap);
     }
 
     function setTrackDirection(reverse) {
