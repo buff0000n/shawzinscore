@@ -20,7 +20,9 @@ var Midi = (function() {
             navigator.requestMIDIAccess()
                 .then((access) => {
                     // Get lists of available MIDI controllers
-                    console.log("found " + access.inputs.size + " midi devices");
+                    if (access.inputs.size > 0) {
+                        console.log("found " + access.inputs.size + " midi devices");
+                    }
 
                     // register a listener for devices connecting and disconnecting
                     access.onstatechange = (e) => {
@@ -121,7 +123,7 @@ var Midi = (function() {
                 // set state
                 this.connected = false;
                 // notify event listeners
-                deviceOn(this.name);
+                deviceOff(this.name);
             }
         }
 
