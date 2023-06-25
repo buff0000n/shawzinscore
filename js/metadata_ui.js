@@ -224,6 +224,8 @@ var MetadataUI = (function() {
         1.50,
         2.00
     ];
+    var minPlaybackSpeed = 0.1;
+    var maxPlaybackSpeed = 10;
 
     var midiNoteC = 48;
     var midiNoteChord1 = 44;
@@ -248,6 +250,8 @@ var MetadataUI = (function() {
         maxUnitsPerLine: maxUnitsPerLine,
         maxBeatsPerMeasure: maxBeatsPerMeasure,
         playbackSpeeds: playbackSpeeds,
+        minPlaybackSpeed: minPlaybackSpeed,
+        maxPlaybackSpeed: maxPlaybackSpeed,
         midiNoteC: midiNoteC,
         midiNoteChord1: midiNoteChord1,
         midiNoteChord2: midiNoteChord2,

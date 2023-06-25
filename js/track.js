@@ -957,9 +957,12 @@ var Track = (function() {
                 this.bar = newBar;
                 // remove tablature and piano roll elements from the old bar and add them to the new one
                 this.tabImg.remove();
-                this.bar[0].appendChild(this.tabImg);
                 this.rollImg.remove();
-                this.bar[1].appendChild(this.rollImg);
+                // sanity check
+                if (this.bar) {
+                    this.bar[0].appendChild(this.tabImg);
+                    this.bar[1].appendChild(this.rollImg);
+                }
             }
             // set the position based on what the direction is
             var top = (reversed

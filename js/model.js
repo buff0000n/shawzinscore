@@ -305,6 +305,10 @@ var Model = (function() {
                 while (newLeadinFloat > newMeterArray[0]) {
                     newLeadinFloat -= newMeterArray[0];
                 }
+                // might as well fix negative numbers, too
+                while (newLeadinFloat < 0) {
+                    newLeadinFloat += newMeterArray[0];
+                }
                 // calculate the lead-in ticks based on the tempo
                 newLeadInTicks = Math.round(newLeadinFloat * ((Metadata.ticksPerSecond * 60) / newTempo));
             }

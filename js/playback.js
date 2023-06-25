@@ -106,10 +106,44 @@ var Playback = (function() {
             return granularity * (index + fraction);
         }
 
-        var speedLabel = document.getElementById("speedLabel");
+        // get the two inputs
+        var speedRangeInput = document.getElementById("speedRange");
+        var speedLabelInput = document.getElementById("speedLabelInput");
+        // update function so we can reuse it
         function updateUI(newSpeed) {
-            speedLabel.innerHTML = newSpeed + "x";
+            speedLabelInput.value = newSpeed;
         }
+
+        // change listener for the text box
+        speedLabelInput.addEventListener("change", (e) => {
+            try {
+                // parse the speed
+                var newSpeed = MiscUtils.parseFloat(speedLabelInput.value);
+                // okay, I guess we need some range checking
+                if (newSpeed > MetadataUI.maxPlaybackSpeed) {
+                    newSpeed = MetadataUI.maxPlaybackSpeed;
+                    speedLabelInput.value = newSpeed;
+                }
+                if (newSpeed < MetadataUI.minPlaybackSpeed) {
+                    newSpeed = MetadataUI.minPlaybackSpeed;
+                    speedLabelInput.value = newSpeed;
+                }
+                // update the playback speed
+                setPlaybackSpeed(newSpeed);
+                // convert to slider value and update the slider
+                speedRangeInput.value = speedToSlider(newSpeed);
+                Settings.setPlaybackSpeed(newSpeed);
+                // blur the text box because why doesn't it do this by default
+                speedLabelInput.blur();
+
+            } catch (error) {
+                // if any error occurs, most likely an invalid format, then just revert
+                console.log(error);
+                speedLabelInput.value = sliderToSpeed(document.getElementById("speedRange").value);
+            }
+
+        });
+        // initialize the UI with the preference playnack speed
         updateUI(playbackSpeed);
 
         // generate a list of snap values in slider units
@@ -122,7 +156,7 @@ var Playback = (function() {
         speedSlider = new Slider(
             // elements
             document.getElementById("speedRangeContainer"),
-            document.getElementById("speedRange"),
+            speedRangeInput,
             // range
             maxValue,
             // getter
@@ -332,6 +366,16 @@ var Playback = (function() {
         updateSpeed(realTime);
         // convert real time to song time
         var songTime = toSongTime(realTime);
+
+        // need to check at the beginning if we've exceeded the maximum song time
+        // this can happen if we set the playback speed to something ridiculously high
+        if (songTime > Metadata.maxSongTime) {
+            // stop playing
+            stop();
+            // end the loop
+            return;
+        }
+
         // update the track and playback marker positions
         updateTrack(songTime);
 

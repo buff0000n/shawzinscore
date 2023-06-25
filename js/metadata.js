@@ -64,7 +64,8 @@ var Metadata = (function() {
 
     var ticksPerSecond = 16;
     // technically the song code format can support 4m16s, but the game caps it at exactly 4m
-    var maxTickLength = 4 * 60 * ticksPerSecond;
+    var maxSongTime = 4 * 60;
+    var maxTickLength = maxSongTime * ticksPerSecond;
     var maxNotes = 1000;
     // the UI gives you about a 2.75 second lead-in before the song starts
     var leadInTicks = Math.ceil(2.75 * ticksPerSecond);
@@ -2284,6 +2285,7 @@ var Metadata = (function() {
         },
         // more general song format metadata
         ticksPerSecond: ticksPerSecond,
+        maxSongTime: maxSongTime,
         maxTickLength: maxTickLength,
         maxNotes: maxNotes,
         leadInTicks: leadInTicks,
