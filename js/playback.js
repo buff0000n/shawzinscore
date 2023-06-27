@@ -21,8 +21,10 @@ var Playback = (function() {
     var playing = false;
     // tracks the time location where playback started, we need this to schedule notes offset by that starting time
     var playbackStartTick = null;
-    // the next note to be played
-    var playbackNote = null;
+    // the next note to be scheduled
+    var nextScheduledNote = null;
+    // the next note to be played, already scheduled
+    var nextPlayedNote = null;
 
     // track whether the stop button is enabled
     var stopEnabled = false;
@@ -32,9 +34,13 @@ var Playback = (function() {
     var speedSlider = null;
     // playback speed
     var playbackSpeed = null;
-    // internal playback speed variables
+    // internal playback speed variable
     var newPlaybackSpeed = null;
-    var playbackSpeedOffset = 0;
+    // tracking how long each playback loop takes will help us cancel only the notes that haven't played yet when we
+    // have to stop playback.
+    // I can't believe it's so hard to do this with AudioContext.
+    var lastRealTime = null;
+    var realLoopTime = null;
 
     function registerEventListeners() {
         // set up button event listeners
@@ -296,9 +302,8 @@ var Playback = (function() {
                 var startTick = song.getStartTick();
                 playbackStartTick = startTick - ((startTick + Metadata.leadInTicks) * playbackSpeed);
             }
-            // reset any offset
-            playbackSpeedOffset = 0;
         }
+        //console.log("START TICK: " + playbackStartTick);
 
         // clear any lingering playback state in the track, this makes sure we don't animate a bunch of notes
         // we didn't mean to
@@ -310,23 +315,32 @@ var Playback = (function() {
             // set the audio time offset so we can schedule sounds starting from now
             ShawzinAudio.setTimeOffset();
             // get the first note to play
-            playbackNote = song.getFirstNoteAfter(playbackStartTick);
+            nextScheduledNote = song.getFirstNoteAfter(playbackStartTick);
+            // these start out the same
+            nextPlayedNote = nextScheduledNote;
+            //console.log("NEXT SCHEDULED START: " + nextScheduledNote.tick);
+            //console.log("NEXT PLAYED START: " + nextPlayedNote.tick);
             // set UI state
             setPlaying(true);
             setPauseEnabled();
             setStopEnabled(true);
+            // initialize timing tracker
+            lastRealTime = 0;
             // kick off te playback loop
             playbackLoop();
         });
     }
 
     function setPlaybackSpeed(speed) {
+        // check if we're currently playing
         if (isPlaying()) {
             // todo: looser equality/
             if (speed != (newPlaybackSpeed != null ? newPlaybackSpeed : playbackSpeed)) {
+                // schedule a playback speed change when the nexy playback loop runs
                 newPlaybackSpeed = speed;
             }
         } else {
+            // not currently playing, update the playback speed immediately
             playbackSpeed = speed;
         }
     }
@@ -334,42 +348,60 @@ var Playback = (function() {
     function updateSpeed(realTime) {
         // check if there's an updated playback speed
         if (newPlaybackSpeed != null) {
-            // get the current song time
-            var songTime = toSongTime(realTime);
-            // recalculate the offset so toSongTime() still gives the same song time with the new playback speed
-            playbackSpeedOffset = songTime - (realTime * newPlaybackSpeed);
+            // get the current song tick
+            var songTick = toSongTick(realTime);
+            // recalculate playbackStartTick so that toSongTicks() still gives the same song tick with the new
+            // playback speed
+            playbackStartTick = songTick - (realTime * newPlaybackSpeed * Metadata.ticksPerSecond);
             // update the playback speed
             playbackSpeed = newPlaybackSpeed;
-            //console.log("NEWOFFSET: " + playbackSpeedOffset);
+            //console.log("NEW PLAYBACK START TICK: " + playbackStartTick);
             // unset the temp value
             newPlaybackSpeed = null;
+            // there was an update
+            return true;
+        } else {
+            // no update
+            return false;
         }
     }
 
-    function toSongTime(realTime) {
-        // convert real time to song time
-        return (realTime * playbackSpeed) + playbackSpeedOffset;
+    function toSongTick(realTime) {
+        // convert real time to song tick
+        return (realTime * playbackSpeed * Metadata.ticksPerSecond) + playbackStartTick;
     }
 
-    function toRealTime(songTime) {
-        // convert song time to real time
-        return (songTime - playbackSpeedOffset) / playbackSpeed;
+    function toRealTime(songTick) {
+        // convert song tick to real time
+        return (songTick - playbackStartTick) / (playbackSpeed * Metadata.ticksPerSecond);
     }
 
     function playbackLoop() {
         // sanity check, end the loop if we're no longer playing
-        if (!isPlaying()) return;
+        if (!isPlaying()) {
+            //console.log("STOP TICK: " + Track.getPlaybackTick());
+            return;
+        }
 
         // get the current audio time, this is the most reliable time
         var realTime = soundBank.getCurrentTime();
         // check for a speed change
-        updateSpeed(realTime);
-        // convert real time to song time
-        var songTime = toSongTime(realTime);
+        var updatedSpeed = updateSpeed(realTime);
+
+        if (updatedSpeed) {
+            // if there was a speed change, then cancel any scheduled sounds that are still in the future
+            // appending how long a loop takes seems to do a decent job of not cutting off sounds that have started
+            // playing.  I'd rather double-play sounds than cut off sounds in the middle.
+            soundBank.stop(realTime + realLoopTime);
+        }
+
+        // convert real time to song tick
+        var songTick = toSongTick(realTime);
+        //console.log("SONG TICK: " + songTick);
 
         // need to check at the beginning if we've exceeded the maximum song time
         // this can happen if we set the playback speed to something ridiculously high
-        if (songTime > Metadata.maxSongTime) {
+        if (songTick > Metadata.maxTickLength) {
             // stop playing
             stop();
             // end the loop
@@ -377,30 +409,50 @@ var Playback = (function() {
         }
 
         // update the track and playback marker positions
-        updateTrack(songTime);
+        updateTrack(songTick);
+
+        // Okay, I guess double-playing a note is better than not playing it at all
+        //var songTickPlus = songTick + (realLoopTime * playbackSpeed * Metadata.ticksPerSecond);
+
+        while (nextPlayedNote != null) {
+            // calculate the note time relative to the start time
+            var noteTick = nextPlayedNote.tick;
+            if (noteTick > songTick) {
+                break;
+            }
+            nextPlayedNote = nextPlayedNote.next;
+            //console.log("NEXT PLAYED: " + (nextPlayedNote ? nextPlayedNote.tick : "null"));
+        }
+
+        // if there was a speed update then we need to reschedule sounds starting
+        if (updatedSpeed) {
+            nextScheduledNote = nextPlayedNote;
+        }
 
         // while we have a next note
-        while (playbackNote != null) {
+        while (nextScheduledNote != null) {
             // calculate the note time relative to the start time
-            var noteTime = (playbackNote.tick - playbackStartTick) / Metadata.ticksPerSecond;
+            var noteTick = nextScheduledNote.tick;
             // if the next note is farther in the future than our schedule buffer, stop scheduling notes
             // adjust the schedule buffer to the playback speed
-            // todo: adjust for playback speed?  Seems to make it worse.
-            //if (noteTime - songTime > (soundScheduleBufferTime * playbackSpeed)) {
-            if (noteTime - songTime > soundScheduleBufferTime) {
+            // todo: cache soundScheduleBufferTicks?
+            if (noteTick - songTick > (soundScheduleBufferTime * Metadata.ticksPerSecond * playbackSpeed)) {
                 break;
             }
 
             // get the note name
-            var noteName = playbackNote.toNoteName();
+            var noteName = nextScheduledNote.toNoteName();
             // schedule the note to play
-            soundBank.play(noteName, toRealTime(noteTime));
+            var noteTime = toRealTime(noteTick);
+            //console.log("SCHEDULED NOTE TIME: " + noteTime);
+            soundBank.play(noteName, noteTime);
             // go to the next note
-            playbackNote = playbackNote.next;
+            nextScheduledNote = nextScheduledNote.next;
+            //console.log("NEXT SCHEDULED: " + (nextScheduledNote ? nextScheduledNote.tick : "null"));
         }
 
-        // check if the current time, adjusted for the starting time, is past the end of the song, and if all sounds have finished playing
-        if ((songTime * Metadata.ticksPerSecond) + playbackStartTick > song.getEndTick() && soundBank.isIdle(realTime)) {
+        // check if the current song tick is past the end of the song, and if all sounds have finished playing
+        if ((songTick > song.getEndTick()) && soundBank.isIdle(realTime)) {
             // stop playing at the end of the song
             stop();
 
@@ -408,11 +460,29 @@ var Playback = (function() {
             // schedule another loop iteration
             loopTimeout = setTimeout(playbackLoop, playbackLoopInterval)
         }
+        // update loop time statistic
+        realLoopTime = realTime - lastRealTime;
+        lastRealTime = realTime;
     }
 
-    function updateTrack(songTime) {
+    function updateTrack(songTick) {
         // set the track playback marker position to the current playback time plus the start time
-        Track.setPlaybackTick((songTime * Metadata.ticksPerSecond) + playbackStartTick);
+        Track.setPlaybackTick(songTick);
+    }
+
+    function stopPlaying() {
+        // stop any scheduled sounds that haven't played yet
+        // get the current time
+        var realTime = soundBank.getCurrentTime();
+        // there's some lag with this, so some sounds might still play, and then
+        // get played again when playback is resumed
+        // add the loop time to avoid cutting off sounds that have started playing.
+        soundBank.stop(realTime + realLoopTime);
+        //console.log("STOP() TIME: " + realTime + ", loop time: " + realLoopTime);
+        // might as well update the track position one last time
+        var songTick = toSongTick(realTime);
+        updateTrack(songTick);
+        //console.log("STOP() TICK: " + songTick);
     }
 
     function pause() {
@@ -420,12 +490,7 @@ var Playback = (function() {
         if (playing) {
             // stop playing
             setPlaying(false);
-            // stop any scheduled sounds that haven't played yet
-            // there's some lag with this, so some sounds might still play, and then
-            // get played again when playback is resumed
-            soundBank.stop();
-            // might as well update the track position one last time
-            updateTrack(toSongTime(soundBank.getCurrentTime()));
+            stopPlaying();
             // enable the play button
             setPlayEnabled();
         }
@@ -439,9 +504,7 @@ var Playback = (function() {
             if (playing) {
                 // stop any scheduled sounds that haven't played yet
                 // there's some lag with this, so some sounds might still play, and then
-                soundBank.stop();
-                // might as well update the track position one last time
-                updateTrack(toSongTime(soundBank.getCurrentTime()));
+                stopPlaying();
                 // update state
                 setPlaying(false);
             }

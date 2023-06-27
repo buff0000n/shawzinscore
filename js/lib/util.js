@@ -610,7 +610,7 @@ var MiscUtils = (function(){
 	function parseFloat(s) {
 	    // read a decimal from a string
 	    var i = Number.parseFloat(s);
-	    if (Number.isNaN(i) || i < 0) {
+	    if (Number.isNaN(i)) {
             throw "Invalid number: \"" + s + "\"";
 	    }
 	    return i;

@@ -187,7 +187,7 @@ var Audio = (function() {
             while (this.queue.length > 0 && this.queue[this.queue.length - 1].startTime > currentTime - timeUlp) {
                 // remove the event and cancel it
                 var event = this.queue.pop();
-                //console.log("removing event at " + event.startTime)
+                //console.log("removing event at " + (event.startTime - timeOffset) + " >  " + (currentTime - timeUlp));
                 event.cancel();
             }
 
@@ -297,16 +297,7 @@ var Audio = (function() {
             }
         }
 
-        play(currentTime, time=null) {
-            if (time == null) {
-                // play immediately
-                time = currentTime;
-
-            } else {
-                // offset playtime to be in the context's time
-                time += timeOffset;
-            }
-
+        play(currentTime, time) {
             // short circuit
             if (this.volume == 0) {
                 return;
@@ -415,6 +406,14 @@ var Audio = (function() {
             this.checkInit(() => {
                 // get the current time for reasons
                 var currentTime = context.currentTime;
+                if (time == null) {
+                    // play immediately
+                    time = currentTime;
+
+                } else {
+                    // offset playtime to be in the context's time
+                    time += timeOffset;
+                }
                 // find the sound entry
                 var soundEntry = this.nameToSoundEntry[name];
                 // play the sound
@@ -435,15 +434,20 @@ var Audio = (function() {
 
         stop(time=null) {
             this.checkInit(() => {
-                // get the current time for reasons
-                if (time == null) time = context.currentTime;
-                // stop the poly soung queue
+                // if no time is given, stop sounds immediately
+                if (time == null) {
+                    time = context.currentTime;
+                // if a time is given, offset to the context time
+                } else {
+                    time += timeOffset;
+                }
+                // stop the poly sound queue
                 if (this.polySoundEventQueue) {
-                    this.polySoundEventQueue.dropAfter(time);;
+                    this.polySoundEventQueue.dropAfter(time);
                 }
                 // stop the mono sound groups
                 for (var monoGroup in this.monoSoundEventQueues) {
-                    this.monoSoundEventQueues[monoGroup].dropAfter(time);;
+                    this.monoSoundEventQueues[monoGroup].dropAfter(time);
                 };
             });
         }
