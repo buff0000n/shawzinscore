@@ -16,6 +16,9 @@ var Track = (function() {
     // whether the note direction is top to bottom (false) or bottom to top (true)
     var reversed = false;
 
+    // the key signature, used for changing the audio playback pitch and all the accompanying UI bits
+    var keySig = null;
+
     // the initial 2.75 second blank bar at the beginning of the song
     var startBar = null;
 
@@ -170,13 +173,23 @@ var Track = (function() {
 
     // just rebuild the piano roll view when the shawzin or scale has changed
     function rebuildRollNotes() {
-        // sanity check
-        if (song) {
-            // clear each note's roll view and rebuild it
-            for (var n = 0; n < song.notes.length; n++) {
-                var noteView = getView(song.notes[n]);
-                noteView.clearRoll();
-                noteView.buildRoll();
+        // check if the key signature has changed
+        if (Model.getKeySig() != keySig) {
+            // change the piano roll side's background image
+            document.getElementById("song-scroll-roll").style.backgroundImage = "url('img2x/track/keys-bg-" + Model.getKeySig() + ".png')";
+            // we have to rebuild the piano roll from scratch because of the meaure dividing lines that are embedded in
+            // each bar.
+            updateStructure();
+
+        } else {
+            // sanity check
+            if (song) {
+                // clear each note's roll view and rebuild it
+                for (var n = 0; n < song.notes.length; n++) {
+                    var noteView = getView(song.notes[n]);
+                    noteView.clearRoll();
+                    noteView.buildRoll();
+                }
             }
         }
     }
@@ -398,8 +411,8 @@ var Track = (function() {
         var scrollTop = scroll.scrollTop;
         // build a new bar object, which is a 2-element array of the tablature and piano roll bars
         var bar = [
-            buildBar(false, "tab"),
-            buildBar(false, "roll")
+            buildBar(false, "1-tab", "2-tab"),
+            buildBar(false, "1-roll-" + Model.getKeySig(), "2-roll")
         ];
 
         if (reversed) {
@@ -496,8 +509,8 @@ var Track = (function() {
     function buildStartBar() {
         // build the 2-element tablature and piano roll bar
         startBar = [
-            buildBar(true, "tab", tickOffset),
-            buildBar(true, "roll", tickOffset)
+            buildBar(true, "1-tab", "2-tab", tickOffset),
+            buildBar(true, "1-roll-" + Model.getKeySig(), "2-roll", tickOffset)
         ];
         // setup the bar properties
         startBar[0].startTick = -tickOffset;
@@ -521,7 +534,7 @@ var Track = (function() {
     }
 
     // build either a tablature or piano roll bar
-    function buildBar(first, pngSuffix, ticks = null) {
+    function buildBar(first, pngSuffix1, pngSuffix2, ticks = null) {
         // bar div
         var div = document.createElement("div");
         div.className = "measure-spacer";
@@ -538,7 +551,7 @@ var Track = (function() {
             // if this is the first bar, then add a delimiter at the top or bottom, depending on whether we're reversed or not
             // with no structure, this will be the only delimiter in the view
             if (first) {
-                div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", reversed ? 0 : ticks * tickSpacing));
+                div.appendChild(buildMarker("track/measure-marker-" + pngSuffix1 + ".png", reversed ? 0 : ticks * tickSpacing));
             }
             // save the bar tick capacity to the container for some reason
             div.ticks = ticks;
@@ -552,11 +565,11 @@ var Track = (function() {
             // set the div height.  This is the only thing that actually adds space to the scroll view
             div.style.height = (beats * ticksPerBeat * tickSpacing) + "px";
             // add a starting major bar delimiter
-            div.appendChild(buildMarker("measure-marker-1-" + pngSuffix + ".png", reversed ? 0 : ticks * tickSpacing));
+            div.appendChild(buildMarker("track/measure-marker-" + pngSuffix1 + ".png", reversed ? 0 : ticks * tickSpacing));
 
             // add internal minor beat delimiters on each beat
             for (var b = 1; b < beats; b++) {
-                div.appendChild(buildMarker("measure-marker-2-" + pngSuffix + ".png", b * ticksPerBeat * tickSpacing));
+                div.appendChild(buildMarker("track/measure-marker-" + pngSuffix2 + ".png", b * ticksPerBeat * tickSpacing));
             }
             // todo: even more minor tick delimiters if the zoom is big enough?
 
@@ -749,13 +762,12 @@ var Track = (function() {
             // todo: what was outline for again/
             div.className = outline ? "roll-note-outline" : "roll-note";
             // set the horizontal position according to the metadata for the given absolute note name
-            div.style.left = MetadataUI.noteToRollOffsets[name] + "px";
+            div.style.left = Piano.rollNoteOffset(Model.getKeySig(), name) + "px";
             // set the vertical position above the note position if we're reversed, otherwise set it to 0
             // note that this will be placed into a container that will determine the actual vertical position
             div.style.top = (reversed ? -(length * tickSpacing) : 0) + "px";
             // set the width
-            // todo: get this from MetadataUI?
-            div.style.width = "12px";
+            div.style.width = Piano.rollNoteWidth + "px";
             // set the height based on the note length in ticks
             div.style.height = (length * tickSpacing) + "px";
             // color the div background, this is what makes it show up
@@ -783,11 +795,10 @@ var Track = (function() {
             // the animation expands horizontally in both directions equally
             // this means we have to position it slightly differently from the other note
             // subtract half the width from the horizontal offset
-            // todo: get this from MetadataUI?
-            div.style.left = (MetadataUI.noteToRollOffsets[name] + 6) + "px";
+            div.style.left = (Piano.rollNoteOffset(Model.getKeySig(), name) + (Piano.rollNoteWidth / 2)) + "px";
             // set the top, width, and height the same as the other version
             div.style.top = (reversed ? -(length * tickSpacing) : 0) + "px";
-            div.style.width = MetadataUI.noteRollWidth + "px";
+            div.style.width = Piano.rollNoteWidth + "px";
             div.style.height = (length * tickSpacing) + "px";
             // color
             div.style.backgroundColor = color;
@@ -937,11 +948,11 @@ var Track = (function() {
 
         build(tabImg, rollImg, className) {
             // tablature side with the circles
-            this.tabImg = PageUtils.makeImage(tabImg, "centerYImg " + className);
+            this.tabImg = PageUtils.makeImage("track/" + tabImg, "centerYImg " + className);
             this.tabImg.style.left = "0px";
 
             // piano roll side is just a line
-            this.rollImg = PageUtils.makeImage(rollImg, "centerYImg " + className);
+            this.rollImg = PageUtils.makeImage("track/" + rollImg, "centerYImg " + className);
             this.rollImg.style.left = "0px";
         }
 

@@ -25,6 +25,7 @@
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata_ui.js"></script>
 <script type="text/javascript" language="javascript" src="js/settings.js"></script>
+<script type="text/javascript" language="javascript" src="js/piano.js"></script>
 <script type="text/javascript" language="javascript" src="js/song.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzinAudio.js"></script>
 <script type="text/javascript" language="javascript" src="js/model.js"></script>
@@ -93,7 +94,7 @@
 
 </script>
 
-<div id="toolbar"> <!-- style="width: 340px;" -->
+<div id="toolbar"> <!-- style="width: 344px;" -->
     <div id="title-bar" class="titleBar">
         <div class="mainTitle">Shawzinscore</div>
     </div>
@@ -191,9 +192,9 @@
 
 <div id="song-container">
     <div id="song-toolbar">
-        <table id="song-toolbar-table" style="width: 680px;">
+        <table id="song-toolbar-table" style="width: 688px;">
             <tr>
-                <td id="song-buttons" style="width: 340px; text-align: center;">
+                <td id="song-buttons" style="width: 344px; text-align: center;">
                     <div id="song-buttons-config" class="button">
                         <img src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x" class="icon"/>
                     </div>
@@ -233,9 +234,9 @@
         </table>
     </div>
     <div id="song-bar">
-        <table id="song-bar-table" style="width: 680px; height: 96px;">
+        <table id="song-bar-table" style="width: 688px; height: 96px;">
             <tr>
-                <td id="song-bar-tab" style="width: 340px; text-align: center; position: relative;">
+                <td id="song-bar-tab" style="width: 344px; text-align: center; position: relative;">
                     <!-- I'd really like to group these in a div but it makes positioning super awkward -->
                     <div id="tab-string-1" class="tab-string-div" style="position: absolute; left: 58px; top: 50%; transform: translate(-50%,-50%);">
                         <img id="tab-string-1-img" src="img/tab-string.png" srcset="img2x/tab-string.png 2x"/>
@@ -278,18 +279,18 @@
                     </div>
                     -->
                 </td>
-                <td id="song-bar-roll" style="width: 340px;">
-                    <img id="roll-keyboard" src="img/keys-plain.png" srcset="img2x/keys-plain.png 2x" draggable="false"/>
+                <td id="song-bar-roll" style="width: 344px;">
+                    <img id="roll-keyboard" src="img/track/keys-plain.png" srcset="img2x/track/keys-plain.png 2x" draggable="false"/>
                 </td>
             </tr>
         </table>
     </div>
     <div id="song-scroll">
-        <table id="song-scroll-table" style="width: 680px;">
+        <table id="song-scroll-table" style="width: 688px;">
             <tr>
-                <td id="song-scroll-tab" style="background-image: url('img/tab-bg.png'); width: 340px; position: relative;">
+                <td id="song-scroll-tab" style="background-image: url('img/tab-bg.png'); background-size: 450px 32px; width: 344px; position: relative;">
                 </td>
-                <td id="song-scroll-roll" style="background-image: url('img/keys-bg.png'); width: 340px; position: relative; z-index: 0;">
+                <td id="song-scroll-roll" style="background-image: url('img2x/track/keys-bg-c.png'); background-size: 450px 32px; width: 344px; position: relative; z-index: 0;">
                 </td>
             </tr>
         </table>
@@ -2046,15 +2047,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_1_w.png" srcset="img2x/key_1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_2_w.png" srcset="img2x/key_2_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_3_w.png" srcset="img2x/key_3_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_1_w.png" srcset="img2x/control/key_1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_2_w.png" srcset="img2x/control/key_2_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_3_w.png" srcset="img2x/control/key_3_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_l_w.png" srcset="img2x/key_l_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_d_w.png" srcset="img2x/key_d_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_r_w.png" srcset="img2x/key_r_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_l_w.png" srcset="img2x/control/key_l_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_d_w.png" srcset="img2x/control/key_d_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_r_w.png" srcset="img2x/control/key_r_w.png 2x"/></td>
                             </tr>
                         </table>
                     </td>
@@ -2074,15 +2075,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_l_w.png" srcset="img2x/key_l_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_d_w.png" srcset="img2x/key_d_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_r_w.png" srcset="img2x/key_r_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_l_w.png" srcset="img2x/control/key_l_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_d_w.png" srcset="img2x/control/key_d_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_r_w.png" srcset="img2x/control/key_r_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_1_w.png" srcset="img2x/key_1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_2_w.png" srcset="img2x/key_2_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_3_w.png" srcset="img2x/key_3_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_1_w.png" srcset="img2x/control/key_1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_2_w.png" srcset="img2x/control/key_2_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_3_w.png" srcset="img2x/control/key_3_w.png 2x"/></td>
                             </tr>
                         </table>
                     </td>
@@ -2101,15 +2102,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_square_w.png" srcset="img2x/key_square_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_cross_w.png" srcset="img2x/key_cross_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_circle_w.png" srcset="img2x/key_circle_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_square_w.png" srcset="img2x/control/key_square_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_cross_w.png" srcset="img2x/control/key_cross_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_circle_w.png" srcset="img2x/control/key_circle_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_l1_w.png" srcset="img2x/key_l1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_r1_w.png" srcset="img2x/key_r1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_r2_w.png" srcset="img2x/key_r2_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_l1_w.png" srcset="img2x/control/key_l1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_r1_w.png" srcset="img2x/control/key_r1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_r2_w.png" srcset="img2x/control/key_r2_w.png 2x"/></td>
                             </tr>
                         </table>
                     </td>
@@ -2128,15 +2129,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_square_w.png" srcset="img2x/key_square_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_cross_w.png" srcset="img2x/key_cross_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_circle_w.png" srcset="img2x/key_circle_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_square_w.png" srcset="img2x/control/key_square_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_cross_w.png" srcset="img2x/control/key_cross_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_circle_w.png" srcset="img2x/control/key_circle_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_dl_w.png" srcset="img2x/key_dl_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_dd_w.png" srcset="img2x/key_dd_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_dr_w.png" srcset="img2x/key_dr_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dl_w.png" srcset="img2x/control/key_dl_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dd_w.png" srcset="img2x/control/key_dd_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dr_w.png" srcset="img2x/control/key_dr_w.png 2x"/></td>
                             </tr>
                         </table>
                         <p>
@@ -2158,15 +2159,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_x_w.png" srcset="img2x/key_x_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_x_w.png" srcset="img2x/control/key_x_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_a_w.png" srcset="img2x/control/key_a_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_b_w.png" srcset="img2x/control/key_b_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_xl1_w.png" srcset="img2x/key_xl1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_xr1_w.png" srcset="img2x/key_xr1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_xr2_w.png" srcset="img2x/key_xr2_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_xl1_w.png" srcset="img2x/control/key_xl1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_xr1_w.png" srcset="img2x/control/key_xr1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_xr2_w.png" srcset="img2x/control/key_xr2_w.png 2x"/></td>
                             </tr>
                         </table>
                     </td>
@@ -2185,15 +2186,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_x_w.png" srcset="img2x/key_x_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_x_w.png" srcset="img2x/control/key_x_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_a_w.png" srcset="img2x/control/key_a_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_b_w.png" srcset="img2x/control/key_b_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_dl_w.png" srcset="img2x/key_dl_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_dd_w.png" srcset="img2x/key_dd_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_dr_w.png" srcset="img2x/key_dr_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dl_w.png" srcset="img2x/control/key_dl_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dd_w.png" srcset="img2x/control/key_dd_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dr_w.png" srcset="img2x/control/key_dr_w.png 2x"/></td>
                             </tr>
                         </table>
                         <p>
@@ -2215,15 +2216,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_y_w.png" srcset="img2x/key_y_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_y_w.png" srcset="img2x/control/key_y_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_b_w.png" srcset="img2x/control/key_b_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_a_w.png" srcset="img2x/control/key_a_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_l1_w.png" srcset="img2x/key_l1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_r1_w.png" srcset="img2x/key_r1_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_r2_w.png" srcset="img2x/key_r2_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_l1_w.png" srcset="img2x/control/key_l1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_r1_w.png" srcset="img2x/control/key_r1_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_r2_w.png" srcset="img2x/control/key_r2_w.png 2x"/></td>
                             </tr>
                         </table>
                     </td>
@@ -2242,15 +2243,15 @@
                         <table class="centeredTable">
                             <tr>
                                 <td class="label"><strong>Strings:</strong></td>
-                                <td><img class="icon" src="img/key_y_w.png" srcset="img2x/key_y_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_b_w.png" srcset="img2x/key_b_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_a_w.png" srcset="img2x/key_a_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_y_w.png" srcset="img2x/control/key_y_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_b_w.png" srcset="img2x/control/key_b_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_a_w.png" srcset="img2x/control/key_a_w.png 2x"/></td>
                             </tr>
                             <tr>
                                 <td class="label"><strong>Frets:</strong></td>
-                                <td><img class="icon" src="img/key_dl_w.png" srcset="img2x/key_dl_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_dd_w.png" srcset="img2x/key_dd_w.png 2x"/></td>
-                                <td><img class="icon" src="img/key_dr_w.png" srcset="img2x/key_dr_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dl_w.png" srcset="img2x/control/key_dl_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dd_w.png" srcset="img2x/control/key_dd_w.png 2x"/></td>
+                                <td><img class="icon" src="img/control/key_dr_w.png" srcset="img2x/control/key_dr_w.png 2x"/></td>
                             </tr>
                         </table>
                         <p>
@@ -2263,15 +2264,15 @@
             <h3 id="control_chordbutton">The Chord Button</h3>
             <p>
                 With all the 2023 controller control schemes based on the D-Pad, they added a use for
-                <img class="icon" src="img/key_du_w.png" srcset="img2x/key_du_w.png 2x"/> and called
+                <img class="icon" src="img/control/key_du_w.png" srcset="img2x/control/key_du_w.png 2x"/> and called
                 it the <strong>Chord</strong> button.  Basically, it's equivalent to this:
             </p>
             <ul>
                 <li>
                     <strong class="info">
-                    <img class="icon" src="img/key_du_w.png" srcset="img2x/key_du_w.png 2x"/> =
-                    <img class="icon" src="img/key_dl_w.png" srcset="img2x/key_dl_w.png 2x"/> +
-                    <img class="icon" src="img/key_dr_w.png" srcset="img2x/key_dr_w.png 2x"/>
+                    <img class="icon" src="img/control/key_du_w.png" srcset="img2x/control/key_du_w.png 2x"/> =
+                    <img class="icon" src="img/control/key_dl_w.png" srcset="img2x/control/key_dl_w.png 2x"/> +
+                    <img class="icon" src="img/control/key_dr_w.png" srcset="img2x/control/key_dr_w.png 2x"/>
                     </strong>
                 </li>
             </ul>
@@ -2279,9 +2280,9 @@
             <p>
                 Unfortunately, as far as I can tell, there is still no way to do
                 <strong class="info">
-                    <img class="icon" src="img/key_dl_w.png" srcset="img2x/key_dl_w.png 2x"/> +
-                    <img class="icon" src="img/key_dd_w.png" srcset="img2x/key_dd_w.png 2x"/> +
-                    <img class="icon" src="img/key_dr_w.png" srcset="img2x/key_dr_w.png 2x"/>
+                    <img class="icon" src="img/control/key_dl_w.png" srcset="img2x/control/key_dl_w.png 2x"/> +
+                    <img class="icon" src="img/control/key_dd_w.png" srcset="img2x/control/key_dd_w.png 2x"/> +
+                    <img class="icon" src="img/control/key_dr_w.png" srcset="img2x/control/key_dr_w.png 2x"/>
                 </strong>, so I still can't recommend this control scheme if you're doing chords.
             </p>
 
@@ -2338,17 +2339,18 @@
             <h1 id="tocTodo">To do</h1>
             <ul>
                 <li><strong>EDITING</strong></li>
-                <li>playback time/measure display? </li>
                 <li>Library</li>
                 <li>Local storage</li>
                 <li>Wav export</li>
-                <li>loading bars?</li>
-                <li>sort options for shawzin list</li>
-                <li>Zoom Level?</li>
-                <li>Custom control schemes</li>
-                <li>Support meter/tempo changing mid-song</li>
-                <li>Less dumb animation for piano roll notes</li>
                 <li><strong class="fret13">Concept Shawzins</strong></li>
+                <li>Key changing?</li>
+                <li>sort options for shawzin list?</li>
+                <li>Support meter/tempo changing mid-song?</li>
+                <li>Less dumb animation for piano roll notes?</li>
+                <li>playback time/measure display?</li>
+                <li>loading bars?</li>
+                <li>Zoom Level?</li>
+                <li>Custom control schemes?</li>
                 <li>Sleep</li>
             </ul>
 

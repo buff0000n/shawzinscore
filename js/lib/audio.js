@@ -82,13 +82,15 @@ var Audio = (function() {
 
     // sound event, starts/schedules an instance of a sound and tracks everything we might need to cut it off or cancel it
     class SoundEvent {
-        constructor(name, buffer, volume, startTime, duration, monoFadeTime) {
+        constructor(name, buffer, volume, startTime, duration, rate, monoFadeTime) {
             // sound data
             this.name = name;
             this.buffer = buffer;
             this.volume = volume;
             this.startTime = startTime;
-            this.duration = duration;
+            // apply the playback rate to the duration
+            this.duration = duration / this.rate;
+            this.rate = rate;
             this.endTime = startTime + duration;
             this.monoFadeTime = monoFadeTime;
 
@@ -101,6 +103,10 @@ var Audio = (function() {
             // create a source node
             this.source = context.createBufferSource();
             this.source.buffer = this.buffer;
+            // apply a playack rate if it's not exactly 1
+            if (this.rate != 1.0) {
+                this.source.playbackRate.value = this.rate;
+            }
 
             // create a volume node
             this.gain = context.createGain();
@@ -277,6 +283,9 @@ var Audio = (function() {
 
             // default volume
             this.volume = 1.0;
+            
+            // default rate
+            this.rate = 1.0;
         }
 
         init(buffers) {
@@ -297,6 +306,12 @@ var Audio = (function() {
             }
         }
 
+        setRate(rate) {
+            if (rate != this.rate) {
+                this.rate = rate;
+            }
+        }
+
         play(currentTime, time) {
             // short circuit
             if (this.volume == 0) {
@@ -314,7 +329,7 @@ var Audio = (function() {
             }
 
             // build a sound event
-            var soundEvent = new SoundEvent(this.name, buffer, this.volume, time, duration, this.monoFadeTime);
+            var soundEvent = new SoundEvent(this.name, buffer, this.volume, time, duration, this.rate, this.monoFadeTime);
             // insert in the queue
             this.soundEventQueue.insert(currentTime, soundEvent);
             // start it
@@ -334,7 +349,10 @@ var Audio = (function() {
             // one event queue for sounds that aren't in a mono group
             this.polySoundEventQueue = null;
 
+            // default volume
             this.volume = 1.0;
+            // default playback rate
+            this.rate = 1.0;
         }
 
         addSound(name, urlList, monoGroup=null, monoFadeTime=0) {
@@ -394,6 +412,8 @@ var Audio = (function() {
 
                 // init volume
                 this.setVolume(this.volume);
+                // init playback rate
+                this.setRate(this.rate);
                 // set the flag
                 this.initialized = true;
 
@@ -428,6 +448,17 @@ var Audio = (function() {
             if (this.nameToSoundEntry) {
                 for (name in this.nameToSoundEntry) {
                     this.nameToSoundEntry[name].setVolume(volume);
+                }
+            }
+        }
+
+        setRate(rate) {
+            // store the playnack rate
+            this.rate = rate;
+            // propagate to sound entries
+            if (this.nameToSoundEntry) {
+                for (name in this.nameToSoundEntry) {
+                    this.nameToSoundEntry[name].setRate(rate);
                 }
             }
         }

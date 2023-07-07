@@ -268,7 +268,13 @@ var Playback = (function() {
         if (shawzin && scale) {
             // update the sound bank
             soundBank = ShawzinAudio.getSoundBank(shawzin, scale);
+            updateKeySig();
         }
+    }
+
+    function updateKeySig() {
+        // just need to set the pitch offset on the sound bank
+        soundBank.setKeySig(Model.getKeySig());
     }
 
     function setSong(newSong) {
@@ -533,6 +539,8 @@ var Playback = (function() {
         updateShawzin: updateSoundBank, // ()
         // notify that the scale has been updated
         updateScale: updateSoundBank, // ()
+        // notify that the key signature has been updated
+        updateKeySig: updateKeySig, // ()
         // notify that the song has been updated
         setSong: setSong, // (newSong)
         // play a single note immediately

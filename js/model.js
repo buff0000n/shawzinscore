@@ -26,6 +26,8 @@ var Model = (function() {
     // either measures per line or seconds per line for shawzin tab, depending on whether a structure is defined
     // this depends on the song, so it's saved as part of the model
     var unitsPerLine = null;
+    // key signature, basically the global pitch offset
+    var keySig = Piano.keySigOrder[0];
 
     // delay before updating the song code and the URL
     var updateDelay = 1000;
@@ -179,7 +181,16 @@ var Model = (function() {
         // update the UI and other libs
         updateScale();
     }
-    
+
+    function doSetKeySig(newKeySig) {
+        // update the setting
+        keySig = newKeySig;
+        // update the other modules that need updating
+        Playback.updateKeySig();
+        TrackBar.updateScale();
+        Track.updateScale();
+    }
+
     function getControlScheme() {
         // get it
         return controlScheme;
@@ -428,6 +439,22 @@ var Model = (function() {
                     () => { doSetScale(newScale); scheduleUpdate(); },
                     () => { doSetScale(current); scheduleUpdate(); },
                     "Set Scale"
+                );
+            }
+        },
+
+        // key sig getter/setter
+        getKeySig: function() { return keySig; },
+        setKeySig: function(newKeySig) {
+            // save current value
+            var current = keySig;
+            // check for change
+            if (newKeySig != current) {
+                // build do and undo actions and run through the undo system
+                Undo.doAction(
+                    () => { doSetKeySig(newKeySig); scheduleUpdate(); },
+                    () => { doSetKeySig(current); scheduleUpdate(); },
+                    "Set Key Signature"
                 );
             }
         },

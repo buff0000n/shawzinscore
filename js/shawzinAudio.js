@@ -122,6 +122,16 @@ var ShawzinAudio = (function() {
             }
         }
 
+        // mix in a function for altering pitches for the specific key signature
+        soundBank.setKeySig = function(keySig) {
+            // get the pitch offset in half tones
+            var pitchOffset = Piano.getPitchOffset(keySig);
+            // convert to a playback speed multiplier
+            var rate = 2 ** (pitchOffset / 12);
+            // apply the multiplier to the sound bank's playback rate
+            this.setRate(rate);
+        }
+
         // all done
         return soundBank;
     }

@@ -2,15 +2,15 @@
 var TrackBar = (function() {
 
     // track direction
-    trackReversed = false;
+    var trackReversed = false;
     // show frets or strings
-    showFrets = false;
+    var showFrets = false;
     // tracking for which frets are enabled
     // this is just a toy for now, it doesn't do anything
-    fretEnabled = [false, false, false, false];
+    var fretEnabled = [false, false, false, false];
 
     // keyboard div container, easier to rebuild if I keep track of a container
-    rollKeyButtonDiv = null;
+    var rollKeyButtonDiv = null;
 
     function registerEventListeners() {
         // event handler for the track direction button, I love this button
@@ -208,6 +208,25 @@ var TrackBar = (function() {
         }, 500);
     }
 
+    // build a coloring for the given scale
+    function buildPianoColoring(scaleMd) {
+        // this will be an array with indices from 0 to 28
+        // most of the indices will be null
+        var colors = [];
+        // loop over the scale notes
+        for (var noteName in scaleMd.notes) {
+            var note = scaleMd.notes[noteName];
+            // find the full keyboard index of the scale note
+            var index = Metadata.noteOrder.indexOf(note);
+            // get the fret color for the note
+            // todo: better way to get the fret and color
+            var color = MetadataUI.fretToRollColors[noteName.split("-")[0]];
+            // save the color to the array in the correct index
+            colors[index] = color;
+        }
+        return colors;
+    }
+
     // rebuild the piano container for the given scale
     function updateScale() {
         // get the shawzin and scale metadata
@@ -219,10 +238,17 @@ var TrackBar = (function() {
 
         // build a map of midi notes to boxes
         var midiMap = {};
+        // get the note offset based on the key signature
+        var midiNoteOffset = Piano.getPitchOffset(Model.getKeySig());
 
-        // set the base image on the existing image element
-        var img = document.getElementById("roll-keyboard");
-        PageUtils.setImgSrc(img, src);
+        // remove the old canvas/image element
+        document.getElementById("roll-keyboard").remove();
+        // build a new canvas with the correct key and scale coloring
+        var newImage = Piano.buildPianoCanvas(Model.getKeySig(), 1, 1, buildPianoColoring(scaleMd));
+        // make sure we can find it later
+        newImage.id = "roll-keyboard";
+        // put it in the container
+        document.getElementById("song-bar-roll").appendChild(newImage);
 
         // remove the old button container, if present
         if (rollKeyButtonDiv) {
@@ -237,8 +263,9 @@ var TrackBar = (function() {
         for (var noteName in scaleMd.notes) {
             // get the absolute note name
             var note = scaleMd.notes[noteName];
-            // get the hard-coded set of position for the note from the UI metadata
-            var boxStyle = MetadataUI.noteKeyboardBoxes[note];
+            // get the position for the note box from the canvas,
+            // indexed by the note's overall index in the full not eorder list
+            var boxStyle = newImage.boxStyles[Metadata.noteOrder.indexOf(note)];
             // create an invisible box div
             var box = document.createElement("div");
             // CSS
@@ -257,8 +284,8 @@ var TrackBar = (function() {
             DragEvents.addDragDropListener(box, scaleRollDragDropListener);
             // add to the container
             rollKeyButtonDiv.appendChild(box);
-            // get the midi note number
-            var midiNote = MetadataUI.midiNoteC + Metadata.noteOrder.indexOf(note)
+            // get the midi note number plus any offset
+            var midiNote = MetadataUI.midiNoteC + Metadata.noteOrder.indexOf(note) + midiNoteOffset;
             // save to a map
             midiMap[midiNote] = box;
         }
