@@ -150,8 +150,9 @@ var Model = (function() {
         var text = document.getElementById("select-shawzin-text");
         text.innerHTML = Metadata.shawzinList[shawzin].config.name;
 
-        // propagate the update to the track and the player
+        // propagate the update to the track, trackbar, and the player
         Track.updateShawzin();
+        TrackBar.updateShawzin();
         Playback.updateShawzin();
     }
 

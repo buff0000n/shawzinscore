@@ -273,14 +273,29 @@
                     <div id="trackbar-switch" class="smallButton" style="position: absolute; left: 0px; top: 0px;">
                         <img src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x" class="icon"/>
                     </div>
-                    <!--
-                    <div id="roll-chord-button" class="smallButton" style="position: absolute; right: 0px; top: 0px;">
-                        <img src="img/icon-chord-down.png" srcset="img2x/icon-chord-down.png 2x" class="icon"/>
+                    <div id="roll-chord-buttons" style="position: absolute; right: 0px; top: 0px; display: block">
+                        <div id="roll-chord-button-none" class="smallButton chordButton" style="">
+                            <img src="img/icon-chord-none-selected.png" srcset="img2x/icon-chord-none-selected.png 2x" class="icon"/>
+                        </div>
+                        <div id="roll-chord-button-a" class="smallButton chordButton" style="">
+                            <img src="img/icon-chord-a.png" srcset="img2x/icon-chord-a.png 2x" class="icon"/>
+                        </div>
+                        <div id="roll-chord-button-b" class="smallButton chordButton" style="">
+                            <img src="img/icon-chord-b.png" srcset="img2x/icon-chord-b.png 2x" class="icon"/>
+                        </div>
+                        <div id="roll-chord-button-ab" class="smallButton chordButton" style="display: none;">
+                            <img src="img/icon-chord-ab.png" srcset="img2x/icon-chord-ab.png 2x" class="icon"/>
+                        </div>
+                        <div id="roll-chord-button-slap" class="smallButton chordButton" style="display: none;">
+                            <img src="img/icon-chord-slap.png" srcset="img2x/icon-chord-slap.png 2x" class="icon"/>
+                        </div>
                     </div>
-                    -->
                 </td>
                 <td id="song-bar-roll" style="width: 344px;">
                     <img id="roll-keyboard" src="img/track/keys-plain.png" srcset="img2x/track/keys-plain.png 2x" draggable="false"/>
+                    <div id="roll-chord-info" class="smallButton" style="position: absolute; right: 0px; bottom: 0px; display: none">
+                        <img src="img/icon-chord-down.png" srcset="img2x/icon-chord-down.png 2x" class="icon"/>
+                    </div>
                 </td>
             </tr>
         </table>
@@ -427,7 +442,12 @@
                         <li><a href="#tocTrackAreaLeft">The Tablature Section</a></li>
                         <li><a href="#tocTrackAreaRight">The Piano Roll Section</a></li>
                         <li><a href="#tocTrackAreaFret">Strings/Frets</a></li>
-                        <li><a href="#tocTrackAreaKeyboard">The Keyboard</a></li>
+                        <li>
+                            <a href="#tocTrackAreaKeyboard">The Keyboard</a>
+                            <ul>
+                                <li><a href="#tocChordModes">Chord modes</a></li>
+                            </ul>
+                        </li>
                         <li><a href="#tocTrackAreaDirection">Direction</a></li>
                     </ul>
                 </li>
@@ -668,6 +688,38 @@
                 Above/below the Piano Roll section is a piano keyboard.  The available notes for the currently selected
                 scale will be highlighted on the keyboard.  Clicking on a highlighted key will play that tone.
             </p>
+            <h3 id="tocChordModes">Chord Modes</h3>
+            <p>
+                By default the piano keyboard allows you to play single notes.  To the left of the keyboard are buttons
+                for switching between various chord modes.  The selected chord mode is highlighted with a white
+                outline.
+            </p>
+            <p>
+                The available buttons change depending on the current Shawzin and scale combination.
+            </p>
+            <ul>
+                <li>
+                    <strong><img class="smallButton icon" src="img/icon-chord-none.png" srcset="img2x/icon-chord-none.png 2x"/>
+                    Normal: </strong> No chord mode selected, normal single notes are played.
+                </li>
+                <li>
+                    <strong><img class="smallButton icon" src="img/icon-chord-a.png" srcset="img2x/icon-chord-a.png 2x"/>
+                    <img class="smallButton icon" src="img/icon-chord-b.png" srcset="img2x/icon-chord-b.png 2x"/>
+                    Dual Chord Sets: </strong> Most Shawzin and scale combinations have two sets of chords, each set
+                    rooted mostly on the first six notes of the scale.  <i>Mostly</i>.
+                </li>
+                <li>
+                    <strong><img class="smallButton icon" src="img/icon-chord-ab.png" srcset="img2x/icon-chord-ab.png 2x"/>
+                    Single Chord Set: </strong> The Chromatic scale on most Shawzins has a single run of 12 chords
+                    instead of two sets of 6.
+                </li>
+                <li>
+                    <strong><img class="smallButton icon" src="img/icon-chord-slap.png" srcset="img2x/icon-chord-slap.png 2x"/>
+                    Slap: </strong> For every scale on the Tiamat Shawzin, the chords are just slap-bass equivalants of the
+                    normal notes.
+                </li>
+            </ul>
+
 
             <h2 id="tocTrackAreaDirection">Direction</h2>
             <p>
@@ -2331,19 +2383,24 @@
             </ul>
 
             <h1 id="tocUpdates">Update Notes</h1>
-            <h3 id="tocUpdates1.0">v1.0: 2023-06-23</h3>
+            <h3 id="tocUpdates1.0">v1.0: 2023-07-16</h3>
             <ul>
                 <li>Oh shit it's released</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
+            <h2>Definitely</h2>
             <ul>
-                <li><strong>EDITING</strong></li>
+                <li><strong class="fret12">EDITING</strong></li>
+                <li>Key changing</li>
+                <li>Chord pop-up display</li>
                 <li>Library</li>
                 <li>Local storage</li>
                 <li>Wav export</li>
                 <li><strong class="fret13">Concept Shawzins</strong></li>
-                <li>Key changing?</li>
+            </ul>
+            <h2>Maybe</h2>
+            <ul>
                 <li>sort options for shawzin list?</li>
                 <li>Support meter/tempo changing mid-song?</li>
                 <li>Less dumb animation for piano roll notes?</li>
@@ -2351,6 +2408,9 @@
                 <li>loading bars?</li>
                 <li>Zoom Level?</li>
                 <li>Custom control schemes?</li>
+            </ul>
+            <h2>Never</h2>
+            <ul>
                 <li>Sleep</li>
             </ul>
 
@@ -2387,7 +2447,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.0: 2023-06-23
+            v1.0.0: 2023-07-16
         </div>
         <div>
             Contact:

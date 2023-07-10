@@ -849,15 +849,15 @@ var Track = (function() {
                 rollRow.appendChild(rollNote);
                 rollNoteList.push(rollNote);
 
-            } else if (shawzinMd.config.slap) {
+            } else if (scaleMd.config.chordtype == Metadata.chordTypeSlap) {
                 // slap chord, still just a single note
                 // optionally trim the length of the note depending on polyphony rules and when the next note is
-                noteLength = trimToNextNonPolyphonicNote(this.note, shawzinMd.slap.length, shawzinMd.config.type);
+                noteLength = trimToNextNonPolyphonicNote(this.note, scaleMd.slap.length, shawzinMd.config.type);
                 // pull the absolute name of the slap note from the scale definition if provided, otherwise using a
                 // mapping from chord note to single note and using the regular scale note definition
-                var rollNoteName = scaleMd.slap.notes ? scaleMd.slap.notes[noteName] : scaleMd.notes[Metadata.slapMap[noteName]];
+                var rollNote0 = scaleMd.slap.notes ? scaleMd.slap.notes[noteName] : scaleMd.notes[Metadata.slapMap[noteName]];
                 // build the note element
-                var rollNote = this.buildRollNote(rollNoteName, noteLength, color, false);
+                var rollNote = this.buildRollNote(rollNote0, noteLength, color, false);
                 // add to the row and note list
                 rollRow.appendChild(rollNote);
                 rollNoteList.push(rollNote);
@@ -872,9 +872,9 @@ var Track = (function() {
                 // loop over each note in the chord
                 for (var n = 0; n < chord.notes.length; n++) {
                     // look up the absolute note name
-                    var rollNoteName = chord.notes[n];
+                    var rollNote0 = chord.notes[n];
                     // build the note element
-                    var rollNote = this.buildRollNote(rollNoteName, noteLength, color, false);
+                    var rollNote = this.buildRollNote(rollNote0, noteLength, color, false);
                     // add to the row and note list
                     rollRow.appendChild(rollNote);
                     rollNoteList.push(rollNote);
@@ -975,15 +975,18 @@ var Track = (function() {
                     this.bar[1].appendChild(this.rollImg);
                 }
             }
-            // set the position based on what the direction is
-            var top = (reversed
-                      // O.o
-                      ? ((this.bar[0].startTick + this.bar[0].ticks - this.playTick) * tickSpacing)
-                      : ((this.playTick - this.bar[0].startTick) * tickSpacing)
-                      ) + "px";
-            // same position for both elements, they're centered vertically on the tick location
-            this.tabImg.style.top = top;
-            this.rollImg.style.top = top;
+            // sanity check
+            if (this.bar) {
+                // set the position based on what the direction is
+                var top = (reversed
+                          // O.o
+                          ? ((this.bar[0].startTick + this.bar[0].ticks - this.playTick) * tickSpacing)
+                          : ((this.playTick - this.bar[0].startTick) * tickSpacing)
+                          ) + "px";
+                // same position for both elements, they're centered vertically on the tick location
+                this.tabImg.style.top = top;
+                this.rollImg.style.top = top;
+            }
         }
 
         clear() {

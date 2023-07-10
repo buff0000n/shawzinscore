@@ -77,7 +77,7 @@ var ShawzinAudio = (function() {
 
         if (scaleMetadata.chords) {
             // check for slap
-            if (shawzinMetadata.config.slap) {
+            if (scaleMetadata.config.chordtype == Metadata.chordTypeSlap) {
                 if (scaleMetadata.slap.notes) {
                     // custom slap scale because it's bugged
                     for (var chordName in scaleMetadata.slap.notes) {

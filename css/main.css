@@ -169,7 +169,7 @@ td.label {
     display: inline-flex;
 }
 #song-bar-roll {
-    background-color: #101010;
+    background-color: #202020;
     /*border-radius: 1ex;*/
     position: relative;
 }
@@ -365,6 +365,10 @@ img.showcase:hover {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+.chordButton {
+    display: block;
 }
 
 #shawzintab-div {
