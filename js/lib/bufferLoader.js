@@ -33,7 +33,7 @@ class BufferLoader {
                 function(buffer) {
                     if (!buffer) {
                         var e = 'error decoding file data: ' + url;
-                        showError(e);
+                        PageUtils.showError(e);
                         throw e;
                         //return;
                     }
@@ -49,7 +49,7 @@ class BufferLoader {
                 function(error) {
                     // meh
                     var e = error != null ? ("Audio format not supported: " + error) : "Audio format not supported";
-                    showError(e);
+                    PageUtils.showError(e);
                     throw e;
                 }
             );
@@ -58,7 +58,7 @@ class BufferLoader {
         // add a callback for errors
         request.onerror = function() {
             var e = 'Error requesting audio file';
-            showError(e);
+            PageUtils.showError(e);
             throw e;
         }
 

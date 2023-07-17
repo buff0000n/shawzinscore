@@ -23,6 +23,21 @@ var Piano = (function() {
     var rollNoteWhiteColorReverse = "#202020";
     var rollNoteBlackColorReverse = "#404040";
 
+    // ugh, roundRect() is only supported on very new browsers
+    var roundRectSupported = null;
+    try {
+        var canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        var c = canvas.getContext("2d");
+        c.beginPath();
+        c.roundRect(0, 0, 1, 2, [1, 1, 1, 1]);
+        c.stroke();
+        roundRectSupported = true;
+    } catch (e) {
+        roundRectSupported = false;
+    }
+
     // I hate how many steps it takes to both draw and fill in a shape
     function fillStroke(context, path) {
         // do the fill first
@@ -165,14 +180,29 @@ var Piano = (function() {
                     // use the special note color if specified, otherwise use the default color
                     context.fillStyle = color ? color : defaultColor;
                     // draw the note, here is where we need to apply the scale
-                    fillStroke(context, (c) => {
-                        c.roundRect(
+                    if (roundRectSupported) {
+                        fillStroke(context, (c) => {
+                            c.roundRect(
+                                left * xScale,
+                                top * yScale,
+                                wid * xScale,
+                                high * yScale,
+                                [0, 0, rounded * xScale, rounded * xScale]);
+                        });
+                    } else {
+                        context.fillRect(
                             left * xScale,
-                            top * xScale,
+                            top * yScale,
                             wid * xScale,
-                            high * xScale,
-                            [0, 0, rounded * xScale, rounded * xScale]);
-                    });
+                            high * yScale
+                        );
+                        context.strokeRect(
+                            left * xScale,
+                            top * yScale,
+                            wid * xScale,
+                            high * yScale
+                        );
+                    }
                     // if there was a custom color, then build a box style object
                     if (color) {
                         // build a basic CSS box style struct

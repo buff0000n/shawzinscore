@@ -35,6 +35,7 @@ var Midi = (function() {
                     });
                 });
         } catch (error) {
+            //console.log(error);
             // ignore, it's not the end of the world if MIDI support doesn't work
         }
     }

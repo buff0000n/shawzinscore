@@ -184,6 +184,11 @@ var Model = (function() {
     }
 
     function doSetKeySig(newKeySig) {
+        // check for validity
+        if (Piano.keySigOrder.indexOf(newKeySig) == -1) {
+            console.log("Invalid key signature: " + newKeySig);
+            return;
+        }
         // update the setting
         keySig = newKeySig;
         // update the other modules that need updating

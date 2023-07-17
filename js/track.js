@@ -243,7 +243,7 @@ var Track = (function() {
             ensureTickCapacity(endTick);
 
         // if it's less than the capacity, check if we can trim some empty bars
-        } else if (endTick < tickCapacity + tickBuffer && endTick > song.getEndTick()) {
+        } else if (endTick < tickCapacity + tickBuffer && endTick > (song ? song.getEndTick() : 0)) {
             // check for notes present
             trimTickCapacity(endTick);
         }
