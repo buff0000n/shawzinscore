@@ -25,6 +25,8 @@ var TrackBar = (function() {
             setTrackDirection(newReversed);
             // save the new preference
             Settings.setTrackReversed(newReversed);
+            // update the setting UI, there are two ways to set this setting
+            document.getElementById("config-trackreversed-input").checked = !newReversed;
         });
 
         // event handlers for the chord mode buttons
@@ -769,10 +771,15 @@ var TrackBar = (function() {
         return midiMap;
     }
 
+    function updateTrackDirection() {
+        setTrackDirection(Settings.isTrackReversed());
+    }
+
     return {
         registerEventListeners: registerEventListeners,  // ()
         updateControlScheme: updateControlScheme, // ()
         updateScale: updateScale,  // ()
         updateShawzin: updateScale,  // ()
+        updateTrackDirection: updateTrackDirection, // ()
     };
 })();

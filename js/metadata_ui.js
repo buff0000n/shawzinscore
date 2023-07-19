@@ -23,13 +23,19 @@ var MetadataUI = (function() {
         "1": 58,
         "2": 170,
         "3": 282,
-    }
+    };
 
     var tabFretOffsets = {
         "1": [-22, 0],
         "2": [0, 22],
         "3": [22, 0],
-    }
+    };
+
+    var tabFretOffsets_Old = {
+        "1": [-34, -38],
+        "2": [0, -38],
+        "3": [34, -38],
+    };
 
     var fretToRollColors = {
         "": "#BF8340",
@@ -197,6 +203,7 @@ var MetadataUI = (function() {
         tickSpacing: tickSpacing,
         tabStringXOffsets: tabStringXOffsets,
         tabFretOffsets: tabFretOffsets,
+        tabFretOffsets_Old: tabFretOffsets_Old,
         noFret: noFret,
         noFretImg: noFretImg,
         fretToRollColors: fretToRollColors,

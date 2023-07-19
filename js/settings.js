@@ -11,6 +11,7 @@ var Settings = (function() {
     var darkMode = false;
     var oldMode = false;
     var playbackSpeed = 1.0;
+    var oldFretLayout = false;
 
     function load() {
         // load the local storage item
@@ -38,6 +39,9 @@ var Settings = (function() {
             if (props.playbackSpeed != null) {
                 playbackSpeed = props.playbackSpeed;
             }
+            if (props.oldFretLayout != null) {
+                oldFretLayout = props.oldFretLayout;
+            }
         }
     }
 
@@ -55,6 +59,7 @@ var Settings = (function() {
             "darkMode": darkMode,
             "oldMode": oldMode,
             "playbackSpeed": playbackSpeed,
+            "oldFretLayout": oldFretLayout,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -83,5 +88,8 @@ var Settings = (function() {
         // getter/setter for shawzin tab old mode setting
         getPlaybackSpeed: function() { return playbackSpeed; },
         setPlaybackSpeed: function(v) { if (v != playbackSpeed) { playbackSpeed = v; save(); } },
+        // getter/setter for old fret layout
+        getOldFretLayout: function() { return oldFretLayout; },
+        setOldFretLayout: function(v) { if (v != oldFretLayout) { oldFretLayout = v; save(); } },
     }
 })()

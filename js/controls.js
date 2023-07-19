@@ -62,6 +62,19 @@ var Controls = (function() {
         document.getElementById("config-darkmode-input").checked = Settings.getDarkMode();
         document.getElementById("config-oldmode-input").checked = Settings.getOldMode();
 
+        // settings menu button
+        document.getElementById("toolbar-buttons-settings").addEventListener("click", doSettingsMenu, { passive: false });
+        // individual controls in the settings menu
+        // these are hidden by default, so we can just keep then up-to-date all the time like everything else
+        Events.setupCheckbox(document.getElementById("config-trackreversed-input"), true);
+        document.getElementById("config-trackreversed-input").addEventListener("change", commitTrackReversedChange, { passive: false });
+        //
+        Events.setupCheckbox(document.getElementById("config-oldfretlayout-input"), true);
+        document.getElementById("config-oldfretlayout-input").addEventListener("change", commitOldFretLayoutChange, { passive: false });
+        // initialize these from local storage. they are preferences and not part of the song model
+        document.getElementById("config-trackreversed-input").checked = !Settings.isTrackReversed();
+        document.getElementById("config-oldfretlayout-input").checked = Settings.getOldFretLayout();
+
         // event handlers for the copy URL button
         document.getElementById("toolbar-buttons-copyurl").addEventListener("click", doCopyUrlMenu, { passive: false });
 
@@ -353,6 +366,51 @@ var Controls = (function() {
             // and add it back to the hidden area of the document
             document.getElementById("hidden-things").appendChild(structureDiv);
         });
+    }
+
+    function doSettingsMenu() {
+        // build a container for the config contents
+        var menuDiv = document.createElement("div");
+        menuDiv.className = "selection-div";
+
+        // get the hidden setting controls from the document
+        var settingsDiv = document.getElementById("config-settings");
+        // remove them
+        settingsDiv.remove();
+        // add them to the menu contents
+        menuDiv.appendChild(settingsDiv);
+
+        // show the menu with a custom close callback
+        var close = Menus.showMenu(menuDiv, this, "Settings", false, () => {
+            // when the settings menu is closed, remove the the original container
+            settingsDiv.remove();
+            // and add it back to the hidden area of the document
+            document.getElementById("hidden-things").appendChild(settingsDiv);
+        });
+    }
+
+    function commitTrackReversedChange() {
+        // get the textbox
+        var input = document.getElementById("config-trackreversed-input");
+        // get its value, just a boolean
+        var value = !input.checked;
+
+        // save to preferences
+        Settings.setTrackReversed(value);
+        // update Track
+        TrackBar.updateTrackDirection();
+    }
+
+    function commitOldFretLayoutChange() {
+        // get the textbox
+        var input = document.getElementById("config-oldfretlayout-input");
+        // get its value, just a boolean
+        var value = input.checked;
+
+        // save to preferences
+        Settings.setOldFretLayout(value);
+        // update Track
+        Track.updateSettings();
     }
 
     function doCopyUrlMenu() {

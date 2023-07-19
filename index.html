@@ -139,11 +139,12 @@
                         <span id="select-control-scheme-text"></span>
                     </div>
                     <div id="toolbar-buttons">
-                        <!--
-                        <div id="toolbar-buttons-burger" class="smallButton">
-                            <img src="img/icon-burger.png" srcset="img2x/icon-burger.png 2x" alt="Burger" class="icon"/>
+                        <div class="tooltip">
+                            <span id="toolbar-buttons-settings" class="smallButton urlButton popup">
+                            <img src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x" alt="Settings" class="icon"/>
+                            </span>
+                            <span class="tooltiptextbottom">Edit Settings</span>
                         </div>
-                        -->
                         <div class="tooltip">
                             <span id="toolbar-buttons-copyurl" class="smallButton urlButton popup">
                                 <img src="img/icon-link.png" srcset="img2x/icon-link.png 2x" alt="URL" class="icon"/>
@@ -313,11 +314,12 @@
 </div>
 
 <div id="hidden-things" style="display: none;">
+
     <div id="config-structure" class="field-div">
         <div class="field-entry" id="config-meter">
             <div class="tooltip">
                 <div class="fieldTitle">Time Signature:</div>
-                <input id="config-meter-input" class="meter" type="text" value="" placeholder="4/4"/>
+                <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
                 <span class="tooltiptextbottom">The meter of the song</span>
             </div>
         </div>
@@ -351,20 +353,20 @@
                 <div class="tooltip">
                     <div id="config-line-units-label-measures" class="fieldTitle" style="display: none;">Measures per line:</div>
                     <div id="config-line-units-label-seconds" class="fieldTitle">Seconds per line:</div>
-                    <input id="config-line-units-input" class="meter" type="number" min="1" value="" placeholder="4"/>
+                    <input id="config-line-units-input" type="number" min="1" value="" placeholder="4"/>
                     <span class="tooltiptextbottom">Number of seconds or measures per line, depending on whether a meter is set</span>
                 </div>
             </div>
-            <span class="field-entry-span" id="config-darkmode">
+            <div class="field-entry-span" id="config-darkmode">
                 <span class="tooltip">
-                    <input id="config-darkmode-input" class="meter" type="checkbox"/>
+                    <input id="config-darkmode-input" type="checkbox"/>
                     <span class="fieldTitle">Dark Mode</span>
                     <span class="tooltiptextbottom">Enable for dark mode</span>
                 </span>
-            </span>
+            </div>
             <div class="field-entry-span" id="config-oldmode">
                 <div class="tooltip">
-                    <input id="config-oldmode-input" class="meter" type="checkbox"/>
+                    <input id="config-oldmode-input" type="checkbox"/>
                     <span class="fieldTitle">Old Mode</span>
                     <span class="tooltiptextbottom">Enable for old-school numeric tab format</span>
                 </div>
@@ -372,6 +374,24 @@
         </div>
         <div id="shawzintab-container" style="overflow: auto;"></div>
     </div>
+
+    <div id="config-settings" class="field-div">
+        <div class="field-entry" id="config-trackreversed">
+                <span class="tooltip">
+                    <input id="config-trackreversed-input" type="checkbox"/>
+                    <span class="fieldTitle">Flipped Direction</span>
+                    <span class="tooltiptextbottom">Enable to change the direction of song UI</span>
+                </span>
+        </div>
+        <div class="field-entry" id="config-oldfretlayout">
+            <div class="tooltip">
+                <input id="config-oldfretlayout-input" type="checkbox"/>
+                <span class="fieldTitle">Old Fret Layout</span>
+                <span class="tooltiptextbottom">Enable the old, single-line fret layout</span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="titleBar">
@@ -477,6 +497,7 @@
                         <li><a href="#tocLeadin">Lead-in beats</a></li>
                     </ul>
                 </li>
+                <li><a href="#tocSettings">Settings</a></li>
                 <li><a href="#tocGeneral">General Info</a>
                     <ul>
                         <li><a href="#tocMechanics">Shawzin Mechanics</a>
@@ -627,8 +648,8 @@
             </p>
 
             <p>
-                Your control scheme selection is stored in your browser's local storage as a preference.  It will
-                persist across browser sessions on any song you work with in Shawzinscore.
+                <strong>Note: </strong> Your control scheme selection is stored in your browser's local storage as a
+                preference.  It will persist across browser sessions on any song you work with in Shawzinscore.
             </p>
 
             <h1 id="tocTrackArea">The Track Area</h1>
@@ -798,8 +819,8 @@
                 You can enter up to <strong>10x</strong> speed in here, because it's <strong class="info">funny</strong>.
             </p>
             <p>
-                Your current playback speed is stored in your browser's local storage as a preference.  It will
-                persist across browser sessions on any song you work with in Shawzinscore.
+                <strong>Note: </strong> Your current playback speed is stored in your browser's local storage as a
+                preference.  It will persist across browser sessions on any song you work with in Shawzinscore.
             </p>
             <p>
                 <strong class="warn">Note: </strong> You can adjust the speed while the song is playing, but it's
@@ -868,7 +889,7 @@
                 <strong>Dark Mode</strong> to generate it as white on a black background instead.
             </p>
             <p>
-                Your Dark Mode setting is stored in your browser's local storage as a preference.
+                <strong>Note: </strong> Your Dark Mode setting is stored in your browser's local storage as a preference.
             </p>
 
             <h3 id="tocShawzinTabOldMode">Old Mode</h3>
@@ -883,7 +904,7 @@
                 them to group them together as a chord.
             </p>
             <p>
-                Your Old Mode setting is stored in your browser's local storage as a preference.
+                <strong>Note: </strong> Your Old Mode setting is stored in your browser's local storage as a preference.
             </p>
 
             <h1 id="tocAdvancedStructure">Advanced Structure</h1>
@@ -962,6 +983,32 @@
             <p>
                 <strong class="info">Note:</strong> When I finally add editing I'll have a less hacky way to handle this
                 in the UI.
+            </p>
+
+            <h1 id="tocSettings">Settings</h1>
+            <p>
+                Click on the
+                <img class="smallButton icon" src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x"/>
+                <strong>Settings</strong> button to bring up the settings menu.
+            </p>
+            <ul>
+                <li>
+                    <strong>Flipped Direction</strong>: Use this to toggle the direction of the song display.  This has
+                    the same effect as the
+                    <a href="#tocTrackAreaDirection">
+                        <img class="smallButton icon" src="img/icon-dropup.png" srcset="img2x/icon-dropup.png 2x"/>
+                        and
+                        <img class="smallButton icon" src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x"/>
+                        buttons</a>.
+                </li>
+                <li>
+                    <strong>Old Fret Layout</strong>: This reverts the note display to the old layout, where the
+                    fret controls were displayed in a line above the string control instead of in a triangle
+                    underneath it.
+                </li>
+            </ul>
+            <p>
+                <strong>Note: </strong> Your settings are stored in your browser's local storage as a preference.
             </p>
 
             <div style="text-align: center;">
@@ -2401,12 +2448,13 @@
                 <li>Oh shit it's released</li>
                 <li>Added support for multi-string notes, which is apparently a thing that people do
                     (thanks <strong>Packetdancer</strong>)</li>
+                <li>Added a settings section, and a setting for switching back to the old fret layout
+                    (thanks <strong>AtomicKlum</strong>)</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
-                <li>Support for the old linear fret layout (thanks <strong>AtomicKlum</strong>)</li>
                 <li>Custom control schemes</li>
                 <li><strong class="fret12">EDITING</strong></li>
                 <li>Key changing</li>
@@ -2463,7 +2511,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.1: 2023-07-19
+            v1.0.2: 2023-07-19
         </div>
         <div>
             Contact:

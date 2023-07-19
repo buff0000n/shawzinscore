@@ -55,6 +55,9 @@ var Track = (function() {
     // playback start marker object
     var playbackStartMarker = null;
 
+    // copy of the setting
+    var oldFretLayout = null;
+
     function registerEventListeners() {
         // set this directly to start with, before doing any layouts
         reversed = Settings.isTrackReversed();
@@ -86,6 +89,9 @@ var Track = (function() {
         Events.addCombinedResizeListener(resize);
 
         scroll.addEventListener("click", trackClick, { "passive": true});
+
+        // initialize here
+        oldFretLayout = Settings.getOldFretLayout();
     }
 
     function trackClick(e) {
@@ -709,10 +715,13 @@ var Track = (function() {
             // add the dot element
             div.appendChild(dot);
 
-            // if there are no frets then the central dot is all that's displayed
-            if (this.note.fret != "") {
+            // if there are no frets then the central dot is all that's displayed, unless oldFretLayout is enabled
+            if (this.note.fret != "" || oldFretLayout) {
                 // css classes for the three dots, we need to center them differently
-                var classes = ["leftImg", "bottomImg", "rightImg"];
+                // also depends on fret style
+                var classes = oldFretLayout ? ["centerImg", "centerImg", "centerImg"] : ["leftImg", "bottomImg", "rightImg"];
+                // offsets, depending on fret stylt
+                var fretOffsets = oldFretLayout ? MetadataUI.tabFretOffsets_Old : MetadataUI.tabFretOffsets;
                 // iterate over the three possible frets
                 for (var i = 1; i <= 3; i++) {
                     // get the fret as a string
@@ -732,8 +741,8 @@ var Track = (function() {
                     // add a css class, I really gotta do some css cleanup
                     fretImg.classList.add("tab-dot");
                     // get the absolutely positioning offsets for the fret index
-                    fretImg.style.left = MetadataUI.tabFretOffsets[fretKey][0] + "px";
-                    fretImg.style.top = MetadataUI.tabFretOffsets[fretKey][1] + "px" ;
+                    fretImg.style.left = fretOffsets[fretKey][0] + "px";
+                    fretImg.style.top = fretOffsets[fretKey][1] + "px" ;
                     // add the fret element
                     div.appendChild(fretImg);
                 }
@@ -1101,6 +1110,14 @@ var Track = (function() {
         }
     }
 
+    function updateSettings() {
+        // refresh from settings
+        oldFretLayout = Settings.getOldFretLayout();
+        // redraw
+        // todo: more granular?
+        updateStructure();
+    }
+
     // public members
     return  {
         registerEventListeners: registerEventListeners, // ()
@@ -1114,6 +1131,8 @@ var Track = (function() {
         updateControlScheme: rebuildTabNotes, // ()
         // rebuild the entire view when the structure has changed
         updateStructure: updateStructure, // ()
+        // update the view for any settings changes
+        updateSettings: updateSettings, // ()
 
         // set the playing flag and setup the UI
         setPlaying: setPlaying, // (newPlaying)
