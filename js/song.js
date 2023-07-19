@@ -75,18 +75,29 @@ class Note {
         // combine measure int and tick into into a single tick, number of ticks from the beginning of the song
         this.tick = (measure * 64) + measureTick;
 
-        if (this.string.length != 1) {
-            // must contain exactly one string
-            throw "Invalid note code: \"" + code + "\"";
-        }
+        // apparently more than one string is fine
 
         return this;
     }
 
-    // build the canonical name for the string and fret combination,
+    // build the canonical names for the string and fret combination,
     // this identifies the audio sound to play
-    toNoteName() {
-        return (this.fret.length == 0 ? "0" : this.fret) + "-" + this.string;
+    // note that because a note can have more than one string specified, it can have more than one note name
+    toNoteNames() {
+        // generate the fret portion of the name
+        var fretName = this.fret.length == 0 ? "0" : this.fret;
+
+        // worth having an optimized case for a single note name
+        if (this.string.length == 1) {
+            return [fretName + "-" + this.string];
+        }
+        // list of names
+        var names = [];
+        // loop over the strings and create a separate note name for each one
+        for (var s = 0; s < this.string.length; s++) {
+            names.push(fretName + "-" + this.string.charAt(s));
+        }
+        return names;
     }
 
     // convert to a three-character code
@@ -368,4 +379,90 @@ class Song {
     getEndTick() {
         return this.notes.length == 0 ? 0 : this.notes[this.notes.length - 1].tick;
     }
+}
+
+function what() {
+    var song = new Song();
+    song.setScale("pmin");
+    var frets = "1";
+    var t = 0;
+    var dt = 16;
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t+=dt));
+    song.addNote(new Note(frets, "3", t+=dt));
+    song.addNote(new Note(frets, "12", t+=dt));
+    song.addNote(new Note(frets, "23", t+=dt));
+    song.addNote(new Note(frets, "13", t+=dt));
+    song.addNote(new Note(frets, "123", t+=dt));
+    frets = "12";
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t+=dt));
+    song.addNote(new Note(frets, "3", t+=dt));
+    song.addNote(new Note(frets, "12", t+=dt));
+    song.addNote(new Note(frets, "23", t+=dt));
+    song.addNote(new Note(frets, "13", t+=dt));
+    song.addNote(new Note(frets, "123", t+=dt));
+    var code = song.toString();
+    console.log(code);
+}
+
+function what2() {
+    var song = new Song();
+    song.setScale("pmin");
+    var frets = "1";
+    var t = 0;
+    var dt = 16;
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t+=dt));
+    song.addNote(new Note(frets, "3", t+=dt));
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t));
+    song.addNote(new Note(frets, "2", t+=dt));
+    song.addNote(new Note(frets, "3", t));
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "3", t));
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t));
+    song.addNote(new Note(frets, "3", t));
+    var code = song.toString();
+    console.log(code);
+}
+
+function what2() {
+    var song = new Song();
+    song.setScale("pmin");
+    var frets = "1";
+    var t = 0;
+    var dt = 16;
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t+=dt));
+    song.addNote(new Note(frets, "3", t+=dt));
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t+1));
+    song.addNote(new Note(frets, "3", t+=dt));
+    var code = song.toString();
+    console.log(code);
+}
+
+function what2() {
+    var song = new Song();
+    song.setScale("pmin");
+    var frets = "1";
+    var t = 0;
+    var dt = 16;
+    frets = "12";
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t+=dt));
+    song.addNote(new Note(frets, "3", t+=dt));
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t));
+    song.addNote(new Note(frets, "2", t+=dt));
+    song.addNote(new Note(frets, "3", t));
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "3", t));
+    song.addNote(new Note(frets, "1", t+=dt));
+    song.addNote(new Note(frets, "2", t));
+    song.addNote(new Note(frets, "3", t));
+    var code = song.toString();
+    console.log(code);
 }

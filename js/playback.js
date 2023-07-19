@@ -446,12 +446,20 @@ var Playback = (function() {
                 break;
             }
 
-            // get the note name
-            var noteName = nextScheduledNote.toNoteName();
+            // get the note names
+            var noteNames = nextScheduledNote.toNoteNames();
             // schedule the note to play
             var noteTime = toRealTime(noteTick);
             //console.log("SCHEDULED NOTE TIME: " + noteTime);
-            soundBank.play(noteName, noteTime);
+            // worth having an optimized case for a single note name
+            if (noteNames.length == 1) {
+                soundBank.play(noteNames[0], noteTime);
+            } else {
+                // todo: polyphony check?
+                for (var n = 0; n < noteNames.length; n++) {
+                    soundBank.play(noteNames[n], noteTime);
+                }
+            }
             // go to the next note
             nextScheduledNote = nextScheduledNote.next;
             //console.log("NEXT SCHEDULED: " + (nextScheduledNote ? nextScheduledNote.tick : "null"));

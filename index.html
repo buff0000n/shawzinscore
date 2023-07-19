@@ -1366,7 +1366,7 @@
                                     </ol>
                                 </li>
                                 <li>
-                                    Exactly one and only one of the string flags must be set to <strong>1</strong>,
+                                    With some caveats listed below, exactly one and only one of the string flags must be set to <strong>1</strong>,
                                     with the others left at <strong>0</strong>, making three possible string
                                     configurations.
                                 </li>
@@ -1375,9 +1375,22 @@
                                     eight possible fret configurations.
                                 </li>
                                 <li>
-                                    <strong class="warn">Note: </strong>This means there are <strong>3</strong> x
-                                    <strong>8</strong> = <strong>24</strong>, possible notes, 12 single notes and 12
-                                    chords.
+                                    This means there are <strong>3</strong> x <strong>8</strong> = <strong>24</strong>,
+                                    possible notes, 12 single notes and 12 chords.
+                                </li>
+                                <li>
+                                    <strong class="warn">Note: </strong> You <i>can</i> actually put more than one string
+                                    into a single note code and the game will accept it fine.  Each of the notes associated
+                                    with those strings will play.  This only works with single notes that use the same
+                                    fret, on Shawzins that are <strong>Polyphonic</strong>.  With chords, and
+                                    <strong>Monophonic</strong> Shawzins, it will still allow the code but only the top
+                                    note or chord will play.
+                                </li>
+                                <li>
+                                    <strong class="fret1">Note: </strong> You can also technically have a note code
+                                    with <i>no strings</i> enabled.  The game just displays nothing, and if you're
+                                    playing a song for scoring with enough no-string notes in it then it will be
+                                    impossible to get 100%.
                                 </li>
                             </ul>
                         </li>
@@ -2386,11 +2399,15 @@
             <h3 id="tocUpdates1.0">v1.0: 2023-07-16</h3>
             <ul>
                 <li>Oh shit it's released</li>
+                <li>Added support for multi-string notes, which is apparently a thing that people do
+                    (thanks <strong>Packetdancer</strong>)</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
+                <li>Support for the old linear fret layout (thanks <strong>AtomicKlum</strong>)</li>
+                <li>Custom control schemes</li>
                 <li><strong class="fret12">EDITING</strong></li>
                 <li>Key changing</li>
                 <li>Chord pop-up display</li>
@@ -2407,7 +2424,6 @@
                 <li>playback time/measure display?</li>
                 <li>loading bars?</li>
                 <li>Zoom Level?</li>
-                <li>Custom control schemes?</li>
             </ul>
             <h2>Never</h2>
             <ul>
@@ -2447,7 +2463,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.0: 2023-07-16
+            v1.0.1: 2023-07-19
         </div>
         <div>
             Contact:

@@ -664,8 +664,35 @@ var Track = (function() {
             return this.bar[roll ? 1 : 0];
         }
 
-        // actually build the tablature elements
         buildTabNote() {
+            // worth having an optimized case for a single note name
+            if (this.note.string.length == 1) {
+                return this.buildTabNote0(this.note.string);
+
+            } else {
+                // ugh.  Not really interested in optimizing this case
+                // build a containing div
+                var div = document.createElement("div");
+                // basically set it as an overlay on the whole measure
+                div.style.position = "absolute";
+                div.style.left = "0px";
+                div.style.top = "0px";
+                // marker to tell the play animation to treat this div differently
+                div.composite = true;
+                // go over the strings
+                for (var i = 0; i < this.note.string.length; i++) {
+                    // build a normal tab note for each string
+                    var noteDiv = this.buildTabNote0(this.note.string.charAt(i));
+                    // add it to the container
+                    div.appendChild(noteDiv);
+                }
+                // return the container
+                return div;
+            }
+        }
+
+        // actually build the tablature elements
+        buildTabNote0(string = this.note.string) {
             // we need the control scheme
             var controlScheme = Model.getControlScheme();
 
@@ -713,8 +740,8 @@ var Track = (function() {
             }
 
             // build the string image and alt based on the control scheme
-            var stringImg = PageUtils.makeImage(controlScheme.strings[this.note.string].imgBase + "_b.png", "centerImg");
-            stringImg.alt = controlScheme.strings[this.note.string].altText + "\n";
+            var stringImg = PageUtils.makeImage(controlScheme.strings[string].imgBase + "_b.png", "centerImg");
+            stringImg.alt = controlScheme.strings[string].altText + "\n";
             // more css
             stringImg.classList.add("tab-dot");
             // place on top of the central dot
@@ -724,7 +751,7 @@ var Track = (function() {
             div.appendChild(stringImg);
 
             // position the central dot horizontally over top of the correct string line
-            div.style.left = (MetadataUI.tabStringXOffsets[this.note.string]) + "px";
+            div.style.left = (MetadataUI.tabStringXOffsets[string]) + "px";
             // position the central dot vertically inside its bar, depending on the direction
             div.style.top = (reversed
                             ? ((this.getBar(0).startTick + this.getBar(0).ticks - this.note.tick) * tickSpacing)
@@ -828,7 +855,7 @@ var Track = (function() {
             var shawzinMd = Metadata.shawzinList[Model.getShawzin()];
             var scaleMd = shawzinMd.scales[Model.getScale()];
             // get the scale note name
-            var noteName = this.note.toNoteName();
+            var noteNames = this.note.toNoteNames();
             // get the corresponding color for the note's frets
             var color = MetadataUI.fretToRollColors[this.note.fret];
             // length of the note will be filled in later
@@ -838,19 +865,50 @@ var Track = (function() {
             var rollRow = this.buildRollRow();
             // start a list of notes
             var rollNoteList = [];
+
+            // todo: this is a goddamned mess
+
             // check if it's a chord
             if (!this.note.isChord()) {
-                // not a chord, just one note
                 // optionally trim the length of the note depending on polyphony rules and when the next note is
                 noteLength = trimToNextNonPolyphonicNote(this.note, shawzinMd.notes.length, shawzinMd.config.type);
-                // build the note element, pulling the absolute name of the note from the scale definition
-                var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color, false);
-                // add to the row and note list
-                rollRow.appendChild(rollNote);
-                rollNoteList.push(rollNote);
+                // not a chord, just one note
+                if (noteNames.length == 1) {
+                    // build the note element, pulling the absolute name of the note from the scale definition
+                    var rollNote = this.buildRollNote(scaleMd.notes[noteNames[0]], noteLength, color, false);
+                    // add to the row and note list
+                    rollRow.appendChild(rollNote);
+                    rollNoteList.push(rollNote);
+                } else {
+                    // double or triple note.  Who does this
+                    // if it's not polyphonic, just the highest note plays
+                    if (shawzinMd.config.type != Metadata.polyTypePolyphonic) {
+                        // get the highest note
+                        var noteName = noteNames[noteNames.length - 1];
+                        // build the note element, pulling the absolute name of the note from the scale definition
+                        var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color, false);
+                        // add to the row and note list
+                        rollRow.appendChild(rollNote);
+                        rollNoteList.push(rollNote);
+                    } else {
+                        // otherwise we have to show each note
+                        for (var n = 0; n < noteNames.length; n++) {
+                            // get the note
+                            var noteName = noteNames[n];
+                            // build the note element, pulling the absolute name of the note from the scale definition
+                            var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color, false);
+                            // add to the row and note list
+                            // thank goodness it already supports multi-notes for chords
+                            rollRow.appendChild(rollNote);
+                            rollNoteList.push(rollNote);
+                        }
+                    }
+                }
 
             } else if (scaleMd.config.chordtype == Metadata.chordTypeSlap) {
                 // slap chord, still just a single note
+                // until we have a slap shawzin that isn't mono, just get the highest note
+                var noteName = noteNames[noteNames.length - 1];
                 // optionally trim the length of the note depending on polyphony rules and when the next note is
                 noteLength = trimToNextNonPolyphonicNote(this.note, scaleMd.slap.length, shawzinMd.config.type);
                 // pull the absolute name of the slap note from the scale definition if provided, otherwise using a
@@ -864,7 +922,9 @@ var Track = (function() {
 
             } else {
                 // oh god it's a chord
-                // pull the list of chord notes from the scale definition
+                // all chords are mono, take the highest chord
+                var noteName = noteNames[noteNames.length - 1];
+                // get the scale note name
                 var chord = scaleMd.chords[noteName];
                 // optionally trim the length of the notes depending on polyphony rules and when the next note is
                 // this length applies to all notes in the chord
@@ -905,8 +965,18 @@ var Track = (function() {
             // the animated tablature elements are a carbon copy of the regular ones
             // todo: do an actual copy instead of generating it again from scratcn?
             var tabDiv = this.buildTabNote();
-            // with a special animated css class that makes it expand and increase in transparency
-            tabDiv.classList.add("playTabNote");
+            // Add a special animated css class that makes it expand and increase in transparency
+            // check if it's a special composite div
+            if (tabDiv.composite) {
+                // set the css class on each of its child divs
+                // this is such a hack
+                for (var i = 0; i < tabDiv.children.length; i++) {
+                    tabDiv.children[i].classList.add("playTabNote");
+                }
+            } else {
+                // normal note, set the css class directly on the tab div
+                tabDiv.classList.add("playTabNote");
+            }
             // add to the bar
             this.getBar(0).appendChild(tabDiv);
 
