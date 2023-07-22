@@ -177,12 +177,17 @@ var Track = (function() {
         scrollToTick(tick);
     }
 
+    function setRollBackground(ticks=false) {
+        // change the piano roll side's background image
+        document.getElementById("song-scroll-roll").style.backgroundImage = "url('img2x/track/keys-bg-" + Model.getKeySig() + (ticks ? "-ticks" : "") + ".png')";
+    }
+
     // just rebuild the piano roll view when the shawzin or scale has changed
     function rebuildRollNotes() {
         // check if the key signature has changed
         if (Model.getKeySig() != keySig) {
             // change the piano roll side's background image
-            document.getElementById("song-scroll-roll").style.backgroundImage = "url('img2x/track/keys-bg-" + Model.getKeySig() + ".png')";
+            setRollBackground(false);
             // we have to rebuild the piano roll from scratch because of the meaure dividing lines that are embedded in
             // each bar.
             updateStructure();

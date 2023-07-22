@@ -144,6 +144,11 @@ td.label {
 #toolbar-buttons-burger-menu {}
 #toolbar-buttons-burger-menu > div {}
 
+#editbar {
+    display: inline-block;
+    vertical-align: top;
+}
+
 #song-container {
     display: inline-block;
     height: 80%
