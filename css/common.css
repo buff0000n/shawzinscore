@@ -23,7 +23,7 @@
         background-color: #000000;
     }
 
-    .button, .button-disabled, .selectButton, .lightButton {
+    .button, .button-disabled, .selectButton, .lightButton, .textButton {
         cursor: pointer;
         border: none;
         color: #FFFFFF;

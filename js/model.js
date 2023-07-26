@@ -37,7 +37,7 @@ var Model = (function() {
     function init(url) {
         // gotta do this before filling in the track
         // control scheme comes from preferences and isn't tied to the song data
-        doSetControlScheme(Settings.getControlScheme());
+        doSetControlScheme(ControlSchemeUI.preferenceToControlScheme(Settings.getControlScheme()));
 
         // load settings from the URL query parameters
         var shawzin = PageUtils.getQueryParam("s", false);
@@ -215,7 +215,7 @@ var Model = (function() {
         `;
 
         // propagate to preferences
-        Settings.setControlScheme(controlScheme);
+        Settings.setControlScheme(ControlSchemeUI.controlSchemeToPreference(controlScheme));
         // propagate to the trackbar
         TrackBar.updateControlScheme();
         // propagate to the track

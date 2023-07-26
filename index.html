@@ -33,6 +33,7 @@
 <script type="text/javascript" language="javascript" src="js/trackbar.js"></script>
 <script type="text/javascript" language="javascript" src="js/playback.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzintab.js"></script>
+<script type="text/javascript" language="javascript" src="js/controlScheme.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript">
 
@@ -62,6 +63,7 @@
             Track.registerEventListeners();
             TrackBar.registerEventListeners();
             Playback.registerEventListeners();
+            ControlSchemeUI.registerEventListeners();
             Midi.init();
 
             // initialize the model from the page URL
@@ -390,6 +392,14 @@
                 <span class="tooltiptextbottom">Enable the old, single-line fret layout</span>
             </div>
         </div>
+    </div>
+
+    <div id="custom-control-scheme" class="selection-div" style="text-align: center;">
+        <span id="ccs-platform-button" class="lightButton"></span>
+        <div id="ccs-diagram" style="position: relative; width: 672px; height: 312px;"></div>
+        <span id="ccs-ok-button" class="lightButton">OK</span>
+        <span id="ccs-cancel-button" class="lightButton">Cancel</span>
+        <span id="ccs-delete-button" class="lightButton">Delete</span>
     </div>
 
 </div>
@@ -2472,6 +2482,7 @@
                 <li>playback time/measure display?</li>
                 <li>loading bars?</li>
                 <li>Zoom Level?</li>
+                <li>Playlist (thanks <strong>comebackkid1007</strong>)</li>
             </ul>
             <h2>Never</h2>
             <ul>

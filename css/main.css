@@ -64,6 +64,7 @@ td.label {
     font-weight: bold;
     font-size: 100%;
     color: #FFFFFF;
+    white-space: nowrap;
 }
 .menu-content-container {
     padding: 1ex;
@@ -80,6 +81,7 @@ td.label {
     cursor: pointer;
     background-color: #202020;
     border-radius: 1ex;
+    white-space: nowrap;
 }
 .selection-item:hover {
     background-color: #808080;
