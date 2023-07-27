@@ -19,23 +19,6 @@ class ControlScheme {
         this.frets = {"1": fret1, "2": fret2, "3": fret3};
         this.custom = custom;
     }
-    
-    clone(id=this.id) {
-        return new ControlScheme(
-            id,
-            this.name,
-            this.description,
-            this.platformId,
-            this.img,
-            this.strings["1"],
-            this.strings["2"],
-            this.strings["3"],
-            this.frets["1"],
-            this.frets["2"],
-            this.frets["3"],
-            true
-        );
-    }
 }
 
 var MetadataUI = (function() {

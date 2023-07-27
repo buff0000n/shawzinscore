@@ -48,13 +48,20 @@ var ControlSchemeUI = (function() {
     }
 
     function cloneScheme(templateScheme) {
-        var s = templateScheme.clone(null);
-        if (!templateScheme.custom) {
-            s.name = "Custom";
-            s.description = null;
-            s.custom = true;
-        }
-        return s;
+        return new ControlScheme(
+            null,
+            !templateScheme.custom ? "Custom" : templateScheme.name,
+            null,
+            templateScheme.platformId,
+            templateScheme.img,
+            templateScheme.strings["1"],
+            templateScheme.strings["2"],
+            templateScheme.strings["3"],
+            templateScheme.frets["1"],
+            templateScheme.frets["2"],
+            templateScheme.frets["3"],
+            true
+        );
     }
 
     class ControlBinding {
@@ -273,10 +280,10 @@ var ControlSchemeUI = (function() {
         //  - console, custom
         if (!MetadataUI.platforms[theScheme.platformId].console) {
             theScheme = MetadataUI.controlSchemes[MetadataUI.platforms.xbx.defaultTemplate]
-            theScheme = theScheme.clone(null);
+            theScheme = cloneScheme(theScheme);
 
         } else if (!theScheme.custom) {
-            theScheme = theScheme.clone(null);
+            theScheme = cloneScheme(theScheme);
         }
 
         scheme = theScheme;
