@@ -3,28 +3,58 @@ var ControlSchemeUI = (function() {
     var key = "shawzinscore:customschemes";
 
     var customSchemeList = null;
+    var mainClose = null;
+    var topMenuClose = null;
+    var topMenuSelectionRow = null;
     var scheme = null;
 
     function registerEventListeners() {
         document.getElementById("ccs-platform-button").addEventListener("click", (e) => {
             doPlatformMenu(document.getElementById("ccs-platform-button"), (platform) => {
                 if (platform.id == scheme.platformId) return;
-                scheme = MetadataUI.controlSchemes[platform.defaultTemplate].clone(null);
+                var templateScheme = MetadataUI.controlSchemes[platform.defaultTemplate];
+                var newScheme = cloneScheme(templateScheme);
+                newScheme.id = scheme.id;
+                newScheme.name = scheme.name;
+                scheme = newScheme;
                 updateScheme();
             });
-        });
+        }, { passive: false });
 
-        document.getElementById("ccs-ok-button").addEventListener("click", (e) => {
-        });
+        Events.setupTextInput(document.getElementById("ccs-name-input"), true);
+        document.getElementById("ccs-name-input").addEventListener("change", commitNameChange, { passive: false });
 
-        document.getElementById("ccs-cancel-button").addEventListener("click", (e) => {
-        });
+        var saveHandler = (e) => {
+            scheme = saveCustomScheme(scheme);
+            Model.setControlScheme(scheme);
+            mainClose();
+            topMenuClose();
+        };
+        document.getElementById("ccs-ok-button").addEventListener("click", saveHandler, { passive: false });
+        document.getElementById("ccs-save-button").addEventListener("click", saveHandler, { passive: false });
+
+        document.getElementById("ccs-cancel-button").addEventListener("click", (e) => { mainClose(); }, { passive: false });
 
         document.getElementById("ccs-delete-button").addEventListener("click", (e) => {
-        });
+            deleteCustomScheme(scheme);
+            if (topMenuSelectionRow) {
+                topMenuSelectionRow.remove();
+            }
+            mainClose();
+        }, { passive: false });
 
         // load schemes from storage
         loadCustomSchemes();
+    }
+
+    function cloneScheme(templateScheme) {
+        var s = templateScheme.clone(null);
+        if (!templateScheme.custom) {
+            s.name = "Custom";
+            s.description = null;
+            s.custom = true;
+        }
+        return s;
     }
 
     class ControlBinding {
@@ -79,7 +109,6 @@ var ControlSchemeUI = (function() {
             var control = controlBinding.get(scheme);
 
             // meh. build the selection contents from the control data
-            // todo: icon?
             tr.innerHTML = `
                 <img src="img/${control.imgBase}_w.png" srcset="img2x/${control.imgBase}_w.png 2x" class="icon" style="height: 2ex; width: auto; margin: 0.5ex;"/>
                 ${controlBinding.name}
@@ -105,7 +134,7 @@ var ControlSchemeUI = (function() {
         }
 
         // show the menu and store the close callback
-        var close = Menus.showMenu(selectionDiv, controlDiv, "Control binding");
+        var close = Menus.showMenu(selectionDiv, controlDiv, "Rebind Control");
     }
 
     function doPlatformMenu(button, callback) {
@@ -224,9 +253,20 @@ var ControlSchemeUI = (function() {
             ${platform.name}
         `;
         buildDiagram(document.getElementById("ccs-diagram"), scheme);
+
+        document.getElementById("ccs-name-input").value = scheme.name;
+
+        document.getElementById("ccs-ok-button").style.display = (scheme.id != null) ? "" : "none";
+        document.getElementById("ccs-save-button").style.display = (scheme.id != null) ? "none" : "";
+
+        document.getElementById("ccs-delete-button").style.display = (scheme.id != null && scheme.custom) ? "" : "none";
     }
 
-    function doCustomControlSchemeMenu(button, menuClose, theScheme) {
+    function commitNameChange() {
+        scheme.name = document.getElementById("ccs-name-input").value;
+    }
+
+    function doCustomControlSchemeMenu(selectionRow, menuClose, theScheme) {
         // scheme cases:
         //  - non-console
         //  - console, non-custom
@@ -241,53 +281,20 @@ var ControlSchemeUI = (function() {
 
         scheme = theScheme;
 
-//        var container = document.createElement("div");
-//        container.className = "selection-div";
-//        container.style.textAlign = "center";
-//
-//        var platformButton = document.createElement("span");
-//        platformButton.className = "lightButton";
-//        platformButton.style.margin = "1ex 1ex";
-//        container.appendChild(platformButton);
-//
-//        var diagramDiv = document.createElement("div");
-//        container.appendChild(diagramDiv);
-//
-//        var okayButton = document.createElement("span");
-//        okayButton.className = "lightButton";
-//        okayButton.style.margin = "1ex 1ex";
-//        okayButton.innerHTML = "OK";
-//        container.appendChild(okayButton);
-//
-//        var cancelButton = document.createElement("span");
-//        cancelButton.className = "lightButton";
-//        cancelButton.style.margin = "1ex 1ex";
-//        cancelButton.innerHTML = "Cancel";
-//        container.appendChild(cancelButton);
-//
-//        if (scheme.id != null && scheme.custom) {
-//            var deleteButton = document.createElement("span");
-//            deleteButton.className = "lightButton";
-//            deleteButton.style.margin = "1ex 1ex";
-//            deleteButton.innerHTML = "Delete";
-//            container.appendChild(deleteButton);
-//        }
-
-        document.getElementById("ccs-delete-button").style.display = (scheme.id != null && scheme.custom) ? "" : "none";
-
         updateScheme();
-
 
         // pull the shawzin tab element ouf of the hidden area
         var mainDiv = document.getElementById("custom-control-scheme");
         mainDiv.remove();
 
         // show it as a pop-up menu with a custom close callback
-        var close = Menus.showMenu(mainDiv, button, "Customize Control Scheme", false, () => {
+        mainClose = Menus.showMenu(mainDiv, selectionRow, "Customize Control Scheme", false, () => {
             // put the menu contents back in the hidden area
             mainDiv.remove();
             document.getElementById("hidden-things").appendChild(mainDiv);
         });
+        topMenuClose = menuClose;
+        topMenuSelectionRow = selectionRow;
     }
 
     function controlSchemeToPreference(scheme) {
@@ -379,7 +386,8 @@ var ControlSchemeUI = (function() {
             if (index >= 0) {
                 customSchemeList[index] = scheme;
             } else {
-                // todo: warning?
+                // should only happen if the user deletes the current scheme, then clicks the Add button and saves
+                // it again
                 customSchemeList.push(scheme);
             }
         } else {
@@ -394,17 +402,91 @@ var ControlSchemeUI = (function() {
             customSchemeList.push(scheme);
 
         }
+        persistCustomScheme();
         return scheme;
     }
+
     function deleteCustomScheme(scheme) {
         var index = lookupCustomSchemeIndex(scheme.id);
         if (index >= 0) {
-            list.splice(index, 1);
+            customSchemeList.splice(index, 1);
         }
+        persistCustomScheme();
     }
 
     function getCustomSchemes() {
         return customSchemeList;
+    }
+
+    function doControlSchemeSelect() {
+        // get the control scheme list
+        var sm = MetadataUI.controlSchemes;
+
+        // selection container
+        var selectionDiv = document.createElement("div");
+        selectionDiv.className = "selection-div";
+
+        // basically a function object that contains the state for the click event handler
+        function createSelection(scheme) {
+            // create the selection item
+            var tr = document.createElement("div");
+            tr.className = "selection-item";
+
+            // meh. build the selection contents from the metadata icon image, name, and description
+            tr.innerHTML = `
+                <div class="tooltip">
+                    <img src="img/${scheme.img}" srcset="img2x/${scheme.img} 2x" class="icon"/>
+                    ${scheme.name}
+                    <span class="tooltiptextbottom">${scheme.description}</span>
+                </div>
+            `;
+
+            // click event handler.  Because this is inside a function closure we can just use the local variables
+            tr.onclick = () => {
+                if (scheme.custom) {
+                    doCustomControlSchemeMenu(tr, close, scheme);
+
+                } else {
+                    Model.setControlScheme(scheme);
+                    close();
+                }
+            };
+
+            return tr;
+        }
+
+        // loop over the stock control schemes
+        for (var csn in sm) {
+            // build the selection item and its handler, and add to the container
+            selectionDiv.appendChild(createSelection(sm[csn]));
+        }
+
+        for (var i = 0; i < customSchemeList.length; i++) {
+            // build the selection item and its handler, and add to the container
+            selectionDiv.appendChild(createSelection(customSchemeList[i]));
+        }
+
+        // create the add button
+        var tr = document.createElement("div");
+        tr.className = "selection-item";
+
+        tr.innerHTML = `
+            <div class="tooltip">
+                <img src="img/icon-control-scheme-add.png" srcset="img2x/icon-control-scheme-add.png 2x" class="icon"/>
+                Add custom
+                <span class="tooltiptextbottom">Add a custom control scheme</span>
+            </div>
+        `;
+
+        // click event handler.  Because this is inside a function closure we can just use the local variables
+        tr.onclick = () => {
+            doCustomControlSchemeMenu(tr, close, cloneScheme(Model.getControlScheme()));
+            //close();
+        };
+        selectionDiv.appendChild(tr);
+
+        // show the menu and store the close callback
+        var close = Menus.showMenu(selectionDiv, this, "Select Control Scheme");
     }
 
     return  {
@@ -415,5 +497,6 @@ var ControlSchemeUI = (function() {
         doCustomControlSchemeMenu: doCustomControlSchemeMenu, // (button, scheme)
         controlSchemeToPreference: controlSchemeToPreference, // (scheme)
         preferenceToControlScheme: preferenceToControlScheme, // (pref)
+        doControlSchemeSelect: doControlSchemeSelect, // ()
     };
 })();

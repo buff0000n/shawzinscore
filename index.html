@@ -315,6 +315,7 @@
     </div>
 </div>
 
+<!-- holding pen for pop-up menus and dialogs that I didn't feel like building from scratch in javascript -->
 <div id="hidden-things" style="display: none;">
 
     <div id="config-structure" class="field-div">
@@ -394,12 +395,39 @@
         </div>
     </div>
 
-    <div id="custom-control-scheme" class="selection-div" style="text-align: center;">
-        <span id="ccs-platform-button" class="lightButton"></span>
+    <div id="custom-control-scheme" class="selection-div" style="text-align: center; width: 672px;">
+        <div class="tooltip">
+            <span id="ccs-platform-button" class="lightButton"></span>
+            <span class="tooltiptextbottom">Select the platform</span>
+        </div>
+        <div class="tooltip">
+            <div class="field-entry" id="ccs-name">
+                <span class="fieldTitle">Name:</span>
+                <input id="ccs-name-input" type="text" value="" size="25"/>
+            </div>
+            <span class="tooltiptextbottom">Enter a name for the custom control scheme</span>
+        </div>
         <div id="ccs-diagram" style="position: relative; width: 672px; height: 312px;"></div>
-        <span id="ccs-ok-button" class="lightButton">OK</span>
-        <span id="ccs-cancel-button" class="lightButton">Cancel</span>
-        <span id="ccs-delete-button" class="lightButton">Delete</span>
+
+        <div class="tooltip">
+            <span id="ccs-save-button" class="lightButton">Save</span>
+            <span class="tooltiptextbottom">Save control scheme</span>
+        </div>
+
+        <div class="tooltip">
+            <span id="ccs-ok-button" class="lightButton">OK</span>
+            <span class="tooltiptextbottom">Save changes</span>
+        </div>
+
+        <div class="tooltip">
+            <span id="ccs-cancel-button" class="lightButton">Cancel</span>
+            <span class="tooltiptextbottom">Cancel changes</span>
+        </div>
+
+        <div class="tooltip">
+            <span id="ccs-delete-button" class="lightButton">Delete</span>
+            <span class="tooltiptextbottom">Delete this control scheme</span>
+        </div>
     </div>
 
 </div>
