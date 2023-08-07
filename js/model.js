@@ -226,7 +226,7 @@ var Model = (function() {
         // replace blank string with null
         if (name && name.length == 0) name = null;
         // set it
-        songName = name;
+        songName = MiscUtils.sanitizeString(name);
         // update the UI
         var text = document.getElementById("metadata-settings-title-text");
         text.value = name;

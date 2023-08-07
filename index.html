@@ -492,7 +492,18 @@
                         <li><a href="#tocTitle">Title</a></li>
                         <li><a href="#tocShawzins">Shawzin</a></li>
                         <li><a href="#tocScales">Scale</a></li>
-                        <li><a href="#tocControlSchemes">Control Scheme</a></li>
+                        <li>
+                            <a href="#tocControlSchemes">Control Scheme</a>
+                            <ul>
+                                <li>
+                                    <a href="#tocCustomControlSchemes">Custom Control Schemes</a>
+                                    <ul>
+                                        <li><a href="#tocCustomControlSchemeAdd">Adding a Custom Control Scheme</a></li>
+                                        <li><a href="#tocCustomControlSchemeLoad">Loading a Custom Control Scheme</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li><a href="#tocTrackArea">The Track Area</a>
@@ -682,12 +693,82 @@
             <p>
                 Finally, under the Scale selector is a Control Scheme selector.  Use this to change the controls
                 displayed in the <a href="#tocTrackAreaLeft">tablature section</a> of the track area.  There
-                are currently <a href="#tocControlSchemeList">eight control schemes available</a>.
+                are currently <a href="#tocControlSchemeList">eight stock control schemes available</a>.
             </p>
 
+            <h3 id="tocCustomControlSchemes">Custom Control Schemes</h3>
             <p>
-                <strong>Note: </strong> Your control scheme selection is stored in your browser's local storage as a
-                preference.  It will persist across browser sessions on any song you work with in Shawzinscore.
+                In addition to the eight stock control schemes, you can specify your own custom control scheme
+            </p>
+            <p>
+                <strong class="warn">Note: </strong> Custom control schemes are only supported for console controllers.
+                I'm not making a bajillion icons for all the PC buttons and y'all can just use song codes anyway.
+            </p>
+
+            <h4 id="tocCustomControlSchemeAdd">Adding a Custom Control Scheme</h4>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-control-scheme-add.png" srcset="img2x/icon-control-scheme-add.png 2x"/>
+                <strong>Add custom</strong> button to bring up the Custom Control Scheme dialog.
+            </p>
+            <p>
+                In the dropdown in the upper left, select from <strong class="fret3">Playstation</strong>,
+                <strong class="fret2">XBox</strong>, or <strong class="fret1">Nintendo Switch</strong>.
+                This will determine the controller layout displayed.
+            </p>
+            <p>
+                Beside the layout dropdown is a <strong>Name</strong> text box where you can give the control scheme a
+                name.
+            </p>
+            <p>
+                Each control in the layout is either assigned to one of six functions, the three frets and three strings,
+                or is unassigned and labelled <strong>N/A</strong>.  Click on the label beside any control to
+                reassign it.  There are always exactly six controls assigned, with the rest being <strong>N/A</strong>.
+            </p>
+            <ul>
+                <li>Clicking on an unassigned control and assigning a function to it will unassign that function
+                from where it was previously assigned.</li>
+                <li>Clicking on an already assigned control and reassigning it to a new function will swap its function
+                with wherever the selected function was assigned before.</li>
+            </ul>
+            <p>
+                Click <strong>Save</strong> to save the control scheme and use it.
+            </p>
+            <p>
+                Click <strong>Cancel</strong> to cancel the dialog and return to the control scheme selection menu.
+            </p>
+
+            <h4 id="tocCustomControlSchemeLoad">Loading a Custom Control Scheme</h4>
+            <p>
+                Adding a custom control scheme will add it to the control scheme selection menu.  You can add multiple
+                custom control schemes to choose from.
+            </p>
+            <p>
+                Clicking an existing custom control scheme will open the custom control scheme dialog again.  This gives
+                you a chance to view, edit, or delete the control scheme.
+            </p>
+            <p>
+                Click <strong>Okay</strong> to save any changes to the control scheme and use it.
+            </p>
+            <p>
+                Click <strong>Cancel</strong> to cancel any changes and return to the control scheme selection menu.
+            </p>
+            <p>
+                Click <strong>Delete</strong> to delete the custom control scheme from the control scheme selection
+                menu.  Note that if you currently have that control scheme selected then it will still be your
+                configured control scheme until you select or add another one.
+            </p>
+            <p>
+                <strong class="fret2">Note: </strong> If you want to duplicate a custom control scheme, then first
+                select it.  Then open the control scheme menu again and select
+                <img class="smallButton icon" src="img/icon-control-scheme-add.png" srcset="img2x/icon-control-scheme-add.png 2x"/>
+                <strong>Add custom</strong>.  The add custom control scheme dialog uses your currently selected control
+                scheme as a template.
+            </p>
+            <p>
+                <strong class="fret2">Note: </strong> Your control scheme selection and any custom control schemes
+                you've created are stored in your browser's local storage as preferences.  They will persist across
+                browser sessions on any song you work with in Shawzinscore.
             </p>
 
             <h1 id="tocTrackArea">The Track Area</h1>

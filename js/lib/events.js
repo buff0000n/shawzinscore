@@ -51,6 +51,15 @@ var Events = (function() {
         keyDownListeners[key].push(listener);
     }
 
+    // remove a previously added global listener for a specific key
+    function removeKeyDownListener(key, listener) {
+        // check for the existence of a listener list for that key
+        if (keyDownListeners[key]) {
+            // remove the listener
+            DomUtils.removeFromList(keyDownListeners[key], listener);
+        }
+    }
+
     // add a global listener for a specific key
     // The listener returns true if it did something
     function addKeyUpListener(key, listener) {
@@ -62,11 +71,26 @@ var Events = (function() {
         keyUpListeners[key].push(listener);
     }
 
+    // remove a previously added global listener for a specific key
+    function removeKeyUpListener(key, listener) {
+        // check for the existence of a listener list for that key
+        if (keyUpListeners[key]) {
+            // remove the listener
+            DomUtils.removeFromList(keyUpListeners[key], listener);
+        }
+    }
+
     // add a global listener for mouse events
     // The listener returns true if it did something
     function addMouseDownListener(listener) {
         // add the listener
         mouseDownListeners.push(listener);
+    }
+
+    // remove a previously added global listener for mouse events
+    function removeMouseDownListener(listener) {
+        // remove the listener
+        DomUtils.removeFromList(mouseDownListeners, listener);
     }
 
     // add a global listener for resize events
@@ -352,10 +376,16 @@ var Events = (function() {
         registerEventListeners: registerEventListeners, // ()
         // add a global listener for a particular key
         addKeyDownListener: addKeyDownListener, // (key, listener)
+        // remove a previously added listener
+        removeKeyDownListener: removeKeyDownListener, // (key, listener)
         // add a global listener for a particular key
         addKeyUpListener: addKeyUpListener, // (key, listener)
+        // remove a previously added listener
+        removeKeyUpListener: removeKeyUpListener, // (key, listener)
         // add a global listener for mouse events
         addMouseDownListener: addMouseDownListener, // (listener)
+        // remove a previously added listener
+        removeMouseDownListener: removeMouseDownListener, // (listener)
         // add a global listener for resize events
         // The listener takes (width, height) and returns true if it did something
         addResizeListener: addResizeListener, // (function(width, height): Boolean)
