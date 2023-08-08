@@ -7,7 +7,7 @@ var Settings = (function() {
     // default setting values
     var trackReversed = true;
     var showFrets = false;
-    var controlScheme = MetadataUI.controlSchemes["pc"];
+    var controlScheme = null;
     var darkMode = false;
     var oldMode = false;
     var playbackSpeed = 1.0;

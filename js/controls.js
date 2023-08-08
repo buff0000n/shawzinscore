@@ -9,7 +9,7 @@ var Controls = (function() {
         // select scale action
         document.getElementById("select-scale").addEventListener("click", doScaleSelect, { passive: false });
         // select control scheme action
-        document.getElementById("select-control-scheme").addEventListener("click", doControlSchemeSelect, { passive: false });
+        document.getElementById("select-control-scheme").addEventListener("click", ControlSchemeUI.doControlSchemeSelect, { passive: false });
 
         // title box event handlers
         Events.setupTextInput(document.getElementById("metadata-settings-title-text"));
@@ -231,46 +231,12 @@ var Controls = (function() {
         var close = Menus.showMenu(selectionDiv, this, "Select Scale");
     }
 
-    function doControlSchemeSelect() {
-        // get the control scheme list
-        var sm = MetadataUI.controlSchemes;
-
-        // selection container
-        var selectionDiv = document.createElement("div");
-        selectionDiv.className = "selection-div";
-
-        // basically a function object that contains the state for the click event handler
-        function createSelection(name) {
-            // create the selection item
-            var tr = document.createElement("div");
-            tr.className = "selection-item";
-
-            // meh. build the selection contents from the metadata icon image, name, and description
-            tr.innerHTML = `
-                <div class="tooltip">
-                    <img src="img/${sm[name].img}" srcset="img2x/${sm[name].img} 2x" class="icon"/>
-                    ${sm[name].name}
-                    <span class="tooltiptextbottom">${sm[name].description}</span>
-                </div>
-            `;
-
-            // click event handler.  Because this is inside a function closure we can just use the local variables
-            tr.onclick = () => {
-                Model.setControlScheme(sm[name]);
-                close();
-            };
-
-            return tr;
+    function chooseControlScheme(name) {
+        if (name == "custom") {
+            // something
+        } else {
+            Model.setControlScheme(scheme);
         }
-
-        // loop over the control scheme keys
-        for (var csn in sm) {
-            // build the selection item and its handler, and add to the container
-            selectionDiv.appendChild(createSelection(csn));
-        }
-
-        // show the menu and store the close callback
-        var close = Menus.showMenu(selectionDiv, this, "Select Control Scheme");
     }
 
     function commitMeterChange() {

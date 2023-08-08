@@ -246,16 +246,17 @@ var Menus = (function() {
     function getMenuCoordsFromElement(element, fullWidth = false) {
         // get the elements view position
         var elementBcr = element.getBoundingClientRect();
+        // todo: some other way to specify the direction of the menu popup?
         // if this is the first menu, open underneath the element
-        if (getCurrentMenuLevel() == 0) {
+//        if (getCurrentMenuLevel() == 0) {
             var left = fullWidth ? 0 : elementBcr.left;
             var top = elementBcr.bottom;
 
         // otherwise, open to the right of the element
-        } else {
-            var left = fullWidth ? 0 : elementBcr.right;
-            var top = elementBcr.top;
-        }
+//        } else {
+//            var left = fullWidth ? 0 : elementBcr.right;
+//            var top = elementBcr.top;
+//        }
 
         // check the last event
         if (window.event && window.event.clientY) {

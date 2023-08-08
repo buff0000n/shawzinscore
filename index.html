@@ -35,6 +35,7 @@
 <script type="text/javascript" language="javascript" src="js/trackbar.js"></script>
 <script type="text/javascript" language="javascript" src="js/playback.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzintab.js"></script>
+<script type="text/javascript" language="javascript" src="js/controlScheme.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript">
 
@@ -64,6 +65,7 @@
             Track.registerEventListeners();
             TrackBar.registerEventListeners();
             Playback.registerEventListeners();
+            ControlSchemeUI.registerEventListeners();
             Midi.init();
 
             // initialize the model from the page URL
@@ -322,6 +324,7 @@
     </div>
 </div>
 
+<!-- holding pen for pop-up menus and dialogs that I didn't feel like building from scratch in javascript -->
 <div id="hidden-things" style="display: none;">
 
     <div id="config-structure" class="field-div">
@@ -401,6 +404,41 @@
         </div>
     </div>
 
+    <div id="custom-control-scheme" class="selection-div" style="text-align: center; width: 672px;">
+        <div class="tooltip inline-field">
+            <span id="ccs-platform-button" class="lightButton"></span>
+            <span class="tooltiptextbottom">Select the platform</span>
+        </div>
+        <div class="tooltip inline-field">
+            <div class="field-entry" id="ccs-name">
+                <span class="fieldTitle">Name:</span>
+                <input id="ccs-name-input" type="text" value="" size="25"/>
+            </div>
+            <span class="tooltiptextbottom">Enter a name for the custom control scheme</span>
+        </div>
+        <div id="ccs-diagram" style="position: relative; width: 672px; height: 312px;"></div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-save-button" class="lightButton">Save</span>
+            <span class="tooltiptextbottom">Save control scheme</span>
+        </div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-ok-button" class="lightButton">OK</span>
+            <span class="tooltiptextbottom">Save changes</span>
+        </div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-cancel-button" class="lightButton">Cancel</span>
+            <span class="tooltiptextbottom">Cancel changes</span>
+        </div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-delete-button" class="lightButton">Delete</span>
+            <span class="tooltiptextbottom">Delete this control scheme</span>
+        </div>
+    </div>
+
     <div id="midi-icon" class="tooltip" style="position: absolute; right: 0px; top: 0px;">
         <img src="img/icon-midi.png" srcset="img2x/icon-midi.png 2x" alt="MIDI" class="icon"/>
         <span id="midi-icon-tooltip" class="tooltiptextbottom"></span>
@@ -468,7 +506,18 @@
                         <li><a href="#tocTitle">Title</a></li>
                         <li><a href="#tocShawzins">Shawzin</a></li>
                         <li><a href="#tocScales">Scale</a></li>
-                        <li><a href="#tocControlSchemes">Control Scheme</a></li>
+                        <li>
+                            <a href="#tocControlSchemes">Control Scheme</a>
+                            <ul>
+                                <li>
+                                    <a href="#tocCustomControlSchemes">Custom Control Schemes</a>
+                                    <ul>
+                                        <li><a href="#tocCustomControlSchemeAdd">Adding a Custom Control Scheme</a></li>
+                                        <li><a href="#tocCustomControlSchemeLoad">Loading a Custom Control Scheme</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li><a href="#tocTrackArea">The Track Area</a>
@@ -658,12 +707,82 @@
             <p>
                 Finally, under the Scale selector is a Control Scheme selector.  Use this to change the controls
                 displayed in the <a href="#tocTrackAreaLeft">tablature section</a> of the track area.  There
-                are currently <a href="#tocControlSchemeList">eight control schemes available</a>.
+                are currently <a href="#tocControlSchemeList">eight stock control schemes available</a>.
             </p>
 
+            <h3 id="tocCustomControlSchemes">Custom Control Schemes</h3>
             <p>
-                <strong>Note: </strong> Your control scheme selection is stored in your browser's local storage as a
-                preference.  It will persist across browser sessions on any song you work with in Shawzinscore.
+                In addition to the eight stock control schemes, you can specify your own custom control scheme
+            </p>
+            <p>
+                <strong class="warn">Note: </strong> Custom control schemes are only supported for console controllers.
+                I'm not making a bajillion icons for all the PC buttons and y'all can just use song codes anyway.
+            </p>
+
+            <h4 id="tocCustomControlSchemeAdd">Adding a Custom Control Scheme</h4>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-control-scheme-add.png" srcset="img2x/icon-control-scheme-add.png 2x"/>
+                <strong>Add custom</strong> button to bring up the Custom Control Scheme dialog.
+            </p>
+            <p>
+                In the dropdown in the upper left, select from <strong class="fret3">Playstation</strong>,
+                <strong class="fret2">XBox</strong>, or <strong class="fret1">Nintendo Switch</strong>.
+                This will determine the controller layout displayed.
+            </p>
+            <p>
+                Beside the layout dropdown is a <strong>Name</strong> text box where you can give the control scheme a
+                name.
+            </p>
+            <p>
+                Each control in the layout is either assigned to one of six functions, the three frets and three strings,
+                or is unassigned and labelled <strong>N/A</strong>.  Click on the label beside any control to
+                reassign it.  There are always exactly six controls assigned, with the rest being <strong>N/A</strong>.
+            </p>
+            <ul>
+                <li>Clicking on an unassigned control and assigning a function to it will unassign that function
+                from where it was previously assigned.</li>
+                <li>Clicking on an already assigned control and reassigning it to a new function will swap its function
+                with wherever the selected function was assigned before.</li>
+            </ul>
+            <p>
+                Click <strong>Save</strong> to save the control scheme and use it.
+            </p>
+            <p>
+                Click <strong>Cancel</strong> to cancel the dialog and return to the control scheme selection menu.
+            </p>
+
+            <h4 id="tocCustomControlSchemeLoad">Loading a Custom Control Scheme</h4>
+            <p>
+                Adding a custom control scheme will add it to the control scheme selection menu.  You can add multiple
+                custom control schemes to choose from.
+            </p>
+            <p>
+                Clicking an existing custom control scheme will open the custom control scheme dialog again.  This gives
+                you a chance to view, edit, or delete the control scheme before using it.
+            </p>
+            <p>
+                Click <strong>Okay</strong> to save any changes to the control scheme and use it.
+            </p>
+            <p>
+                Click <strong>Cancel</strong> to cancel any changes and return to the control scheme selection menu.
+            </p>
+            <p>
+                Click <strong>Delete</strong> to delete the custom control scheme from the control scheme selection
+                menu.  Note that if you currently have that control scheme selected then it will still be your
+                configured control scheme until you select or add another one.
+            </p>
+            <p>
+                <strong class="fret2">Note: </strong> If you want to duplicate a custom control scheme, then first
+                select it.  Then open the control scheme menu again and select
+                <img class="smallButton icon" src="img/icon-control-scheme-add.png" srcset="img2x/icon-control-scheme-add.png 2x"/>
+                <strong>Add custom</strong>.  The add custom control scheme dialog uses your currently selected control
+                scheme as a template.
+            </p>
+            <p>
+                <strong class="fret2">Note: </strong> Your control scheme selection and any custom control schemes
+                you've created are stored in your browser's local storage as preferences.  They will persist across
+                browser sessions on any song you work with in Shawzinscore.
             </p>
 
             <h1 id="tocTrackArea">The Track Area</h1>
@@ -1108,8 +1227,9 @@
                 note.
             </p>
             <p>
-                <strong class="info">Note:</strong> You can't play a note with more than one string.  Trying to play
-                multiple strings will just play multiple notes.
+                <strong class="info">Note:</strong> You can play more than one note at the same time, as long as each
+                note uses the same frets.  Just press multiple string buttons while optionally holding down a single
+                fret button.
             </p>
 
             <h4 id="generalNotes">Playing Notes</h4>
@@ -1228,15 +1348,42 @@
                 beginning.  The order is:
             </p>
             <ol>
-                <li><a href="#scale_pmin">Minor Pentatonic</a></li>
-                <li><a href="#scale_pmaj">Major Pentatonic</a></li>
-                <li><a href="#scale_chrom">Chromatic</a></li>
-                <li><a href="#scale_hex">Hexatonic</a></li>
-                <li><a href="#scale_min">Major</a></li>
-                <li><a href="#scale_maj">Minor</a></li>
-                <li><a href="#scale_hira">Hirajoshi</a></li>
-                <li><a href="#scale_phry">Phrygian Dominant</a></li>
-                <li><a href="#scale_yo">Yo</a></li>
+                <li>
+                    <img class="icon" src="img/standard/pmin/scale.png" srcset="img2x/standard/pmin/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_pmin">Minor Pentatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/pmaj/scale.png" srcset="img2x/standard/pmaj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_pmaj">Major Pentatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/chrom/scale.png" srcset="img2x/standard/chrom/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_chrom">Chromatic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/hex/scale.png" srcset="img2x/standard/hex/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_hex">Hexatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/maj/scale.png" srcset="img2x/standard/maj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_min">Major</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/min/scale.png" srcset="img2x/standard/min/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_maj">Minor</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_hira">Hirajoshi</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/phry/scale.png" srcset="img2x/standard/phry/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_phry">Phrygian Dominant</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/yo/scale.png" srcset="img2x/standard/yo/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_yo">Yo</a>
+                </li>
             </ol>
             <p>
                 If you switch Shawzins or leave the Shawzin screen, then the selected scale will revert back to
@@ -1946,7 +2093,7 @@
                         <p>
                             The chords on a Chromatic scale are different from most other scales.  Instead of being
                             divided in two groups of six, each of the twelve chords is basically a power chord rooted
-                            on the corresponding single note of the scale.
+                            on the corresponding note from the twelve single scale notes.
                         </p>
                     </td>
                 </tr>
@@ -2026,11 +2173,12 @@
                         </p>
                         <p>
                             Since both the Shawzin's <strong>Major</strong> and <strong>Minor</strong> scales
-                            also contain both minor and major scales within them, the only real difference is
-                            the range.  A song in a minor key can be done in <strong>C Minor</strong> with the Minor
-                            scale, or in <strong>A Minor</strong> with the Major scale, depending on what kind of range
-                            it needs.  Likewise, a song in a major key can be done in <strong>C Major </strong> with
-                            the Major scale, or <strong>E&#x266D; Major</strong> with the Minor scale.
+                            also contain both minor and major scales within them, the only real differences are
+                            the range and fingerings.  A song in a minor key can be done in <strong>C Minor</strong>
+                            with the Minor scale, or in <strong>A Minor</strong> with the Major scale, depending on
+                            what kind of range it needs.  Likewise, a song in a major key can be done in
+                            <strong>C Major </strong> with the Major scale, or <strong>E&#x266D; Major</strong> with
+                            the Minor scale.
                         </p>
                     </td>
                 </tr>
@@ -2414,16 +2562,6 @@
 
             <h1 id="tocQA">Q & A</h1>
             <ul class="qa">
-                <li>
-                    <strong class="warn">Q:</strong> Can I make a custom control scheme?
-                </li>
-                <li>
-                    <strong class="info">A:</strong> It's on my todo list.  It will probably only support custom
-                    control schemes for consoles, because PC has a lot of controls and doesn't really need to follow
-                    along with the app because it can just use song codes.
-                </li>
-            </ul>
-            <ul class="qa">
                 <li><strong class="warn">Q:</strong> Editing</li>
                 <li>
                     <strong class="info">A:</strong> That's not a question, but it's in the plan.  This app was
@@ -2469,13 +2607,16 @@
                 <li>Added tooltips to a bunch of icons, also added a little icon to show when a MIDI devices is
                     enabled</li>
             </ul>
+            <h3 id="tocUpdates1.1">v1.1: 2023-08-08</h3>
+            <ul>
+                <li>Added support for custom controller bindings</li>
+            </ul>
 
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
-                <li>Custom control schemes</li>
-                <li><strong class="fret12">EDITING</strong></li>
                 <li>Key changing</li>
+                <li><strong class="fret12">EDITING</strong></li>
                 <li>Chord pop-up display</li>
                 <li>Library</li>
                 <li>Local storage</li>
@@ -2490,6 +2631,7 @@
                 <li>playback time/measure display?</li>
                 <li>loading bars?</li>
                 <li>Zoom Level?</li>
+                <li>Playlist (thanks <strong>comebackkid1007</strong>)</li>
             </ul>
             <h2>Never</h2>
             <ul>
@@ -2532,7 +2674,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.4: 2023-08-08
+            v1.1.0: 2023-08-08
         </div>
         <div>
             Contact:
