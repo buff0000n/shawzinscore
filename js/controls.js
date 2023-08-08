@@ -144,12 +144,12 @@ var Controls = (function() {
         // if there's a song code then enable the copy button
         if (songCode && songCode.length > 0) {
             var button = document.getElementById("copyCodeButton");
-            button.className = "smallButton";
+            button.className = "smallButton icon tooltip";
             button.children[0].className = "icon";
         // otherwise, disable the copy button
         } else {
             var button = document.getElementById("copyCodeButton");
-            button.className = "smallButton-disabled";
+            button.className = "smallButton-disabled icon tooltip";
             button.children[0].className = "icon-disabled";
         }
     }
@@ -360,7 +360,7 @@ var Controls = (function() {
         menuDiv.appendChild(structureDiv);
 
         // show the menu with a custom close callback
-        var close = Menus.showMenu(menuDiv, this, "Config", false, () => {
+        var close = Menus.showMenu(menuDiv, this, "Song Configuration", false, () => {
             // when the structure menu is closed, remove the the original controls container
             structureDiv.remove();
             // and add it back to the hidden area of the document

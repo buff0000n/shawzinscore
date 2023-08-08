@@ -109,54 +109,48 @@
                     <div id="metadata-settings-code" class="toolbarSection">
                         <div class="fieldTitle">Song Code</div>
                         <input id="metadata-settings-code-text" type="text" value="" size="12"/>
-                        <div class="tooltip">
-                            <span id="pasteCodeButton" class="smallButton icon">
-                                <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" class="icon"/>
-                            </span>
+                        <span id="pasteCodeButton" class="smallButton icon tooltip">
+                            <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" class="icon"/>
                             <span class="tooltiptextbottom">Paste a song code from the clipboard</span>
-                        </div>
-                        <div class="tooltip">
-                            <span id="copyCodeButton" class="smallButton-disabled icon">
-                                <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon-disabled"/>
-                            </span>
+                        </span>
+                        <span id="copyCodeButton" class="smallButton-disabled icon tooltip">
+                            <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon-disabled"/>
                             <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
-                        </div>
+                        </span>
                     </div>
-                    <div id="metadata-settings-title" class="toolbarSection">
+                    <div id="metadata-settings-title" class="toolbarSection tooltip">
                         <div id="metadata-settings-title-title" class="fieldTitle">Title</div>
                         <input id="metadata-settings-title-text" type="text" value="" size="22"/>
+                        <span class="tooltiptextbottom">Enter a short title for the song</span>
                     </div>
-                    <div id="select-shawzin" class="selectButton">
+                    <div id="select-shawzin" class="selectButton tooltip">
                         <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span id="select-shawzin-text"></span>
+                        <span class="tooltiptextbottom">Select a Shawzin</span>
                     </div>
-                    <div id="select-scale" class="selectButton">
+                    <div id="select-scale" class="selectButton tooltip">
                         <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span id="select-scale-text"></span>
+                        <span class="tooltiptextbottom">Select a Scale</span>
                     </div>
-                    <div id="select-control-scheme" class="selectButton">
+                    <div id="select-control-scheme" class="selectButton tooltip">
                         <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span id="select-control-scheme-text"></span>
+                        <span class="tooltiptextbottom">Select or create a Control Scheme</span>
                     </div>
                     <div id="toolbar-buttons">
-                        <div class="tooltip">
-                            <span id="toolbar-buttons-settings" class="smallButton urlButton popup">
+                        <span id="toolbar-buttons-settings" class="smallButton urlButton popup tooltip">
                             <img src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x" alt="Settings" class="icon"/>
-                            </span>
                             <span class="tooltiptextbottom">Edit Settings</span>
-                        </div>
-                        <div class="tooltip">
-                            <span id="toolbar-buttons-copyurl" class="smallButton urlButton popup">
-                                <img src="img/icon-link.png" srcset="img2x/icon-link.png 2x" alt="URL" class="icon"/>
-                            </span>
+                        </span>
+                        <span id="toolbar-buttons-copyurl" class="smallButton urlButton popup tooltip">
+                            <img src="img/icon-link.png" srcset="img2x/icon-link.png 2x" alt="URL" class="icon"/>
                             <span class="tooltiptextbottom">Generate a URL for this song</span>
-                        </div>
-                        <div class="tooltip">
-                            <span id="toolbar-buttons-shawzintab" class="smallButton urlButton popup">
-                                <img src="img/icon-png.png" srcset="img2x/icon-png.png 2x" alt="Shawzintab" class="icon"/>
-                            </span>
+                        </span>
+                        <span id="toolbar-buttons-shawzintab" class="smallButton urlButton popup tooltip">
+                            <img src="img/icon-png.png" srcset="img2x/icon-png.png 2x" alt="Shawzintab" class="icon"/>
                             <span class="tooltiptextbottom">Generate a tablature image for this song</span>
-                        </div>
+                        </span>
                         <!--
                         <div class="tooltip">
                             <span id="createWavButton" class="smallButton urlButton popup" onclick="generateWav(this)">
@@ -165,15 +159,11 @@
                             <span class="tooltiptextbottom">Generate a sound file for this song</span>
                         </div>
                         -->
-                        <div class="tooltip">
-                            <div id="button-undo" class="smallButton-disabled">
-                                <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
-                            </div>
+                        <div id="button-undo" class="smallButton-disabled tooltip">
+                            <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
                         </div>
-                        <div class="tooltip">
-                            <div id="button-redo" class="smallButton-disabled">
-                                <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
-                            </div>
+                        <div id="button-redo" class="smallButton-disabled tooltip">
+                            <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
                         </div>
                     </div>
                 </div>
@@ -196,8 +186,9 @@
         <table id="song-toolbar-table" style="width: 688px;">
             <tr>
                 <td id="song-buttons" style="width: 344px; text-align: center;">
-                    <div id="song-buttons-config" class="button">
+                    <div id="song-buttons-config" class="button tooltip">
                         <img src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Song configuration</span>
                     </div>
 
                     <!--
@@ -214,22 +205,27 @@
                         <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="cut" class="icon"/>
                     </div>
                     -->
-                    <div id="song-buttons-play" class="button">
+                    <div id="song-buttons-play" class="button tooltip">
                         <img src="img/icon-play.png" srcset="img2x/icon-play.png 2x" alt="play" class="icon"/>
+                        <span class="tooltiptextbottom">Play</span>
                     </div>
-                    <div id="song-buttons-stop" class="button-disabled">
+                    <div id="song-buttons-stop" class="button-disabled tooltip">
                         <img src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x" alt="stop" class="icon-disabled"/>
+                        <span class="tooltiptextbottom">Stop</span>
                     </div>
-                    <div id="song-buttons-rewind" class="button">
+                    <div id="song-buttons-rewind" class="button tooltip">
                         <img src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x" alt="rewind" class="icon"/>
+                        <span class="tooltiptextbottom">Rewind</span>
                     </div>
-                    <div id="song-buttons-ff" class="button">
+                    <div id="song-buttons-ff" class="button tooltip">
                         <img src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x" alt="fast forward" class="icon"/>
+                        <span class="tooltiptextbottom">Fast Forward</span>
                     </div>
                 </td>
-                <td>
+                <td class="tooltip">
                     <span id="speedRangeContainer" class="sliderContainer"><input id="speedRange" type="range" min="0"/></span>
                     <span id="speedLabel"><input id="speedLabelInput" size="4" value="1.00"/>x</span>
+                    <span class="tooltiptextbottom">Playback speed</span>
                 </td>
             </tr>
         </table>
@@ -268,27 +264,38 @@
                         <img id="tab-note-fret-3" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-fret-button"/>
                     </div>
 
-                    <div id="track-direction" class="smallButton" style="position: absolute; left: 0px; bottom: 0px;">
+                    <div id="track-direction" class="smallButton tooltip" style="position: absolute; left: 0px; bottom: 0px;">
                         <img src="img/icon-dropup.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Switch track direction</span>
                     </div>
-                    <div id="trackbar-switch" class="smallButton" style="position: absolute; left: 0px; top: 0px;">
+                    <div id="trackbar-switch-frets" class="smallButton tooltip" style="position: absolute; left: 0px; top: 0px;">
                         <img src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Show Frets</span>
+                    </div>
+                    <div id="trackbar-switch-strings" class="smallButton tooltip" style="position: absolute; left: 0px; top: 0px; display: none;">
+                        <img src="img/icon-trackbar-switch-strings.png" srcset="img2x/icon-trackbar-switch-strings.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Show Strings</span>
                     </div>
                     <div id="roll-chord-buttons" style="position: absolute; right: 0px; top: 0px; display: block">
-                        <div id="roll-chord-button-none" class="smallButton chordButton" style="">
+                        <div id="roll-chord-button-none" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-none-selected.png" srcset="img2x/icon-chord-none-selected.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Normal note mode</span>
                         </div>
-                        <div id="roll-chord-button-a" class="smallButton chordButton" style="">
+                        <div id="roll-chord-button-a" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-a.png" srcset="img2x/icon-chord-a.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Chord set 1 mode</span>
                         </div>
-                        <div id="roll-chord-button-b" class="smallButton chordButton" style="">
+                        <div id="roll-chord-button-b" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-b.png" srcset="img2x/icon-chord-b.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Chord set 2 mode</span>
                         </div>
-                        <div id="roll-chord-button-ab" class="smallButton chordButton" style="display: none;">
+                        <div id="roll-chord-button-ab" class="smallButton chordButton tooltip" style="display: none;">
                             <img src="img/icon-chord-ab.png" srcset="img2x/icon-chord-ab.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Chord mode</span>
                         </div>
-                        <div id="roll-chord-button-slap" class="smallButton chordButton" style="display: none;">
+                        <div id="roll-chord-button-slap" class="smallButton chordButton tooltip" style="display: none;">
                             <img src="img/icon-chord-slap.png" srcset="img2x/icon-chord-slap.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Slap mode</span>
                         </div>
                     </div>
                 </td>
@@ -390,6 +397,11 @@
                 <span class="tooltiptextbottom">Enable the old, single-line fret layout</span>
             </div>
         </div>
+    </div>
+
+    <div id="midi-icon" class="tooltip" style="position: absolute; right: 0px; top: 0px;">
+        <img src="img/icon-midi.png" srcset="img2x/icon-midi.png 2x" alt="MIDI" class="icon"/>
+        <span id="midi-icon-tooltip" class="tooltiptextbottom"></span>
     </div>
 
 </div>
@@ -2452,6 +2464,8 @@
                     (thanks <strong>AtomicKlum</strong>)</li>
                 <li>Refactored the on-screen piano to include the entire white key as clickable, that was bugging me.
                     Also, fixed clicking and dragging across the piano on mobile.</li>
+                <li>Added tooltips to a bunch of icons, also added a little icon to show when a MIDI devices is
+                    enabled</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
@@ -2516,7 +2530,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.3: 2023-08-07
+            v1.0.4: 2023-08-08
         </div>
         <div>
             Contact:
