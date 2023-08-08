@@ -247,6 +247,8 @@
         z-index: 1;
         top: 1ex;
         left: calc(100% + 2ex);
+        pointer-events: none;
+        white-space: normal;
 
         opacity: 0;
         transition: opacity 500ms;
@@ -278,6 +280,7 @@
         left: calc(50% - 15ex);
         margin-left: -2ex;
         pointer-events: none;
+        white-space: normal;
 
         opacity: 0;
         transition: opacity 500ms;
