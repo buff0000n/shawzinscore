@@ -101,6 +101,10 @@ td.label {
     display: inline-block;
 }
 
+.inline-field {
+    display: inline-block;
+}
+
 .field-div {
     border-radius: 1ex;
     background-color: #202020;

@@ -58,15 +58,18 @@ var TrackBar = (function() {
         });
 
         // event handler for the fret/string switch button
-        var switchDiv = document.getElementById("trackbar-switch");
-        switchDiv.addEventListener("click", () => {
+        var switchHandler = () => {
             // invert the preference value
             var newShowFrets = !Settings.isShowFrets();
             // apply the new setting
             setShowFrets(newShowFrets);
             // save the new preference
             Settings.setShowFrets(newShowFrets);
-        });
+        };
+        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
+        switchFretsDiv.addEventListener("click", switchHandler);
+        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
+        switchStringsDiv.addEventListener("click", switchHandler);
 
         // later
 //        var chordDiv = document.getElementById("roll-chord-button");
@@ -475,7 +478,8 @@ var TrackBar = (function() {
 
         // get some buttons inside the trackbar that we will have to move
         var dirDiv = document.getElementById("track-direction");
-        var switchDiv = document.getElementById("trackbar-switch");
+        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
+        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
         var chordDiv = document.getElementById("roll-chord-button");
         var chordInfoDiv = document.getElementById("roll-chord-info");
 
@@ -491,9 +495,11 @@ var TrackBar = (function() {
             // move the direction button to the top of the header bar
             dirDiv.style.top = "0px";
             dirDiv.style.bottom = "";
-            // move the fret/string switch button to the bottom of the header bar
-            switchDiv.style.top = "";
-            switchDiv.style.bottom = "0px";
+            // move the fret/string switch buttons to the bottom of the header bar
+            switchFretsDiv.style.top = "";
+            switchFretsDiv.style.bottom = "0px";
+            switchStringsDiv.style.top = "";
+            switchStringsDiv.style.bottom = "0px";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-up.png");
             chordInfoDiv.style.top = "0px";
@@ -512,9 +518,11 @@ var TrackBar = (function() {
             // move the direction button to the bottom of the header bar
             dirDiv.style.top = "";
             dirDiv.style.bottom = "0px";
-            // move the fret/string switch button to the top of the header bar
-            switchDiv.style.top = "0px";
-            switchDiv.style.bottom = "";
+            // move the fret/string switch buttons to the top of the header bar
+            switchFretsDiv.style.top = "0px";
+            switchFretsDiv.style.bottom = "";
+            switchStringsDiv.style.top = "0px";
+            switchStringsDiv.style.bottom = "";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-down.png");
             chordInfoDiv.style.top = "";
@@ -550,10 +558,11 @@ var TrackBar = (function() {
         // sanity check
         if (showFrets == newShowFrets) return;
 
-        // find the switch button
-        var switchDiv = document.getElementById("trackbar-switch");
-        // change the image on the switch button accordingly
-        PageUtils.setImgSrc(switchDiv.children[0], newShowFrets ? "icon-trackbar-switch-strings.png" : "icon-trackbar-switch-frets.png");
+        // show/hide the switch buttons
+        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
+        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
+        switchFretsDiv.style.display = newShowFrets ? "none" : "inline-block";
+        switchStringsDiv.style.display = newShowFrets ? "inline-block" : "none";
 
         // show or hide the string elements
         for (var i = 1; i <= 3; i++) {
@@ -605,6 +614,10 @@ var TrackBar = (function() {
             super();
             // map from midi notes to things with a play function
             this.midiNoteMap = null;
+            // list of connected midi devices
+            this.devices = [];
+            // UI icon
+            this.icon = null;
         }
 
         setMidiNoteMap(map) {
@@ -612,14 +625,41 @@ var TrackBar = (function() {
             this.midiNoteMap = map;
         }
 
+        updateIcon() {
+            if (this.devices.length == 0) {
+                // if there are no connected midi devices but the icon is still there, remove it
+                if (this.icon) {
+                    // remove it and put it back under the hidden area
+                    this.icon.remove();
+                    document.getElementById("hidden-things").appendChild(this.icon);
+                    // clear the reference
+                    this.icon = null;
+                }
+            } else {
+                // if there are connected midi devices but the icon is not there, add it
+                if (!this.icon) {
+                    // get the icon element from the hidden area
+                    this.icon = document.getElementById("midi-icon");
+                    // remove from the hidden area
+                    this.icon.remove();
+                    // add to the top-level piano container
+                    document.getElementById("song-bar-roll").appendChild(this.icon);
+                }
+                // update the alt text with the list of midi devices
+                document.getElementById("midi-icon-tooltip").innerHTML = this.devices.join(", ");
+            }
+        }
+
         deviceOn(device) {
-            // todo: some kind of UI indication that MIDI is a go?
             console.log(device + ": on");
+            DomUtils.addToListIfNotPresent(this.devices, device);
+            this.updateIcon();
         }
 
         deviceOff(device) {
-            // todo: some kind of UI indication that MIDI is a no go?
             console.log(device + ": off");
+            DomUtils.removeFromList(this.devices, device);
+            this.updateIcon();
         }
 
         noteOn(device, note) {

@@ -219,7 +219,8 @@
 
     .tooltip {
         position: relative;
-        display: inline-block;
+        /* todo: necessary? */
+        /*display: inline-block;*/
     }
     .tooltip:hover .tooltiptext, .tooltip:hover .tooltiptextbottom  {
         visibility: visible;
