@@ -757,7 +757,7 @@
             </p>
             <p>
                 Clicking an existing custom control scheme will open the custom control scheme dialog again.  This gives
-                you a chance to view, edit, or delete the control scheme.
+                you a chance to view, edit, or delete the control scheme before using it.
             </p>
             <p>
                 Click <strong>Okay</strong> to save any changes to the control scheme and use it.
@@ -1225,8 +1225,9 @@
                 note.
             </p>
             <p>
-                <strong class="info">Note:</strong> You can't play a note with more than one string.  Trying to play
-                multiple strings will just play multiple notes.
+                <strong class="info">Note:</strong> You can play more than one note at the same time, as long as each
+                note uses the same frets.  Just press multiple string buttons while optionally holding down a single
+                fret button.
             </p>
 
             <h4 id="generalNotes">Playing Notes</h4>
@@ -1345,15 +1346,42 @@
                 beginning.  The order is:
             </p>
             <ol>
-                <li><a href="#scale_pmin">Minor Pentatonic</a></li>
-                <li><a href="#scale_pmaj">Major Pentatonic</a></li>
-                <li><a href="#scale_chrom">Chromatic</a></li>
-                <li><a href="#scale_hex">Hexatonic</a></li>
-                <li><a href="#scale_min">Major</a></li>
-                <li><a href="#scale_maj">Minor</a></li>
-                <li><a href="#scale_hira">Hirajoshi</a></li>
-                <li><a href="#scale_phry">Phrygian Dominant</a></li>
-                <li><a href="#scale_yo">Yo</a></li>
+                <li>
+                    <img class="icon" src="img/standard/pmin/scale.png" srcset="img2x/standard/pmin/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_pmin">Minor Pentatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/pmaj/scale.png" srcset="img2x/standard/pmaj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_pmaj">Major Pentatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/chrom/scale.png" srcset="img2x/standard/chrom/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_chrom">Chromatic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/hex/scale.png" srcset="img2x/standard/hex/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_hex">Hexatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/maj/scale.png" srcset="img2x/standard/maj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_min">Major</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/min/scale.png" srcset="img2x/standard/min/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_maj">Minor</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_hira">Hirajoshi</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/phry/scale.png" srcset="img2x/standard/phry/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_phry">Phrygian Dominant</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/yo/scale.png" srcset="img2x/standard/yo/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_yo">Yo</a>
+                </li>
             </ol>
             <p>
                 If you switch Shawzins or leave the Shawzin screen, then the selected scale will revert back to
@@ -2063,7 +2091,7 @@
                         <p>
                             The chords on a Chromatic scale are different from most other scales.  Instead of being
                             divided in two groups of six, each of the twelve chords is basically a power chord rooted
-                            on the corresponding single note of the scale.
+                            on the corresponding note from the twelve single scale notes.
                         </p>
                     </td>
                 </tr>
@@ -2143,11 +2171,12 @@
                         </p>
                         <p>
                             Since both the Shawzin's <strong>Major</strong> and <strong>Minor</strong> scales
-                            also contain both minor and major scales within them, the only real difference is
-                            the range.  A song in a minor key can be done in <strong>C Minor</strong> with the Minor
-                            scale, or in <strong>A Minor</strong> with the Major scale, depending on what kind of range
-                            it needs.  Likewise, a song in a major key can be done in <strong>C Major </strong> with
-                            the Major scale, or <strong>E&#x266D; Major</strong> with the Minor scale.
+                            also contain both minor and major scales within them, the only real differences are
+                            the range and fingerings.  A song in a minor key can be done in <strong>C Minor</strong>
+                            with the Minor scale, or in <strong>A Minor</strong> with the Major scale, depending on
+                            what kind of range it needs.  Likewise, a song in a major key can be done in
+                            <strong>C Major </strong> with the Major scale, or <strong>E&#x266D; Major</strong> with
+                            the Minor scale.
                         </p>
                     </td>
                 </tr>
@@ -2531,16 +2560,6 @@
 
             <h1 id="tocQA">Q & A</h1>
             <ul class="qa">
-                <li>
-                    <strong class="warn">Q:</strong> Can I make a custom control scheme?
-                </li>
-                <li>
-                    <strong class="info">A:</strong> It's on my todo list.  It will probably only support custom
-                    control schemes for consoles, because PC has a lot of controls and doesn't really need to follow
-                    along with the app because it can just use song codes.
-                </li>
-            </ul>
-            <ul class="qa">
                 <li><strong class="warn">Q:</strong> Editing</li>
                 <li>
                     <strong class="info">A:</strong> That's not a question, but it's in the plan.  This app was
@@ -2586,13 +2605,16 @@
                 <li>Added tooltips to a bunch of icons, also added a little icon to show when a MIDI devices is
                     enabled</li>
             </ul>
+            <h3 id="tocUpdates1.1">v1.1: 2023-08-08</h3>
+            <ul>
+                <li>Added support for custom controller bindings</li>
+            </ul>
 
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
-                <li>Custom control schemes</li>
-                <li><strong class="fret12">EDITING</strong></li>
                 <li>Key changing</li>
+                <li><strong class="fret12">EDITING</strong></li>
                 <li>Chord pop-up display</li>
                 <li>Library</li>
                 <li>Local storage</li>
@@ -2650,7 +2672,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.4: 2023-08-08
+            v1.1.0: 2023-08-08
         </div>
         <div>
             Contact:
