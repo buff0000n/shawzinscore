@@ -41,6 +41,8 @@ var Controls = (function() {
         // lead-in textbox event handlers
         Events.setupTextInput(document.getElementById("config-leadin-input"), true);
         document.getElementById("config-leadin-input").addEventListener("change", commitLeadinChange, { passive: false });
+        // key signature selection event handlers
+        document.getElementById("select-keysig").addEventListener("click", doKeySigSelect, { passive: false });
 
         // shawzintab menu button
         document.getElementById("toolbar-buttons-shawzintab").addEventListener("click", doShawzinTab, { passive: false });
@@ -155,6 +157,8 @@ var Controls = (function() {
     }
 
     function doShawzinSelect() {
+        var currentShawzin = Model.getShawzin();
+
         // container div for the shawzin selection menu
         var selectionDiv = document.createElement("div");
         selectionDiv.className = "selection-div";
@@ -164,7 +168,8 @@ var Controls = (function() {
             var sm = Metadata.shawzinList[name];
 
             var tr = document.createElement("div");
-            tr.className = "selection-item";
+            // display it differently if it's the currently selected item
+            tr.className = name == currentShawzin ? "selection-item-selected" : "selection-item";
 
             tr.innerHTML = `
                 <div class="tooltip">
@@ -191,8 +196,11 @@ var Controls = (function() {
     }
 
     function doScaleSelect() {
+        // get the current shawzin metadata
         var sm = Metadata.shawzinList[Model.getShawzin()];
+        var currentScaleName = Model.getScale();
 
+        // container div
         var selectionDiv = document.createElement("div");
         selectionDiv.className = "selection-div";
 
@@ -200,7 +208,8 @@ var Controls = (function() {
         function createSelection(name) {
             // create the selection item
             var tr = document.createElement("div");
-            tr.className = "selection-item";
+            // display it differently if it's the currently selected item
+            tr.className = name == currentScaleName ? "selection-item-selected" : "selection-item";
 
             // meh. build the selection contents from the metadata icon image, name, and description
             tr.innerHTML = `
@@ -229,6 +238,97 @@ var Controls = (function() {
 
         // show the menu and store the close callback
         var close = Menus.showMenu(selectionDiv, this, "Select Scale");
+    }
+
+    function getKeySigHTML(note) {
+        // get the image base and display name for the key signature
+        var display = MetadataMusic.getKeySigDisplay(note);
+        // generate some HTML with all that in there
+        return `
+            <div class="key-sig-box"><img src="img/${display.imgBase}" srcset="img2x/${display.imgBase} 2x" class="icon"/></div>
+            ${display.name}
+        `;
+    }
+
+    function doKeySigSelect() {
+        // get the current scale metadata
+        var currentNote = Model.getKeySig();
+
+        // container div
+        var containerDiv = document.createElement("div");
+        // we're going to make a few selection divs
+        function createSelectionContainerDiv() {
+            var div = document.createElement("div");
+            div.className = "selection-div";
+            return div;
+        }
+        // first selection div
+        var selectionDiv = createSelectionContainerDiv();
+
+        // basically a function object that contains the state for the click event handler
+        function createSelection(note) {
+            // create the selection item
+            var tr = document.createElement("div");
+            // display it differently if it's the currently selected item
+            tr.className = (note == currentNote ? "selection-item-selected" : "selection-item") +
+                            (note == MetadataMusic.noteOrder[0] ? " fret2" : "");
+
+            // meh. build the selection contents from the metadata icon image, name, and description
+            tr.innerHTML = getKeySigHTML(note);
+
+            // click event handler.  Because this is inside a function closure we can just use the local variables
+            tr.onclick = () => {
+                // set the key signature on the model
+                Model.setKeySig(note);
+                // update the top-level menu item
+                document.getElementById("select-keysig-text").innerHTML = getKeySigHTML(note);
+                // close the menu using the close callback returned at the end of the outer function
+                close();
+            };
+
+            return tr;
+        }
+
+        // generate a note list
+        var noteList = [];
+        // loop over all 12 notes
+        for (var i = 0; i < MetadataMusic.noteOrder.length; i++) {
+            var note = MetadataMusic.noteOrder[i];
+            // get the pitch offset for the key signature correponding to the note
+            var pitchOffset = Piano.getPitchOffset(note);
+            // save in a struct
+            noteList.push({ "offset": pitchOffset, "note": note});
+        }
+        // put in inverse order of the offset, so high offsets are first and low offsets are last
+        noteList.sort((a, b) => { return -(a.offset - b.offset); });
+
+        // build a separator by closing the existing div and starting a new one
+        function doSeparator() {
+            containerDiv.appendChild(selectionDiv);
+            selectionDiv = createSelectionContainerDiv();
+            // shrugs
+            selectionDiv.style.margin = "1ex 0 0 0";
+        }
+
+        // go over the sorted note list
+        for (var i = 0; i < noteList.length; i++) {
+            var note = noteList[i].note;
+            // if it's the default key signature base, then build a separator before it
+            if (note == MetadataMusic.noteOrder[0]) {
+                doSeparator();
+            }
+            // build the selection
+            selectionDiv.appendChild(createSelection(note));
+            // if it's the default key signature base, then build another separator after it
+            if (note == MetadataMusic.noteOrder[0]) {
+                doSeparator();
+            }
+        }
+        // add the remaining container
+        containerDiv.appendChild(selectionDiv);
+
+        // show the menu and store the close callback
+        var close = Menus.showMenu(containerDiv, this, "Select Key");
     }
 
     function chooseControlScheme(name) {
@@ -332,6 +432,9 @@ var Controls = (function() {
             // and add it back to the hidden area of the document
             document.getElementById("hidden-things").appendChild(structureDiv);
         });
+
+        // make sure the key signature item is displaying the current key signature
+        document.getElementById("select-keysig-text").innerHTML = getKeySigHTML(Model.getKeySig());
     }
 
     function doSettingsMenu() {

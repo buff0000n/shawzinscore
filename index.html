@@ -24,6 +24,7 @@
 <script type="text/javascript" language="javascript" src="js/lib/menus.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/slider.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/midi.js"></script>
+<script type="text/javascript" language="javascript" src="js/metadata_music.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata_ui.js"></script>
 <script type="text/javascript" language="javascript" src="js/settings.js"></script>
@@ -308,6 +309,15 @@
                     <div id="roll-chord-info" class="smallButton" style="position: absolute; right: 0px; bottom: 0px; display: none">
                         <img src="img/icon-chord-down.png" srcset="img2x/icon-chord-down.png 2x" class="icon"/>
                     </div>
+                    <div id="midi-icon" class="tooltip" style="display: none; position: absolute; right: 0px; top: 0px;">
+                        <img src="img/icon-midi.png" srcset="img2x/icon-midi.png 2x" alt="MIDI" class="icon"/>
+                        <span id="midi-icon-tooltip" class="tooltiptextbottom"></span>
+                    </div>
+
+                    <div id="keysig-icon" class="key-sig-box tooltip" style="display: none; position: absolute; right: 0px; bottom: 0px;">
+                        <img id="keysig-icon-img" src="img/keysig/treble-c.png" srcset="img2x/keysig/treble-c.png 2x" class="icon"/>
+                        <span id="keysig-icon-tooltip" class="tooltiptextbottom">TOOLTP</span>
+                    </div>
                 </td>
             </tr>
         </table>
@@ -328,27 +338,29 @@
 <div id="hidden-things" style="display: none;">
 
     <div id="config-structure" class="field-div">
-        <div class="field-entry" id="config-meter">
-            <div class="tooltip">
-                <div class="fieldTitle">Time Signature:</div>
-                <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
-                <span class="tooltiptextbottom">The meter of the song</span>
-            </div>
+        <div class="field-entry tooltip" id="config-meter">
+            <div class="fieldTitle">Time Signature:</div>
+            <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
+            <span class="tooltiptextbottom">The meter of the song</span>
         </div>
-        <div class="field-entry" id="config-tempo">
-            <div class="tooltip">
-                <div class="fieldTitle">Tempo:</div>
-                <select id="config-tempo-input" >
-                </select>
-                <span class="tooltiptextbottom">The Tempo of the song</span>
-            </div>
+        <div class="field-entry tooltip" id="config-tempo">
+            <div class="fieldTitle">Tempo:</div>
+            <select id="config-tempo-input" >
+            </select>
+            <span class="tooltiptextbottom">The Tempo of the song</span>
         </div>
-        <div class="field-entry" id="config-leadin">
-            <div class="tooltip">
-                <div class="fieldTitle">Lead-in beats:</div>
-                <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
-                <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
-            </div>
+        <div class="field-entry tooltip" id="config-leadin">
+            <div class="fieldTitle">Lead-in beats:</div>
+            <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
+            <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
+        </div>
+        <div id="select-keysig" class="selectButton tooltip">
+            <!--<div class="fieldTitle">Key:</div>-->
+            <!--<div id="select-keysig" class="selectButton">-->
+                <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                <span id="select-keysig-text"></span>
+            <!--</div>-->
+            <span class="tooltiptextbottom">Change the key</span>
         </div>
     </div>
 
@@ -438,12 +450,6 @@
             <span class="tooltiptextbottom">Delete this control scheme</span>
         </div>
     </div>
-
-    <div id="midi-icon" class="tooltip" style="position: absolute; right: 0px; top: 0px;">
-        <img src="img/icon-midi.png" srcset="img2x/icon-midi.png 2x" alt="MIDI" class="icon"/>
-        <span id="midi-icon-tooltip" class="tooltiptextbottom"></span>
-    </div>
-
 </div>
 
 <div class="titleBar">
@@ -553,11 +559,12 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="#tocAdvancedStructure">Advanced Structure</a>
+                <li><a href="#tocAdvancedStructure">Song Configuration</a>
                     <ul>
                         <li><a href="#tocMeter">Meter</a></li>
                         <li><a href="#tocTempo">Tempo</a></li>
                         <li><a href="#tocLeadin">Lead-in beats</a></li>
+                        <li><a href="#tocKeySig">Key Signature</a></li>
                     </ul>
                 </li>
                 <li><a href="#tocSettings">Settings</a></li>
@@ -1000,7 +1007,7 @@
 
             <h3 id="tocShawzinTabUnits">Seconds per line/Measures per line</h3>
             <p>
-                If you have measures and a tempo specified (see <a href="#tocAdvancedStructure">Advanced Structure</a>)
+                If you have measures and a tempo specified (see <a href="#tocAdvancedStructure">Song Configuration</a>)
                 then this field will be <strong>Measures per line</strong>.  Otherwise it will be <strong>Seconds per
                 line</strong>.
             </p>
@@ -1040,12 +1047,12 @@
                 <strong>Note: </strong> Your Old Mode setting is stored in your browser's local storage as a preference.
             </p>
 
-            <h1 id="tocAdvancedStructure">Advanced Structure</h1>
+            <h1 id="tocAdvancedStructure">Song Configuration</h1>
             <p>
                 If you know a little about music and time signatures then you can configure some markers to delimit
                 measures and beats.  Use the
                 <img class="smallButton icon" src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x"/> button to bring
-                up the <strong>Advanced</strong> options
+                up the advanced <strong>Song Configuration</strong> menu.
             </p>
             <p>
                 <strong class="warn">Note:</strong> If a song was recorded <i>without</i> a metronome or any other way of
@@ -1116,6 +1123,39 @@
             <p>
                 <strong class="info">Note:</strong> When I finally add editing I'll have a less hacky way to handle this
                 in the UI.
+            </p>
+
+            <h2 id="tocKeySig">Key Signature</h2>
+            <p>
+                For lack of a better place to put it, the Song Configuration menu also contains the option for changing
+                the pitch of the Shawzin.  This is done with a <strong>Key Signature</strong> dropdown at the bottom of
+                the <strong>Song Configuration</strong> menu.
+            </p>
+            <p>
+                Clicking the dropdown will bring up a list of key signatures.  In the middle of this list,
+                highlighted in <strong class="fret2">green</strong>, is the key signature representing the Shawzin's
+                <strong class="fret2">natural pitch</strong>.  This is the pitch the Shawzin usually plays at.
+            </p>
+            <ul>
+                <li>
+                    Above the highlighted entry are key signatures that raise the pitch of the Shawzin.  Each one raises
+                    the pitch by one <strong>half-tone</strong> compared to the one above it.
+                </li>
+                <li>
+                    Below this are key signatures that lower the pitch of the Shawzin.  Each one lowers the pitch by
+                    one <strong>half-tone</strong> compared to the one above it.
+                </li>
+            </ul>
+            <p>
+                The actual key signatures shown are dependent on the chosen scale, but between the twelve of them they
+                cover all possible pitches.  They're split in two groups and centered around the natural pitch because
+                It's just changing the pitch the most basic way, by changing the playback rate of the sounds.  There's
+                a limit to how far you can take that before it starts sounding weird.
+            </p>
+            <p>
+                <strong class="warn">Note: </strong> This is fun to play with, but the key signature setting will not
+                persist in any Shawzinscore links or between browser sessions.  This won't really be useful until
+                editing is implemented.
             </p>
 
             <h1 id="tocSettings">Settings</h1>
@@ -2560,6 +2600,16 @@
                 </strong>, so I still can't recommend this control scheme if you're doing chords.
             </p>
 
+            <h3 id="control_custom">Custom controller bindings</h3>
+            <p>
+                On consoles, you can rebind the Shawzin controls under the main <strong>Options</strong> menu
+            </p>
+            <p>
+                Go to <strong>Options</strong> &rarr; <strong>Controller</strong> &rarr;
+                <strong>Customize Controller</strong> &rarr; <strong>Shawzin</strong>.  This will show you roughly
+                the same control binding screen that Shawzinscore shows for custom control schemes.
+            </p>
+
             <h1 id="tocQA">Q & A</h1>
             <ul class="qa">
                 <li><strong class="warn">Q:</strong> Editing</li>
@@ -2610,12 +2660,13 @@
             <h3 id="tocUpdates1.1">v1.1: 2023-08-08</h3>
             <ul>
                 <li>Added support for custom controller bindings</li>
+                <li>Added a control for changing the overall pitch of the Shawzin.  This has been in there for a while,
+                    there just wasn't a way to do it in the UI.</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
-                <li>Key changing</li>
                 <li><strong class="fret12">EDITING</strong></li>
                 <li>Chord pop-up display</li>
                 <li>Library</li>
@@ -2674,7 +2725,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.1.0: 2023-08-08
+            v1.1.1: 2023-08-10
         </div>
         <div>
             Contact:

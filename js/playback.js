@@ -231,7 +231,7 @@ var Playback = (function() {
         // enable or disable the stop button
         var div = document.getElementById("song-buttons-stop");
         var img = div.children[0];
-        div.className = enabled ? "button" : "button-disabled";
+        div.className = enabled ? "button tooltip" : "button-disabled tooltip";
         img.className = enabled ? "icon" : "icon-disabled";
         // save the state
         stopEnabled = enabled;

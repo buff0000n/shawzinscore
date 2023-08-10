@@ -328,6 +328,8 @@ var TrackBar = (function() {
         updateChordMode();
         // rebuild the piano display
         rebuildPiano();
+        // rebuild the key signature icon, if necessary
+        updateKeySig();
     }
 
     // util function to get the current scale metadata
@@ -338,6 +340,30 @@ var TrackBar = (function() {
         // sanity check, then derefernce from metadata
         // todo: there's a code path that gets in here before everything is initialized
         return (shawzin && scale) ? Metadata.shawzinList[shawzin].scales[scale] : null;
+    }
+
+    function updateKeySig() {
+        // get the current key signature
+        var note = Model.getKeySig();
+
+        // get the container div for the key signature marker icon
+        var containerDiv = document.getElementById("keysig-icon");
+        // if we're on the default key signagure, don't show the icon
+        if (note == MetadataMusic.noteOrder[0]) {
+            containerDiv.style.display = "none";
+            return;
+        }
+
+        // show the icon
+        containerDiv.style.display = "block";
+
+        // get the image base and display name
+        var display = MetadataMusic.getKeySigDisplay(note);
+
+        // set the icon image
+        PageUtils.setImgSrc(document.getElementById("keysig-icon-img"), display.imgBase);
+        // set the tooltip
+        document.getElementById("keysig-icon-tooltip").innerHTML = display.name;
     }
 
     // class grouping together possible multiple clickable boxes for a single piano key and handling sound and
@@ -629,21 +655,18 @@ var TrackBar = (function() {
             if (this.devices.length == 0) {
                 // if there are no connected midi devices but the icon is still there, remove it
                 if (this.icon) {
-                    // remove it and put it back under the hidden area
-                    this.icon.remove();
-                    document.getElementById("hidden-things").appendChild(this.icon);
+                    // hide the icon
+                    this.icon.style.display = "none";
                     // clear the reference
                     this.icon = null;
                 }
             } else {
                 // if there are connected midi devices but the icon is not there, add it
                 if (!this.icon) {
-                    // get the icon element from the hidden area
+                    // get the icon element
                     this.icon = document.getElementById("midi-icon");
-                    // remove from the hidden area
-                    this.icon.remove();
-                    // add to the top-level piano container
-                    document.getElementById("song-bar-roll").appendChild(this.icon);
+                    // display it
+                    this.icon.style.display = "block";
                 }
                 // update the alt text with the list of midi devices
                 document.getElementById("midi-icon-tooltip").innerHTML = this.devices.join(", ");

@@ -64,27 +64,55 @@ var Piano = (function() {
     }
 
     // note config order, including blank spots for gaps between consecutive white keys
-    var noteConfOrder = ["c", "cs", "d", "ds", "e", "EF", "f", "fs", "g", "gs", "a", "as", "b", "BC"];
+    var noteConfOrder = [
+        MetadataMusic.note.C,
+        MetadataMusic.note.Cs,
+        MetadataMusic.note.D,
+        MetadataMusic.note.Ds,
+        MetadataMusic.note.E,
+        "EF",
+        MetadataMusic.note.F,
+        MetadataMusic.note.Fs,
+        MetadataMusic.note.G,
+        MetadataMusic.note.Gs,
+        MetadataMusic.note.A,
+        MetadataMusic.note.As,
+        MetadataMusic.note.B,
+        "BC"
+    ];
     // just the notes with no gaps, for external use
-    var keySigOrder = ["c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"];
+    var keySigOrder = [
+        MetadataMusic.note.C,
+        MetadataMusic.note.Cs,
+        MetadataMusic.note.D,
+        MetadataMusic.note.Ds,
+        MetadataMusic.note.E,
+        MetadataMusic.note.F,
+        MetadataMusic.note.Fs,
+        MetadataMusic.note.G,
+        MetadataMusic.note.Gs,
+        MetadataMusic.note.A,
+        MetadataMusic.note.As,
+        MetadataMusic.note.B,
+    ];
 
     // note configs, offsets were basically determined by eyeball
-    var noteConfs = {
-        "c": new NoteConf("w", 0, 2),
-        "cs": new NoteConf("b", -1, 0),
-        "d": new NoteConf("w", 0, 5),
-        "ds": new NoteConf("b", 1, 2),
-        "e": new NoteConf("w", 0, 8),
-        "EF": new NoteConf("", 0, 0),
-        "f": new NoteConf("w", 0, 0),
-        "fs": new NoteConf("b", -2, 0),
-        "g": new NoteConf("w", 0, 3),
-        "gs": new NoteConf("b", 0, 0),
-        "a": new NoteConf("w", 0, 6),
-        "as": new NoteConf("b", 2, 2),
-        "b": new NoteConf("w", 0, 10),
-        "BC": new NoteConf("", 0, 0),
-    };
+    var noteConfs = {};
+
+    noteConfs[MetadataMusic.note.C] = new NoteConf("w", 0, 2);
+    noteConfs[MetadataMusic.note.Cs] = new NoteConf("b", -1, 0);
+    noteConfs[MetadataMusic.note.D] = new NoteConf("w", 0, 5);
+    noteConfs[MetadataMusic.note.Ds] = new NoteConf("b", 1, 2);
+    noteConfs[MetadataMusic.note.E] = new NoteConf("w", 0, 8);
+    noteConfs["EF"] = new NoteConf("", 0, 0);
+    noteConfs[MetadataMusic.note.F] = new NoteConf("w", 0, 0);
+    noteConfs[MetadataMusic.note.Fs] = new NoteConf("b", -2, 0);
+    noteConfs[MetadataMusic.note.G] = new NoteConf("w", 0, 3);
+    noteConfs[MetadataMusic.note.Gs] = new NoteConf("b", 0, 0);
+    noteConfs[MetadataMusic.note.A] = new NoteConf("w", 0, 6);
+    noteConfs[MetadataMusic.note.As] = new NoteConf("b", 2, 2);
+    noteConfs[MetadataMusic.note.B] = new NoteConf("w", 0, 10);
+    noteConfs["BC"] = new NoteConf("", 0, 0);
 
     // convenience struct
     class Box {

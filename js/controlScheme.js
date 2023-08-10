@@ -579,6 +579,8 @@ var ControlSchemeUI = (function() {
 
     // run the top-level control scheme select menu
     function doControlSchemeSelect() {
+        var currentSchemeId = Model.getControlScheme().id;
+
         // get the control scheme list
         var sm = MetadataUI.controlSchemes;
 
@@ -593,7 +595,8 @@ var ControlSchemeUI = (function() {
         function createSelection(scheme) {
             // create the selection item
             var tr = document.createElement("div");
-            tr.className = "selection-item";
+            // display it differently if it's the currently selected item
+            tr.className = scheme.id == currentSchemeId ? "selection-item-selected" : "selection-item";
 
             // build the selection contents from the metadata icon image, name, and description
             tr.innerHTML = `
