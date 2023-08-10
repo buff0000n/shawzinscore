@@ -348,8 +348,9 @@ var TrackBar = (function() {
 
         // get the container div for the key signature marker icon
         var containerDiv = document.getElementById("keysig-icon");
+        var offset = Piano.getPitchOffset(note);
         // if we're on the default key signagure, don't show the icon
-        if (note == MetadataMusic.noteOrder[0]) {
+        if (offset == 0) {
             containerDiv.style.display = "none";
             return;
         }
@@ -363,7 +364,10 @@ var TrackBar = (function() {
         // set the icon image
         PageUtils.setImgSrc(document.getElementById("keysig-icon-img"), display.imgBase);
         // set the tooltip
-        document.getElementById("keysig-icon-tooltip").innerHTML = display.name;
+        document.getElementById("keysig-icon-tooltip").innerHTML = `
+            ${display.name}<br/>
+            (${(offset > 0 ? "+" : "")}${offset} half-tones)
+        `;
     }
 
     // class grouping together possible multiple clickable boxes for a single piano key and handling sound and
