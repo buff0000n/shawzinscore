@@ -226,6 +226,10 @@
                         <img src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x" alt="fast forward" class="icon"/>
                         <span class="tooltiptextbottom">Fast Forward</span>
                     </div>
+                    <div id="song-buttons-metro" class="button-disabled tooltip">
+                        <img src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x" alt="Metronome" class="icon-disabled"/>
+                        <span class="tooltiptextbottom">It's a metronome</span>
+                    </div>
                 </td>
                 <td class="tooltip">
                     <span id="speedRangeContainer" class="sliderContainer"><input id="speedRange" type="range" min="0"/></span>
@@ -544,6 +548,7 @@
                     <ul>
                         <li><a href="#tocPlaybackStart">Playback Start</a></li>
                         <li><a href="#tocPlaybackSpeed">Playback Speed</a></li>
+                        <li><a href="#tocPlaybackMetronome">Metronome</a></li>
                     </ul>
                 </li>
                 <li><a href="#tocSharing">Sharing</a>
@@ -968,6 +973,24 @@
                 the nature of trying to play sounds accurately in a browser.
             </p>
 
+            <h2 id="tocPlaybackMetronome">Metronome</h2>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x"/>
+                <strong>Metronome</strong> button to turn the metronome on.
+                Click
+                <img class="smallButton icon" src="img/icon-metro-on.png" srcset="img2x/icon-metro-on.png 2x"/>
+                again to turn it off.
+            </p>
+            <p>
+                While the metronome is on, Shawzinscore will play an audible click on each beat and measure marker to
+                mark the time.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> The metronome is only enabled if you have a Meter and Tempo
+                configured (see <a href="#tocAdvancedStructure">Song Configuration</a>).
+            </p>
+
             <h1 id="tocSharing">Sharing</h1>
             <p>
                 The browser's <strong>Location Bar</strong> is kept up to date, so if you want you can just copy or
@@ -1149,8 +1172,8 @@
             <p>
                 The actual key signatures shown are dependent on the chosen scale, but between the twelve of them they
                 cover all possible pitches.  They're split in two groups and centered around the natural pitch because
-                It's just changing the pitch the most basic way, by changing the playback rate of the sounds.  There's
-                a limit to how far you can take that before it starts sounding weird.
+                it's just changing the pitch in the most basic way, by changing the playback rate of the sounds.
+                There's a limit to how far you can take that before it starts sounding weird.
             </p>
             <p>
                 <strong class="warn">Note: </strong> This is fun to play with, but the key signature setting will not
@@ -2662,6 +2685,7 @@
                 <li>Added support for custom controller bindings</li>
                 <li>Added a control for changing the overall pitch of the Shawzin.  This has been in there for a while,
                     there just wasn't a way to do it in the UI.</li>
+                <li>Added a metronome because why not</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
@@ -2725,7 +2749,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.1.1: 2023-08-10
+            v1.1.2: 2023-08-13
         </div>
         <div>
             Contact:

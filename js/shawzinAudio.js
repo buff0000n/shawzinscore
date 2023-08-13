@@ -8,6 +8,9 @@ var ShawzinAudio = (function() {
     // suffix for alternate note sound files
     var altFileSuffix = "-alt";
 
+    // metronome sound back cache
+    var metronomeSoundBank = null;
+
     // build mappings from sound name to mono groups
     var polyphonicGroups = {};
     var monophonicGroups = {};
@@ -160,6 +163,19 @@ var ShawzinAudio = (function() {
         };
     }());
 
+    function getMetronomeSoundBank() {
+        // lazily load
+        if (metronomeSoundBank == null) {
+            var metronomeSoundBank = Audio.createSoundBank();
+            // init its volume, the individual sounds are pretty loud
+            metronomeSoundBank.setVolume(0.15);
+            // metronome sounds
+            metronomeSoundBank.addSound("bar", [baseUrl + "misc/bar.mp3"], 1, 0.1);
+            metronomeSoundBank.addSound("beat", [baseUrl + "misc/beat.mp3"], 1, 0.1);
+        }
+        return metronomeSoundBank;
+    }
+
     function scaleTest(time, shawz, scale, next=null) {
         // get the sound bank for the given shawzin and scale
         var sb = ShawzinAudio.getSoundBank(shawz, scale);
@@ -213,6 +229,8 @@ var ShawzinAudio = (function() {
             // go to the cache
             return SoundBankCache.getSoundBank(shawzinName, scaleName);
         },
+        // get the metronome sound bank
+        getMetronomeSoundBank: getMetronomeSoundBank, // ()
         // initizize the time offset for scheduling sounds
         setTimeOffset: Audio.setTimeOffset, // (offset=0)
 

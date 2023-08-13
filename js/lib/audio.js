@@ -379,7 +379,10 @@ var Audio = (function() {
         checkInit(callback) {
             // short-circuit if we're initialized
             if (this.initialized) {
-                callback();
+                // callback is optional
+                if (callback) {
+                    callback();
+                }
                 return;
             }
 
@@ -417,8 +420,10 @@ var Audio = (function() {
                 // set the flag
                 this.initialized = true;
 
-                // return
-                callback();
+                // callback is optional
+                if (callback) {
+                    callback();
+                }
             });
         }
 

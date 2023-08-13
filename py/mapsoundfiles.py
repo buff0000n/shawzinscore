@@ -1,4 +1,4 @@
-# hell no I didn't sit down and record 1062 individual shawzin sounds
+# hell no I didn't sit down and record 1379 individual shawzin sounds
 # I downloaded the .wavs from kasumata and built this script to convert/reorganize them
 
 import os
@@ -88,9 +88,16 @@ shawzinSlapPrefix = "SlapOct"
 shawzinNotePrefix = "Oct"
 shawzinChordPrefix = "Chord"
 
+miscMapping = {
+    "ShawzinMetronomeBar": "misc/bar",
+    "ShawzinMetronomeBeat": "misc/beat"
+}
 
 def convertfilename(path):
     basename = os.path.basename(path)[:-4]
+    if basename in miscMapping:
+        return miscMapping[basename]
+
     for shawzinprefix in shawzinNameMap:
         if basename.startswith(shawzinprefix):
             shawzin = shawzinNameMap[shawzinprefix]

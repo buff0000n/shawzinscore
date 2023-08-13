@@ -353,6 +353,9 @@ var Model = (function() {
 
         // update the Track
         Track.updateStructure();
+
+        // update the Playback UI, basically it just needs to know whether to enable the metronome
+        Playback.updateStructure();
     }
 
     function setLeadInTicksOnSong(song) {
