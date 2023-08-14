@@ -37,6 +37,7 @@
 <script type="text/javascript" language="javascript" src="js/playback.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzintab.js"></script>
 <script type="text/javascript" language="javascript" src="js/controlScheme.js"></script>
+<script type="text/javascript" language="javascript" src="js/editing.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript">
 
@@ -67,6 +68,7 @@
             TrackBar.registerEventListeners();
             Playback.registerEventListeners();
             ControlSchemeUI.registerEventListeners();
+            Editing.registerEventListeners();
             Midi.init();
 
             // initialize the model from the page URL
@@ -184,6 +186,16 @@
 
     <div id="debug-bar">
     </div>
+
+    <div id="edit-bar" class="expandBar">
+        <div class="expandTitle">
+            <img id="edit-bar-img" src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+            Editing
+        </div>
+    </div>
+    <div id="edit-toolbar" style="display: none">
+        I AM aN EDITING TOOLBARR
+    </div>
 </div>
 
 <div id="song-container">
@@ -277,6 +289,7 @@
                         <img src="img/icon-dropup.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span class="tooltiptextbottom">Switch track direction</span>
                     </div>
+                    <!--
                     <div id="trackbar-switch-frets" class="smallButton tooltip" style="position: absolute; left: 0px; top: 0px;">
                         <img src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x" class="icon"/>
                         <span class="tooltiptextbottom">Show Frets</span>
@@ -285,6 +298,7 @@
                         <img src="img/icon-trackbar-switch-strings.png" srcset="img2x/icon-trackbar-switch-strings.png 2x" class="icon"/>
                         <span class="tooltiptextbottom">Show Strings</span>
                     </div>
+                    -->
                     <div id="roll-chord-buttons" style="position: absolute; right: 0px; top: 0px; display: block">
                         <div id="roll-chord-button-none" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-none-selected.png" srcset="img2x/icon-chord-none-selected.png 2x" class="icon"/>
@@ -329,7 +343,7 @@
     <div id="song-scroll">
         <table id="song-scroll-table" style="width: 688px;">
             <tr>
-                <td id="song-scroll-tab" style="background-image: url('img/tab-bg.png'); background-size: 450px 20px; width: 344px; position: relative;">
+                <td id="song-scroll-tab" style="background-image: url('img2x/track/tab-bg.png'); background-size: 450px 20px; width: 344px; position: relative;">
                 </td>
                 <td id="song-scroll-roll" style="background-image: url('img2x/track/keys-bg-c.png'); background-size: 450px 20px; width: 344px; position: relative; z-index: 0;">
                 </td>

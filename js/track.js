@@ -15,6 +15,8 @@ var Track = (function() {
     var tickSpacing = MetadataUI.tickSpacing;
     // whether the note direction is top to bottom (false) or bottom to top (true)
     var reversed = false;
+    // whether editing is enabled
+    var editing = false;
 
     // the key signature, used for changing the audio playback pitch and all the accompanying UI bits
     var keySig = null;
@@ -177,9 +179,27 @@ var Track = (function() {
         scrollToTick(tick);
     }
 
-    function setRollBackground(ticks=false) {
+    function setEditing(newEditing) {
+        // check for change
+        if (newEditing == editing) return;
+
+        // set a local flag
+        editing = newEditing;
+        // change the track backgrounds
+        setRollBackground();
+        setTabBackground();
+        // show or don't show the fret buttons in the track bar
+        TrackBar.setShowFrets(editing);
+    }
+
+    function setRollBackground(ticks=editing) {
         // change the piano roll side's background image
-        document.getElementById("song-scroll-roll").style.backgroundImage = "url('img2x/track/keys-bg-" + Model.getKeySig() + (ticks ? "-ticks" : "") + ".png')";
+        roll.style.backgroundImage = "url('img2x/track/keys-bg-" + Model.getKeySig() + (ticks ? "-ticks" : "") + ".png')";
+    }
+
+    function setTabBackground(ticks=editing) {
+        // change the tab side's background image
+        tab.style.backgroundImage = "url('img2x/track/tab-bg" + (ticks ? "-ticks" : "") + ".png')";
     }
 
     // just rebuild the piano roll view when the shawzin or scale has changed
@@ -187,7 +207,7 @@ var Track = (function() {
         // check if the key signature has changed
         if (Model.getKeySig() != keySig) {
             // change the piano roll side's background image
-            setRollBackground(false);
+            setRollBackground();
             // we have to rebuild the piano roll from scratch because of the meaure dividing lines that are embedded in
             // each bar.
             updateStructure();
@@ -206,6 +226,7 @@ var Track = (function() {
     }
 
     function rebuildTabNotes() {
+        setTabBackground();
         // sanity check
         if (song) {
             // clear each note's tab view and rebuild it
@@ -1159,6 +1180,8 @@ var Track = (function() {
         setReversed: setReversed, // (newReversed)
         // recalculate visible pixels and ticks when the window size has changed
         resize: resize, // (width, height)
+        // set whether editing mode is enabled
+        setEditing: setEditing, // (newEditing)
     }
 })();
 

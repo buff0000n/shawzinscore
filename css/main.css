@@ -135,6 +135,20 @@ td.label {
     color: #FFFFFF;
 }
 
+.expandBar {
+    cursor: pointer;
+}
+
+.expandTitle {
+    font-weight: bold;
+    color: #FFFFFF;
+    border-radius: 1ex;
+    background-color: #404040;
+    text-align: left;
+    margin: 0.5ex;
+    padding: 0.5ex;
+}
+
 #toolbar {
     display: inline-block;
     vertical-align: top;
