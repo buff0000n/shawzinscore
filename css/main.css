@@ -64,6 +64,7 @@ td.label {
     font-weight: bold;
     font-size: 100%;
     color: #FFFFFF;
+    white-space: nowrap;
 }
 .menu-content-container {
     padding: 1ex;
@@ -80,12 +81,19 @@ td.label {
     cursor: pointer;
     background-color: #202020;
     border-radius: 1ex;
+    white-space: nowrap;
 }
-.selection-item:hover {
+.selection-item-selected {
+    cursor: pointer;
+    background-color: #404040;
+    border-radius: 1ex;
+    white-space: nowrap;
+}
+.selection-item:hover, .selection-item-selected:hover {
     background-color: #808080;
     color: #FFFFFF;
 }
-.selection-item:hover > * {
+.selection-item:hover > *, .selection-item-selected:hover > * {
     color: #FFFFFF;
 }
 .field-entry, .field-entry-span {
@@ -99,10 +107,24 @@ td.label {
     display: inline-block;
 }
 
+.inline-field {
+    display: inline-block;
+}
+
 .field-div {
     border-radius: 1ex;
     background-color: #202020;
     text-align: left;
+}
+
+.key-sig-box {
+    border-radius: 0.5ex;
+    background-color: #FFFFFF;
+    margin: 0.5ex;
+    display: inline-block;
+    border: solid;
+    border-width: 1px;
+    border-color: #000000;
 }
 
 #title-bar {

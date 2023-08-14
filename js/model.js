@@ -37,7 +37,7 @@ var Model = (function() {
     function init(url) {
         // gotta do this before filling in the track
         // control scheme comes from preferences and isn't tied to the song data
-        doSetControlScheme(Settings.getControlScheme());
+        doSetControlScheme(ControlSchemeUI.preferenceToControlScheme(Settings.getControlScheme()));
 
         // load settings from the URL query parameters
         var shawzin = PageUtils.getQueryParam("s", false);
@@ -215,7 +215,7 @@ var Model = (function() {
         `;
 
         // propagate to preferences
-        Settings.setControlScheme(controlScheme);
+        Settings.setControlScheme(ControlSchemeUI.controlSchemeToPreference(controlScheme));
         // propagate to the trackbar
         TrackBar.updateControlScheme();
         // propagate to the track
@@ -226,7 +226,7 @@ var Model = (function() {
         // replace blank string with null
         if (name && name.length == 0) name = null;
         // set it
-        songName = name;
+        songName = MiscUtils.sanitizeString(name);
         // update the UI
         var text = document.getElementById("metadata-settings-title-text");
         text.value = name;
@@ -353,6 +353,9 @@ var Model = (function() {
 
         // update the Track
         Track.updateStructure();
+
+        // update the Playback UI, basically it just needs to know whether to enable the metronome
+        Playback.updateStructure();
     }
 
     function setLeadInTicksOnSong(song) {

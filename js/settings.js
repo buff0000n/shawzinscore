@@ -7,11 +7,12 @@ var Settings = (function() {
     // default setting values
     var trackReversed = true;
     var showFrets = false;
-    var controlScheme = MetadataUI.controlSchemes["pc"];
+    var controlScheme = null;
     var darkMode = false;
     var oldMode = false;
     var playbackSpeed = 1.0;
     var oldFretLayout = false;
+    var metronomeOn = false;
 
     function load() {
         // load the local storage item
@@ -42,6 +43,9 @@ var Settings = (function() {
             if (props.oldFretLayout != null) {
                 oldFretLayout = props.oldFretLayout;
             }
+            if (props.metronomeOn != null) {
+                metronomeOn = props.metronomeOn;
+            }
         }
     }
 
@@ -60,6 +64,7 @@ var Settings = (function() {
             "oldMode": oldMode,
             "playbackSpeed": playbackSpeed,
             "oldFretLayout": oldFretLayout,
+            "metronomeOn": metronomeOn,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -91,5 +96,8 @@ var Settings = (function() {
         // getter/setter for old fret layout
         getOldFretLayout: function() { return oldFretLayout; },
         setOldFretLayout: function(v) { if (v != oldFretLayout) { oldFretLayout = v; save(); } },
+        // getter/setter for old fret layout
+        getMetronomeOn: function() { return metronomeOn; },
+        setMetronomeOn: function(v) { if (v != metronomeOn) { metronomeOn = v; save(); } },
     }
 })()

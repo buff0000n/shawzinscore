@@ -58,15 +58,18 @@ var TrackBar = (function() {
         });
 
         // event handler for the fret/string switch button
-        var switchDiv = document.getElementById("trackbar-switch");
-        switchDiv.addEventListener("click", () => {
+        var switchHandler = () => {
             // invert the preference value
             var newShowFrets = !Settings.isShowFrets();
             // apply the new setting
             setShowFrets(newShowFrets);
             // save the new preference
             Settings.setShowFrets(newShowFrets);
-        });
+        };
+        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
+        switchFretsDiv.addEventListener("click", switchHandler);
+        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
+        switchStringsDiv.addEventListener("click", switchHandler);
 
         // later
 //        var chordDiv = document.getElementById("roll-chord-button");
@@ -119,26 +122,31 @@ var TrackBar = (function() {
         constructor() {
             super();
             // track the last key that was touched
-            this.lastTarget = null;
+            this.lastGroup = null;
         }
 
         checkPlay(e, target) {
             //console.log(`checkplay: ${e.target.tagName}`);
+            //PageUtils.showDebug("checkPlay: " + target);
 
             // check if the target isn't an enabled key element
-            if (!target || !target.action) {
+            if (!target || !target.group) {
                 //console.log("clearing");
+                //PageUtils.showDebug("clearing: " + target);
                 // clear the last element.  This way, when we drag off the keyboard and then back on to the same
                 // key then it will play again
-                this.lastTarget = null;
+                this.lastGroup = null;
 
             // check if the drag target has changed
-            } else if (target != this.lastTarget) {
+            } else if (target.group != this.lastGroup) {
                 ///console.log("playing");
+                //PageUtils.showDebug("playing: " + target.className);
                 // play the new note
-                target.action(target);
+                target.group.action(target.group);
                 // save the target for later
-                this.lastTarget = target;
+                this.lastGroup = target.group;
+            //} else {
+            //    PageUtils.showDebug("same: " + target.className);
             }
             // otherwise, we're dragging on the same note we did before, so do nothing
         }
@@ -155,44 +163,12 @@ var TrackBar = (function() {
         // when dropped, clear the target
         onDrop(e, target) {
             //console.log("storped");
-            this.lastTarget = null;
+            this.lastGroup = null;
         }
     }
 
     // just a single instance of this
     var scaleRollDragDropListener = new ScaleRollDragDropListener();
-
-    function playRollNote(box) {
-        // get the note name from the UI element
-        var noteName = box.noteName;
-        // play the note immediately
-        Playback.playNote(noteName);
-
-        // pull the existing note box's style
-        var noteBoxStyle = box.boxStyle;
-        // create a new note box
-        var playBox = document.createElement("div");
-        // get the color for the play div
-        // todo: better way to get the fret and color
-        var color = MetadataUI.fretToRollColors[noteName.split("-")[0]];
-        // set the css for the animation
-        playBox.className = "roll-note playRollNote";
-        // copy position from the original box, slightly modified for the animation
-        // horizontal position is centered on the note center
-        playBox.style.left = (noteBoxStyle.left + (noteBoxStyle.width/2))+ "px";
-        // the rest is the same
-        playBox.style.top = noteBoxStyle.top + "px";
-        playBox.style.width = noteBoxStyle.width + "px";
-        playBox.style.height = noteBoxStyle.height + "px";
-        playBox.style.backgroundColor = color;
-        // add the animation element
-        rollKeyButtonDiv.appendChild(playBox);
-
-        // schedule cleanup for when the animation is done
-        setTimeout(() => {
-            playBox.remove();
-        }, 500);
-    }
 
     // build a map from note fingerings to display notes for the given scale and chord mode
     function buildNoteMap(scaleMd, chordMode) {
@@ -352,6 +328,8 @@ var TrackBar = (function() {
         updateChordMode();
         // rebuild the piano display
         rebuildPiano();
+        // rebuild the key signature icon, if necessary
+        updateKeySig();
     }
 
     // util function to get the current scale metadata
@@ -362,6 +340,105 @@ var TrackBar = (function() {
         // sanity check, then derefernce from metadata
         // todo: there's a code path that gets in here before everything is initialized
         return (shawzin && scale) ? Metadata.shawzinList[shawzin].scales[scale] : null;
+    }
+
+    function updateKeySig() {
+        // get the current key signature
+        var note = Model.getKeySig();
+
+        // get the container div for the key signature marker icon
+        var containerDiv = document.getElementById("keysig-icon");
+        var offset = Piano.getPitchOffset(note);
+        // if we're on the default key signagure, don't show the icon
+        if (offset == 0) {
+            containerDiv.style.display = "none";
+            return;
+        }
+
+        // show the icon
+        containerDiv.style.display = "block";
+
+        // get the image base and display name
+        var display = MetadataMusic.getKeySigDisplay(note);
+
+        // set the icon image
+        PageUtils.setImgSrc(document.getElementById("keysig-icon-img"), display.imgBase);
+        // set the tooltip
+        document.getElementById("keysig-icon-tooltip").innerHTML = `
+            ${display.name}<br/>
+            (${(offset > 0 ? "+" : "")}${offset} half-tones)
+        `;
+    }
+
+    // class grouping together possible multiple clickable boxes for a single piano key and handling sound and
+    // animation for that key
+    class KeyGroup {
+        constructor(noteName, boxStyleList) {
+            this.noteName = noteName;
+            this.boxStyleList = boxStyleList;
+            // meh, just keep a list of the click boxes we create
+            this.boxes = [];
+        }
+
+        // build the click boxes and add them to the UI
+        buildBoxes() {
+            for (var i = 0; i < this.boxStyleList.length; i++) {
+                var boxStyle = this.boxStyleList[i];
+                // create an invisible box div
+                var box = document.createElement("div");
+                // CSS
+                box.className = "roll-keyboard-note";
+                // set the position from the UI metadata
+                box.style.left = boxStyle.left + "px";
+                box.style.top = boxStyle.top + "px";
+                box.style.width = boxStyle.width + "px";
+                box.style.height = boxStyle.height + "px";
+                // save a back reference the drag/drop listener can call it
+                box.group = this;
+                // setup the note div for drag/drop handling
+                DragEvents.addDragDropListener(box, scaleRollDragDropListener);
+                // add to the container
+                rollKeyButtonDiv.appendChild(box);
+                this.boxes.push(box);
+            }
+        }
+
+        // play the sound and do the animation
+        // did the event listener for this weird, so 'this' doesn't actually point to this object
+        action(group) {
+            // play the note immediately
+            Playback.playNote(group.noteName);
+
+            // put this in a function for closure
+            function doPlay(boxStyle) {
+                // create a new note box
+                var playBox = document.createElement("div");
+                // get the color for the play div
+                // todo: better way to get the fret and color
+                var color = MetadataUI.fretToRollColors[group.noteName.split("-")[0]];
+                // set the css for the animation
+                playBox.className = "roll-note playRollNote";
+                // copy position from the original box, slightly modified for the animation
+                // horizontal position is centered on the note center
+                playBox.style.left = (boxStyle.left + (boxStyle.width/2))+ "px";
+                // the rest is the same
+                playBox.style.top = boxStyle.top + "px";
+                playBox.style.width = boxStyle.width + "px";
+                playBox.style.height = boxStyle.height + "px";
+                playBox.style.backgroundColor = color;
+                // add the animation element
+                rollKeyButtonDiv.appendChild(playBox);
+
+                // schedule cleanup for when the animation is done
+                setTimeout(() => {
+                    playBox.remove();
+                }, 500);
+            }
+
+            for (var i = 0; i < group.boxStyleList.length; i++) {
+                doPlay(group.boxStyleList[i]);
+            }
+        }
     }
 
     // rebuild the piano container for the given scale
@@ -403,29 +480,16 @@ var TrackBar = (function() {
             var note = noteMap[noteName];
             // get the position for the note box from the canvas,
             // indexed by the note's overall index in the full note order list
-            var boxStyle = newImage.boxStyles[Metadata.noteOrder.indexOf(note)];
-            // create an invisible box div
-            var box = document.createElement("div");
-            // CSS
-            box.className = "roll-keyboard-note";
-            // set the position from the UI metadata
-            box.style.left = boxStyle.left + "px";
-            box.style.top = boxStyle.top + "px";
-            box.style.width = boxStyle.width + "px";
-            box.style.height = boxStyle.height + "px";
-            // save the note name and metadata for the play function
-            box.noteName = noteName;
-            box.boxStyle = boxStyle;
-            // save a play() function so the drag/drop listener can call it
-            box.action = playRollNote;
-            // setup the note div for drag/drop handling
-            DragEvents.addDragDropListener(box, scaleRollDragDropListener);
-            // add to the container
-            rollKeyButtonDiv.appendChild(box);
+            var boxStyleList = newImage.boxStyles[Metadata.noteOrder.indexOf(note)];
+            // create a key group
+            var keyGroup = new KeyGroup(noteName, boxStyleList);
+            // build the click boxes and add them to the container
+            keyGroup.buildBoxes();
+
             // get the midi note number plus any offset
             var midiNote = MetadataUI.midiNoteC + Metadata.noteOrder.indexOf(note) + midiNoteOffset;
             // save to a map
-            midiMap[midiNote] = box;
+            midiMap[midiNote] = keyGroup;
         }
         // add the button container to the piano roll header container
         document.getElementById("song-bar-roll").appendChild(rollKeyButtonDiv);
@@ -444,7 +508,8 @@ var TrackBar = (function() {
 
         // get some buttons inside the trackbar that we will have to move
         var dirDiv = document.getElementById("track-direction");
-        var switchDiv = document.getElementById("trackbar-switch");
+        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
+        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
         var chordDiv = document.getElementById("roll-chord-button");
         var chordInfoDiv = document.getElementById("roll-chord-info");
 
@@ -460,9 +525,11 @@ var TrackBar = (function() {
             // move the direction button to the top of the header bar
             dirDiv.style.top = "0px";
             dirDiv.style.bottom = "";
-            // move the fret/string switch button to the bottom of the header bar
-            switchDiv.style.top = "";
-            switchDiv.style.bottom = "0px";
+            // move the fret/string switch buttons to the bottom of the header bar
+            switchFretsDiv.style.top = "";
+            switchFretsDiv.style.bottom = "0px";
+            switchStringsDiv.style.top = "";
+            switchStringsDiv.style.bottom = "0px";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-up.png");
             chordInfoDiv.style.top = "0px";
@@ -481,9 +548,11 @@ var TrackBar = (function() {
             // move the direction button to the bottom of the header bar
             dirDiv.style.top = "";
             dirDiv.style.bottom = "0px";
-            // move the fret/string switch button to the top of the header bar
-            switchDiv.style.top = "0px";
-            switchDiv.style.bottom = "";
+            // move the fret/string switch buttons to the top of the header bar
+            switchFretsDiv.style.top = "0px";
+            switchFretsDiv.style.bottom = "";
+            switchStringsDiv.style.top = "0px";
+            switchStringsDiv.style.bottom = "";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-down.png");
             chordInfoDiv.style.top = "";
@@ -519,10 +588,11 @@ var TrackBar = (function() {
         // sanity check
         if (showFrets == newShowFrets) return;
 
-        // find the switch button
-        var switchDiv = document.getElementById("trackbar-switch");
-        // change the image on the switch button accordingly
-        PageUtils.setImgSrc(switchDiv.children[0], newShowFrets ? "icon-trackbar-switch-strings.png" : "icon-trackbar-switch-frets.png");
+        // show/hide the switch buttons
+        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
+        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
+        switchFretsDiv.style.display = newShowFrets ? "none" : "inline-block";
+        switchStringsDiv.style.display = newShowFrets ? "inline-block" : "none";
 
         // show or hide the string elements
         for (var i = 1; i <= 3; i++) {
@@ -574,6 +644,10 @@ var TrackBar = (function() {
             super();
             // map from midi notes to things with a play function
             this.midiNoteMap = null;
+            // list of connected midi devices
+            this.devices = [];
+            // UI icon
+            this.icon = null;
         }
 
         setMidiNoteMap(map) {
@@ -581,14 +655,38 @@ var TrackBar = (function() {
             this.midiNoteMap = map;
         }
 
+        updateIcon() {
+            if (this.devices.length == 0) {
+                // if there are no connected midi devices but the icon is still there, remove it
+                if (this.icon) {
+                    // hide the icon
+                    this.icon.style.display = "none";
+                    // clear the reference
+                    this.icon = null;
+                }
+            } else {
+                // if there are connected midi devices but the icon is not there, add it
+                if (!this.icon) {
+                    // get the icon element
+                    this.icon = document.getElementById("midi-icon");
+                    // display it
+                    this.icon.style.display = "block";
+                }
+                // update the alt text with the list of midi devices
+                document.getElementById("midi-icon-tooltip").innerHTML = this.devices.join(", ");
+            }
+        }
+
         deviceOn(device) {
-            // todo: some kind of UI indication that MIDI is a go?
             console.log(device + ": on");
+            DomUtils.addToListIfNotPresent(this.devices, device);
+            this.updateIcon();
         }
 
         deviceOff(device) {
-            // todo: some kind of UI indication that MIDI is a no go?
             console.log(device + ": off");
+            DomUtils.removeFromList(this.devices, device);
+            this.updateIcon();
         }
 
         noteOn(device, note) {

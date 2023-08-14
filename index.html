@@ -2,6 +2,8 @@
 <html>
 <!-- Full disclosure: JavaScript is not my forte and neither is CSS. -B -->
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<!-- disable the weird Google cookie thing that's blocked on github pages -->
+<meta http-equiv="Permissions-Policy" content="interest-cohort=()">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <head>
     <title>Warframe Shawzinscore</title>
@@ -22,6 +24,7 @@
 <script type="text/javascript" language="javascript" src="js/lib/menus.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/slider.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/midi.js"></script>
+<script type="text/javascript" language="javascript" src="js/metadata_music.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata_ui.js"></script>
 <script type="text/javascript" language="javascript" src="js/settings.js"></script>
@@ -33,6 +36,7 @@
 <script type="text/javascript" language="javascript" src="js/trackbar.js"></script>
 <script type="text/javascript" language="javascript" src="js/playback.js"></script>
 <script type="text/javascript" language="javascript" src="js/shawzintab.js"></script>
+<script type="text/javascript" language="javascript" src="js/controlScheme.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript">
 
@@ -62,6 +66,7 @@
             Track.registerEventListeners();
             TrackBar.registerEventListeners();
             Playback.registerEventListeners();
+            ControlSchemeUI.registerEventListeners();
             Midi.init();
 
             // initialize the model from the page URL
@@ -109,54 +114,48 @@
                     <div id="metadata-settings-code" class="toolbarSection">
                         <div class="fieldTitle">Song Code</div>
                         <input id="metadata-settings-code-text" type="text" value="" size="12"/>
-                        <div class="tooltip">
-                            <span id="pasteCodeButton" class="smallButton icon">
-                                <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" class="icon"/>
-                            </span>
+                        <span id="pasteCodeButton" class="smallButton icon tooltip">
+                            <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" class="icon"/>
                             <span class="tooltiptextbottom">Paste a song code from the clipboard</span>
-                        </div>
-                        <div class="tooltip">
-                            <span id="copyCodeButton" class="smallButton-disabled icon">
-                                <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon-disabled"/>
-                            </span>
+                        </span>
+                        <span id="copyCodeButton" class="smallButton-disabled icon tooltip">
+                            <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon-disabled"/>
                             <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
-                        </div>
+                        </span>
                     </div>
-                    <div id="metadata-settings-title" class="toolbarSection">
+                    <div id="metadata-settings-title" class="toolbarSection tooltip">
                         <div id="metadata-settings-title-title" class="fieldTitle">Title</div>
                         <input id="metadata-settings-title-text" type="text" value="" size="22"/>
+                        <span class="tooltiptextbottom">Enter a short title for the song</span>
                     </div>
-                    <div id="select-shawzin" class="selectButton">
+                    <div id="select-shawzin" class="selectButton tooltip">
                         <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span id="select-shawzin-text"></span>
+                        <span class="tooltiptextbottom">Select a Shawzin</span>
                     </div>
-                    <div id="select-scale" class="selectButton">
+                    <div id="select-scale" class="selectButton tooltip">
                         <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span id="select-scale-text"></span>
+                        <span class="tooltiptextbottom">Select a Scale</span>
                     </div>
-                    <div id="select-control-scheme" class="selectButton">
+                    <div id="select-control-scheme" class="selectButton tooltip">
                         <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span id="select-control-scheme-text"></span>
+                        <span class="tooltiptextbottom">Select or create a Control Scheme</span>
                     </div>
                     <div id="toolbar-buttons">
-                        <div class="tooltip">
-                            <span id="toolbar-buttons-settings" class="smallButton urlButton popup">
+                        <span id="toolbar-buttons-settings" class="smallButton urlButton popup tooltip">
                             <img src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x" alt="Settings" class="icon"/>
-                            </span>
                             <span class="tooltiptextbottom">Edit Settings</span>
-                        </div>
-                        <div class="tooltip">
-                            <span id="toolbar-buttons-copyurl" class="smallButton urlButton popup">
-                                <img src="img/icon-link.png" srcset="img2x/icon-link.png 2x" alt="URL" class="icon"/>
-                            </span>
+                        </span>
+                        <span id="toolbar-buttons-copyurl" class="smallButton urlButton popup tooltip">
+                            <img src="img/icon-link.png" srcset="img2x/icon-link.png 2x" alt="URL" class="icon"/>
                             <span class="tooltiptextbottom">Generate a URL for this song</span>
-                        </div>
-                        <div class="tooltip">
-                            <span id="toolbar-buttons-shawzintab" class="smallButton urlButton popup">
-                                <img src="img/icon-png.png" srcset="img2x/icon-png.png 2x" alt="Shawzintab" class="icon"/>
-                            </span>
+                        </span>
+                        <span id="toolbar-buttons-shawzintab" class="smallButton urlButton popup tooltip">
+                            <img src="img/icon-png.png" srcset="img2x/icon-png.png 2x" alt="Shawzintab" class="icon"/>
                             <span class="tooltiptextbottom">Generate a tablature image for this song</span>
-                        </div>
+                        </span>
                         <!--
                         <div class="tooltip">
                             <span id="createWavButton" class="smallButton urlButton popup" onclick="generateWav(this)">
@@ -165,15 +164,11 @@
                             <span class="tooltiptextbottom">Generate a sound file for this song</span>
                         </div>
                         -->
-                        <div class="tooltip">
-                            <div id="button-undo" class="smallButton-disabled">
-                                <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
-                            </div>
+                        <div id="button-undo" class="smallButton-disabled tooltip">
+                            <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
                         </div>
-                        <div class="tooltip">
-                            <div id="button-redo" class="smallButton-disabled">
-                                <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
-                            </div>
+                        <div id="button-redo" class="smallButton-disabled tooltip">
+                            <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
                         </div>
                     </div>
                 </div>
@@ -196,8 +191,9 @@
         <table id="song-toolbar-table" style="width: 688px;">
             <tr>
                 <td id="song-buttons" style="width: 344px; text-align: center;">
-                    <div id="song-buttons-config" class="button">
+                    <div id="song-buttons-config" class="button tooltip">
                         <img src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Song configuration</span>
                     </div>
 
                     <!--
@@ -214,22 +210,31 @@
                         <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="cut" class="icon"/>
                     </div>
                     -->
-                    <div id="song-buttons-play" class="button">
+                    <div id="song-buttons-play" class="button tooltip">
                         <img src="img/icon-play.png" srcset="img2x/icon-play.png 2x" alt="play" class="icon"/>
+                        <span class="tooltiptextbottom">Play</span>
                     </div>
-                    <div id="song-buttons-stop" class="button-disabled">
+                    <div id="song-buttons-stop" class="button-disabled tooltip">
                         <img src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x" alt="stop" class="icon-disabled"/>
+                        <span class="tooltiptextbottom">Stop</span>
                     </div>
-                    <div id="song-buttons-rewind" class="button">
+                    <div id="song-buttons-rewind" class="button tooltip">
                         <img src="img/icon-rw.png" srcset="img2x/icon-rw.png 2x" alt="rewind" class="icon"/>
+                        <span class="tooltiptextbottom">Rewind</span>
                     </div>
-                    <div id="song-buttons-ff" class="button">
+                    <div id="song-buttons-ff" class="button tooltip">
                         <img src="img/icon-ff.png" srcset="img2x/icon-ff.png 2x" alt="fast forward" class="icon"/>
+                        <span class="tooltiptextbottom">Fast Forward</span>
+                    </div>
+                    <div id="song-buttons-metro" class="button-disabled tooltip">
+                        <img src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x" alt="Metronome" class="icon-disabled"/>
+                        <span class="tooltiptextbottom">It's a metronome</span>
                     </div>
                 </td>
-                <td>
+                <td class="tooltip">
                     <span id="speedRangeContainer" class="sliderContainer"><input id="speedRange" type="range" min="0"/></span>
                     <span id="speedLabel"><input id="speedLabelInput" size="4" value="1.00"/>x</span>
+                    <span class="tooltiptextbottom">Playback speed</span>
                 </td>
             </tr>
         </table>
@@ -268,27 +273,38 @@
                         <img id="tab-note-fret-3" src="img/fret_0_wf.png" srcset="img2x/fret_0_wf.png 2x" class="tab-fret-button"/>
                     </div>
 
-                    <div id="track-direction" class="smallButton" style="position: absolute; left: 0px; bottom: 0px;">
+                    <div id="track-direction" class="smallButton tooltip" style="position: absolute; left: 0px; bottom: 0px;">
                         <img src="img/icon-dropup.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Switch track direction</span>
                     </div>
-                    <div id="trackbar-switch" class="smallButton" style="position: absolute; left: 0px; top: 0px;">
+                    <div id="trackbar-switch-frets" class="smallButton tooltip" style="position: absolute; left: 0px; top: 0px;">
                         <img src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Show Frets</span>
+                    </div>
+                    <div id="trackbar-switch-strings" class="smallButton tooltip" style="position: absolute; left: 0px; top: 0px; display: none;">
+                        <img src="img/icon-trackbar-switch-strings.png" srcset="img2x/icon-trackbar-switch-strings.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Show Strings</span>
                     </div>
                     <div id="roll-chord-buttons" style="position: absolute; right: 0px; top: 0px; display: block">
-                        <div id="roll-chord-button-none" class="smallButton chordButton" style="">
+                        <div id="roll-chord-button-none" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-none-selected.png" srcset="img2x/icon-chord-none-selected.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Normal note mode</span>
                         </div>
-                        <div id="roll-chord-button-a" class="smallButton chordButton" style="">
+                        <div id="roll-chord-button-a" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-a.png" srcset="img2x/icon-chord-a.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Chord set 1 mode</span>
                         </div>
-                        <div id="roll-chord-button-b" class="smallButton chordButton" style="">
+                        <div id="roll-chord-button-b" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-b.png" srcset="img2x/icon-chord-b.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Chord set 2 mode</span>
                         </div>
-                        <div id="roll-chord-button-ab" class="smallButton chordButton" style="display: none;">
+                        <div id="roll-chord-button-ab" class="smallButton chordButton tooltip" style="display: none;">
                             <img src="img/icon-chord-ab.png" srcset="img2x/icon-chord-ab.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Chord mode</span>
                         </div>
-                        <div id="roll-chord-button-slap" class="smallButton chordButton" style="display: none;">
+                        <div id="roll-chord-button-slap" class="smallButton chordButton tooltip" style="display: none;">
                             <img src="img/icon-chord-slap.png" srcset="img2x/icon-chord-slap.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Slap mode</span>
                         </div>
                     </div>
                 </td>
@@ -296,6 +312,15 @@
                     <img id="roll-keyboard" src="img/track/keys-plain.png" srcset="img2x/track/keys-plain.png 2x" draggable="false"/>
                     <div id="roll-chord-info" class="smallButton" style="position: absolute; right: 0px; bottom: 0px; display: none">
                         <img src="img/icon-chord-down.png" srcset="img2x/icon-chord-down.png 2x" class="icon"/>
+                    </div>
+                    <div id="midi-icon" class="tooltip" style="display: none; position: absolute; right: 0px; top: 0px;">
+                        <img src="img/icon-midi.png" srcset="img2x/icon-midi.png 2x" alt="MIDI" class="icon"/>
+                        <span id="midi-icon-tooltip" class="tooltiptextbottom"></span>
+                    </div>
+
+                    <div id="keysig-icon" class="key-sig-box tooltip" style="display: none; position: absolute; right: 0px; bottom: 0px;">
+                        <img id="keysig-icon-img" src="img/keysig/treble-c.png" srcset="img2x/keysig/treble-c.png 2x" class="icon"/>
+                        <span id="keysig-icon-tooltip" class="tooltiptextbottom">TOOLTP</span>
                     </div>
                 </td>
             </tr>
@@ -313,30 +338,33 @@
     </div>
 </div>
 
+<!-- holding pen for pop-up menus and dialogs that I didn't feel like building from scratch in javascript -->
 <div id="hidden-things" style="display: none;">
 
     <div id="config-structure" class="field-div">
-        <div class="field-entry" id="config-meter">
-            <div class="tooltip">
-                <div class="fieldTitle">Time Signature:</div>
-                <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
-                <span class="tooltiptextbottom">The meter of the song</span>
-            </div>
+        <div class="field-entry tooltip" id="config-meter">
+            <div class="fieldTitle">Time Signature:</div>
+            <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
+            <span class="tooltiptextbottom">The meter of the song</span>
         </div>
-        <div class="field-entry" id="config-tempo">
-            <div class="tooltip">
-                <div class="fieldTitle">Tempo:</div>
-                <select id="config-tempo-input" >
-                </select>
-                <span class="tooltiptextbottom">The Tempo of the song</span>
-            </div>
+        <div class="field-entry tooltip" id="config-tempo">
+            <div class="fieldTitle">Tempo:</div>
+            <select id="config-tempo-input" >
+            </select>
+            <span class="tooltiptextbottom">The Tempo of the song</span>
         </div>
-        <div class="field-entry" id="config-leadin">
-            <div class="tooltip">
-                <div class="fieldTitle">Lead-in beats:</div>
-                <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
-                <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
-            </div>
+        <div class="field-entry tooltip" id="config-leadin">
+            <div class="fieldTitle">Lead-in beats:</div>
+            <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
+            <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
+        </div>
+        <div id="select-keysig" class="selectButton tooltip">
+            <!--<div class="fieldTitle">Key:</div>-->
+            <!--<div id="select-keysig" class="selectButton">-->
+                <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                <span id="select-keysig-text"></span>
+            <!--</div>-->
+            <span class="tooltiptextbottom">Change the key</span>
         </div>
     </div>
 
@@ -392,6 +420,40 @@
         </div>
     </div>
 
+    <div id="custom-control-scheme" class="selection-div" style="text-align: center; width: 672px;">
+        <div class="tooltip inline-field">
+            <span id="ccs-platform-button" class="lightButton"></span>
+            <span class="tooltiptextbottom">Select the platform</span>
+        </div>
+        <div class="tooltip inline-field">
+            <div class="field-entry" id="ccs-name">
+                <span class="fieldTitle">Name:</span>
+                <input id="ccs-name-input" type="text" value="" size="25"/>
+            </div>
+            <span class="tooltiptextbottom">Enter a name for the custom control scheme</span>
+        </div>
+        <div id="ccs-diagram" style="position: relative; width: 672px; height: 312px;"></div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-save-button" class="lightButton">Save</span>
+            <span class="tooltiptextbottom">Save control scheme</span>
+        </div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-ok-button" class="lightButton">OK</span>
+            <span class="tooltiptextbottom">Save changes</span>
+        </div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-cancel-button" class="lightButton">Cancel</span>
+            <span class="tooltiptextbottom">Cancel changes</span>
+        </div>
+
+        <div class="tooltip inline-field">
+            <span id="ccs-delete-button" class="lightButton">Delete</span>
+            <span class="tooltiptextbottom">Delete this control scheme</span>
+        </div>
+    </div>
 </div>
 
 <div class="titleBar">
@@ -431,7 +493,7 @@
                     Lost Woods theme</a></li>
                 <li><a href="?n=Song%20of%20Storms&s=courtly&m=4%2F4&t=120&c=5CAAaAGCAMEASKAVcAYJAkxAqxAwEA2KA5cA8CBIaBOaBUEBaKBdcBgJBsxByxB4EB%2BKCBcCECCQJCTUCWCCiJClUCohC0iC9hDAiDDhDGSDJMDMMDYCDeJDkKDnMDqMD8CECJEIKELEEOCEgJEjUEmCEyJE1UE4hFEiFNhFQiFThFWSFZMFcMFoCFuJF0KF3MF6MGGCGMaGSaGYEGeKGhcGkJGwxG2xG8EHCcHICHUaHaaHgEHmcHsJH4xH%2BxIEEIKcIQCIcaIiaIoEIucI0JJAxJGxJMEJScJYMJkaJqaJwJJ2xJ8MKIaKOaKUMKa6KgCKsaKyaK4EK%2BcLEJLQxLWxLcELicLnML0aL6aMAMMG6MMCMY">
                     Song of Storms</a></li>
-                <li><a href="?n=Best%20Song%20Ever&s=dax&m=4%2F4&t=120&l=1&c=5KAAMACSAEMAGhAIhAOUAUKAgMAiSAkMAmUAoUAuSA0RA4MA6KBAMBCSBEMBGSBIUBQRBUMBaKBcKBkUBoSBwKCAMCCSCEMCGhCIhCOUCUKCgMCiSCkMCmkCoRCuSC0RC4MC6KDAMDCSDEMDGSDIUDQRDUMDaKDcKDkUDoSDw">
+                <li><a href="?n=Best%20Song%20Ever&s=dax&m=3%2F4&t=160&l=1&c=5KAAMACSAEMAGhAIhAOUAUKAgMAiSAkMAmUAoUAuSA0RA4MA6KBAMBCSBEMBGSBIUBQRBUMBaKBcKBkUBoSBwKCAMCCSCEMCGhCIhCOUCUKCgMCiSCkMCmkCoRCuSC0RC4MC6KDAMDCSDEMDGSDIUDQRDUMDaKDcKDkUDoSDw">
                     BEST SONG EVER</a></li>
                 <li><a href="?n=Dark%20Necessities&s=tiamat&m=4%2F4&t=120&c=6yAA8AMKAV6Ab8AhKAnaAqcAw8A8EBF6BL8BRkBXxBayBg8BsKB16B78CBKCHaCKcCQ8CcECl6Cr8CxkC3cC6ZDAqDMqDVBDYqDbqDhSDnZDqcDw5D85EFEEI5ELpERREXyEaKEdyEg8EsKE16E78FBKFHaFKcFQ8FcEFl6Fr8FxkF3xF6yGA">
                     Dark Necessities</a></li>
@@ -454,7 +516,18 @@
                         <li><a href="#tocTitle">Title</a></li>
                         <li><a href="#tocShawzins">Shawzin</a></li>
                         <li><a href="#tocScales">Scale</a></li>
-                        <li><a href="#tocControlSchemes">Control Scheme</a></li>
+                        <li>
+                            <a href="#tocControlSchemes">Control Scheme</a>
+                            <ul>
+                                <li>
+                                    <a href="#tocCustomControlSchemes">Custom Control Schemes</a>
+                                    <ul>
+                                        <li><a href="#tocCustomControlSchemeAdd">Adding a Custom Control Scheme</a></li>
+                                        <li><a href="#tocCustomControlSchemeLoad">Loading a Custom Control Scheme</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li><a href="#tocTrackArea">The Track Area</a>
@@ -475,6 +548,7 @@
                     <ul>
                         <li><a href="#tocPlaybackStart">Playback Start</a></li>
                         <li><a href="#tocPlaybackSpeed">Playback Speed</a></li>
+                        <li><a href="#tocPlaybackMetronome">Metronome</a></li>
                     </ul>
                 </li>
                 <li><a href="#tocSharing">Sharing</a>
@@ -490,11 +564,12 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="#tocAdvancedStructure">Advanced Structure</a>
+                <li><a href="#tocAdvancedStructure">Song Configuration</a>
                     <ul>
                         <li><a href="#tocMeter">Meter</a></li>
                         <li><a href="#tocTempo">Tempo</a></li>
                         <li><a href="#tocLeadin">Lead-in beats</a></li>
+                        <li><a href="#tocKeySig">Key Signature</a></li>
                     </ul>
                 </li>
                 <li><a href="#tocSettings">Settings</a></li>
@@ -644,12 +719,82 @@
             <p>
                 Finally, under the Scale selector is a Control Scheme selector.  Use this to change the controls
                 displayed in the <a href="#tocTrackAreaLeft">tablature section</a> of the track area.  There
-                are currently <a href="#tocControlSchemeList">eight control schemes available</a>.
+                are currently <a href="#tocControlSchemeList">eight stock control schemes available</a>.
             </p>
 
+            <h3 id="tocCustomControlSchemes">Custom Control Schemes</h3>
             <p>
-                <strong>Note: </strong> Your control scheme selection is stored in your browser's local storage as a
-                preference.  It will persist across browser sessions on any song you work with in Shawzinscore.
+                In addition to the eight stock control schemes, you can specify your own custom control scheme
+            </p>
+            <p>
+                <strong class="warn">Note: </strong> Custom control schemes are only supported for console controllers.
+                I'm not making a bajillion icons for all the PC buttons and y'all can just use song codes anyway.
+            </p>
+
+            <h4 id="tocCustomControlSchemeAdd">Adding a Custom Control Scheme</h4>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-control-scheme-add.png" srcset="img2x/icon-control-scheme-add.png 2x"/>
+                <strong>Add custom</strong> button to bring up the Custom Control Scheme dialog.
+            </p>
+            <p>
+                In the dropdown in the upper left, select from <strong class="fret3">Playstation</strong>,
+                <strong class="fret2">XBox</strong>, or <strong class="fret1">Nintendo Switch</strong>.
+                This will determine the controller layout displayed.
+            </p>
+            <p>
+                Beside the layout dropdown is a <strong>Name</strong> text box where you can give the control scheme a
+                name.
+            </p>
+            <p>
+                Each control in the layout is either assigned to one of six functions, the three frets and three strings,
+                or is unassigned and labelled <strong>N/A</strong>.  Click on the label beside any control to
+                reassign it.  There are always exactly six controls assigned, with the rest being <strong>N/A</strong>.
+            </p>
+            <ul>
+                <li>Clicking on an unassigned control and assigning a function to it will unassign that function
+                from where it was previously assigned.</li>
+                <li>Clicking on an already assigned control and reassigning it to a new function will swap its function
+                with wherever the selected function was assigned before.</li>
+            </ul>
+            <p>
+                Click <strong>Save</strong> to save the control scheme and use it.
+            </p>
+            <p>
+                Click <strong>Cancel</strong> to cancel the dialog and return to the control scheme selection menu.
+            </p>
+
+            <h4 id="tocCustomControlSchemeLoad">Loading a Custom Control Scheme</h4>
+            <p>
+                Adding a custom control scheme will add it to the control scheme selection menu.  You can add multiple
+                custom control schemes to choose from.
+            </p>
+            <p>
+                Clicking an existing custom control scheme will open the custom control scheme dialog again.  This gives
+                you a chance to view, edit, or delete the control scheme before using it.
+            </p>
+            <p>
+                Click <strong>Okay</strong> to save any changes to the control scheme and use it.
+            </p>
+            <p>
+                Click <strong>Cancel</strong> to cancel any changes and return to the control scheme selection menu.
+            </p>
+            <p>
+                Click <strong>Delete</strong> to delete the custom control scheme from the control scheme selection
+                menu.  Note that if you currently have that control scheme selected then it will still be your
+                configured control scheme until you select or add another one.
+            </p>
+            <p>
+                <strong class="fret2">Note: </strong> If you want to duplicate a custom control scheme, then first
+                select it.  Then open the control scheme menu again and select
+                <img class="smallButton icon" src="img/icon-control-scheme-add.png" srcset="img2x/icon-control-scheme-add.png 2x"/>
+                <strong>Add custom</strong>.  The add custom control scheme dialog uses your currently selected control
+                scheme as a template.
+            </p>
+            <p>
+                <strong class="fret2">Note: </strong> Your control scheme selection and any custom control schemes
+                you've created are stored in your browser's local storage as preferences.  They will persist across
+                browser sessions on any song you work with in Shawzinscore.
             </p>
 
             <h1 id="tocTrackArea">The Track Area</h1>
@@ -828,6 +973,24 @@
                 the nature of trying to play sounds accurately in a browser.
             </p>
 
+            <h2 id="tocPlaybackMetronome">Metronome</h2>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x"/>
+                <strong>Metronome</strong> button to turn the metronome on.
+                Click
+                <img class="smallButton icon" src="img/icon-metro-on.png" srcset="img2x/icon-metro-on.png 2x"/>
+                again to turn it off.
+            </p>
+            <p>
+                While the metronome is on, Shawzinscore will play an audible click on each beat and measure marker to
+                mark the time.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> The metronome is only enabled if you have a Meter and Tempo
+                configured (see <a href="#tocAdvancedStructure">Song Configuration</a>).
+            </p>
+
             <h1 id="tocSharing">Sharing</h1>
             <p>
                 The browser's <strong>Location Bar</strong> is kept up to date, so if you want you can just copy or
@@ -867,7 +1030,7 @@
 
             <h3 id="tocShawzinTabUnits">Seconds per line/Measures per line</h3>
             <p>
-                If you have measures and a tempo specified (see <a href="#tocAdvancedStructure">Advanced Structure</a>)
+                If you have measures and a tempo specified (see <a href="#tocAdvancedStructure">Song Configuration</a>)
                 then this field will be <strong>Measures per line</strong>.  Otherwise it will be <strong>Seconds per
                 line</strong>.
             </p>
@@ -907,12 +1070,12 @@
                 <strong>Note: </strong> Your Old Mode setting is stored in your browser's local storage as a preference.
             </p>
 
-            <h1 id="tocAdvancedStructure">Advanced Structure</h1>
+            <h1 id="tocAdvancedStructure">Song Configuration</h1>
             <p>
                 If you know a little about music and time signatures then you can configure some markers to delimit
                 measures and beats.  Use the
                 <img class="smallButton icon" src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x"/> button to bring
-                up the <strong>Advanced</strong> options
+                up the advanced <strong>Song Configuration</strong> menu.
             </p>
             <p>
                 <strong class="warn">Note:</strong> If a song was recorded <i>without</i> a metronome or any other way of
@@ -983,6 +1146,39 @@
             <p>
                 <strong class="info">Note:</strong> When I finally add editing I'll have a less hacky way to handle this
                 in the UI.
+            </p>
+
+            <h2 id="tocKeySig">Key Signature</h2>
+            <p>
+                For lack of a better place to put it, the Song Configuration menu also contains the option for changing
+                the pitch of the Shawzin.  This is done with a <strong>Key Signature</strong> dropdown at the bottom of
+                the <strong>Song Configuration</strong> menu.
+            </p>
+            <p>
+                Clicking the dropdown will bring up a list of key signatures.  In the middle of this list,
+                highlighted in <strong class="fret2">green</strong>, is the key signature representing the Shawzin's
+                <strong class="fret2">natural pitch</strong>.  This is the pitch the Shawzin usually plays at.
+            </p>
+            <ul>
+                <li>
+                    Above the highlighted entry are key signatures that raise the pitch of the Shawzin.  Each one raises
+                    the pitch by one <strong>half-tone</strong> compared to the one above it.
+                </li>
+                <li>
+                    Below this are key signatures that lower the pitch of the Shawzin.  Each one lowers the pitch by
+                    one <strong>half-tone</strong> compared to the one above it.
+                </li>
+            </ul>
+            <p>
+                The actual key signatures shown are dependent on the chosen scale, but between the twelve of them they
+                cover all possible pitches.  They're split in two groups and centered around the natural pitch because
+                it's just changing the pitch in the most basic way, by changing the playback rate of the sounds.
+                There's a limit to how far you can take that before it starts sounding weird.
+            </p>
+            <p>
+                <strong class="warn">Note: </strong> This is fun to play with, but the key signature setting will not
+                persist in any Shawzinscore links or between browser sessions.  This won't really be useful until
+                editing is implemented.
             </p>
 
             <h1 id="tocSettings">Settings</h1>
@@ -1094,8 +1290,9 @@
                 note.
             </p>
             <p>
-                <strong class="info">Note:</strong> You can't play a note with more than one string.  Trying to play
-                multiple strings will just play multiple notes.
+                <strong class="info">Note:</strong> You can play more than one note at the same time, as long as each
+                note uses the same frets.  Just press multiple string buttons while optionally holding down a single
+                fret button.
             </p>
 
             <h4 id="generalNotes">Playing Notes</h4>
@@ -1214,15 +1411,42 @@
                 beginning.  The order is:
             </p>
             <ol>
-                <li><a href="#scale_pmin">Minor Pentatonic</a></li>
-                <li><a href="#scale_pmaj">Major Pentatonic</a></li>
-                <li><a href="#scale_chrom">Chromatic</a></li>
-                <li><a href="#scale_hex">Hexatonic</a></li>
-                <li><a href="#scale_min">Major</a></li>
-                <li><a href="#scale_maj">Minor</a></li>
-                <li><a href="#scale_hira">Hirajoshi</a></li>
-                <li><a href="#scale_phry">Phrygian Dominant</a></li>
-                <li><a href="#scale_yo">Yo</a></li>
+                <li>
+                    <img class="icon" src="img/standard/pmin/scale.png" srcset="img2x/standard/pmin/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_pmin">Minor Pentatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/pmaj/scale.png" srcset="img2x/standard/pmaj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_pmaj">Major Pentatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/chrom/scale.png" srcset="img2x/standard/chrom/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_chrom">Chromatic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/hex/scale.png" srcset="img2x/standard/hex/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_hex">Hexatonic</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/maj/scale.png" srcset="img2x/standard/maj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_min">Major</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/min/scale.png" srcset="img2x/standard/min/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_maj">Minor</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_hira">Hirajoshi</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/phry/scale.png" srcset="img2x/standard/phry/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_phry">Phrygian Dominant</a>
+                </li>
+                <li>
+                    <img class="icon" src="img/standard/yo/scale.png" srcset="img2x/standard/yo/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <a href="#scale_yo">Yo</a>
+                </li>
             </ol>
             <p>
                 If you switch Shawzins or leave the Shawzin screen, then the selected scale will revert back to
@@ -1932,7 +2156,7 @@
                         <p>
                             The chords on a Chromatic scale are different from most other scales.  Instead of being
                             divided in two groups of six, each of the twelve chords is basically a power chord rooted
-                            on the corresponding single note of the scale.
+                            on the corresponding note from the twelve single scale notes.
                         </p>
                     </td>
                 </tr>
@@ -2012,11 +2236,12 @@
                         </p>
                         <p>
                             Since both the Shawzin's <strong>Major</strong> and <strong>Minor</strong> scales
-                            also contain both minor and major scales within them, the only real difference is
-                            the range.  A song in a minor key can be done in <strong>C Minor</strong> with the Minor
-                            scale, or in <strong>A Minor</strong> with the Major scale, depending on what kind of range
-                            it needs.  Likewise, a song in a major key can be done in <strong>C Major </strong> with
-                            the Major scale, or <strong>E&#x266D; Major</strong> with the Minor scale.
+                            also contain both minor and major scales within them, the only real differences are
+                            the range and fingerings.  A song in a minor key can be done in <strong>C Minor</strong>
+                            with the Minor scale, or in <strong>A Minor</strong> with the Major scale, depending on
+                            what kind of range it needs.  Likewise, a song in a major key can be done in
+                            <strong>C Major </strong> with the Major scale, or <strong>E&#x266D; Major</strong> with
+                            the Minor scale.
                         </p>
                     </td>
                 </tr>
@@ -2398,17 +2623,17 @@
                 </strong>, so I still can't recommend this control scheme if you're doing chords.
             </p>
 
+            <h3 id="control_custom">Custom controller bindings</h3>
+            <p>
+                On consoles, you can rebind the Shawzin controls under the main <strong>Options</strong> menu
+            </p>
+            <p>
+                Go to <strong>Options</strong> &rarr; <strong>Controller</strong> &rarr;
+                <strong>Customize Controller</strong> &rarr; <strong>Shawzin</strong>.  This will show you roughly
+                the same control binding screen that Shawzinscore shows for custom control schemes.
+            </p>
+
             <h1 id="tocQA">Q & A</h1>
-            <ul class="qa">
-                <li>
-                    <strong class="warn">Q:</strong> Can I make a custom control scheme?
-                </li>
-                <li>
-                    <strong class="info">A:</strong> It's on my todo list.  It will probably only support custom
-                    control schemes for consoles, because PC has a lot of controls and doesn't really need to follow
-                    along with the app because it can just use song codes.
-                </li>
-            </ul>
             <ul class="qa">
                 <li><strong class="warn">Q:</strong> Editing</li>
                 <li>
@@ -2450,14 +2675,23 @@
                     (thanks <strong>Packetdancer</strong>)</li>
                 <li>Added a settings section, and a setting for switching back to the old fret layout
                     (thanks <strong>AtomicKlum</strong>)</li>
+                <li>Refactored the on-screen piano to include the entire white key as clickable, that was bugging me.
+                    Also, fixed clicking and dragging across the piano on mobile.</li>
+                <li>Added tooltips to a bunch of icons, also added a little icon to show when a MIDI devices is
+                    enabled</li>
+            </ul>
+            <h3 id="tocUpdates1.1">v1.1: 2023-08-08</h3>
+            <ul>
+                <li>Added support for custom controller bindings</li>
+                <li>Added a control for changing the overall pitch of the Shawzin.  This has been in there for a while,
+                    there just wasn't a way to do it in the UI.</li>
+                <li>Added a metronome because why not</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
-                <li>Custom control schemes</li>
                 <li><strong class="fret12">EDITING</strong></li>
-                <li>Key changing</li>
                 <li>Chord pop-up display</li>
                 <li>Library</li>
                 <li>Local storage</li>
@@ -2472,6 +2706,7 @@
                 <li>playback time/measure display?</li>
                 <li>loading bars?</li>
                 <li>Zoom Level?</li>
+                <li>Playlist (thanks <strong>comebackkid1007</strong>)</li>
             </ul>
             <h2>Never</h2>
             <ul>
@@ -2490,6 +2725,9 @@
                     playing.</li>
                 <li>Just general not great with resizing/zooming on mobile.  I'll try harder later.</li>
                 <li>The playback speed slider is placed weird on Firefox.</li>
+                <li>Changing the key and probably other actions that rebuild the track view somehow scroll the main
+                    window as a byproduct.</li>
+                <li>Playback on the on-screen piano is super laggy on mobile.</li>
             </ul>
 
             <h1 id="tocThanks"><strong class="info">Thanks</strong></h1>
@@ -2511,7 +2749,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.0.2: 2023-07-19
+            v1.1.2: 2023-08-13
         </div>
         <div>
             Contact:

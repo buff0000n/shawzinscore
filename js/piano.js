@@ -7,8 +7,8 @@ var Piano = (function() {
     var numNotes = 28;
 
     // UI parameters for the full piano keyboard layout
-    var width = 344;
-    var height = 96;
+    var pianoWidth = 344;
+    var pianoHeight = 96;
     var rounded = 0.5;
     var lineWidth = 4;
     var whiteNoteWidth = 20;
@@ -64,27 +64,65 @@ var Piano = (function() {
     }
 
     // note config order, including blank spots for gaps between consecutive white keys
-    var noteConfOrder = ["c", "cs", "d", "ds", "e", "EF", "f", "fs", "g", "gs", "a", "as", "b", "BC"];
+    var noteConfOrder = [
+        MetadataMusic.note.C,
+        MetadataMusic.note.Cs,
+        MetadataMusic.note.D,
+        MetadataMusic.note.Ds,
+        MetadataMusic.note.E,
+        "EF",
+        MetadataMusic.note.F,
+        MetadataMusic.note.Fs,
+        MetadataMusic.note.G,
+        MetadataMusic.note.Gs,
+        MetadataMusic.note.A,
+        MetadataMusic.note.As,
+        MetadataMusic.note.B,
+        "BC"
+    ];
     // just the notes with no gaps, for external use
-    var keySigOrder = ["c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"];
+    var keySigOrder = [
+        MetadataMusic.note.C,
+        MetadataMusic.note.Cs,
+        MetadataMusic.note.D,
+        MetadataMusic.note.Ds,
+        MetadataMusic.note.E,
+        MetadataMusic.note.F,
+        MetadataMusic.note.Fs,
+        MetadataMusic.note.G,
+        MetadataMusic.note.Gs,
+        MetadataMusic.note.A,
+        MetadataMusic.note.As,
+        MetadataMusic.note.B,
+    ];
 
     // note configs, offsets were basically determined by eyeball
-    var noteConfs = {
-        "c": new NoteConf("w", 0, 2),
-        "cs": new NoteConf("b", -1, 0),
-        "d": new NoteConf("w", 0, 5),
-        "ds": new NoteConf("b", 1, 2),
-        "e": new NoteConf("w", 0, 8),
-        "EF": new NoteConf("", 0, 0),
-        "f": new NoteConf("w", 0, 0),
-        "fs": new NoteConf("b", -2, 0),
-        "g": new NoteConf("w", 0, 3),
-        "gs": new NoteConf("b", 0, 0),
-        "a": new NoteConf("w", 0, 6),
-        "as": new NoteConf("b", 2, 2),
-        "b": new NoteConf("w", 0, 10),
-        "BC": new NoteConf("", 0, 0),
-    };
+    var noteConfs = {};
+
+    noteConfs[MetadataMusic.note.C] = new NoteConf("w", 0, 2);
+    noteConfs[MetadataMusic.note.Cs] = new NoteConf("b", -1, 0);
+    noteConfs[MetadataMusic.note.D] = new NoteConf("w", 0, 5);
+    noteConfs[MetadataMusic.note.Ds] = new NoteConf("b", 1, 2);
+    noteConfs[MetadataMusic.note.E] = new NoteConf("w", 0, 8);
+    noteConfs["EF"] = new NoteConf("", 0, 0);
+    noteConfs[MetadataMusic.note.F] = new NoteConf("w", 0, 0);
+    noteConfs[MetadataMusic.note.Fs] = new NoteConf("b", -2, 0);
+    noteConfs[MetadataMusic.note.G] = new NoteConf("w", 0, 3);
+    noteConfs[MetadataMusic.note.Gs] = new NoteConf("b", 0, 0);
+    noteConfs[MetadataMusic.note.A] = new NoteConf("w", 0, 6);
+    noteConfs[MetadataMusic.note.As] = new NoteConf("b", 2, 2);
+    noteConfs[MetadataMusic.note.B] = new NoteConf("w", 0, 10);
+    noteConfs["BC"] = new NoteConf("", 0, 0);
+
+    // convenience struct
+    class Box {
+        constructor(left, top, width, height) {
+            this.left = left;
+            this.top = top;
+            this.width = width;
+            this.height = height;
+        }
+    }
 
     // build a canvas and draw a piano keyboard with the given parameters
     // if colors[] is specified, this also generates a list of CSS-ready box objects and puts them on the canvas
@@ -93,8 +131,8 @@ var Piano = (function() {
         // create a canvas
         var canvas = document.createElement("canvas");
         // set size explicitly with CSS, this is what allows us to make a high DPI canvas
-        canvas.style.width = (width * xScale) + "px";
-        canvas.style.height = (height * yScale) + "px";
+        canvas.style.width = (pianoWidth * xScale) + "px";
+        canvas.style.height = (pianoHeight * yScale) + "px";
         // todo: necessary?
         canvas.style.display = "block";
 
@@ -105,8 +143,8 @@ var Piano = (function() {
         }
 
         // set the internal canvas size
-        canvas.width = width * xScale;
-        canvas.height = height * yScale;
+        canvas.width = pianoWidth * xScale;
+        canvas.height = pianoHeight * yScale;
         // get the graphics context, this is what we'll do all our work in
         var context = canvas.getContext("2d");
 
@@ -133,39 +171,71 @@ var Piano = (function() {
                 // get the current note's conf
                 var noteConf = noteConfs[noteConfOrder[noteIndex]];
                 // we're going to set a bunch of variables depending on whether it's a white or black note
-                var defaultColor, left, top, wid, high, bleft, btop, bwid, bhigh;
+                var defaultColor, drawBox, clickBoxes;
                 switch (noteConf.type) {
                     case "w" :
                         // default note color
                         defaultColor = "#FFFFFF";
 
                         // draw coordinates for a white note centered on x
-                        wid = whiteNoteWidth;
-                        left = (x + (noteConf.xOffset) - wid/2);
-                        top = (lineWidth/2);
-                        high = (height - lineWidth);
+                        drawBox = new Box(
+                            left = (x + (noteConf.xOffset) - whiteNoteWidth/2),
+                            top = (lineWidth/2),
+                            width = whiteNoteWidth,
+                            height = (pianoHeight - lineWidth)
+                        );
 
                         // CSS box coordinates for the playable portion of a white note centered on x
-                        bleft = left;
-                        bwid = wid;
-                        btop = (height * blackNoteHeight) + (lineWidth/2);
-                        bhigh = (height * (1 - blackNoteHeight)) - (lineWidth/2);
+                        // get the offset from the black key to the left, if there is one
+                        // there isn't one if this is the very first key on the keyboard, or if it's an F or a C
+                        var leftBlackNoteConf = n == 0 ? null : noteConfs[noteConfOrder[noteIndex == 0 ? (noteConfOrder.length - 1) : (noteIndex - 1)]];
+                        // if there's a black key to the left, calculate the offset of its right edge, otherwise there's no offset
+                        var leftBlackNoteOffset = (leftBlackNoteConf && leftBlackNoteConf.type == "b") ? (leftBlackNoteConf.xOffset + blackNoteWidth/2) : 0;
+                        // get the offset from the black key to the right, if there is one
+                        // there isn't one if this is the very last key on the keyboard, or if it's an E or a B
+                        var rightBlackNoteConf = n == (numNotes - 1) ? null : noteConfs[noteConfOrder[(noteIndex + 1) % noteConfOrder.length]];
+                        // if there's a black key to the right, calculate the offset of its left edge, otherwise there's no offset
+                        var rightBlackNoteOffset = (rightBlackNoteConf && rightBlackNoteConf.type == "b") ? (rightBlackNoteConf.xOffset - blackNoteWidth/2) : 0;
+
+                        clickBoxes = [
+                            // full width part at the bottom
+                            new Box(
+                                left = drawBox.left,
+                                top = (pianoHeight * blackNoteHeight) + (lineWidth/2),
+                                width = drawBox.width,
+                                height = (pianoHeight * (1 - blackNoteHeight)) - (lineWidth/2)
+                            ),
+                            // partial width part at the top, possibly between some black keys
+                            new Box(
+                                left = drawBox.left + leftBlackNoteOffset,
+                                top = 0,
+                                width = drawBox.width - leftBlackNoteOffset + rightBlackNoteOffset,
+                                height = (pianoHeight * blackNoteHeight) + (lineWidth/2)
+                            )
+                        ];
                         break;
                     case "b" :
                         // default note color
                         defaultColor = "#000000";
 
                         // draw coordinates for a black note centered on x
-                        wid = blackNoteWidth;
-                        left = (x + (noteConf.xOffset) - wid/2);
-                        top = (lineWidth/2);
-                        high = (height * blackNoteHeight) - (lineWidth/2);
+                        drawBox = new Box(
+                            left = (x + (noteConf.xOffset) - blackNoteWidth/2),
+                            top = (lineWidth/2),
+                            width = blackNoteWidth,
+                            height = (pianoHeight * blackNoteHeight) - (lineWidth/2)
+                        );
 
                         // CSS box coordinates for the playable portion of a black note centered on x
-                        bleft = left - (lineWidth/2);
-                        bwid = wid + lineWidth;
-                        btop = 0;
-                        bhigh = high + lineWidth;
+                        // this one's simple
+                        clickBoxes = [
+                            new Box(
+                                left = drawBox.left - (lineWidth/2),
+                                top = 0,
+                                width = drawBox.width + lineWidth,
+                                height = drawBox.height + lineWidth
+                            )
+                        ];
                         break;
                     case "" :
                         // it's a gap note entry, reset the for loop counter so that this doesn't count as a note,
@@ -181,40 +251,34 @@ var Piano = (function() {
                     context.fillStyle = color ? color : defaultColor;
                     // draw the note, here is where we need to apply the scale
                     if (roundRectSupported) {
+                        // use the roundRect() path function, if it's available.
                         fillStroke(context, (c) => {
                             c.roundRect(
-                                left * xScale,
-                                top * yScale,
-                                wid * xScale,
-                                high * yScale,
+                                drawBox.left * xScale,
+                                drawBox.top * yScale,
+                                drawBox.width * xScale,
+                                drawBox.height * yScale,
                                 [0, 0, rounded * xScale, rounded * xScale]);
                         });
                     } else {
+                        // Otherwise, just use the old fillRect() and strokeRect() functions
                         context.fillRect(
-                            left * xScale,
-                            top * yScale,
-                            wid * xScale,
-                            high * yScale
+                            drawBox.left * xScale,
+                            drawBox.top * yScale,
+                            drawBox.width * xScale,
+                            drawBox.height * yScale
                         );
                         context.strokeRect(
-                            left * xScale,
-                            top * yScale,
-                            wid * xScale,
-                            high * yScale
+                            drawBox.left * xScale,
+                            drawBox.top * yScale,
+                            drawBox.width * xScale,
+                            drawBox.height * yScale
                         );
                     }
                     // if there was a custom color, then build a box style object
                     if (color) {
-                        // build a basic CSS box style struct
-                        // todo: make an actual object class for this?
-                        var boxStyle = {
-                            "left": bleft,
-                            "top": btop,
-                            "width": bwid,
-                            "height": bhigh
-                        };
                         // save to the list
-                        boxStyles[n] = boxStyle;
+                        boxStyles[n] = clickBoxes;
                     }
                 }
 

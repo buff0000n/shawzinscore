@@ -28,6 +28,10 @@ var Playback = (function() {
 
     // track whether the stop button is enabled
     var stopEnabled = false;
+    // track whether the metronome button is enabled
+    var metronomeEnabled = false;
+    // track whether the metronome is on
+    var metronomeOn = false;
     // setTimeout cancel callback for the playback loop
     var loopTimeout = null;
     // slider for playback speed selection
@@ -48,6 +52,7 @@ var Playback = (function() {
         document.getElementById("song-buttons-stop").addEventListener("click", stop, { passive: false });
         document.getElementById("song-buttons-rewind").addEventListener("click", rewind, { passive: false });
         document.getElementById("song-buttons-ff").addEventListener("click", fastForward, { passive: false });
+        document.getElementById("song-buttons-metro").addEventListener("click", toggleMetronome, { passive: false });
 
         // set up global key listener for the spacebar
         Events.addKeyDownListener("Space", (e) => {
@@ -66,6 +71,9 @@ var Playback = (function() {
         playbackSpeed = Settings.getPlaybackSpeed();
         // the playback speed slider needs a bit of setup
         setupSpeedSlider();
+
+        // initialize the metronome buttom state from settings
+        setMetronomeOn(Settings.getMetronomeOn());
     }
 
     function setupSpeedSlider() {
@@ -231,10 +239,30 @@ var Playback = (function() {
         // enable or disable the stop button
         var div = document.getElementById("song-buttons-stop");
         var img = div.children[0];
-        div.className = enabled ? "button" : "button-disabled";
+        div.className = enabled ? "button tooltip" : "button-disabled tooltip";
         img.className = enabled ? "icon" : "icon-disabled";
         // save the state
         stopEnabled = enabled;
+    }
+
+    function setMetronomeEnabled(enabled) {
+        // enable or disable the metronome button
+        var div = document.getElementById("song-buttons-metro");
+        var img = div.children[0];
+        div.className = enabled ? "button tooltip" : "button-disabled tooltip";
+        img.className = enabled ? "icon" : "icon-disabled";
+        // save the state
+        metronomeEnabled = enabled;
+    }
+
+    function setMetronomeOn(on) {
+        // change the state of the metronome button
+        var div = document.getElementById("song-buttons-metro");
+        var img = div.children[0];
+        PageUtils.setImgSrc(img, on ? "icon-metro-on.png" : "icon-metro-off.png");
+        // save the state
+        metronomeOn = on;
+        Settings.setMetronomeOn(on);
     }
 
     function rewind() {
@@ -277,12 +305,87 @@ var Playback = (function() {
         soundBank.setKeySig(Model.getKeySig());
     }
 
+    function updateStructure() {
+        // enable the metronome depending on whether the model has a meter and tempo
+        var newMetronomeEnabled = (Model.getMeterTop() != null && Model.getTempo() != null);
+        // check for a change
+        if (metronomeEnabled != newMetronomeEnabled) {
+            // set the enabledness of the metronome button
+            setMetronomeEnabled(newMetronomeEnabled);
+        }
+    }
+
+    function toggleMetronome() {
+        // only do something if the metronome button is enabled
+        if (metronomeEnabled) {
+            // toggle the metronome state
+            setMetronomeOn(!metronomeOn);
+        }
+    }
+
     function setSong(newSong) {
         // if someone sets the song, stop playing
         stop();
         // save the song object
         song = newSong;
     }
+
+    // metronome tracker
+    class MetronomeTrack {
+        constructor(startTick) {
+            // get the sound bank, this is cached by ShawzinAudio
+            this.soundBank = ShawzinAudio.getMetronomeSoundBank();
+
+            this.init(startTick);
+        }
+
+        init(startTick) {
+            // cache these, we need to be able to tell when they change
+            this.tempo = Model.getTempo();
+            // get the beats per bar from the meter
+            this.beatsPerBar = Model.getMeterTop();
+
+            // calculate ticks per beat
+            this.ticksPerBeat = (60 * Metadata.ticksPerSecond) / this.tempo;
+
+            // initialize the next beat
+            this.nextBeat = Math.ceil(startTick / this.ticksPerBeat);
+            // and the time of the next beat
+            this.nextBeatTick = this.nextBeat * this.ticksPerBeat;
+        }
+
+        playbackLoop(songTick, songScheduleBufferTicks) {
+            // check if the structure has changed during playback
+            if (Model.getTempo != this.tempo || model.getMeterTop != this.beatsPerBar) {
+                // stop any scheduled sounds
+                this.stop();
+                // re-init with the new structure
+                this.init(songTick);
+            }
+            // schedule sounds up to the buffer
+            while (this.nextBeatTick - songTick < songScheduleBufferTicks) {
+                // determine if the next sound is a bar or just a beat
+                var isBar = (this.nextBeat % this.beatsPerBar) == 0;
+                // convert to real time
+                var beatTime = toRealTime(this.nextBeatTick);
+                // schedule the sound
+                this.soundBank.play(isBar ? "bar" : "beat", beatTime);
+                // increment the beat
+                this.nextBeat += 1;
+                // recalculate the tick of the next beat
+                this.nextBeatTick = this.nextBeat * this.ticksPerBeat;
+                //console.log("Next beat: " + this.nextBeatTick);
+            }
+        }
+
+        stop(realTime) {
+            // stop any scheduled sounds
+            this.soundBank.stop(realTime);
+        }
+    }
+
+    // metronome tracker, just one of them
+    var metronomeTrack = null;
 
     function start() {
         // sanity check
@@ -315,26 +418,41 @@ var Playback = (function() {
         // we didn't mean to
         Track.clearPlayback();
 
+        // initialize a metronome track if it's enabled and on
+        if (metronomeEnabled && metronomeOn) {
+            metronomeTrack = new MetronomeTrack(playbackStartTick);
+        }
+
         // todo: setLoading()
         // load the sound bank and start everything once its loaded
-        soundBank.checkInit(() => {
-            // set the audio time offset so we can schedule sounds starting from now
-            ShawzinAudio.setTimeOffset();
-            // get the first note to play
-            nextScheduledNote = song.getFirstNoteAfter(playbackStartTick);
-            // these start out the same
-            nextPlayedNote = nextScheduledNote;
-            //console.log("NEXT SCHEDULED START: " + nextScheduledNote.tick);
-            //console.log("NEXT PLAYED START: " + nextPlayedNote.tick);
-            // set UI state
-            setPlaying(true);
-            setPauseEnabled();
-            setStopEnabled(true);
-            // initialize timing tracker
-            lastRealTime = 0;
-            // kick off te playback loop
-            playbackLoop();
-        });
+        var startCallback = () => {
+            soundBank.checkInit(() => {
+                // set the audio time offset so we can schedule sounds starting from now
+                ShawzinAudio.setTimeOffset();
+                // get the first note to play
+                nextScheduledNote = song.getFirstNoteAfter(playbackStartTick);
+                // these start out the same
+                nextPlayedNote = nextScheduledNote;
+                //console.log("NEXT SCHEDULED START: " + nextScheduledNote.tick);
+                //console.log("NEXT PLAYED START: " + nextPlayedNote.tick);
+                // set UI state
+                setPlaying(true);
+                setPauseEnabled();
+                setStopEnabled(true);
+                // initialize timing tracker
+                lastRealTime = 0;
+                // kick off te playback loop
+                playbackLoop();
+            });
+        };
+
+        // load the metronome, if present, then load everything else
+        if (metronomeTrack) {
+            metronomeTrack.soundBank.checkInit(startCallback);
+        } else {
+            // otherwise just load everything else
+            startCallback();
+        }
     }
 
     function setPlaybackSpeed(speed) {
@@ -399,6 +517,11 @@ var Playback = (function() {
             // appending how long a loop takes seems to do a decent job of not cutting off sounds that have started
             // playing.  I'd rather double-play sounds than cut off sounds in the middle.
             soundBank.stop(realTime + realLoopTime);
+            // for the metronome, too
+            // todo: refactor this somehow?
+            if (metronomeTrack) {
+                metronomeTrack.soundBank.stop(realTime + realLoopTime);
+            }
         }
 
         // convert real time to song tick
@@ -435,14 +558,37 @@ var Playback = (function() {
             nextScheduledNote = nextPlayedNote;
         }
 
+        // calculate the end of the schedule buffer in ticks, adjusted forplayback speed
+        var songScheduleBufferTicks = (soundScheduleBufferTime * Metadata.ticksPerSecond * playbackSpeed);
+
+        // check if the metronome should be on
+        var metronome = metronomeEnabled && metronomeOn;
+        // check if we need to either start or stop the metronome
+        if ((metronomeTrack != null) != metronome) {
+            // if it's present, stop it
+            if (metronomeTrack) {
+                metronomeTrack.stop();
+                // and clear it out
+                metronomeTrack = null;
+            // otherwise, start it
+            } else {
+                metronomeTrack = new MetronomeTrack(songTick);
+                // meh, just make sure it's initialized in the background
+                metronomeTrack.soundBank.checkInit(null);
+            }
+        }
+
+        // run the metronome, if present
+        if (metronomeTrack) {
+            metronomeTrack.playbackLoop(songTick, songScheduleBufferTicks);
+        }
+
         // while we have a next note
         while (nextScheduledNote != null) {
             // calculate the note time relative to the start time
             var noteTick = nextScheduledNote.tick;
             // if the next note is farther in the future than our schedule buffer, stop scheduling notes
-            // adjust the schedule buffer to the playback speed
-            // todo: cache soundScheduleBufferTicks?
-            if (noteTick - songTick > (soundScheduleBufferTime * Metadata.ticksPerSecond * playbackSpeed)) {
+            if (noteTick - songTick > songScheduleBufferTicks) {
                 break;
             }
 
@@ -496,6 +642,11 @@ var Playback = (function() {
         // might as well update the track position one last time
         var songTick = toSongTick(realTime);
         updateTrack(songTick);
+        // clear out the metronome track, if present
+        if (metronomeTrack) {
+            metronomeTrack.stop(realTime);
+            metronomeTrack = null;
+        }
         //console.log("STOP() TICK: " + songTick);
     }
 
@@ -549,6 +700,8 @@ var Playback = (function() {
         updateScale: updateSoundBank, // ()
         // notify that the key signature has been updated
         updateKeySig: updateKeySig, // ()
+        // notify that the song structure has changed
+        updateStructure: updateStructure, // ()
         // notify that the song has been updated
         setSong: setSong, // (newSong)
         // play a single note immediately

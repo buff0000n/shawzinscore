@@ -111,6 +111,7 @@ var Metadata = (function() {
             "comment": "",
             // options
             "type": polyTypePolyphonic,
+            "clef": "treble",
         },
         "notes": {
             // todo: individual lengths of each note?  The answer is no
@@ -161,6 +162,8 @@ var Metadata = (function() {
                     "img": "standard/pmin/scale.png",
                     "name": scaleName["pmin"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -245,6 +248,8 @@ var Metadata = (function() {
                     "img": "standard/pmaj/scale.png",
                     "name": scaleName["pmaj"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -329,6 +334,8 @@ var Metadata = (function() {
                     "img": "standard/chrom/scale.png",
                     "name": scaleName["chrom"],
                     "chordtype": chordTypeSingle,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -414,6 +421,8 @@ var Metadata = (function() {
                     "img": "standard/hex/scale.png",
                     "name": scaleName["hex"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -498,6 +507,8 @@ var Metadata = (function() {
                     "img": "standard/maj/scale.png",
                     "name": scaleName["maj"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -582,6 +593,8 @@ var Metadata = (function() {
                     "img": "standard/min/scale.png",
                     "name": scaleName["min"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -666,6 +679,8 @@ var Metadata = (function() {
                     "img": "standard/hira/scale.png",
                     "name": scaleName["hira"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Db],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -750,6 +765,8 @@ var Metadata = (function() {
                     "img": "standard/phry/scale.png",
                     "name": scaleName["phry"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.C,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Ab],
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -834,6 +851,8 @@ var Metadata = (function() {
                     "img": "standard/yo/scale.png",
                     "name": scaleName["yo"],
                     "chordtype": chordTypeDual,
+                    "key": MetadataMusic.note.Db,
+                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Gb],
                 },
                 "notes": {
                     "0-1": note.Db1,
@@ -1555,6 +1574,7 @@ var Metadata = (function() {
             "name": "Tiamat Shawzin",
             "comment": "Based on an electric bass.",
             "type": polyTypeMonophonic,
+            "clef": "bass",
         },
         "notes": {
             "length": 10,

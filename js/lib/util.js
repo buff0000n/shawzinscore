@@ -615,9 +615,22 @@ var MiscUtils = (function(){
 	    }
 	    return i;
 	}
+
+	function sanitizeString(s, maxLength = 25) {
+        // yeah, just blow away anything that looks like HTML
+        if (s == null) return null;
+
+         s = s.replaceAll("<", "&lt;");
+         if (s.length > 25) {
+            s = s.substring(0, 25) + "...";
+         }
+         return s;
+	}
+
 	return {
 	    parseInt: parseInt, // (s)
 	    parseFloat: parseFloat, // (s)
+	    sanitizeString: sanitizeString,// (s, maxLength = 25)
 	}
 })();
 
