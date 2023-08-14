@@ -96,14 +96,25 @@ var MetadataMusic = (function() {
         // Calculate the index of the base note for the key signature
         var baseNoteIndex = (MetadataMusic.noteOrder.indexOf(scaleMetadata.config.keysig.baseNote) + offset) % MetadataMusic.noteOrder.length
         // lookup the base note, then the key signature
-        var selectKeySig = MetadataMusic.keySigs[MetadataMusic.noteOrder[baseNoteIndex]];
+        var keySigBaseNote = MetadataMusic.noteOrder[baseNoteIndex];
+        var selectKeySig = MetadataMusic.keySigs[keySigBaseNote];
+        // lookup the pitch offset
+        var pitchOffset = Piano.getPitchOffset(note);
+        // build some HTML describing the pitch offset
+        var pitchOffsetString =
+            (pitchOffset < 0) ? (`<strong class="fret1">&darr;${-pitchOffset}</strong>`)
+            : (pitchOffset > 0) ? (`<strong class="fret2">&uarr;${pitchOffset}</strong>`)
+            : "";
 
         // wow that was hard
         return {
             // generate an image base using the type of shawzin and the key signature base note
             "imgBase": `keysig/${shawzinMetadata.config.clef}-${selectKeySig.baseNote}.png`,
             // generate a name with a display note and the name of the current scale
-            "name": `${MetadataMusic.getNoteNameInKeySig(selectKeySig, baseNote)} ${scaleMetadata.config.name}`
+            "name": `
+                ${MetadataMusic.getNoteNameInKeySig(selectKeySig, baseNote)} ${scaleMetadata.config.name}
+                ${pitchOffsetString}
+            `
         };
     }
 

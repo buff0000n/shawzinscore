@@ -271,7 +271,7 @@ var Controls = (function() {
             var tr = document.createElement("div");
             // display it differently if it's the currently selected item
             tr.className = (note == currentNote ? "selection-item-selected" : "selection-item") +
-                            (note == MetadataMusic.noteOrder[0] ? " fret2" : "");
+                            (note == MetadataMusic.noteOrder[0] ? " fret3" : "");
 
             // meh. build the selection contents from the metadata icon image, name, and description
             tr.innerHTML = getKeySigHTML(note);

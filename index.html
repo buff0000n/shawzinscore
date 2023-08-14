@@ -341,9 +341,9 @@
 <!-- holding pen for pop-up menus and dialogs that I didn't feel like building from scratch in javascript -->
 <div id="hidden-things" style="display: none;">
 
-    <div id="config-structure" class="field-div">
+    <div id="config-structure" class="field-div" style="width: 40ex;">
         <div class="field-entry tooltip" id="config-meter">
-            <div class="fieldTitle">Time Signature:</div>
+            <div class="fieldTitle">Meter:</div>
             <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
             <span class="tooltiptextbottom">The meter of the song</span>
         </div>
@@ -358,13 +358,13 @@
             <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
             <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
         </div>
-        <div id="select-keysig" class="selectButton tooltip">
-            <!--<div class="fieldTitle">Key:</div>-->
-            <!--<div id="select-keysig" class="selectButton">-->
+        <div class="field-entry tooltip">
+            <div class="fieldTitle">Key:</div>
+            <div id="select-keysig" class="selectButtonDark tooltip">
                 <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                 <span id="select-keysig-text"></span>
-            <!--</div>-->
-            <span class="tooltiptextbottom">Change the key</span>
+            </div>
+            <span class="tooltiptextbottom">Transpose the pitch to a different key</span>
         </div>
     </div>
 
@@ -491,9 +491,9 @@
                     Gerudo Valley</a></li>
                 <li><a href="?n=Lost%20Woods&s=void&m=4%2F4&t=120&c=5JAAMAERAIJAQMAURAYJAgMAkRAohAsUAwRA4SA8RBAKBEEBICBcEBgKBkEBoJCAMCERCIJCQMCURCYJCgMCkRCohCsUCwRC4SC8hDARDEKDIRDcKDgCDkEDoCEAEEEJEIKEQMEUREYSEgREkEEoCFAEFEJFIKFQMFURFYSFgUFkhFoCGAEGEJGIKGQMGURGYSGgRGkEGoCHABHEJHIEHMKHQJHUMHYKHcRHgMHkSHoRHsUHwSH0hH4iH6UH+hIAJJAMJERJIJJQMJURJYJJgMJkRJohJsUJwRJ4SJ8RKAKKEEKICKcEKgKKkEKoJLAMLERLIJLQMLURLYJLgMLkRLohLsULwRL4SL8hMARMEKMIRMcKMgCMkEMoCNAENEJNIKNQMNURNYSNgRNkENoCOAEOEJOIKOQMOUROYSOgUOkhOoCPAEPEJPIKPQMPURPYSPgRPkEPoCQABQEJQIEQMKQQJQUMQYKQcRQgMQkSQoRQsUQwSQ0hQ4iQ6UQ+hRA">
                     Lost Woods theme</a></li>
-                <li><a href="?n=Song%20of%20Storms&s=courtly&m=4%2F4&t=120&c=5CAAaAGCAMEASKAVcAYJAkxAqxAwEA2KA5cA8CBIaBOaBUEBaKBdcBgJBsxByxB4EB%2BKCBcCECCQJCTUCWCCiJClUCohC0iC9hDAiDDhDGSDJMDMMDYCDeJDkKDnMDqMD8CECJEIKELEEOCEgJEjUEmCEyJE1UE4hFEiFNhFQiFThFWSFZMFcMFoCFuJF0KF3MF6MGGCGMaGSaGYEGeKGhcGkJGwxG2xG8EHCcHICHUaHaaHgEHmcHsJH4xH%2BxIEEIKcIQCIcaIiaIoEIucI0JJAxJGxJMEJScJYMJkaJqaJwJJ2xJ8MKIaKOaKUMKa6KgCKsaKyaK4EK%2BcLEJLQxLWxLcELicLnML0aL6aMAMMG6MMCMY">
+                <li><a href="?n=Song%20of%20Storms&s=courtly&m=3%2F4&t=160&c=5CAAaAGCAMEASKAVcAYJAkxAqxAwEA2KA5cA8CBIaBOaBUEBaKBdcBgJBsxByxB4EB%2BKCBcCECCQJCTUCWCCiJClUCohC0iC9hDAiDDhDGSDJMDMMDYCDeJDkKDnMDqMD8CECJEIKELEEOCEgJEjUEmCEyJE1UE4hFEiFNhFQiFThFWSFZMFcMFoCFuJF0KF3MF6MGGCGMaGSaGYEGeKGhcGkJGwxG2xG8EHCcHICHUaHaaHgEHmcHsJH4xH%2BxIEEIKcIQCIcaIiaIoEIucI0JJAxJGxJMEJScJYMJkaJqaJwJJ2xJ8MKIaKOaKUMKa6KgCKsaKyaK4EK%2BcLEJLQxLWxLcELicLnML0aL6aMAMMG6MMCMY">
                     Song of Storms</a></li>
-                <li><a href="?n=Best%20Song%20Ever&s=dax&m=3%2F4&t=160&l=1&c=5KAAMACSAEMAGhAIhAOUAUKAgMAiSAkMAmUAoUAuSA0RA4MA6KBAMBCSBEMBGSBIUBQRBUMBaKBcKBkUBoSBwKCAMCCSCEMCGhCIhCOUCUKCgMCiSCkMCmkCoRCuSC0RC4MC6KDAMDCSDEMDGSDIUDQRDUMDaKDcKDkUDoSDw">
+                <li><a href="?n=Best%20Song%20Ever&s=dax&m=4%2F4&t=120&l=1&c=5KAAMACSAEMAGhAIhAOUAUKAgMAiSAkMAmUAoUAuSA0RA4MA6KBAMBCSBEMBGSBIUBQRBUMBaKBcKBkUBoSBwKCAMCCSCEMCGhCIhCOUCUKCgMCiSCkMCmkCoRCuSC0RC4MC6KDAMDCSDEMDGSDIUDQRDUMDaKDcKDkUDoSDw">
                     BEST SONG EVER</a></li>
                 <li><a href="?n=Dark%20Necessities&s=tiamat&m=4%2F4&t=120&c=6yAA8AMKAV6Ab8AhKAnaAqcAw8A8EBF6BL8BRkBXxBayBg8BsKB16B78CBKCHaCKcCQ8CcECl6Cr8CxkC3cC6ZDAqDMqDVBDYqDbqDhSDnZDqcDw5D85EFEEI5ELpERREXyEaKEdyEg8EsKE16E78FBKFHaFKcFQ8FcEFl6Fr8FxkF3xF6yGA">
                     Dark Necessities</a></li>
@@ -2686,6 +2686,7 @@
                 <li>Added a control for changing the overall pitch of the Shawzin.  This has been in there for a while,
                     there just wasn't a way to do it in the UI.</li>
                 <li>Added a metronome because why not</li>
+                <li>Tweaking some UI stuff that was bothering me, fixing examples</li>
             </ul>
 
             <h1 id="tocTodo">To do</h1>
@@ -2700,6 +2701,7 @@
             </ul>
             <h2>Maybe</h2>
             <ul>
+                <li>Metronome play option next to the meter/tempo settings?</li>
                 <li>sort options for shawzin list?</li>
                 <li>Support meter/tempo changing mid-song?</li>
                 <li>Less dumb animation for piano roll notes?</li>
@@ -2749,7 +2751,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v1.1.2: 2023-08-13
+            v1.1.3: 2023-08-13
         </div>
         <div>
             Contact:
