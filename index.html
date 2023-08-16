@@ -104,7 +104,7 @@
         <div class="mainTitle">Shawzinscore</div>
     </div>
     <!-- todo: figure out some way to prevent this from getting messed up on skinny mobile screens without resotring to a table -->
-    <table>
+    <table class="layoutTable">
         <tr>
             <td id="toolbar-shawzin">
                 <img id="toolbar-shawzin-img" src="img/shawzin-dax-large.png" srcset="img2x/shawzin-dax-large.png 2x"/>
@@ -342,17 +342,29 @@
 <div id="hidden-things" style="display: none;">
 
     <div id="config-structure" class="field-div" style="width: 40ex;">
-        <div class="field-entry tooltip" id="config-meter">
-            <div class="fieldTitle">Meter:</div>
-            <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
-            <span class="tooltiptextbottom">The meter of the song</span>
-        </div>
-        <div class="field-entry tooltip" id="config-tempo">
-            <div class="fieldTitle">Tempo:</div>
-            <select id="config-tempo-input" >
-            </select>
-            <span class="tooltiptextbottom">The Tempo of the song</span>
-        </div>
+        <table class="layoutTable">
+            <tr>
+                <td>
+                    <div class="field-entry tooltip" id="config-meter">
+                        <div class="fieldTitle">Meter:</div>
+                        <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
+                        <span class="tooltiptextbottom">The meter of the song</span>
+                    </div>
+                    <div class="field-entry tooltip" id="config-tempo">
+                        <div class="fieldTitle">Tempo:</div>
+                        <select id="config-tempo-input" >
+                        </select>
+                        <span class="tooltiptextbottom">The Tempo of the song</span>
+                    </div>
+                </td>
+                <td>
+                    <div id="song-buttons-metro-settings" class="button-disabled tooltip">
+                        <img src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x" alt="Metronome" class="icon-disabled"/>
+                        <span class="tooltiptextbottom">It's a metronome</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
         <div class="field-entry tooltip" id="config-leadin">
             <div class="fieldTitle">Lead-in beats:</div>
             <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>

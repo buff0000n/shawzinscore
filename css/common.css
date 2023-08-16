@@ -39,7 +39,7 @@
         padding: 0ex;
         margin 0.5ex;
     }
-    .button, .lightButton {
+    .button, .button-disabled, .lightButton {
         text-align: center;
     }
     .button, .selectButton {

@@ -32,6 +32,10 @@ var Playback = (function() {
     var metronomeEnabled = false;
     // track whether the metronome is on
     var metronomeOn = false;
+    // track whether the settings metronome is on
+    var settingsMetronomeOn = false;
+    // huhhh
+    var metronomeAutoOff = false;
     // setTimeout cancel callback for the playback loop
     var loopTimeout = null;
     // slider for playback speed selection
@@ -53,6 +57,7 @@ var Playback = (function() {
         document.getElementById("song-buttons-rewind").addEventListener("click", rewind, { passive: false });
         document.getElementById("song-buttons-ff").addEventListener("click", fastForward, { passive: false });
         document.getElementById("song-buttons-metro").addEventListener("click", toggleMetronome, { passive: false });
+        document.getElementById("song-buttons-metro-settings").addEventListener("click", toggleSettingsMetronome, { passive: false });
 
         // set up global key listener for the spacebar
         Events.addKeyDownListener("Space", (e) => {
@@ -192,6 +197,13 @@ var Playback = (function() {
         );
     }
 
+    function setSong(newSong) {
+        // if someone sets the song, stop playing
+        stop();
+        // save the song object
+        song = newSong;
+    }
+
     function setPlaying(newPlaying) {
         // sanity check
         if (playing == newPlaying) return;
@@ -247,10 +259,15 @@ var Playback = (function() {
 
     function setMetronomeEnabled(enabled) {
         // enable or disable the metronome button
-        var div = document.getElementById("song-buttons-metro");
-        var img = div.children[0];
-        div.className = enabled ? "button tooltip" : "button-disabled tooltip";
-        img.className = enabled ? "icon" : "icon-disabled";
+        function ffs(id) {
+            var div = document.getElementById(id);
+            var img = div.children[0];
+            div.className = enabled ? "button tooltip" : "button-disabled tooltip";
+            img.className = enabled ? "icon" : "icon-disabled";
+        }
+
+        ffs("song-buttons-metro");
+        ffs("song-buttons-metro-settings");
         // save the state
         metronomeEnabled = enabled;
     }
@@ -263,6 +280,15 @@ var Playback = (function() {
         // save the state
         metronomeOn = on;
         Settings.setMetronomeOn(on);
+    }
+
+    function setSettingsMetronomeOn(on) {
+        // change the state of the settings metronome button
+        var div = document.getElementById("song-buttons-metro-settings");
+        var img = div.children[0];
+        PageUtils.setImgSrc(img, on ? "icon-metro-on.png" : "icon-metro-off.png");
+        // save the state
+        settingsMetronomeOn = on;
     }
 
     function rewind() {
@@ -318,16 +344,51 @@ var Playback = (function() {
     function toggleMetronome() {
         // only do something if the metronome button is enabled
         if (metronomeEnabled) {
-            // toggle the metronome state
-            setMetronomeOn(!metronomeOn);
+            var on = !metronomeOn;
+            setMetronomeOn(on);
         }
     }
 
-    function setSong(newSong) {
-        // if someone sets the song, stop playing
-        stop();
-        // save the song object
-        song = newSong;
+    function toggleSettingsMetronome() {
+        // only do something if the metronome button is enabled
+        if (metronomeEnabled) {
+            var on = !settingsMetronomeOn;
+            // toggle the metronome state
+            setSettingsMetronomeOn(on);
+
+            if (isPlaying()) {
+                if (on && !metronomeOn) {
+                    metronomeAutoOff = true;
+                }
+                setMetronomeOn(on);
+
+            } else if (!on) {
+                // stop metronome player
+                console.log("stop metronome player");
+
+            } else {
+                // start metronome player
+                console.log("start metronome player");
+            }
+        }
+    }
+
+    function showSettingsMetronome() {
+        // only do something if the metronome button is enabled
+        if (metronomeEnabled) {
+            setSettingsMetronomeOn(isPlaying() && metronomeOn);
+        }
+    }
+
+    function hideSettingsMetronome() {
+        // only do something if the metronome button is enabled
+        if (metronomeEnabled) {
+            if (!isPlaying() && settingsMetronomeOn) {
+                setSettingsMetronomeOn(false);
+                // stop metronome player
+                console.log("stop metronome player");
+            }
+        }
     }
 
     // metronome tracker
@@ -390,6 +451,15 @@ var Playback = (function() {
     function start() {
         // sanity check
         if (isPlaying()) return;
+
+        if (settingsMetronomeOn) {
+            console.log("stop playing metronome");
+            if (!metronomeOn) {
+                setMetronomeOn(true);
+                metronomeAutoOff = true;
+            }
+        }
+        setSettingsMetronomeOn(metronomeOn);
 
         // see if the track already has a playback marker placed somewhere
         playbackStartTick = Track.getPlaybackTick();
@@ -647,6 +717,11 @@ var Playback = (function() {
             metronomeTrack.stop(realTime);
             metronomeTrack = null;
         }
+        setSettingsMetronomeOn(false);
+        if (metronomeAutoOff) {
+            setMetronomeOn(false);
+            metronomeAutoOff = false;
+        }
         //console.log("STOP() TICK: " + songTick);
     }
 
@@ -706,6 +781,10 @@ var Playback = (function() {
         setSong: setSong, // (newSong)
         // play a single note immediately
         playNote: playNote, // (noteName)
+
+        // notify when the song setting dialog is shown or hidden so it can manage the other metronome button
+        showSettingsMetronome: showSettingsMetronome, // ()
+        hideSettingsMetronome: hideSettingsMetronome, // ()
 
         // not actually used externally
 //        // check if we're currently playing

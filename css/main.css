@@ -21,6 +21,11 @@ td {
     padding: 0px;
     border-width: 0ex;
 }
+.layoutTable {
+    border-spacing: 0;
+    width: 100%;
+}
+
 .listTable td {
     vertical-align: top;
 }

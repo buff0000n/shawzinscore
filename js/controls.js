@@ -431,10 +431,15 @@ var Controls = (function() {
             structureDiv.remove();
             // and add it back to the hidden area of the document
             document.getElementById("hidden-things").appendChild(structureDiv);
+            // notify playback that the other metronome button is gone
+            Playback.hideSettingsMetronome();
         });
 
         // make sure the key signature item is displaying the current key signature
         document.getElementById("select-keysig-text").innerHTML = getKeySigHTML(Model.getKeySig());
+
+        // notify playback that the other metronome button is shown
+        Playback.showSettingsMetronome();
     }
 
     function doSettingsMenu() {
