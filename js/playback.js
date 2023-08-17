@@ -17,8 +17,6 @@ var Playback = (function() {
 
     // current sound bank, with just the sounds for the currently selected shawzin and scale
     var soundBank = null;
-    // playing flag
-    var playing = false;
 
     // track whether the stop button is enabled
     var stopEnabled = false;
@@ -68,24 +66,9 @@ var Playback = (function() {
         song = newSong;
     }
 
-    function setPlaying(newPlaying) {
-        // sanity check
-        if (playing == newPlaying) return;
-
-        // set
-        playing = newPlaying;
-
-        // update the track
-        Track.setPlaying(playing);
-    }
-
-    function isPlaying() {
-        return playing;
-    }
-
     function togglePlay() {
         // start if we're not playing
-        if (!isPlaying()) {
+        if (!FullPlayer.isPlaying()) {
             FullPlayer.startPlaying();
 
         // pause if we are playing
@@ -157,7 +140,7 @@ var Playback = (function() {
 
     function rewind() {
         // track whether we were playing or not
-        var wasPlaying = isPlaying();
+        var wasPlaying = FullPlayer.isPlaying();
         // stop playing
         FullPlayer.stopPlaying();
         // clear the playback start marker, if present
@@ -210,6 +193,9 @@ var Playback = (function() {
         if (metronomeEnabled) {
             var on = !metronomeOn;
             setMetronomeOn(on);
+            if (on) {
+                metronomeAutoOff = false;
+            }
         }
     }
 
@@ -220,7 +206,7 @@ var Playback = (function() {
             // toggle the metronome state
             setSettingsMetronomeOn(on);
 
-            if (isPlaying()) {
+            if (FullPlayer.isPlaying()) {
                 if (on && !metronomeOn) {
                     metronomeAutoOff = true;
                 }
@@ -229,10 +215,12 @@ var Playback = (function() {
             } else if (!on) {
                 // stop metronome player
                 console.log("stop metronome player");
+                MetronomePlayer.stopPlaying();
 
             } else {
                 // start metronome player
                 console.log("start metronome player");
+                MetronomePlayer.startPlaying();
             }
         }
     }
@@ -240,14 +228,14 @@ var Playback = (function() {
     function showSettingsMetronome() {
         // only do something if the metronome button is enabled
         if (metronomeEnabled) {
-            setSettingsMetronomeOn(isPlaying() && metronomeOn);
+            setSettingsMetronomeOn(FullPlayer.isPlaying() && metronomeOn);
         }
     }
 
     function hideSettingsMetronome() {
         // only do something if the metronome button is enabled
         if (metronomeEnabled) {
-            if (isPlaying()) {
+            if (FullPlayer.isPlaying()) {
                 if (metronomeAutoOff) {
                     setMetronomeOn(false);
                 }
@@ -256,6 +244,7 @@ var Playback = (function() {
                     setSettingsMetronomeOn(false);
                     // stop metronome player
                     console.log("stop metronome player");
+                    MetronomePlayer.stopPlaying();
                 }
             }
         }
@@ -320,7 +309,10 @@ var Playback = (function() {
         }
     }
 
+    // full song and optional metronome player
     var FullPlayer = (function() {
+        // playing flag
+        var fullPlaying = false;
         // tracks the time location where playback started, we need this to schedule notes offset by that starting time
         var playbackStartTick = null;
         // the next note to be scheduled
@@ -346,6 +338,21 @@ var Playback = (function() {
             playbackSpeed = Settings.getPlaybackSpeed();
             // the playback speed slider needs a bit of setup
             setupSpeedSlider();
+        }
+
+        function setPlaying(newPlaying) {
+            // sanity check
+            if (isPlaying() == newPlaying) return;
+
+            // set
+            fullPlaying = newPlaying;
+
+            // update the track
+            Track.setPlaying(isPlaying());
+        }
+
+        function isPlaying() {
+            return fullPlaying;
         }
 
         function setupSpeedSlider() {
@@ -471,6 +478,7 @@ var Playback = (function() {
 
             if (settingsMetronomeOn) {
                 console.log("stop playing metronome");
+                MetronomePlayer.stopPlaying();
                 if (!metronomeOn) {
                     setMetronomeOn(true);
                     metronomeAutoOff = true;
@@ -522,7 +530,7 @@ var Playback = (function() {
                 setStopEnabled(true);
                 // initialize timing tracker
                 lastRealTime = 0;
-                // kick off te playback loop
+                // kick off the playback loop
                 playbackLoop();
             });
         }
@@ -729,7 +737,7 @@ var Playback = (function() {
 
         function pausePlaying() {
             // sanity check
-            if (playing) {
+            if (isPlaying()) {
                 // stop playing
                 setPlaying(false);
                 stopCommon();
@@ -743,7 +751,7 @@ var Playback = (function() {
             if (stopEnabled) {
                 // check if we're playing
                 // todo: is this check necessary?
-                if (playing) {
+                if (isPlaying()) {
                     // stop any scheduled sounds that haven't played yet
                     // there's some lag with this, so some sounds might still play, and then
                     stopCommon();
@@ -761,9 +769,115 @@ var Playback = (function() {
 
         return {
             setup: setup,
+            isPlaying: isPlaying,
             startPlaying: startPlaying,
             setPlaybackSpeed: setPlaybackSpeed,
             pausePlaying: pausePlaying,
+            stopPlaying: stopPlaying,
+        };
+    })();
+
+    // dedicated metronome player
+    // todo: seems like I should be able to refactor some kind of common superclass for FullPlayer and MetronomePlayer, I'm just too lazy
+    var MetronomePlayer = (function() {
+        // playing flag
+        var metronomePlaying = false;
+        // tracks the time location where playback started, we need this to schedule notes offset by that starting time
+        var playbackStartTick = null;
+        // setTimeout cancel callback for the playback loop
+        var loopTimeout = null;
+        // tracking how long each playback loop takes will help us cancel only the notes that haven't played yet when we
+        // have to stop playback.
+        // I can't believe it's so hard to do this with AudioContext.
+        var lastRealTime = null;
+        var realLoopTime = null;
+        // metronome tracker, just one of them
+        var metronomeTrack = null;
+        var playbackSpeed = 1;
+
+        function startPlaying(startTick = 0) {
+            // sanity check
+            if (FullPlayer.isPlaying() || metronomePlaying) return;
+
+            // save the start tick
+            playbackStartTick = startTick;
+
+            // build a metronome player
+            metronomeTrack = new MetronomeTrack(playbackStartTick, toRealTime);
+
+            // set the flag
+            metronomePlaying = true;
+
+            // todo: setLoading()
+            // load the sound bank and start everything once its loaded
+            metronomeTrack.soundBank.checkInit(() => {
+                // set the audio time offset so we can schedule sounds starting from now
+                ShawzinAudio.setTimeOffset();
+                // initialize timing tracker
+                lastRealTime = 0;
+                // kick off the playback loop
+                playbackLoop();
+            });
+        }
+
+        function toSongTick(realTime) {
+            // convert real time to song tick
+            return (realTime * playbackSpeed * Metadata.ticksPerSecond) + playbackStartTick;
+        }
+
+        function toRealTime(songTick) {
+            // convert song tick to real time
+            return (songTick - playbackStartTick) / (playbackSpeed * Metadata.ticksPerSecond);
+        }
+
+        function playbackLoop() {
+            // sanity check, end the loop if we're no longer playing
+            if (!metronomePlaying) {
+                //console.log("STOP TICK: " + Track.getPlaybackTick());
+                return;
+            }
+
+            // get the current audio time, this is the most reliable time
+            var realTime = soundBank.getCurrentTime();
+
+            // convert real time to song tick
+            var songTick = toSongTick(realTime);
+            //console.log("METRO TICK: " + songTick);
+
+            // calculate the end of the schedule buffer in ticks, adjusted forplayback speed
+            var songScheduleBufferTicks = (soundScheduleBufferTime * Metadata.ticksPerSecond);
+
+            // play the metronome
+            metronomeTrack.playbackLoop(songTick, songScheduleBufferTicks);
+
+            // schedule another loop iteration
+            loopTimeout = setTimeout(playbackLoop, playbackLoopInterval)
+
+            // update loop time statistic
+            realLoopTime = realTime - lastRealTime;
+            lastRealTime = realTime;
+        }
+
+        function stopCommon() {
+            // stop any scheduled sounds that haven't played yet
+            // get the current time
+            var realTime = soundBank.getCurrentTime();
+            metronomeTrack.stopPlaying(realTime);
+            metronomeTrack = null;
+            metronomePlaying = false;
+        }
+
+        function stopPlaying() {
+            // sanity check
+            if (metronomePlaying) {
+                // stop any scheduled sounds that haven't played yet
+                // there's some lag with this, so some sounds might still play, and then
+                stopCommon();
+            }
+        }
+
+        return {
+            startPlaying: startPlaying,
             stopPlaying: stopPlaying,
         };
     })();
