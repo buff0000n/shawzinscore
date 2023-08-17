@@ -36,7 +36,7 @@ var Playback = (function() {
     function registerEventListeners() {
         // set up button event listeners
         document.getElementById("song-buttons-play").addEventListener("click", togglePlay, { passive: false });
-        document.getElementById("song-buttons-stop").addEventListener("click", stop, { passive: false });
+        document.getElementById("song-buttons-stop").addEventListener("click", () => { FullPlayer.stopPlaying(); }, { passive: false });
         document.getElementById("song-buttons-rewind").addEventListener("click", rewind, { passive: false });
         document.getElementById("song-buttons-ff").addEventListener("click", fastForward, { passive: false });
         document.getElementById("song-buttons-metro").addEventListener("click", toggleMetronome, { passive: false });
@@ -264,7 +264,8 @@ var Playback = (function() {
     // metronome tracker
     class MetronomeTrack {
         constructor(startTick, toRealTime) {
-            // ugh
+            //console.log("Metronome: new");
+            // ugh, we need the container player's time calculation function
             this.toRealTime = toRealTime;
             // get the sound bank, this is cached by ShawzinAudio
             this.soundBank = ShawzinAudio.getMetronomeSoundBank();
@@ -273,6 +274,7 @@ var Playback = (function() {
         }
 
         init(startTick) {
+            //console.log("Metronome: init");
             // cache these, we need to be able to tell when they change
             this.tempo = Model.getTempo();
             // get the beats per bar from the meter
@@ -289,7 +291,7 @@ var Playback = (function() {
 
         playbackLoop(songTick, songScheduleBufferTicks) {
             // check if the structure has changed during playback
-            if (Model.getTempo != this.tempo || model.getMeterTop != this.beatsPerBar) {
+            if (Model.getTempo() != this.tempo || Model.getMeterTop() != this.beatsPerBar) {
                 // stop any scheduled sounds
                 this.stopPlaying();
                 // re-init with the new structure
@@ -302,6 +304,7 @@ var Playback = (function() {
                 // convert to real time
                 var beatTime = this.toRealTime(this.nextBeatTick);
                 // schedule the sound
+                //console.log("Metronome " + (isBar ? "bar" : "beat") + " at " + beatTime + " (" + this.nextBeat + ")");
                 this.soundBank.play(isBar ? "bar" : "beat", beatTime);
                 // increment the beat
                 this.nextBeat += 1;
