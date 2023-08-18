@@ -104,6 +104,9 @@ var Metadata = (function() {
     var sharp = "\u266F";
     var natural = "\u266E";
 
+    var defaultShawzinVolume = 0.25;
+    var defaultMetronomeVolume = 0.5;
+
     var standardShawzin  = {
         "config": {
             // metadata, override this
@@ -2136,5 +2139,7 @@ var Metadata = (function() {
         maxTickLength: maxTickLength,
         maxNotes: maxNotes,
         leadInTicks: leadInTicks,
+        defaultShawzinVolume: defaultShawzinVolume,
+        defaultMetronomeVolume: defaultMetronomeVolume,
     }
 })();

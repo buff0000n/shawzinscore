@@ -23,16 +23,23 @@
         background-color: #000000;
     }
 
-    .button, .button-disabled, .selectButton, .lightButton, .textButton {
+    .button, .button-disabled, .selectButton, .selectButtonDark, .lightButton, .textButton {
         cursor: pointer;
         border: none;
         color: #FFFFFF;
-        padding: 1ex;
         text-decoration: none;
         font-size: 100%;
         border-radius: 1ex;
     }
-    .button, .lightButton {
+    .button, .button-disabled, .selectButton, .lightButton, .textButton {
+        padding: 1ex;
+    }
+    .selectButtonDark {
+        background-color: #000000;
+        padding: 0ex;
+        margin 0.5ex;
+    }
+    .button, .button-disabled, .lightButton {
         text-align: center;
     }
     .button, .selectButton {

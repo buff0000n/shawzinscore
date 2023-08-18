@@ -271,7 +271,7 @@ var Controls = (function() {
             var tr = document.createElement("div");
             // display it differently if it's the currently selected item
             tr.className = (note == currentNote ? "selection-item-selected" : "selection-item") +
-                            (note == MetadataMusic.noteOrder[0] ? " fret2" : "");
+                            (note == MetadataMusic.noteOrder[0] ? " fret3" : "");
 
             // meh. build the selection contents from the metadata icon image, name, and description
             tr.innerHTML = getKeySigHTML(note);
@@ -431,10 +431,15 @@ var Controls = (function() {
             structureDiv.remove();
             // and add it back to the hidden area of the document
             document.getElementById("hidden-things").appendChild(structureDiv);
+            // notify playback that the other metronome button is gone
+            Playback.hideSettingsMetronome();
         });
 
         // make sure the key signature item is displaying the current key signature
         document.getElementById("select-keysig-text").innerHTML = getKeySigHTML(Model.getKeySig());
+
+        // notify playback that the other metronome button is shown
+        Playback.showSettingsMetronome();
     }
 
     function doSettingsMenu() {
