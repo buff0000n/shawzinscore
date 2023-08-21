@@ -115,6 +115,7 @@ var Metadata = (function() {
             // options
             "type": polyTypePolyphonic,
             "clef": "treble",
+            "tuningCents": 0,
         },
         "notes": {
             // todo: individual lengths of each note?  The answer is no
@@ -949,6 +950,7 @@ var Metadata = (function() {
         "config": {
             "name": "Nelumbo Shawzin",
             "comment": "Based on an acoustic guitar.",
+            "tuningCents": 25,
         }
     });
 

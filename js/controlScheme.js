@@ -603,7 +603,7 @@ var ControlSchemeUI = (function() {
                 <div class="tooltip">
                     <img src="img/${scheme.img}" srcset="img2x/${scheme.img} 2x" class="icon"/>
                     ${scheme.name}
-                    <span class="tooltiptextbottom">${scheme.description}</span>
+                    <span class="tooltiptextbottom">${scheme.description ? scheme.description : "Custom control scheme"}</span>
                 </div>
             `;
 
