@@ -240,14 +240,16 @@ var Controls = (function() {
         var close = Menus.showMenu(selectionDiv, this, "Select Scale");
     }
 
-    function getKeySigHTML(note) {
-        // get the image base and display name for the key signature
+    function getKeySigHTMLAndTooltip(note) {
+        // get the image base, display name, and tooltip for the key signature
         var display = MetadataMusic.getKeySigDisplay(note);
         // generate some HTML with all that in there
-        return `
-            <div class="key-sig-box"><img src="img/${display.imgBase}" srcset="img2x/${display.imgBase} 2x" class="icon"/></div>
-            ${display.name}
-        `;
+        return [`
+                <div class="key-sig-box"><img src="img/${display.imgBase}" srcset="img2x/${display.imgBase} 2x" class="icon"/></div>
+                ${display.name}
+                `,
+                display.popup
+               ];
     }
 
     function doKeySigSelect() {
@@ -271,17 +273,22 @@ var Controls = (function() {
             var tr = document.createElement("div");
             // display it differently if it's the currently selected item
             tr.className = (note == currentNote ? "selection-item-selected" : "selection-item") +
-                            (note == MetadataMusic.noteOrder[0] ? " fret3" : "");
+                            (note == MetadataMusic.noteOrder[0] ? " fret3" : "") +
+                            " tooltip";
 
             // meh. build the selection contents from the metadata icon image, name, and description
-            tr.innerHTML = getKeySigHTML(note);
+            var [html, tooltip] = getKeySigHTMLAndTooltip(note);
+            tr.innerHTML = `
+                ${html}
+                <div class="tooltiptextbottom">${tooltip}</div>
+            `;
 
             // click event handler.  Because this is inside a function closure we can just use the local variables
             tr.onclick = () => {
                 // set the key signature on the model
                 Model.setKeySig(note);
                 // update the top-level menu item
-                document.getElementById("select-keysig-text").innerHTML = getKeySigHTML(note);
+                document.getElementById("select-keysig-text").innerHTML = getKeySigHTMLAndTooltip(note)[0];
                 // close the menu using the close callback returned at the end of the outer function
                 close();
             };
@@ -436,7 +443,7 @@ var Controls = (function() {
         });
 
         // make sure the key signature item is displaying the current key signature
-        document.getElementById("select-keysig-text").innerHTML = getKeySigHTML(Model.getKeySig());
+        document.getElementById("select-keysig-text").innerHTML = getKeySigHTMLAndTooltip(Model.getKeySig())[0];
 
         // notify playback that the other metronome button is shown
         Playback.showSettingsMetronome();

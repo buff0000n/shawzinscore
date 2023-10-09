@@ -106,15 +106,43 @@ var MetadataMusic = (function() {
             : (pitchOffset > 0) ? (`<strong class="fret2">&uarr;${pitchOffset}</strong>`)
             : "";
 
+        // build the list of scale names, including alt scales
+        var scaleList = [];
+        // HTML describing the main scale
+        var mainName = `${MetadataMusic.getNoteNameInKeySig(selectKeySig, baseNote)} ${scaleMetadata.config.name}`;
+        // add to the top of the list
+        // todo: why do I need to explicitly set the color here?
+        scaleList.push(`<span class="justtooltiptext">${mainName}</span>`);
+        // loop over the alt scales
+        for (var i = 0; i < scaleMetadata.config.altScales.length; i++) {
+            // get the alt scale metadata
+            var altScale = scaleMetadata.config.altScales[i];
+            // get the absolute offset of the alt scale's base note
+            var altOffset = MetadataMusic.noteOrder.indexOf(altScale.key)
+            // calculate the alt scale's base note in the current key
+            // Note: baseNoteOffset cancels itself out
+            var altBaseNote = MetadataMusic.noteOrder[(offset + altOffset) % MetadataMusic.noteOrder.length];
+            // if this is the first alt scale, add a little separator to the list
+            if (i == 0) {
+                scaleList.push(`<i class="fret13">Other names:</i>`);
+            }
+            // HTML describing the alt scale
+        // todo: why do I need to explicitly set the color here?
+            scaleList.push(`<span class="justtooltiptext">${MetadataMusic.getNoteNameInKeySig(selectKeySig, altBaseNote)} ${altScale.name}</span>`);
+        }
+
         // wow that was hard
         return {
             // generate an image base using the type of shawzin and the key signature base note
             "imgBase": `keysig/${shawzinMetadata.config.clef}-${selectKeySig.baseNote}.png`,
             // generate a name with a display note and the name of the current scale
             "name": `
-                ${MetadataMusic.getNoteNameInKeySig(selectKeySig, baseNote)} ${scaleMetadata.config.name}
+                ${mainName}
                 ${pitchOffsetString}
-            `
+            `,
+            // generate some popup text with the main scale and all the alt scales
+            // this is too much to put in the main UI
+            "popup": `${scaleList.join("<br/>")}`
         };
     }
 
