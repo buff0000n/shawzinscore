@@ -115,6 +115,7 @@ var Metadata = (function() {
             // options
             "type": polyTypePolyphonic,
             "clef": "treble",
+            "tuningCents": 0,
         },
         "notes": {
             // todo: individual lengths of each note?  The answer is no
@@ -167,6 +168,9 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
+                    "altScales": [
+                        { "name": "Pentatonic Major", "key": MetadataMusic.note.Eb }
+                    ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -253,6 +257,9 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
+                    "altScales": [
+                        { "name": "Pentatonic Minor", "key": MetadataMusic.note.A }
+                    ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -339,6 +346,7 @@ var Metadata = (function() {
                     "chordtype": chordTypeSingle,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
+                    "altScales": [ ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -426,6 +434,10 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
+                    "altScales": [
+                        { "name": "Minor Blues", "key": MetadataMusic.note.C },
+                        { "name": "Major Blues", "key": MetadataMusic.note.Eb }
+                    ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -512,6 +524,9 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
+                    "altScales": [
+                        { "name": "Minor", "key": MetadataMusic.note.A }
+                    ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -598,6 +613,9 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
+                    "altScales": [
+                        { "name": "Major", "key": MetadataMusic.note.Eb }
+                    ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -684,6 +702,9 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.Db],
+                    "altScales": [
+                        { "name": "Harmonic Minor", "key": MetadataMusic.note.Bb }
+                    ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -770,6 +791,9 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.C,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.Ab],
+                    "altScales": [
+                        { "name": "Harmonic Minor", "key": MetadataMusic.note.F }
+                    ]
                 },
                 "notes": {
                     "0-1": note.C1,
@@ -856,6 +880,10 @@ var Metadata = (function() {
                     "chordtype": chordTypeDual,
                     "key": MetadataMusic.note.Db,
                     "keysig": MetadataMusic.keySigs[MetadataMusic.note.Gb],
+                    "altScales": [
+                        { "name": "Pentatonic Minor", "key": MetadataMusic.note.Eb },
+                        { "name": "Pentatonic Major", "key": MetadataMusic.note.Gb }
+                    ]
                 },
                 "notes": {
                     "0-1": note.Db1,
@@ -949,6 +977,7 @@ var Metadata = (function() {
         "config": {
             "name": "Nelumbo Shawzin",
             "comment": "Based on an acoustic guitar.",
+            "tuningCents": 25,
         }
     });
 

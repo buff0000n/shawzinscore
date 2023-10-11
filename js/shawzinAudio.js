@@ -125,14 +125,25 @@ var ShawzinAudio = (function() {
             }
         }
 
-        // mix in a function for altering pitches for the specific key signature
-        soundBank.setKeySig = function(keySig) {
-            // get the pitch offset in half tones
-            var pitchOffset = Piano.getPitchOffset(keySig);
+        // mix in a general function for changing the pitch
+        soundBank.setPitchOffset = function(pitchOffset) {
             // convert to a playback speed multiplier
             var rate = 2 ** (pitchOffset / 12);
             // apply the multiplier to the sound bank's playback rate
             this.setRate(rate);
+        }
+
+        // mix in a function for altering pitches for the specific key signature
+        soundBank.setKeySig = function(keySig) {
+            // get the pitch offset in half tones, including any tuning for the shawzin
+            var pitchOffset = Piano.getPitchOffset(keySig) + (shawzinMetadata.config.tuningCents / 100.0);
+            // set the pitch offset
+            this.setPitchOffset(pitchOffset);
+        }
+
+        // if the shawzin has some tuning, then apply it without requiring a key change
+        if (shawzinMetadata.config.tuningCents != 0) {
+            soundBank.setPitchOffset(shawzinMetadata.config.tuningCents / 100.0);
         }
 
         // all done

@@ -364,7 +364,7 @@ var TrackBar = (function() {
         // set the icon image
         PageUtils.setImgSrc(document.getElementById("keysig-icon-img"), display.imgBase);
         // set the tooltip
-        document.getElementById("keysig-icon-tooltip").innerHTML = display.name;
+        document.getElementById("keysig-icon-tooltip").innerHTML = display.popup;
     }
 
     // class grouping together possible multiple clickable boxes for a single piano key and handling sound and
