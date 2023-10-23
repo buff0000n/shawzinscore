@@ -537,22 +537,55 @@ var DragEvents = (function() {
     }
 
     function addDragDropListener(element, dragDropListener) {
+        // ugh we have to save a reference to each one of these so we can make removeDragDropListener work.
+
         // add the start dragging event handlers
-        element.addEventListener("mousedown", (e) => { startDrag(Events.mouseEventToMTEvent(e), element, dragDropListener); }, { "passive": false} );
-        element.addEventListener("touchstart", (e) => { startDrag(Events.touchEventToMTEvent(e), element, dragDropListener); }, { "passive": false} );
+        element.listener_mousedown = (e) => { startDrag(Events.mouseEventToMTEvent(e), element, dragDropListener); };
+        element.addEventListener("mousedown", element.listener_mousedown, { "passive": false} );
+
+        element.listener_touchstart = (e) => { startDrag(Events.touchEventToMTEvent(e), element, dragDropListener); };
+        element.addEventListener("touchstart", element.listener_touchstart, { "passive": false} );
 
         // add drag handlers for this specific element
-        element.addEventListener("mousemove", (e) => { runDrag(Events.mouseEventToMTEvent(e), element, dragDropListener); }, { "passive": false} );
-        element.addEventListener("mouseup", (e) => { runDrop(Events.mouseEventToMTEvent(e), element, dragDropListener); }, { "passive": false} );
-        element.addEventListener("touchmove", (e) => {
+        element.listener_mousemove = (e) => { runDrag(Events.mouseEventToMTEvent(e), element, dragDropListener); };
+        element.addEventListener("mousemove", element.listener_mousemove, { "passive": false} );
+
+        element.listener_mouseup = (e) => { runDrop(Events.mouseEventToMTEvent(e), element, dragDropListener); };
+        element.addEventListener("mouseup", element.listener_mouseup, { "passive": false} );
+
+        element.listener_touchmove = (e) => {
             var mte = Events.touchEventToMTEvent(e, true);
             runDrag(mte, mte.target, dragDropListener);
-        }, { "passive": false} );
-        element.addEventListener("touchend", (e) => {
+        };
+        element.addEventListener("touchmove", element.listener_touchmove, { "passive": false} );
+
+        element.listener_touchend = (e) => {
             var mte = Events.touchEventToMTEvent(e, true);
             runDrop(mte, mte.target, dragDropListener);
-        }, { "passive": false} );
+        };
+        element.addEventListener("touchend", element.listener_touchend, { "passive": false} );
     }
+
+    function removeDragDropListener(element, dragDropListener) {
+        element.removeEventListener("mousedown", element.listener_mousedown);
+        element.listener_mousedown = null;
+
+        element.removeEventListener("touchstart", element.listener_touchstart);
+        element.listener_touchstart = null;
+
+        element.removeEventListener("mousemove", element.listener_mousemove);
+        element.listener_mousemove = null;
+
+        element.removeEventListener("mouseup", element.listener_mouseup);
+        element.listener_mouseup = null;
+
+        element.removeEventListener("touchmove", element.listener_touchmove);
+        element.listener_touchmove = null;
+
+        element.removeEventListener("touchend", element.listener_touchend);
+        element.listener_touchend = null;
+    }
+
 
     return {
         // set up an element for initiating a drag/drop session with the given DragDropListener

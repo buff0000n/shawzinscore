@@ -482,6 +482,16 @@ var Piano = (function() {
         return noteConfs[keySig].keyXOffset + noteToRollOffsets[noteName];
     }
 
+    function rollNoteIndexFromOffset(keySig, xOffset) {
+        return (xOffset - noteConfs[keySig].keyXOffset) / rollNoteWidth;
+    }
+
+    // get the note covering the given x offset
+    function rollNoteFromOffset(keySig, xOffset) {
+        var num = Math.floor(rollNoteIndexFromOffset(keySig, xOffset));
+        return (num >= 0 && num < Metadata.noteOrder.length) ? Metadata.noteOrder[num] : null;
+    }
+
     // get the audio pitch offset in half-tones for the given key signature
     function getPitchOffset(keySig) {
         // get the index of the key sig
@@ -501,6 +511,8 @@ var Piano = (function() {
         keySigOrder: keySigOrder,
         rollNoteWidth: rollNoteWidth,
         rollNoteOffset: rollNoteOffset, // (keySig, noteName)
+        rollNoteIndexFromOffset: rollNoteIndexFromOffset, // (keySig, xOffset)
+        rollNoteFromOffset: rollNoteFromOffset, // (keySig, xOffset)
         numNotes: numNotes,
         getPitchOffset: getPitchOffset, // (keySig)
     }

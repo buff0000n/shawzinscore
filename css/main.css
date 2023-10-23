@@ -236,14 +236,17 @@ td.label {
     padding: 0px;
     border-width: 0ex;
     background-color: #337799;
-    cursor: pointer;
     /*scroll-behavior: smooth !important;*/
 }
     /*
     #song-scroll::-webkit-scrollbar {
-        display: none;  /* Safari and Chrome */
+        display: none;  /* Safari and Chrome *
     }
 */
+
+.cursor-pointer {
+    cursor: pointer;
+}
 
 #song-scroll-table {
     height: 100%;
@@ -265,6 +268,16 @@ td.label {
 .tab-dot {
     position: absolute;
     z-index: 1;
+}
+.tab-grab {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    top: 0px;
+    left: 0px;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 10;
 }
 
 .roll-keyboard-note {
@@ -288,13 +301,15 @@ td.label {
     border-color: #202020;
     transform: translate(-1px, -1px);
     z-index: 1;
+    cursor: pointer;
 }
+
 .roll-note-outline {
     position: absolute;
     border: solid;
-    border-width: 1px;
+    border-width: 2px 1px;
     transform: translate(-1px, -1px);
-    z-index: 1;
+    z-index: 2;
 }
 .centerImg {
     position: absolute;

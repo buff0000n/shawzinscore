@@ -15,8 +15,6 @@ var Track = (function() {
     var tickSpacing = MetadataUI.tickSpacing;
     // whether the note direction is top to bottom (false) or bottom to top (true)
     var reversed = false;
-    // whether editing is enabled
-    var editing = false;
 
     // the key signature, used for changing the audio playback pitch and all the accompanying UI bits
     var keySig = null;
@@ -59,6 +57,8 @@ var Track = (function() {
 
     // copy of the setting
     var oldFretLayout = null;
+
+    var tempNoteTransparency = "33%";
 
     function registerEventListeners() {
         // set this directly to start with, before doing any layouts
@@ -179,25 +179,12 @@ var Track = (function() {
         scrollToTick(tick);
     }
 
-    function setEditing(newEditing) {
-        // check for change
-        if (newEditing == editing) return;
-
-        // set a local flag
-        editing = newEditing;
-        // change the track backgrounds
-        setRollBackground();
-        setTabBackground();
-        // show or don't show the fret buttons in the track bar
-        TrackBar.setShowFrets(editing);
-    }
-
-    function setRollBackground(ticks=editing) {
+    function setRollBackground(ticks=false) {
         // change the piano roll side's background image
         roll.style.backgroundImage = "url('img2x/track/keys-bg-" + Model.getKeySig() + (ticks ? "-ticks" : "") + ".png')";
     }
 
-    function setTabBackground(ticks=editing) {
+    function setTabBackground(ticks=false) {
         // change the tab side's background image
         tab.style.backgroundImage = "url('img2x/track/tab-bg" + (ticks ? "-ticks" : "") + ".png')";
     }
@@ -280,6 +267,8 @@ var Track = (function() {
             trimTickCapacity(endTick);
         }
         //console.log("END   scrollTop: " + scroll.scrollTop);
+
+        Editor.scrollUpdated();
     }
 
     // set the playing flag and setup the UI
@@ -651,9 +640,16 @@ var Track = (function() {
 
     // object encapsulating both the tablature and piano roll views for a single note
     class NoteView {
-        constructor(note) {
+        // display cases:
+        //  - normal note
+        //  - dragging note (temp)
+        //  - ephemeral note (outline)
+        constructor(note, temp=false, outline=false) {
             // store the note
             this.note = note;
+            // style setting
+            this.temp = temp;
+            this.outline = outline;
             // backreference
             note.view = this;
             // containing bar
@@ -671,12 +667,17 @@ var Track = (function() {
             this.rollRow = null;
             // list of piano roll elements
             this.rollNoteList = null;
+
+            // I guess we need a flag here
+            this.noteEditing = false;
         }
 
         // build the tablature and piano roll views
-        build() {
+        build(newNoteEditing=false) {
             this.buildTab();
             this.buildRoll();
+            // add editing listeners if applicable
+            this.setNoteEditing(newNoteEditing);
         }
 
         // clear all views
@@ -696,10 +697,39 @@ var Track = (function() {
             return this.bar[roll ? 1 : 0];
         }
 
-        buildTabNote() {
+        setNoteEditing(newNoteEditing) {
+            if (this.noteEditing == newNoteEditing) return;
+            this.noteEditing = newNoteEditing;
+
+            if (this.noteEditing) {
+                this.tabGrab.addEventListener("click", this.tabNoteClicked, { "passive": false});
+                // DragEvents.addDragDropListener(this.tabGrab, tabDragListener);
+
+                for (var i = 0; i < this.rollRow.noteList.length; i++) {
+                    var rollDiv = this.rollRow.noteList[i];
+                    console.log("whee");
+                    rollDiv.addEventListener("click", this.rollNoteClicked, { "passive": false});
+                    // DragEvents.addDragDropListener(rollDiv, rollDragListener);
+                }
+
+
+            } else {
+                this.tabGrab.removeEventListener("click", this.tabNoteClicked);
+                // DragEvents.removeDragDropListener(this.tabGrab, tabDragListener);
+
+                for (var i = 0; i < this.rollRow.noteList.length; i++) {
+                    var rollDiv = this.rollRow.noteList[i];
+                    rollDiv.removeEventListener("click", this.rollNoteClicked);
+                    // DragEvents.removeDragDropListener(this.rollRow[i], rollNoteClicked);
+                }
+            }
+
+        }
+
+        buildTabNote(playing=false) {
             // worth having an optimized case for a single note name
             if (this.note.string.length == 1) {
-                return this.buildTabNote0(this.note.string);
+                return this.buildTabNote0(this.note.string, playing);
 
             } else {
                 // ugh.  Not really interested in optimizing this case
@@ -714,7 +744,7 @@ var Track = (function() {
                 // go over the strings
                 for (var i = 0; i < this.note.string.length; i++) {
                     // build a normal tab note for each string
-                    var noteDiv = this.buildTabNote0(this.note.string.charAt(i));
+                    var noteDiv = this.buildTabNote0(this.note.string.charAt(i), playing);
                     // add it to the container
                     div.appendChild(noteDiv);
                 }
@@ -724,16 +754,33 @@ var Track = (function() {
         }
 
         // actually build the tablature elements
-        buildTabNote0(string = this.note.string) {
+        buildTabNote0(string = this.note.string, playing=false) {
             // we need the control scheme
             var controlScheme = Model.getControlScheme();
 
             // container div, absolutely positioned
             var div = document.createElement("div");
             div.style.position = "absolute";
+            // set transparency if it's a temp note
+            if (this.temp) {
+                div.style.opacity = tempNoteTransparency;
+            } else if (this.outline) {
+                div.style.pointerEvents = "none";
+                div.style.touchEvents = "none";
+            }
+
+            if (!playing) {
+                // build a grab div
+                this.tabGrab = document.createElement("div");
+                this.tabGrab.className = "tab-grab";
+                div.appendChild(this.tabGrab);
+
+                this.tabGrab.note = this;
+            }
 
             // build the central dot image
-            var dot = PageUtils.makeImage("tab-note-dot.png", "centerImg");
+//            var dot = PageUtils.makeImage(this.outline ? "tab-note-dot-outline.png" : "tab-note-dot.png", "centerImg");
+            var dot = PageUtils.makeImage(this.outline ? "tab-note-dot.png" : "tab-note-dot.png", "centerImg");
             dot.classList.add("tab-dot");
             // CSS already centers this element, so center it on the position of the container
             dot.style.left = "0px";
@@ -774,16 +821,18 @@ var Track = (function() {
                 }
             }
 
-            // build the string image and alt based on the control scheme
-            var stringImg = PageUtils.makeImage(controlScheme.strings[string].imgBase + "_b.png", "centerImg");
-            stringImg.alt = controlScheme.strings[string].altText + "\n";
-            // more css
-            stringImg.classList.add("tab-dot");
-            // place on top of the central dot
-            stringImg.style.left = "0px";
-            stringImg.style.top = "0px" ;
-            // add the string element
-            div.appendChild(stringImg);
+            if (!this.outline) {
+                // build the string image and alt based on the control scheme
+                var stringImg = PageUtils.makeImage(controlScheme.strings[string].imgBase + "_b.png", "centerImg");
+                stringImg.alt = controlScheme.strings[string].altText + "\n";
+                // more css
+                stringImg.classList.add("tab-dot");
+                // place on top of the central dot
+                stringImg.style.left = "0px";
+                stringImg.style.top = "0px" ;
+                // add the string element
+                div.appendChild(stringImg);
+            }
 
             // position the central dot horizontally over top of the correct string line
             div.style.left = (MetadataUI.tabStringXOffsets[string]) + "px";
@@ -817,11 +866,10 @@ var Track = (function() {
             }
         }
 
-        // build a single piano roll note element
-        buildRollNote(name, length, color, outline) {
+        buildRollNoteDiv(name, length, outline) {
             // The actual piano roll note is just a div box with a bunch of CSS
             var div = document.createElement("div");
-            // todo: what was outline for again/
+            // todo: what was outline for again?
             div.className = outline ? "roll-note-outline" : "roll-note";
             // set the horizontal position according to the metadata for the given absolute note name
             div.style.left = Piano.rollNoteOffset(Model.getKeySig(), name) + "px";
@@ -832,14 +880,30 @@ var Track = (function() {
             div.style.width = Piano.rollNoteWidth + "px";
             // set the height based on the note length in ticks
             div.style.height = (length * tickSpacing) + "px";
-            // color the div background, this is what makes it show up
-            div.style.backgroundColor = color;
-            // set a border color to keep consecutive notes from merging together
-            div.style.borderColor = "#202020";
+
+            return div;
+        }
+
+        // build a single piano roll note element
+        buildRollNote(name, length, color) {
+            var div = this.buildRollNoteDiv(name, length, this.outline);
+            if (this.outline) {
+                // set a border color to keep consecutive notes from merging together
+                div.style.borderColor = color;
+                div.style.pointerEvents = "none";
+                div.style.touchEvents = "none";
+            } else {
+                // color the div background, this is what makes it show up
+                div.style.backgroundColor = color;
+                // set a border color to keep consecutive notes from merging together
+                div.style.borderColor = "#202020";
+            }
             // save for later
             div.noteName = name;
             div.noteLength = length;
             div.noteColor = color;
+
+            div.note = this;
             return div;
         }
 
@@ -868,6 +932,14 @@ var Track = (function() {
             return div;
         }
 
+        getRollNoteTop(bar, tick) {
+            // hahaha what the hell
+            return (reversed
+                    ? ((bar.startTick + bar.ticks - tick) * tickSpacing)
+                    : ((tick - bar.startTick) * tickSpacing)
+                   );
+        }
+
         // build the container for a row of piano roll notes
         buildRollRow() {
             // absolute positioning container
@@ -876,11 +948,12 @@ var Track = (function() {
             // horizontal position is always starts at the left border
             rollRow.style.left = "0px";
             // set the vertical position depending on the direction
-            rollRow.style.top = (reversed
-                                // O.o
-                                ? ((this.getBar(1).startTick + this.getBar(1).ticks - this.note.tick) * tickSpacing)
-                                : ((this.note.tick - this.getBar(1).startTick) * tickSpacing)
-                                ) + "px";
+            rollRow.style.top = this.getRollNoteTop(this.getBar(1), this.note.tick) + "px";
+            // set transparency if it's a temp note
+            if (this.temp) {
+                rollRow.style.opacity = tempNoteTransparency;
+            }
+
             return rollRow;
         }
 
@@ -906,11 +979,11 @@ var Track = (function() {
             // check if it's a chord
             if (!this.note.isChord()) {
                 // optionally trim the length of the note depending on polyphony rules and when the next note is
-                noteLength = trimToNextNonPolyphonicNote(this.note, shawzinMd.notes.length, shawzinMd.config.type);
+                noteLength = (this.temp || this.outline) ? 2 : trimToNextNonPolyphonicNote(this.note, shawzinMd.notes.length, shawzinMd.config.type);
                 // not a chord, just one note
                 if (noteNames.length == 1) {
                     // build the note element, pulling the absolute name of the note from the scale definition
-                    var rollNote = this.buildRollNote(scaleMd.notes[noteNames[0]], noteLength, color, false);
+                    var rollNote = this.buildRollNote(scaleMd.notes[noteNames[0]], noteLength, color);
                     // add to the row and note list
                     rollRow.appendChild(rollNote);
                     rollNoteList.push(rollNote);
@@ -921,7 +994,7 @@ var Track = (function() {
                         // get the highest note
                         var noteName = noteNames[noteNames.length - 1];
                         // build the note element, pulling the absolute name of the note from the scale definition
-                        var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color, false);
+                        var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color);
                         // add to the row and note list
                         rollRow.appendChild(rollNote);
                         rollNoteList.push(rollNote);
@@ -931,7 +1004,7 @@ var Track = (function() {
                             // get the note
                             var noteName = noteNames[n];
                             // build the note element, pulling the absolute name of the note from the scale definition
-                            var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color, false);
+                            var rollNote = this.buildRollNote(scaleMd.notes[noteName], noteLength, color);
                             // add to the row and note list
                             // thank goodness it already supports multi-notes for chords
                             rollRow.appendChild(rollNote);
@@ -945,12 +1018,12 @@ var Track = (function() {
                 // until we have a slap shawzin that isn't mono, just get the highest note
                 var noteName = noteNames[noteNames.length - 1];
                 // optionally trim the length of the note depending on polyphony rules and when the next note is
-                noteLength = trimToNextNonPolyphonicNote(this.note, scaleMd.slap.length, shawzinMd.config.type);
+                noteLength = (this.temp || this.outline) ? 2 : trimToNextNonPolyphonicNote(this.note, scaleMd.slap.length, shawzinMd.config.type);
                 // pull the absolute name of the slap note from the scale definition if provided, otherwise using a
                 // mapping from chord note to single note and using the regular scale note definition
                 var rollNote0 = scaleMd.slap.notes ? scaleMd.slap.notes[noteName] : scaleMd.notes[Metadata.slapMap[noteName]];
                 // build the note element
-                var rollNote = this.buildRollNote(rollNote0, noteLength, color, false);
+                var rollNote = this.buildRollNote(rollNote0, noteLength, color);
                 // add to the row and note list
                 rollRow.appendChild(rollNote);
                 rollNoteList.push(rollNote);
@@ -963,13 +1036,13 @@ var Track = (function() {
                 var chord = scaleMd.chords[noteName];
                 // optionally trim the length of the notes depending on polyphony rules and when the next note is
                 // this length applies to all notes in the chord
-                noteLength = trimToNextNonPolyphonicNote(this.note, chord.length, shawzinMd.config.type);
+                noteLength = (this.temp || this.outline) ? 2 : trimToNextNonPolyphonicNote(this.note, chord.length, shawzinMd.config.type);
                 // loop over each note in the chord
                 for (var n = 0; n < chord.notes.length; n++) {
                     // look up the absolute note name
                     var rollNote0 = chord.notes[n];
                     // build the note element
-                    var rollNote = this.buildRollNote(rollNote0, noteLength, color, false);
+                    var rollNote = this.buildRollNote(rollNote0, noteLength, color);
                     // add to the row and note list
                     rollRow.appendChild(rollNote);
                     rollNoteList.push(rollNote);
@@ -999,7 +1072,7 @@ var Track = (function() {
 
             // the animated tablature elements are a carbon copy of the regular ones
             // todo: do an actual copy instead of generating it again from scratcn?
-            var tabDiv = this.buildTabNote();
+            var tabDiv = this.buildTabNote(true);
             // Add a special animated css class that makes it expand and increase in transparency
             // check if it's a special composite div
             if (tabDiv.composite) {
@@ -1036,6 +1109,38 @@ var Track = (function() {
                 rollRow.remove();
             // the animation takes half a second, it's really fast
             }, 500);
+        }
+
+        tabNoteClicked(e) {
+            e.target.note.tabNoteMenu(e, e.target);
+        }
+
+        rollNoteClicked(e) {
+            e.target.note.rollNoteMenu(e, e.target);
+        }
+
+        tabNoteMenu(e, grab) {
+            if (!this.noteEditing) {
+                return;
+            }
+            console.log("Grabbed " + this.note);
+
+            // huh, this isn't enough
+            e.preventDefault();
+            // prevent this from reaching the track listener that sets the playback position
+            e.stopImmediatePropagation();
+        }
+
+        rollNoteMenu(e, div) {
+            if (!this.noteEditing) {
+                return;
+            }
+            console.log("Grabbed " + this.note);
+
+            // huh, this isn't enough
+            e.preventDefault();
+            // prevent this from reaching the track listener that sets the playback position
+            e.stopImmediatePropagation();
         }
     }
 
@@ -1136,6 +1241,181 @@ var Track = (function() {
         }
     }
 
+    // let's encapsulate this
+    var Editor = (function() {
+        var editing = false;
+
+        var tabEnabled = false;
+        var rollEnabled = false;
+        var fretsEnabled = [false];
+
+        var lastMoveTick = null;
+        var lastMoveNoteName = null;
+        var lastMoveNote = null;
+        var lastMoveEvent = null;
+
+        function setEditing(newEditing) {
+            // check for change
+            if (newEditing == editing) return;
+
+            // set a local flag
+            editing = newEditing;
+            // change the track backgrounds
+            setRollBackground(editing);
+            setTabBackground(editing);
+            // show or don't show the fret buttons in the track bar
+            TrackBar.setShowFrets(editing);
+
+            // add or remove note listeners for the editing mode
+            for (var n = 0; n < song.notes.length; n++) {
+                var noteView = getView(song.notes[n]);
+                noteView.setNoteEditing(editing);
+            }
+
+            editingUpdated();
+        }
+
+        function editingUpdated() {
+            var anyFretEnabled = fretsEnabled.reduce((a, b) => a || b);
+            var newTabEnabled = editing && anyFretEnabled;
+            var newRollEnabled = editing && !anyFretEnabled;
+
+            // add or remove highlighting mouse move listeners on the tab and roll
+            if (!(rollEnabled || tabEnabled) && (newRollEnabled || newTabEnabled)) {
+                scroll.addEventListener("mousemove", mouseMove, { passive: true } );
+                scroll.addEventListener("mouseleave", mouseOut, { passive: true } );
+
+            } else if ((rollEnabled || tabEnabled) && !(newRollEnabled || newTabEnabled)) {
+                scroll.removeEventListener("mousemove", mouseMove);
+                scroll.removeEventListener("mouseleave", mouseOut);
+                mouseOut(lastMoveEvent)
+            }
+
+            tabEnabled = newTabEnabled;
+            rollEnabled = newRollEnabled;
+
+            scrollUpdated();
+        }
+
+        function updateFrets(newFretsEnabled) {
+            fretsEnabled = newFretsEnabled;
+            editingUpdated();
+        }
+
+        function scrollUpdated() {
+            if (lastMoveEvent) {
+                mouseMove(lastMoveEvent);
+            }
+        }
+
+        function mouseMove(e) {
+            // screen y-position of the event
+            var y = e.clientY;
+            // get the bounds for the scroll area
+            var bcr = scroll.getBoundingClientRect();
+            // put the event y-position in scroll area coordinates, and translate to a whole tick location
+            var tick = Math.floor(getTickForScreenPosition(y - bcr.top));
+
+            if (rollEnabled) {
+                rollMouseMove(e, tick);
+            } else if (tabEnabled) {
+                tabMouseMove(e, tick);
+            }
+
+            lastMoveEvent = e;
+        }
+
+        function rollMouseMove(e, tick) {
+            // screen x-position of the event
+            var x = e.clientX;
+            // get the bounds for the piano roll area
+            var bcr2 = roll.getBoundingClientRect();
+            var x2 = x - bcr2.left;
+            if (x2 < 0) {
+                clearLastNote();
+                return;
+            }
+            // put the event x-position in piano roll area coordinates, and translate to a note index, possibly fractional
+            var noteIndex = Piano.rollNoteIndexFromOffset(Model.getKeySig(), x2);
+
+            // get the nearest scale note, depending on the current chord mode
+            var noteName = TrackBar.getNearestScaleNoteName(noteIndex);
+
+            updateMove(tick, noteName);
+        }
+
+        function tabMouseMove(e, tick) {
+            // screen x-position of the event
+            var x = e.clientX;
+            // get the bounds for the piano tab area
+            var bcr2 = tab.getBoundingClientRect();
+            // put the event x-position in tab area coordinates
+            var x2 = x - bcr2.left;
+            if (x2 >= bcr2.width) {
+                clearLastNote();
+                return;
+            }
+            // translate to the nearest string, we don't have to super-optimize this
+            var string = null;
+            var dist = bcr2.width;
+
+            for (var s in MetadataUI.tabStringXOffsets) {
+                var offset = MetadataUI.tabStringXOffsets[s];
+                var newDist = Math.abs(x2 - offset);
+                if (newDist < dist) {
+                    string = s;
+                    dist = newDist;
+                }
+            }
+
+            var noteName = "";
+            for (var i = 0; i < fretsEnabled.length; i++) {
+                if (fretsEnabled[i]) {
+                    noteName = noteName + i;
+                }
+            }
+            noteName = noteName + "-" + string;
+
+            updateMove(tick, noteName);
+        }
+
+        function updateMove(tick, noteName) {
+            if (lastMoveTick != tick || lastMoveNoteName != noteName) {
+                // console.log("TRACK tick: " + tick + ", note: " + noteName);
+                lastMoveTick = tick;
+                lastMoveNoteName = noteName;
+                if (lastMoveNote) {
+                    lastMoveNote.view.clear();
+                }
+
+                lastMoveNote = new Note(noteName, tick);
+                var view = new NoteView(lastMoveNote, false, true);
+                view.build();
+            }
+        }
+
+        function clearLastNote() {
+            lastMoveTick = null;
+            lastMoveNoteName = null;
+            if (lastMoveNote) {
+                lastMoveNote.view.clear();
+                lastMoveNote = null;
+            }
+        }
+
+        function mouseOut(e) {
+            clearLastNote();
+            lastMoveEvent = null;
+            // console.log("TRACK out");
+        }
+
+        return {
+            setEditing: setEditing, // (newEditing)
+            scrollUpdated: scrollUpdated,
+            updateFrets: updateFrets, // (fretsEnabled[4])
+        }
+    })();
+
     function updateSettings() {
         // refresh from settings
         oldFretLayout = Settings.getOldFretLayout();
@@ -1159,6 +1439,8 @@ var Track = (function() {
         updateStructure: updateStructure, // ()
         // update the view for any settings changes
         updateSettings: updateSettings, // ()
+        // update the list of enabled frets for editing mode
+        updateFrets: Editor.updateFrets, // (fretsEnabled[4])
 
         // set the playing flag and setup the UI
         setPlaying: setPlaying, // (newPlaying)
@@ -1181,7 +1463,7 @@ var Track = (function() {
         // recalculate visible pixels and ticks when the window size has changed
         resize: resize, // (width, height)
         // set whether editing mode is enabled
-        setEditing: setEditing, // (newEditing)
+        setEditing: Editor.setEditing, // (newEditing)
     }
 })();
 

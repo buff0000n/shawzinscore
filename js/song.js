@@ -39,10 +39,20 @@ var SongUtils = (function() {
 // thanks to https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/
 // object representing a single note
 class Note {
-    constructor(fret = "", string = "", tick = 0) {
-        // string, fret and time
-        this.string = string;
-        this.fret = fret;
+    constructor(noteName = null, tick = 0) {
+        this.string = null;
+        this.fret = null;
+
+        // string, fret
+        if (noteName) {
+            var split = noteName.split("-");
+            if (split.length == 2) {
+                this.fret = split[0];
+                if (this.fret == "0") this.fret = "";
+                this.string = split[1];
+            }
+        }
+        // time
         this.tick = tick;
 
         // doubly linked list
@@ -316,7 +326,7 @@ class Song {
     getFirstNoteAfter(tick) {
         // search for the index
         // todo: some way without making a throaway object
-        var index = binarySearch(this.notes, new Note("", "", tick), SongUtils.noteTickComparator);
+        var index = binarySearch(this.notes, new Note(null, tick), SongUtils.noteTickComparator);
         // no exact match, correct the result
         if (index < 0) {
             index = -(index + 1);
@@ -387,21 +397,21 @@ function what() {
     var frets = "1";
     var t = 0;
     var dt = 16;
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t+=dt));
-    song.addNote(new Note(frets, "3", t+=dt));
-    song.addNote(new Note(frets, "12", t+=dt));
-    song.addNote(new Note(frets, "23", t+=dt));
-    song.addNote(new Note(frets, "13", t+=dt));
-    song.addNote(new Note(frets, "123", t+=dt));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t+=dt));
+    song.addNote(new Note(frets + "-3", t+=dt));
+    song.addNote(new Note(frets + "-12", t+=dt));
+    song.addNote(new Note(frets + "-23", t+=dt));
+    song.addNote(new Note(frets + "-13", t+=dt));
+    song.addNote(new Note(frets + "-123", t+=dt));
     frets = "12";
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t+=dt));
-    song.addNote(new Note(frets, "3", t+=dt));
-    song.addNote(new Note(frets, "12", t+=dt));
-    song.addNote(new Note(frets, "23", t+=dt));
-    song.addNote(new Note(frets, "13", t+=dt));
-    song.addNote(new Note(frets, "123", t+=dt));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t+=dt));
+    song.addNote(new Note(frets + "-3", t+=dt));
+    song.addNote(new Note(frets + "-12", t+=dt));
+    song.addNote(new Note(frets + "-23", t+=dt));
+    song.addNote(new Note(frets + "-13", t+=dt));
+    song.addNote(new Note(frets + "-123", t+=dt));
     var code = song.toString();
     console.log(code);
 }
@@ -412,18 +422,18 @@ function what2() {
     var frets = "1";
     var t = 0;
     var dt = 16;
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t+=dt));
-    song.addNote(new Note(frets, "3", t+=dt));
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t));
-    song.addNote(new Note(frets, "2", t+=dt));
-    song.addNote(new Note(frets, "3", t));
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "3", t));
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t));
-    song.addNote(new Note(frets, "3", t));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t+=dt));
+    song.addNote(new Note(frets + "-3", t+=dt));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t));
+    song.addNote(new Note(frets + "-2", t+=dt));
+    song.addNote(new Note(frets + "-3", t));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-3", t));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t));
+    song.addNote(new Note(frets + "-3", t));
     var code = song.toString();
     console.log(code);
 }
@@ -434,12 +444,12 @@ function what2() {
     var frets = "1";
     var t = 0;
     var dt = 16;
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t+=dt));
-    song.addNote(new Note(frets, "3", t+=dt));
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t+1));
-    song.addNote(new Note(frets, "3", t+=dt));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t+=dt));
+    song.addNote(new Note(frets + "-3", t+=dt));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t+1));
+    song.addNote(new Note(frets + "-3", t+=dt));
     var code = song.toString();
     console.log(code);
 }
@@ -451,18 +461,18 @@ function what2() {
     var t = 0;
     var dt = 16;
     frets = "12";
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t+=dt));
-    song.addNote(new Note(frets, "3", t+=dt));
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t));
-    song.addNote(new Note(frets, "2", t+=dt));
-    song.addNote(new Note(frets, "3", t));
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "3", t));
-    song.addNote(new Note(frets, "1", t+=dt));
-    song.addNote(new Note(frets, "2", t));
-    song.addNote(new Note(frets, "3", t));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t+=dt));
+    song.addNote(new Note(frets + "-3", t+=dt));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t));
+    song.addNote(new Note(frets + "-2", t+=dt));
+    song.addNote(new Note(frets + "-3", t));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-3", t));
+    song.addNote(new Note(frets + "-1", t+=dt));
+    song.addNote(new Note(frets + "-2", t));
+    song.addNote(new Note(frets + "-3", t));
     var code = song.toString();
     console.log(code);
 }
