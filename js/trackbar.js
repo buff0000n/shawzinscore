@@ -7,8 +7,14 @@ var TrackBar = (function() {
     var showFrets = false;
     // tracking for which frets are enabled
     var fretEnabled = [false, false, false, false];
-    // current chord mode, (null, "a", "b", "ab")
-    var chordMode = null;
+    // current chord mode, ("none", "a", "b", "ab", "slap")
+    var chordMode = "none";
+
+    // temp settings that we can revert
+    var oldFretEnabled = null;
+    var oldChordMode = null;
+
+    // midi handler for changing chord modes
     var chordModeMidiMap = null;
     // lookup helper for getNearestScaleNoteName
     var noteLookupArray = null;
@@ -35,7 +41,7 @@ var TrackBar = (function() {
         var noneDiv = document.getElementById("roll-chord-button-none");
         noneDiv.addEventListener("click", () => {
             // apply the new setting
-            setChordMode(null);
+            setChordMode("none");
         });
         var aDiv = document.getElementById("roll-chord-button-a");
         aDiv.addEventListener("click", () => {
@@ -179,7 +185,7 @@ var TrackBar = (function() {
 
     // build a map from note fingerings to display notes for the given scale and chord mode
     function buildNoteMap(scaleMd, chordMode) {
-        if (chordMode == null) {
+        if (chordMode == "none") {
             // no chord mode, just the normal single note fingerings and notes
             return scaleMd.notes;
 
@@ -295,6 +301,67 @@ var TrackBar = (function() {
         rebuildPiano();
     }
 
+    function setChordModeForFretsTemporarily(fret) {
+        var newChordMode = null;
+        if (fret.length <= 1) {
+            newChordMode = "none";
+        } else {
+            var scaleMd = getScaleMetadata();
+            switch (scaleMd.config.chordtype) {
+                case Metadata.chordTypeDual:
+                    switch (fret) {
+                        case "12":
+                        case "23":
+                            newChordMode = "a";
+                            break;
+                        case "13":
+                        case "123":
+                            newChordMode = "b";
+                            break;
+                        default:
+                            throw "invalid frets: " + fret;
+                    }
+                    break;
+                case Metadata.chordTypeSingle:
+                    newChordMode = "ab";
+                    break;
+                case Metadata.chordTypeSlap:
+                    newChordMode = "slap";
+                    break;
+            }
+        }
+
+        if (newChordMode != chordMode) {
+            oldChordMode = chordMode;
+            setChordMode(newChordMode);
+        }
+
+        // clear out frets
+        setFretsTemporarily("");
+    }
+
+    function setFretsTemporarily(fret) {
+        // clone the old fret settings
+        oldFretEnabled = fretEnabled.slice();
+        for (var i = 0; i < 4; i++) {
+            setFretEnabled(i, fret.indexOf(i) >= 0);
+        }
+    }
+
+    function revertTemporarySettings() {
+        if (oldFretEnabled) {
+            for (var i = 0; i < 4; i++) {
+                setFretEnabled(i, oldFretEnabled[i]);
+            }
+            oldFretEnabled = null;
+        }
+
+        if (oldChordMode) {
+            setChordMode(oldChordMode);
+            oldChordMode = null;
+        }
+    }
+
     //
     function updateChordMode() {
         // get the scale metadata
@@ -302,8 +369,7 @@ var TrackBar = (function() {
         // todo: there's a code path that gets in here before everything is initialized
         if (!scaleMd) return;
 
-        // translate null to "none" to make things easier
-        var mode = chordMode ? chordMode : "none";
+        var mode = chordMode;
         // util function to enable/disable and show/hide a chord mode button
         function setChordButtonEnabled(suffix, enabled) {
             // get the button div
@@ -339,7 +405,7 @@ var TrackBar = (function() {
     // rebuild the piano container and chord mode buttons for the chosen shawzin + scale
     function updateScale() {
         // reset the chord mode
-        chordMode = null;
+        chordMode = "none";
         // build the midi listeners for changing chord modes
         buildChordModeMidiListeners();
         // update and show/hide chord mode buttons
@@ -777,7 +843,7 @@ var TrackBar = (function() {
             else if (aOn) setChordMode("a");
             else if (bOn) setChordMode("b");
             // no chord keys pressed
-            else setChordMode(null);
+            else setChordMode("none");
         };
         // for dual chord type, add a listener on the Ab below the starting C for chord mode A
         midiMap[MetadataUI.midiNoteC + midiNoteOffset - 4] = {
@@ -825,7 +891,7 @@ var TrackBar = (function() {
             // if at least one of the keys is pressed, set the chord mode
             if (downCountSingle > 0) setChordMode("ab");
             // otherwise, no chord mode
-            else setChordMode(null);
+            else setChordMode("none");
         };
         var box = {
             "action": function() {
@@ -858,7 +924,7 @@ var TrackBar = (function() {
             // if at least one key is pressed, set the chord mode
             if (downCountSlap > 0) setChordMode("slap");
             // otherwise, no chord mode
-            else setChordMode(null);
+            else setChordMode("none");
         };
         var box = {
             "action": function() {
@@ -943,5 +1009,8 @@ var TrackBar = (function() {
         updateTrackDirection: updateTrackDirection, // ()
         // noteIndex here can be fractional
         getNearestScaleNoteName: getNearestScaleNoteName, // (noteIndex)
+        setChordModeForFretsTemporarily: setChordModeForFretsTemporarily, // (fret)
+        setFretsTemporarily: setFretsTemporarily, // (fret)
+        revertTemporarySettings: revertTemporarySettings, // ()
     };
 })();

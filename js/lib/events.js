@@ -1,10 +1,10 @@
 // unified event object for mouse and touch events
 class MTEvent {
-    constructor(original, isTouch, currentTarget, clientX, clientY, altKey, shiftKey, ctrlKey, buttons) {
+    constructor(original, isTouch, target, currentTarget, clientX, clientY, altKey, shiftKey, ctrlKey, buttons) {
         this.original = original;
         this.isTouch = isTouch;
+        this.target = target;
         this.currentTarget = currentTarget;
-        this.target = currentTarget;
         this.clientX = clientX;
         this.clientY = clientY;
         this.altKey = altKey;
@@ -270,6 +270,7 @@ var Events = (function() {
 
     function mouseEventToMTEvent(e, overrideTarget=null) {
         var event = new MTEvent(e, false,
+            overrideTarget ? overrideTarget : e.target,
             overrideTarget ? overrideTarget : e.currentTarget,
             e.clientX, e.clientY,
             e.altKey, e.shiftKey,
@@ -305,10 +306,11 @@ var Events = (function() {
                 // element being touched.  To make it work like mouse events, use the coordinates of the event to
                 // find the touched element.
                 overrideTarget ? getActualTarget(primary) : primary.target,
+                primary.currentTarget,
                 primary.clientX, primary.clientY,
                 // can altKey and shiftKey happen on mobile?
-                e.altKey, e.shiftKey,
-                e.touches.length);
+                e.altKey, e.shiftKey, e.ctrlKey || e.metaKey,
+                e.touches.length > 0 ? 1 : 0);
             lastMTEvent = lastTouchEvent;
             return lastTouchEvent;
 
@@ -555,13 +557,13 @@ var DragEvents = (function() {
 
         element.listener_touchmove = (e) => {
             var mte = Events.touchEventToMTEvent(e, true);
-            runDrag(mte, mte.target, dragDropListener);
+            runDrag(mte, mte.currentTarget, dragDropListener);
         };
         element.addEventListener("touchmove", element.listener_touchmove, { "passive": false} );
 
         element.listener_touchend = (e) => {
             var mte = Events.touchEventToMTEvent(e, true);
-            runDrop(mte, mte.target, dragDropListener);
+            runDrop(mte, mte.currentTarget, dragDropListener);
         };
         element.addEventListener("touchend", element.listener_touchend, { "passive": false} );
     }

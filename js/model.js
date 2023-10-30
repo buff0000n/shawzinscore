@@ -69,7 +69,7 @@ var Model = (function() {
         if (songCode) {
             // parse the sond code
             var newSong = new Song();
-            newSong.fromString(songCode);
+            newSong.fromCode(songCode);
             // set the song object
             doSetSong(newSong);
             // update the UI with the song code
@@ -236,7 +236,7 @@ var Model = (function() {
         // check if don't have one cached
         if (!songCode) {
             // get the song code from the song object, or use a default
-            songCode = song ? song.toString() : "";
+            songCode = song ? song.toCode() : "";
         }
         return songCode;
     }
@@ -537,7 +537,7 @@ var Model = (function() {
             }
             // create a new Song and parse the code first thing
             var newSong = new Song();
-            newSong.fromString(newCode);
+            newSong.fromCode(newCode);
 
             // store the old song and code
             var currentSong = song;

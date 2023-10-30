@@ -20,9 +20,44 @@ var SongUtils = (function() {
         return base64Chars[i];
     }
 
-    // time based comparator for sorting notes
-    function noteTickComparator(note1, note2) {
-        return note1.tick - note2.tick;
+    // ganked from https://stackoverflow.com/questions/22697936/binary-search-in-javascript
+    function binarySearchSong(arr, tick, fret=null, string=null) {
+        var m = 0;
+        var n = arr.length - 1;
+
+        while (m <= n) {
+            var k = (n + m) >> 1;
+
+            var cmp = tick - arr[k].tick;
+            if (cmp == 0 && fret) {
+                cmp = fret.localeCompare(arr[k].fret);
+            }
+            if (cmp == 0 && string) {
+                cmp = string.localeCompare(arr[k].string);
+            }
+
+            if (cmp > 0) {
+                m = k + 1;
+
+            } else if (cmp < 0) {
+                n = k - 1;
+
+            } else {
+                return k;
+            }
+        }
+
+        return ~m;
+    }
+
+    function splitNoteName(noteName) {
+        var split = noteName.split("-");
+        if (split.length == 2) {
+            var fret = split[0];
+            var string = split[1];
+            return [fret, string];
+        }
+        throw "Invalid note name: \"" + noteName + "\"";
     }
 
     // public members
@@ -32,7 +67,8 @@ var SongUtils = (function() {
         // convert a single 6-bit int to a base64 char
         intToBase64: intToBase64, // (i)
         // time based comparator for sorting notes
-        noteTickComparator: noteTickComparator, // (note1, note2)
+        splitNoteName: splitNoteName, // (noteName): [fret, string]
+        binarySearchSong: binarySearchSong, // (array, tick, fret=null, string=null)
     };
 })();
 
@@ -45,12 +81,7 @@ class Note {
 
         // string, fret
         if (noteName) {
-            var split = noteName.split("-");
-            if (split.length == 2) {
-                this.fret = split[0];
-                if (this.fret == "0") this.fret = "";
-                this.string = split[1];
-            }
+            [this.fret, this.string] = SongUtils.splitNoteName(noteName);
         }
         // time
         this.tick = tick;
@@ -61,7 +92,7 @@ class Note {
     }
 
     // parse a three character code for string, fret, and timing
-    fromString(code) {
+    fromCode(code) {
         // sanity check
         if (code.length != 3) {
             throw "Invalid note code: \"" + code + "\""
@@ -81,6 +112,9 @@ class Note {
         if (noteInt & 0x08) this.fret = this.fret + "1";
         if (noteInt & 0x10) this.fret = this.fret + "2";
         if (noteInt & 0x20) this.fret = this.fret + "3";
+        if (this.fret.length == 0) {
+            this.fret = "0";
+        }
 
         // combine measure int and tick into into a single tick, number of ticks from the beginning of the song
         this.tick = (measure * 64) + measureTick;
@@ -90,28 +124,14 @@ class Note {
         return this;
     }
 
-    // build the canonical names for the string and fret combination,
+    // build the canonical name for the string and fret combination,
     // this identifies the audio sound to play
-    // note that because a note can have more than one string specified, it can have more than one note name
-    toNoteNames() {
-        // generate the fret portion of the name
-        var fretName = this.fret.length == 0 ? "0" : this.fret;
-
-        // worth having an optimized case for a single note name
-        if (this.string.length == 1) {
-            return [fretName + "-" + this.string];
-        }
-        // list of names
-        var names = [];
-        // loop over the strings and create a separate note name for each one
-        for (var s = 0; s < this.string.length; s++) {
-            names.push(fretName + "-" + this.string.charAt(s));
-        }
-        return names;
+    toNoteName() {
+        return this.fret + "-" + this.string;
     }
 
     // convert to a three-character code
-    toString(offsetTicks = 0) {
+    toCode(offsetTicks = 0) {
         // build the first character from the string and fret info
         var b1 = 0;
         for (var c = 0; c < this.string.length; c++) {
@@ -126,6 +146,7 @@ class Note {
                 case "1" : b1 |= 0x08; break;
                 case "2" : b1 |= 0x10; break;
                 case "3" : b1 |= 0x20; break;
+                case "0" : break;
             }
         }
 
@@ -142,6 +163,19 @@ class Note {
         return SongUtils.intToBase64(b1) + SongUtils.intToBase64(b2) + SongUtils.intToBase64(b3);
     }
 
+    toString() {
+        return this.fret + "-" + this.string + ":" + this.tick;
+    }
+
+    equals(other) {
+        return other && this.fret == other.fret && this.string == other.string;
+    }
+    
+    matchesNoteName(matchFret=null, matchString=null) {
+        return (matchFret == null || matchFret == this.fret)
+            && (matchString == null || matchString == this.string);
+    }
+
     // convenience function to determine whether this note is a chord or not
     isChord() {
         return this.fret.length > 1;
@@ -149,7 +183,7 @@ class Note {
 
     // human readable description
     desc() {
-        return "[" + this.tick + " : " + this.string + "-" + this.fret + "]";
+        return "[" + this.tick + " : " + this.toNoteName() + "]";
     }
 
     // shift the tick time
@@ -179,7 +213,7 @@ class Song {
     }
 
     // parse a song code and store the data in this object
-    fromString(code) {
+    fromCode(code) {
         // strip all whitespace
         code = code.replace(/\s/g, '');
         // should be 3n+1 chars long
@@ -199,8 +233,28 @@ class Song {
         this.notes = Array();
         // pull out each three-char substring and parse it into a note string, fret, and tick
         for (var i = 1; i < code.length; i+= 3) {
-            // add to the note list, sorting by tick and setting up a doubly linked list
-            this.addNote(new Note().fromString(code.substring(i, i+3)));
+            var noteCode = code.substring(i, i+3);
+            var note = new Note().fromCode(noteCode);
+            if (note.string.length == 1) {
+                // add to the note list, sorting by tick and setting up a doubly linked list
+                this.addNote(note);
+
+            } else if (note.string.length == 0) {
+                // what
+                console.log("ignored note code with zero strings specified: " + noteCode);
+
+            } else {
+                // it's a multi-string code, break it up into multiple notes
+                for (var i = 0; i < note.string.length; i++) {
+                    // loop over the strings
+                    for (var i = 0; i < note.string.length; i++) {
+                        // build a note with a single string
+                        var note2 = new Note(note.string[i] + "-" + note.fret, note.tick);
+                        // add to the note list, sorting by tick and setting up a doubly linked list
+                        this.addNote(note2);
+                    }
+                }
+            }
         }
 
         return this;
@@ -209,14 +263,14 @@ class Song {
     /// add a note
     addNote(note) {
         // search for the insertion index
-        var index = binarySearch(this.notes, note, SongUtils.noteTickComparator);
+        var index = this.getNoteIndex(note.tick, note.fret, note.string);
         if (index < 0) {
             // no exact tick match found, just get the insertion index
             index = -(index + 1);
         } else {
-            // exact tick match found, which you should not be doing.
-            // Insert this note as the last one in the list at that tick
-            while (index < this.notes.length && this.notes[index].tick == note.tick) { index++ }
+            // exact match found, which you should not be doing
+            // insert immediately afterward
+            index++;
         }
         // perform the insertion
         this.notes.splice(index, 0, note);
@@ -233,44 +287,42 @@ class Song {
     }
 
     // get the index of the given note
-    getNoteIndex(note) {
-        // search for a note at the correct tick
-        var index = binarySearch(this.notes, note, SongUtils.noteTickComparator);
-        if (index < 0) {
-            // no exact tick match found
-            return -1;
+    // Jesus why is this so complicated
+    getNoteIndex(tick, fret=null, string=null) {
+        // search for a note at the correct tick and optional fret and string
+        return SongUtils.binarySearchSong(this.notes, tick, fret, string);
+        // that's it that's the function
+    }
 
-        } else {
-            // just in case there's more than one at the same tick
-            while (index < this.notes.length - 1 && this.notes[index] != note && this.notes[index + 1].tick == note.tick) { index++ }
-            if (index >= this.notes.length || this.notes[index] != note) {
-                // should I even be bothering with keeping an array?
-                return -1;
-            }
-        }
-        return index;
+    getNote(tick, fret=null, string=null) {
+        var index = this.getNoteIndex(tick, fret, string);
+        return index >= 0 ? this.notes[index] : null;
     }
 
     // remove the given note
     removeNote(note) {
         // find it in the array
-        var index = this.getNoteIndex(note);
+        var index = this.getNoteIndex(note.tick, note.fret, note.string);
         // sanity check
         if (index < 0) {
             throw "Note not found: " + note;
         }
 
+        var noteToRemove = this.notes[index];
+
         // break the forward linkage
-        if (index > 0) {
-            this.notes[index - 1].next = this.notes[index].next;
+        if (noteToRemove.prev) {
+            noteToRemove.prev.next = noteToRemove.next;
         }
         // break the backward linkage
-        if (index < this.notes.length - 1) {
-            this.notes[index + 1].prev = this.notes[index].prev;
+        if (noteToRemove.next) {
+            noteToRemove.next.prev = noteToRemove.prev;
         }
 
         // remove from the array
         this.notes.splice(index, 1);
+
+        return noteToRemove;
     }
 
     // internal function swap the notes at two indices
@@ -291,27 +343,27 @@ class Song {
         this.notes[index2].next = t2next;
     }
 
-    // move the given note to the given time
-    moveNote(note, tick) {
-        // find the note
-        var index = this.getNoteIndex(note);
-        // sanity check
-        if (index < 0) {
-            throw "Note not found: " + note;
-        }
-
-        // update the note's tick
-        note.tick = tick;
-        // Assume we don't have to move it far and be a little efficient about it
-        // move backwards in the list if we decreased its tick
-        while (index > 0 && this.notes[index - 1].tick > note.tick) {
-            this.swap(index - 1, index);
-        }
-        // move forwrads in the list if we increased its tick
-        while (index < this.notes.length - 1 && this.notes[index + 1].tick <= note.tick) {
-            this.swap(index, index + 1);
-        }
-    }
+//    // move the given note to the given time
+//    moveNote(note, tick) {
+//        // find the note
+//        var index = this.getNoteIndex(note);
+//        // sanity check
+//        if (index < 0) {
+//            throw "Note not found: " + note;
+//        }
+//
+//        // update the note's tick
+//        note.tick = tick;
+//        // Assume we don't have to move it far and be a little efficient about it
+//        // move backwards in the list if we decreased its tick
+//        while (index > 0 && this.notes[index - 1].tick > note.tick) {
+//            this.swap(index - 1, index);
+//        }
+//        // move forwrads in the list if we increased its tick
+//        while (index < this.notes.length - 1 && this.notes[index + 1].tick <= note.tick) {
+//            this.swap(index, index + 1);
+//        }
+//    }
 
     // find the first note after the given one matching the given condition
     findNextNote(note, condition = (n1, n2) => true) {
@@ -326,7 +378,7 @@ class Song {
     getFirstNoteAfter(tick) {
         // search for the index
         // todo: some way without making a throaway object
-        var index = binarySearch(this.notes, new Note(null, tick), SongUtils.noteTickComparator);
+        var index = this.getNoteIndex(tick);
         // no exact match, correct the result
         if (index < 0) {
             index = -(index + 1);
@@ -335,7 +387,7 @@ class Song {
     }
 
     // convert to a song code
-    toString() {
+    toCode() {
         // If it's just a scale and no notes then return blank
         if (this.notes.length == 0) {
             return "";
@@ -351,7 +403,27 @@ class Song {
 
         // append each note in chronological order
         for (var n = 0; n < this.notes.length; n++) {
-            buffer += this.notes[n].toString(offsetTicks);
+            var note = this.notes[n];
+
+            // detect notes with the same tick and fret and combine them into multi-string notes
+            // this works because the note list is fully ordered by tick and then by fret
+            while (n < this.notes.length - 1 && this.notes[n + 1].tick == note.tick && this.notes[n + 1].fret == note.fret) {
+                // not really interested in optimizing this extremely rare case
+                // build a new note
+                var note2 = new Note();
+                // merge
+                note2.tick = note.tick;
+                note2.fret = note.fret;
+                // just append, when creating the note code it doesn't matter what order the strings are in or
+                // how many duplicates there are
+                note2.string = note.string + this.notes[n + 1].string;
+                // replace the note to write
+                note = note2;
+                // move to the next note
+                n++;
+            }
+            // convert to a code
+            buffer += note.toCode(offsetTicks);
         }
         return buffer;
     }
@@ -394,85 +466,85 @@ class Song {
 function what() {
     var song = new Song();
     song.setScale("pmin");
-    var frets = "1";
+    var fret = "1";
     var t = 0;
     var dt = 16;
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t+=dt));
-    song.addNote(new Note(frets + "-3", t+=dt));
-    song.addNote(new Note(frets + "-12", t+=dt));
-    song.addNote(new Note(frets + "-23", t+=dt));
-    song.addNote(new Note(frets + "-13", t+=dt));
-    song.addNote(new Note(frets + "-123", t+=dt));
-    frets = "12";
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t+=dt));
-    song.addNote(new Note(frets + "-3", t+=dt));
-    song.addNote(new Note(frets + "-12", t+=dt));
-    song.addNote(new Note(frets + "-23", t+=dt));
-    song.addNote(new Note(frets + "-13", t+=dt));
-    song.addNote(new Note(frets + "-123", t+=dt));
-    var code = song.toString();
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t+=dt));
+    song.addNote(new Note(fret + "-3", t+=dt));
+    song.addNote(new Note(fret + "-12", t+=dt));
+    song.addNote(new Note(fret + "-23", t+=dt));
+    song.addNote(new Note(fret + "-13", t+=dt));
+    song.addNote(new Note(fret + "-123", t+=dt));
+    fret = "12";
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t+=dt));
+    song.addNote(new Note(fret + "-3", t+=dt));
+    song.addNote(new Note(fret + "-12", t+=dt));
+    song.addNote(new Note(fret + "-23", t+=dt));
+    song.addNote(new Note(fret + "-13", t+=dt));
+    song.addNote(new Note(fret + "-123", t+=dt));
+    var code = song.toCode();
     console.log(code);
 }
 
 function what2() {
     var song = new Song();
     song.setScale("pmin");
-    var frets = "1";
+    var fret = "1";
     var t = 0;
     var dt = 16;
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t+=dt));
-    song.addNote(new Note(frets + "-3", t+=dt));
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t));
-    song.addNote(new Note(frets + "-2", t+=dt));
-    song.addNote(new Note(frets + "-3", t));
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-3", t));
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t));
-    song.addNote(new Note(frets + "-3", t));
-    var code = song.toString();
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t+=dt));
+    song.addNote(new Note(fret + "-3", t+=dt));
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t));
+    song.addNote(new Note(fret + "-2", t+=dt));
+    song.addNote(new Note(fret + "-3", t));
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-3", t));
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t));
+    song.addNote(new Note(fret + "-3", t));
+    var code = song.toCode();
     console.log(code);
 }
 
 function what2() {
     var song = new Song();
     song.setScale("pmin");
-    var frets = "1";
+    var fret = "1";
     var t = 0;
     var dt = 16;
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t+=dt));
-    song.addNote(new Note(frets + "-3", t+=dt));
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t+1));
-    song.addNote(new Note(frets + "-3", t+=dt));
-    var code = song.toString();
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t+=dt));
+    song.addNote(new Note(fret + "-3", t+=dt));
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t+1));
+    song.addNote(new Note(fret + "-3", t+=dt));
+    var code = song.toCode();
     console.log(code);
 }
 
 function what2() {
     var song = new Song();
     song.setScale("pmin");
-    var frets = "1";
+    var fret = "1";
     var t = 0;
     var dt = 16;
-    frets = "12";
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t+=dt));
-    song.addNote(new Note(frets + "-3", t+=dt));
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t));
-    song.addNote(new Note(frets + "-2", t+=dt));
-    song.addNote(new Note(frets + "-3", t));
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-3", t));
-    song.addNote(new Note(frets + "-1", t+=dt));
-    song.addNote(new Note(frets + "-2", t));
-    song.addNote(new Note(frets + "-3", t));
-    var code = song.toString();
+    fret = "12";
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t+=dt));
+    song.addNote(new Note(fret + "-3", t+=dt));
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t));
+    song.addNote(new Note(fret + "-2", t+=dt));
+    song.addNote(new Note(fret + "-3", t));
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-3", t));
+    song.addNote(new Note(fret + "-1", t+=dt));
+    song.addNote(new Note(fret + "-2", t));
+    song.addNote(new Note(fret + "-3", t));
+    var code = song.toCode();
     console.log(code);
 }

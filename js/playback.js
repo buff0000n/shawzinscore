@@ -488,12 +488,16 @@ var Playback = (function() {
 
             // see if the track already has a playback marker placed somewhere
             playbackStartTick = Track.getPlaybackTick();
-            // otherwise, check for a playback start marker
+            // if the current playback marker is after the end of the song, ignore it
+            if (playbackStartTick > song.getEndTick()) {
+                playbackStartTick = null;
+            }
+            // if we don't have a current playback marker, check for a playback start marker
             if (playbackStartTick == null) {
                 playbackStartTick = Track.getPlaybackStartTick();
             }
-            // check if the track's marker is missing or after the end of the song
-            if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
+            // if we get this far still without a playback start, start at the beginning
+            if (playbackStartTick == null) {
                 // If playback speed is 1x or greater, start playback at the beginning, minus the playback lead-in
                 // (which is different from the song lead-in)
                 if (playbackSpeed >= 1) {
@@ -672,20 +676,12 @@ var Playback = (function() {
                     break;
                 }
 
-                // get the note names
-                var noteNames = nextScheduledNote.toNoteNames();
+                // get the note name
+                var noteName = nextScheduledNote.toNoteName();
                 // schedule the note to play
                 var noteTime = toRealTime(noteTick);
                 //console.log("SCHEDULED NOTE TIME: " + noteTime);
-                // worth having an optimized case for a single note name
-                if (noteNames.length == 1) {
-                    soundBank.play(noteNames[0], noteTime);
-                } else {
-                    // todo: polyphony check?
-                    for (var n = 0; n < noteNames.length; n++) {
-                        soundBank.play(noteNames[n], noteTime);
-                    }
-                }
+                soundBank.play(noteName, noteTime);
                 // go to the next note
                 nextScheduledNote = nextScheduledNote.next;
                 //console.log("NEXT SCHEDULED: " + (nextScheduledNote ? nextScheduledNote.tick : "null"));

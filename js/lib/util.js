@@ -234,7 +234,14 @@ var PageUtils = (function() {
     }
     
     function windowOnError(msg, url, lineNo, columnNo, error) {
-        showErrors([msg.replace("Uncaught ", "")]);
+        var array = [];
+        array.push(msg.replace("Uncaught ", ""));
+//        if (error && error.stack) {
+//            array.push(error.stack);
+//        } else if (url && lineNo) {
+//            array.push(url + ":" + lineNo);
+//        }
+        showErrors(array);
         return false;
     }
     
@@ -244,7 +251,7 @@ var PageUtils = (function() {
         // find the error bar
         var debugBarElement = document.getElementById("debug-bar");
         if (debugBarElement.children.length == 0) {
-            debugBarElement.innerHTML = `<div id="debug">`;
+            debugBarElement.innerHTML = `<div id="debug"></div>`;
         }
         var debugElement = document.getElementById("debug");
     
