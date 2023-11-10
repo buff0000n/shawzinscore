@@ -164,7 +164,7 @@ class Note {
     }
 
     toString() {
-        return this.fret + "-" + this.string + ":" + this.tick;
+        return this.tick + ":" + this.fret + "-" + this.string;
     }
 
     equals(other) {
@@ -232,8 +232,8 @@ class Song {
         // note array
         this.notes = Array();
         // pull out each three-char substring and parse it into a note string, fret, and tick
-        for (var i = 1; i < code.length; i+= 3) {
-            var noteCode = code.substring(i, i+3);
+        for (var n = 1; n < code.length; n+= 3) {
+            var noteCode = code.substring(n, n+3);
             var note = new Note().fromCode(noteCode);
             if (note.string.length == 1) {
                 // add to the note list, sorting by tick and setting up a doubly linked list
@@ -245,14 +245,12 @@ class Song {
 
             } else {
                 // it's a multi-string code, break it up into multiple notes
+                // loop over the strings
                 for (var i = 0; i < note.string.length; i++) {
-                    // loop over the strings
-                    for (var i = 0; i < note.string.length; i++) {
-                        // build a note with a single string
-                        var note2 = new Note(note.string[i] + "-" + note.fret, note.tick);
-                        // add to the note list, sorting by tick and setting up a doubly linked list
-                        this.addNote(note2);
-                    }
+                    // build a note with a single string
+                    var note2 = new Note(note.fret + "-" + note.string[i], note.tick);
+                    // add to the note list, sorting by tick and setting up a doubly linked list
+                    this.addNote(note2);
                 }
             }
         }
@@ -294,9 +292,42 @@ class Song {
         // that's it that's the function
     }
 
-    getNote(tick, fret=null, string=null) {
+    getNote(tick, fret=null, string=null, backtrack=0, forwardtrack=0) {
         var index = this.getNoteIndex(tick, fret, string);
-        return index >= 0 ? this.notes[index] : null;
+        if (index >= 0) {
+            return this.notes[index];
+        }
+        // convert to insertion index
+        index = -index - 1;
+        if (backtrack > 0 && index > 0) {
+            var stopTick = tick - backtrack;
+            // start at the previous element to the insertion index
+            for (var index2 = index - 1; index2 >= 0; index2--) {
+                var note = this.notes[index2];
+                if (note.tick < stopTick) break;
+                if (note.tick <= tick) {
+                    //console.log("backTrack: " + index2);
+                    if (note.matchesNoteName(fret, string)) {
+                        return note;
+                    }
+                }
+            }
+        }
+        if (forwardtrack > 0 && index < this.notes.length - 1) {
+            var stopTick = tick + forwardtrack;
+            // start at the insertion index
+            for (var index2 = index; index2 < this.notes.length; index2++) {
+                var note = this.notes[index2];
+                if (note.tick > stopTick) break;
+                if (note.tick >= tick) {
+                    //console.log("forwardTrack: " + index2);
+                    if (this.notes[index2].matchesNoteName(fret, string)) {
+                        return this.notes[index2];
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     // remove the given note

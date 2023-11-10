@@ -97,30 +97,32 @@ var Menus = (function() {
         return buttonDiv;
     }
 
-    function buildMenu(contentDiv, label) {
+    function buildMenu(contentDiv, label = null) {
         // top level menu container
         var menuDiv = document.createElement("div");
         menuDiv.className = "menu-container";
 
-        // title bar container
-        var titleBarDiv = document.createElement("table");
-        titleBarDiv.className = "menu-title-bar";
+        if (label) {
+            // title bar container
+            var titleBarDiv = document.createElement("table");
+            titleBarDiv.className = "menu-title-bar";
 
-        var titleBarDivRow = document.createElement("tr");
+            var titleBarDivRow = document.createElement("tr");
 
-        // label element
-        var titleDiv = document.createElement("td");
-        titleDiv.className = "menu-title";
-        titleDiv.innerHTML = label;
-        titleBarDivRow.appendChild(titleDiv);
+            // label element
+            var titleDiv = document.createElement("td");
+            titleDiv.className = "menu-title";
+            titleDiv.innerHTML = label;
+            titleBarDivRow.appendChild(titleDiv);
 
-        // close button element
-        var closeDiv = buildCloseMenuButton();
-        titleBarDivRow.appendChild(closeDiv);
+            // close button element
+            var closeDiv = buildCloseMenuButton();
+            titleBarDivRow.appendChild(closeDiv);
 
-        // add to containers
-        titleBarDiv.appendChild(titleBarDivRow);
-        menuDiv.appendChild(titleBarDiv);
+            // add to containers
+            titleBarDiv.appendChild(titleBarDivRow);
+            menuDiv.appendChild(titleBarDiv);
+        }
 
         // wrap the content div
         var contentContainerDiv = document.createElement("div");
@@ -277,13 +279,11 @@ var Menus = (function() {
         return [left + s.scrollLeft, top + s.scrollTop];
     }
 
-    function showMenu(contentDiv, element, title, fullWidth = false, closeCallback = null) {
+    function showMenu(contentDiv, left, top, title = null, fullWidth = false, closeCallback = null) {
         // build the menu element
         var menuDiv = buildMenu(contentDiv, title);
         // save the close callback, if present
         menuDiv.closeCallback = closeCallback;
-        // get the starting position from the element
-        var [left, top] = getMenuCoordsFromElement(element, fullWidth);
         // show the menu
         showMenuAt(menuDiv, left, top);
         // save the last event so we don't accidentally close the menu immediately
@@ -292,10 +292,22 @@ var Menus = (function() {
         return menuDiv.onclose;
     }
 
+    function showMenuAtElement(contentDiv, element, title = null, fullWidth = false, closeCallback = null) {
+        // get the starting position from the element
+        var [left, top] = getMenuCoordsFromElement(element, fullWidth);
+        return showMenu(contentDiv, left, top, title, fullWidth, closeCallback);
+    }
+
+    function showMenuAtEvent(contentDiv, e, title = null, fullWidth = false, closeCallback = null) {
+        // get the starting position from the event
+        return showMenu(contentDiv, e.clientX + window.scrollX, e.clientY + window.scrollY, title, fullWidth, closeCallback);
+    }
+
     // public members
     return  {
         // Wrap the given div in a menu and pop it up under the given element with a title,
         // optionally full width, and with an optional callback when the menu is closed
-        showMenu: showMenu, // (contentDiv, element, title, fullWidth = false, closeCallback = null)
+        showMenu: showMenuAtElement, // (contentDiv, element, title, fullWidth = false, closeCallback = null)
+        showMenuAtEvent: showMenuAtEvent, // (contentDiv, event, title, fullWidth = false, closeCallback = null)
     }
 })();
