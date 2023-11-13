@@ -1160,7 +1160,8 @@ var Track = (function() {
     }
 
 /* todo:
-    undo/redo
+    URL updating
+    error checking/showing
     do something about draw order
       - z-index?
       - ordering elements in bar div?
@@ -1263,6 +1264,7 @@ var Track = (function() {
             if (editing) {
                 updateMoveNote(e);
                 if (lastMoveNote) {
+                    Undo.startUndoCombo();
                     if (lastMoveNoteNew) {
                         //console.log("Clicked new note at: " + lastMoveNote);
                         originalNote = new Note(lastMoveNote.toNoteName(), lastMoveNote.tick);
@@ -1321,16 +1323,24 @@ var Track = (function() {
                     //console.log("Unclicked note at: " + lastMoveNote);
                     var newNote = new Note(lastMoveNote.toNoteName(), lastMoveNote.tick);
                     updateLastMoveNote(null);
-                    // todo: undo
-                    addNote(newNote);
+                    resetLastMoveNote();
+
+                    if (!originalNoteHasMoved) {
+                        Undo.cancelUndoCombo();
+                        noteMenu(e, newNote);
+
+                    } else if (!originalNoteNew && newNote.tick == originalNote.tick && newNote.equals(originalNote)) {
+                        Undo.cancelUndoCombo();
+
+                    } else {
+                        addNote(newNote);
+                        Undo.endUndoCombo("Modify Note");
+                    }
+
                     originalNote = null;
                     TrackBar.revertTemporarySettings();
                     e.target = null;
-                    resetLastMoveNote();
                     updateMoveNote(e);
-                    if (!originalNoteHasMoved) {
-                        noteMenu(e, newNote);
-                    }
                 }
             }
         }
@@ -1369,6 +1379,7 @@ var Track = (function() {
             if (!moveNoteName && originalNote) {
                 //console.log("drag canceled");
                 if (!originalNoteNew) {
+                    Undo.cancelUndoCombo();
                     addNote(originalNote);
                 }
                 canceledOriginalNote = originalNote;
@@ -1419,7 +1430,7 @@ var Track = (function() {
                 }
 
                 // check if we have a notename
-                if (moveNoteName) {
+                if (!originalNote && moveNoteName) {
                     // parse moveNoteName into fret and string
                     var [fret, string] = SongUtils.splitNoteName(moveNoteName);
                     // search for an existing note near the cursor
@@ -1491,10 +1502,7 @@ var Track = (function() {
                     var temp = originalNote != null;
                     var view = new NoteView(lastMoveNote, temp, outline);
                     view.build();
-                    if (originalNote &&
-                        (originalNote.tick != lastMoveNote.tick ||
-                         originalNote.fret != lastMoveNote.fret ||
-                         originalNote.string != lastMoveNote.string)) {
+                    if (originalNote && (lastMoveNote.tick != originalNote.tick || !lastMoveNote.equals(originalNote))) {
                         originalNoteHasMoved = true;
                     }
                 } else {
@@ -1519,15 +1527,39 @@ var Track = (function() {
         }
 
         function removeNote(note) {
+            return Undo.doAction(
+                () => { return doRemoveNote(note); },
+                () => { doAddNote(note); },
+                "Remove Note"
+            );
+        }
+
+        function addNote(note) {
+            Undo.doAction(
+                () => { doAddNote(note); },
+                () => { doRemoveNote(note); },
+                "Add Note"
+            );
+        }
+
+        function doRemoveNote(note) {
             var prev = note.prev;
             var next = note.next;
             var removedNote = song.removeNote(note);
             removedNote.view.clear();
             rebuildNoteViews(removedNote, prev, next);
+            if (note == lastMoveNote) {
+                resetLastMoveNote();
+                // todo: re-run move event to set the cursor correctly?
+                //if (lastMoveEvent) {
+                //    lastMoveEvent.target = null;
+                //    updateMoveNote(lastMoveEvent);
+                //}
+            }
             return removedNote;
         }
 
-        function addNote(note) {
+        function doAddNote(note) {
             song.addNote(note);
             var view = new NoteView(note, false, false);
             view.build();

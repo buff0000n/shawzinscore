@@ -90,9 +90,11 @@ var Undo = (function() {
     function startUndoCombo() {
         // push a new list on the top of the nested action stack
         undoCombos.push([]);
+        //console.log("Starting combo action level " + undoCombos.length);
     }
     
     function endUndoCombo(description=null) {
+        //console.log("Ending combo action level " + undoCombos.length);
         // pop the last combo list off the stack
         var undoList = undoCombos.pop()
         var action = null;
@@ -109,7 +111,7 @@ var Undo = (function() {
         if (action) {
             // if there are still open nested actions then add this action to the next level down.
             if (undoCombos.length > 0) {
-                undoCombos.push(action);
+                undoCombos[undoCombos.length - 1].push(action);
             // otherwise, there are no more nested actions and we can add this to our undo stack
             } else {
                 addUndoAction(action)
@@ -125,6 +127,7 @@ var Undo = (function() {
 //    }
 //
     function cancelUndoCombo() {
+        //console.log("Canceling combo action level" + undoCombos.length);
         var undoList = undoCombos.pop()
         for (var i = undoList.length - 1; i >= 0; i--) {
             undoList[i].undoAction();
@@ -138,6 +141,10 @@ var Undo = (function() {
 //    }
     
     function doUndo() {
+        if (undoCombos.length > 0) {
+            // ignore undo/redo requests when an acton combo is in progress
+            return;
+        }
         // pop the last action
         var action = undoStack.pop();
         // make sure there was a last action
@@ -155,6 +162,10 @@ var Undo = (function() {
     }
     
     function doRedo() {
+        if (undoCombos.length > 0) {
+            // ignore undo/redo requests when an acton combo is in progress
+            return;
+        }
         // pop the next action
         var action = redoStack.pop();
         // make sure is a next action
@@ -196,17 +207,21 @@ var Undo = (function() {
         }
     
         undoAction() {
+            var ret = null;
             // iterate over the action list in reverse order to undo
             for (var a = this.actions.length - 1; a >= 0; a--) {
-                this.actions[a].undoAction();
+                ret = this.actions[a].undoAction();
             }
+            return ret;
         }
     
         redoAction() {
+            var ret = null;
             // iterate over the action list in original order to redo
             for (var a = 0; a < this.actions.length; a++) {
-                this.actions[a].redoAction();
+                ret = this.actions[a].redoAction();
             }
+            return ret;
         }
     
         toString() {
@@ -225,11 +240,13 @@ var Undo = (function() {
         }
 
         undoAction() {
-            this.undoFunc();
+            //console.log("Undoing: " + this.description);
+            return this.undoFunc();
         }
 
         redoAction() {
-            this.doFunc();
+            //console.log("Doing: " + this.description);
+            return this.doFunc();
         }
 
         toString() {
@@ -245,9 +262,10 @@ var Undo = (function() {
         startUndoCombo();
         // add the action
         addUndoAction(action);
+        var ret = null;
         try {
             // perform the action
-            action.redoAction();
+            ret = action.redoAction();
 
         } catch (error) {
             // cancel the undo combo and undo any actions that might already be in it
@@ -259,6 +277,7 @@ var Undo = (function() {
         endUndoCombo(description);
         // seems like a good time to clear any errors
         PageUtils.clearErrors();
+        return ret;
     }
 
     // public members
@@ -275,6 +294,7 @@ var Undo = (function() {
 
         startUndoCombo: startUndoCombo, // ()
         endUndoCombo: endUndoCombo, // (description)
+        cancelUndoCombo: cancelUndoCombo, // ()
         // perform an action and store it, along with an undo action and a description, in the undo stack
         // If this action recursively calls doAction() with another action then it will all be combined
         // into a single undo action when the top-level undo action exits
