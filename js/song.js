@@ -60,6 +60,11 @@ var SongUtils = (function() {
         throw "Invalid note name: \"" + noteName + "\"";
     }
 
+    var noteCount = 0;
+    function noteId() {
+        return noteCount++;
+    }
+
     // public members
     return {
         // convert a single character to a 6-bit int
@@ -69,6 +74,7 @@ var SongUtils = (function() {
         // time based comparator for sorting notes
         splitNoteName: splitNoteName, // (noteName): [fret, string]
         binarySearchSong: binarySearchSong, // (array, tick, fret=null, string=null)
+        noteId: noteId, // ()
     };
 })();
 
@@ -76,6 +82,7 @@ var SongUtils = (function() {
 // object representing a single note
 class Note {
     constructor(noteName = null, tick = 0) {
+        this.id = SongUtils.noteId();
         this.string = null;
         this.fret = null;
 
@@ -263,10 +270,23 @@ class Song {
         // search for the insertion index
         var index = this.getNoteIndex(note.tick, note.fret, note.string);
         if (index < 0) {
-            // no exact tick match found, just get the insertion index
+            // no exact match found, just get the insertion index
             index = -(index + 1);
         } else {
             // exact match found, which you should not be doing
+            // check if the same exact object was added twice
+            // we have to do a loop forward and backward in case some asshole has added the same
+            // exact note multiple times.  What an asshole.
+            for (var n = this.notes[index]; n != null && n.tick == note.tick; n = n.prev) {
+                if (n == note) {
+                    throw ("Duplicate note object added");
+                }
+            }
+            for (var n = this.notes[index].next; n != null && n.tick == note.tick; n = n.next) {
+                if (n == note) {
+                    throw ("Duplicate note object added");
+                }
+            }
             // insert immediately afterward
             index++;
         }
@@ -276,11 +296,15 @@ class Song {
         if (index > 0) {
             this.notes[index].prev = this.notes[index - 1];
             this.notes[index - 1].next = this.notes[index];
+        } else {
+            this.notes[index].prev = null;
         }
         // maintain the link backward
         if (index < this.notes.length - 1) {
             this.notes[index + 1].prev = this.notes[index];
             this.notes[index].next = this.notes[index + 1];
+        } else {
+            this.notes[index].next = null;
         }
     }
 
@@ -339,6 +363,23 @@ class Song {
             throw "Note not found: " + note;
         }
 
+        // ugh, if the given note object is actually in this note list then make sure its the one we remove
+        // I feel like there's a better way to architect this whole note list
+        var index2 = index;
+        // search backward
+        while (index2 > 0 && this.notes[index2] != note && this.notes[index2 - 1].tick == note.tick && this.notes[index2 - 1].equals(note)) {
+            index2--;
+        }
+        if (this.notes[index2] != note) {
+            // search forward
+            var index2 = index;
+            while (index2 < this.notes.length - 1 && this.notes[index2] != note && this.notes[index2 + 1].tick == note.tick && this.notes[index2 + 1].equals(note)) {
+                index2++;
+            }
+        }
+
+        index = index2;
+
         var noteToRemove = this.notes[index];
 
         // break the forward linkage
@@ -356,23 +397,23 @@ class Song {
         return noteToRemove;
     }
 
-    // internal function swap the notes at two indices
-    swap(index1, index2) {
-        // temp variables
-        var t1 = this.notes[index1];
-        var t2prev = t2.prev;
-        var t2next = t2.next;
-
-        // put note 1 where note 2 was
-        this.notes[index1] = this.notes[index2];
-        this.notes[index1].prev = t1.prev;
-        this.notes[index1].next = t1.next;
-
-        // put note 2 where note 1 was using the temp variables
-        this.notes[index2] = t1;
-        this.notes[index2].prev = t2prev;
-        this.notes[index2].next = t2next;
-    }
+//    // internal function swap the notes at two indices
+//    swap(index1, index2) {
+//        // temp variables
+//        var t1 = this.notes[index1];
+//        var t2prev = t2.prev;
+//        var t2next = t2.next;
+//
+//        // put note 1 where note 2 was
+//        this.notes[index1] = this.notes[index2];
+//        this.notes[index1].prev = t1.prev;
+//        this.notes[index1].next = t1.next;
+//
+//        // put note 2 where note 1 was using the temp variables
+//        this.notes[index2] = t1;
+//        this.notes[index2].prev = t2prev;
+//        this.notes[index2].next = t2next;
+//    }
 
 //    // move the given note to the given time
 //    moveNote(note, tick) {

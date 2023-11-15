@@ -1326,15 +1326,24 @@ var Track = (function() {
                     resetLastMoveNote();
 
                     if (!originalNoteHasMoved) {
-                        Undo.cancelUndoCombo();
+                        if (!Undo.cancelUndoCombo()) {
+                            console.log("Error canceling move operation for menu");
+                            console.trace();
+                        }
                         noteMenu(e, newNote);
 
                     } else if (!originalNoteNew && newNote.tick == originalNote.tick && newNote.equals(originalNote)) {
-                        Undo.cancelUndoCombo();
+                        if (!Undo.cancelUndoCombo()) {
+                            console.log("Error canceling no-op move operation");
+                            console.trace();
+                        }
 
                     } else {
                         addNote(newNote);
-                        Undo.endUndoCombo("Modify Note");
+                        if (!Undo.endUndoCombo("Modify Note")) {
+                            console.log("Error finishing operation");
+                            console.trace();
+                        }
                     }
 
                     originalNote = null;
@@ -1543,9 +1552,9 @@ var Track = (function() {
         }
 
         function doRemoveNote(note) {
-            var prev = note.prev;
-            var next = note.next;
             var removedNote = song.removeNote(note);
+            var prev = removedNote.prev;
+            var next = removedNote.next;
             removedNote.view.clear();
             rebuildNoteViews(removedNote, prev, next);
             if (note == lastMoveNote) {
