@@ -131,6 +131,9 @@ var Undo = (function() {
 //    }
 //
     function cancelUndoCombo() {
+        if (undoCombos.length == 0) {
+            throw "No undo combo to cancel";
+        }
         //console.log("Canceling combo action level" + undoCombos.length);
         var undoList = undoCombos.pop()
         for (var i = undoList.length - 1; i >= 0; i--) {
@@ -149,6 +152,7 @@ var Undo = (function() {
     function doUndo() {
         if (undoCombos.length > 0) {
             // ignore undo/redo requests when an acton combo is in progress
+            throw "Cannot undo, action combo in progress";
             return;
         }
         // pop the last action
@@ -170,6 +174,7 @@ var Undo = (function() {
     function doRedo() {
         if (undoCombos.length > 0) {
             // ignore undo/redo requests when an acton combo is in progress
+            throw "Cannot redo, action combo in progress";
             return;
         }
         // pop the next action

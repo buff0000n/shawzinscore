@@ -878,9 +878,11 @@ var Track = (function() {
                 return [div];
             }
 
-            // hard-code grab box at 2 ticks of length, we have to balance easy selecting with the ability to put
-            // repeated notes close to each other
-            var grabDiv = this.buildRollNoteDiv(name, editNoteLength);
+//            // hard-code grab box at 2 ticks of length, we have to balance easy selecting with the ability to put
+//            // repeated notes close to each other
+//            var grabDiv = this.buildRollNoteDiv(name, editNoteLength);
+            // meh, it's too confusing when you can't grab anywhere on the note
+            var grabDiv = this.buildRollNoteDiv(name, length);
             // classname depends on whether it's outline mode
             grabDiv.className = "roll-note-grab";
             grabDiv.noteView = this;
@@ -1160,61 +1162,46 @@ var Track = (function() {
     }
 
 /* todo:
-    URL updating
     error checking/showing
     do something about draw order
       - z-index?
       - ordering elements in bar div?
+    note offset for dragging chords
+    recalculate lead-in when saving
 */
     // let's encapsulate this
     var Editor = (function() {
         var editing = false;
+        var isDragging = false;
+        var isDragPaused = false;
 
         var tabEnabled = false;
         var rollEnabled = false;
         var fretsEnabled = [false];
 
-        var lastMoveTick = null;
-        var lastMoveNoteName = null;
-        var lastMoveNote = null;
-        var lastMoveNoteNew = null;
-        var lastMoveType = null;
-        var lastMoveNoteOffsetTick = null;
-//        var lastMoveOffsetRoll = null;
-        var lastMoveEvent = null;
-
-        var originalNote = null;
-        var originalNoteOffsetTick = 0;
-        var originalNoteNew = false;
-//        var offsetRollNote = 0;
-        var originalNoteHasMoved = null;
-        var canceledOriginalNote = null;
-
-        var clickCancel = null;
-
         function registerEventListeners() {
-            scroll.addEventListener("mousedown", (e) => { downEvent(Events.mouseEventToMTEvent(e)); }, { "passive": false});
-            scroll.addEventListener("mousemove", (e) => { moveEvent(Events.mouseEventToMTEvent(e)); }, { passive: false } );
-            scroll.addEventListener("mouseup", (e) => { upEvent(Events.mouseEventToMTEvent(e)); }, { "passive": true});
-            scroll.addEventListener("mouseleave", (e) => { outEvent(Events.mouseEventToMTEvent(e)); }, { passive: true } );
+            scroll.addEventListener("mousedown",  (e) => { handleDownEvent(Events.mouseEventToMTEvent(e)); }, { "passive": false } );
+            scroll.addEventListener("mousemove",  (e) => { handleMoveEvent(Events.mouseEventToMTEvent(e)); }, { "passive": false } );
+            scroll.addEventListener("mouseup",    (e) => { handleUpEvent(Events.mouseEventToMTEvent(e));   }, { "passive": true  } );
+            scroll.addEventListener("mouseleave", (e) => { handleOutEvent(Events.mouseEventToMTEvent(e));  }, { "passive": true  } );
 
             scroll.addEventListener("touchstart", (e) => {
                 var e2 = Events.touchEventToMTEvent(e);
                 if (e.touches.length == 1) {
-                    downEvent(e2);
+                    handleDownEvent(e2);
                 }
             }, { "passive": false});
             scroll.addEventListener("touchmove", (e) => {
                 var e2 = Events.touchEventToMTEvent(e);
                 if (e.touches.length == 1) {
-                    moveEvent(e2);
+                    handleMoveEvent(e2);
                 }
             }, { "passive": false } );
             scroll.addEventListener("touchend", (e) => {
                 var e2 = Events.touchEventToMTEvent(e);
-                if (e.touches.length == 0 && lastMoveEvent) {
-                    upEvent(lastMoveEvent);
-                    outEvent(lastMoveEvent)
+                if (e.touches.length == 0 && editEvent) {
+                    handleUpEvent(e2);
+                    handleOutEvent(e2);
                 }
             }, { "passive": true});
         }
@@ -1246,7 +1233,7 @@ var Track = (function() {
             tabEnabled = newTabEnabled;
             rollEnabled = newRollEnabled;
 
-            scrollUpdated();
+            rerunEditEvent();
         }
 
         function updateFrets(newFretsEnabled) {
@@ -1254,272 +1241,410 @@ var Track = (function() {
             editingUpdated();
         }
 
-        function scrollUpdated() {
-            if (lastMoveEvent) {
-                moveEvent(lastMoveEvent);
+        function rerunEditEvent() {
+            if (editEvent) {
+                // recalculate event target
+                editEvent.target = document.elementFromPoint(editEvent.clientX, editEvent.clientY);
+                handleEditEvent(editEvent);
             }
         }
 
-        function downEvent(e) {
+        function handleDownEvent(e) {
             if (editing) {
-                updateMoveNote(e);
-                if (lastMoveNote) {
-                    Undo.startUndoCombo();
-                    if (lastMoveNoteNew) {
-                        //console.log("Clicked new note at: " + lastMoveNote);
-                        originalNote = new Note(lastMoveNote.toNoteName(), lastMoveNote.tick);
-                        originalNoteNew = true;
-                        originalNoteOffsetTick = lastMoveNoteOffsetTick;
-                        originalNoteHasMoved = true;
-                        updateLastMoveNote(lastMoveNote, true);
+                handleEditEvent(e, true, false, false);
+                e.preventDefault();
 
-                    } else {
-                        //console.log("Clicked existing note at: " + lastMoveNote);
-                            var clickFret = lastMoveNote.fret;
-                            switch (lastMoveType) {
-                                case "roll":
-                                    TrackBar.setChordModeForFretsTemporarily(clickFret);
-                                    break;
-                                case "tab":
-                                    TrackBar.setFretsTemporarily(clickFret);
-                                    break;
-                            }
-                            originalNote = removeNote(lastMoveNote);
-                            originalNoteNew = false;
-                            originalNoteOffsetTick = lastMoveNoteOffsetTick;
-                            originalNoteHasMoved = false;
-                            e.target = null;
-                            resetLastMoveNote();
-                            updateMoveNote(e);
-                    }
-                    e.preventDefault();
-                    // stop touch screen scrolling
-//                    e.stopImmediatePropagation();
-                    return;
-                }
-            }
-
-            // assume we're not playing
-            // clear any existing playback marker
-            clearPlaybackTick();
-            // create a new playback marker
-            updatePlaybackTick(tick);
-            // also create a playback start marker.  Playback will start here until the user rewinds or clicks
-            // somewhere else
-            setPlaybackStartTick(tick);
-        }
-
-        function upEvent(e) {
-            if (editing) {
-                if (originalNote) {
-                    updateMoveNote(e);
-                    if (!lastMoveNote) {
-                        if (canceledOriginalNote) {
-                            canceledOriginalNote = null;
-                        }
-                        return;
-                    }
-
-                    //console.log("Unclicked note at: " + lastMoveNote);
-                    var newNote = new Note(lastMoveNote.toNoteName(), lastMoveNote.tick);
-                    updateLastMoveNote(null);
-                    resetLastMoveNote();
-
-                    if (!originalNoteHasMoved) {
-                        if (!Undo.cancelUndoCombo()) {
-                            console.log("Error canceling move operation for menu");
-                            console.trace();
-                        }
-                        noteMenu(e, newNote);
-
-                    } else if (!originalNoteNew && newNote.tick == originalNote.tick && newNote.equals(originalNote)) {
-                        if (!Undo.cancelUndoCombo()) {
-                            console.log("Error canceling no-op move operation");
-                            console.trace();
-                        }
-
-                    } else {
-                        addNote(newNote);
-                        if (!Undo.endUndoCombo("Modify Note")) {
-                            console.log("Error finishing operation");
-                            console.trace();
-                        }
-                    }
-
-                    originalNote = null;
-                    TrackBar.revertTemporarySettings();
-                    e.target = null;
-                    updateMoveNote(e);
-                }
+            } else {
+                setPlaybackBar(e);
             }
         }
 
-        function moveEvent(e) {
+        function setPlaybackBar(e, tick=getTickForEvent(e)) {
+            if (tick != null) {
+                // clear any existing playback marker
+                clearPlaybackTick();
+                // create a new playback marker
+                updatePlaybackTick(tick);
+                // also create a playback start marker.  Playback will start here until the user rewinds or clicks
+                // somewhere else
+                setPlaybackStartTick(tick);
+            }
+        }
+
+        function handleUpEvent(e) {
             if (editing) {
-                if (clickCancel) {
-                    lastMoveEvent = e;
-                    return;
-                }
-                updateMoveNote(e);
+                handleEditEvent(e, false, true, false);
+                //e.preventDefault();
+            }
+        }
+
+        function handleMoveEvent(e) {
+            if (editing) {
+                handleEditEvent(e, false, false, false);
                 e.preventDefault();
             }
         }
 
-        function outEvent(e) {
+        function handleOutEvent(e) {
             if (editing) {
-                //console.log("outEvent");
-                updateMoveNote(e, true);
+                handleEditEvent(e, false, false, true);
             }
         }
+        
+        ////////////////////////////////////////////////////////////////
+        // event handler meat
+        ////////////////////////////////////////////////////////////////
 
-        function updateMoveNote(e, out=false) {
+        var editEvent = null;
+
+        var sideTab = "t";
+        var sideRoll = "r";
+
+        var editTick = null;
+        var editNoteName = null;
+        var editNote = null;
+        var editNoteNew = null;
+        var editNoteSide = null;
+        var editNoteOffsetTick = null;
+//        var editNoteOffsetNoteName = 0;
+
+        var originalNote = null;
+        var originalNoteNew = false;
+        var originalNoteSide = null;
+        var originalNoteOffsetTick = 0;
+//        var originalNoteOffsetNoteName = 0;
+        var originalNoteHasMoved = false;
+
+        var isDragging = false;
+        var isDragPaused = false;
+        var isOutside = true;
+        var isInsideActive = false;
+
+        function updateEditTickNoteName() {
             // get the tick postion of the event
             // there are issues with detecting when we leave the boundary through coordinates alone, so
             // short-circuit if we know it's an out event.
-            var moveTick = out ? null : getTickForEvent(e);
-
-            if (moveTick != null && originalNote) {
-                moveTick += originalNoteOffsetTick;
+            editTick = editEvent.clientY == null ? null : getTickForEvent(editEvent);
+            if (editTick != null && originalNote) {
+                editTick += originalNoteOffsetTick;
             }
+            editNoteName = (editTick != null) ? getNoteNameForEvent(editEvent) : null;
+            // todo: originalNoteOffsetNote
 
-            var moveNoteName = (moveTick != null) ? getNoteNameForEvent(e) : null;
+            // completely outside the track element
+            isOutside = editTick == null;
+            // inside the active side of the track element
+            isInsideActive = editNoteName != null;
+            // if we're not outside, set the edit side and invert if on the non-active side
+            editNoteSide = isOutside ? null : getCurrentEditSide(!isInsideActive);
+        }
 
-            // handle canceling a drag operation
-            if (!moveNoteName && originalNote) {
-                //console.log("drag canceled");
-                if (!originalNoteNew) {
-                    Undo.cancelUndoCombo();
-                    addNote(originalNote);
-                }
-                canceledOriginalNote = originalNote;
-                originalNote = null;
+        function updateTrackBarMode() {
+            var t = editEvent;
+            editEvent = null;
+            setTrackBarMode(originalNote, originalNoteSide);
+            editEvent = t;
+            updateEditTickNoteName();
+        }
 
-            // handle uncanceling a canceled drag operation
-            } else if (moveNoteName && canceledOriginalNote) {
-                if (e.buttons == 1) {
-                    //console.log("drag uncanceled");
-                    originalNote = canceledOriginalNote;
-                    canceledOriginalNote = null;
-                    if (!originalNoteNew) {
-                        removeNote(originalNote);
-                    }
+        function revertTrackBarMode() {
+            var t = editEvent;
+            editEvent = null;
+            resetTrackBarMode();
+            editEvent = t;
+            updateEditTickNoteName();
+        }
+
+        function startAction() {
+            Undo.startUndoCombo();
+        }
+
+        function endAction(name) {
+            if (!Undo.endUndoCombo(name)) {
+                console.log("Error finishing " + name + " operation");
+                console.trace();
+            }
+        }
+
+        function cancelAction() {
+            if (!Undo.cancelUndoCombo()) {
+                console.log("Error canceling undo");
+                console.trace();
+            }
+        }
+
+        function getCurrentEditSide(inverse=false) {
+            // holy crap ladies and gentlemen, it's an XOR
+            return (tabEnabled ^ inverse) ? sideTab : sideRoll;
+        }
+
+        function setTempEditNote() {
+            clearEditNote();
+            editNote = new Note(editNoteName, editTick);
+            editNoteNew = true;
+            // todo: redundant?
+            editNoteSide = getCurrentEditSide();
+            editNoteOffsetTick = 0;
+            var view = new NoteView(editNote, false, true);
+            view.build();
+        }
+
+        function setHoverEditNote(hoverNote, side=getCurrentEditSide()) {
+            if (hoverNote != editNote || side != editNoteSide) {
+                clearEditNote();
+                editNote = hoverNote;
+                editNoteNew = false;
+                editNoteSide = side;
+                editNote.view.setHover(true);
+            }
+            // do this every time because the offset can change while still hovering over the same note
+            editNoteOffsetTick = hoverNote.tick - editTick;
+        }
+
+        function setDragEditNote() {
+            clearEditNote();
+            editNote = new Note(editNoteName, editTick);
+            editNoteNew = true;
+            editNoteSide = getCurrentEditSide();
+            editNoteOffsetTick = originalNoteOffsetTick;
+            var view = new NoteView(editNote, true, false);
+            view.build();
+        }
+
+        function clearEditNote() {
+            if (editNote && editNote.view) {
+                if (editNoteNew) {
+                    editNote.view.clear();
                 } else {
-                    //console.log("drag fully canceled");
-                    canceledOriginalNote = null;
+                    editNote.view.setHover(false);
                 }
             }
-
-            var moveNote = null;
-            var moveNoteNew = null;
-            var moveType = null;
-
-            // check if we're not dragging, and are directly on a note, and are close enough to the beginning
-            // of that note
-            // todo: should it just allow clicking anywhere on a note even if it's really long?
-            if (!originalNote && e.target && e.target.noteView && (moveTick - e.target.noteView.note.tick) < editNoteLength) {
-                moveNote = e.target.noteView.note
-                if (moveNote == lastMoveNote) {
-                    //console.log("Move on same note, at: " + moveTick + ":" + moveNoteName);
-                    lastMoveNoteOffsetTick = moveNote.tick - moveTick;
-                    //console.log("lastMoveNoteOffsetTick: " + lastMoveNoteOffsetTick)
-                    return;
-                }
-                moveNoteNew = false;
-                moveType = e.target.className == "roll-note-grab" ? "roll" :
-                           e.target.className == "tab-grab" ? "tab" :
-                           "none";
-                moveNoteName = moveNote.toNoteName();
-                //console.log("Move on existing " + moveType + " note at: " + moveNote);
-
-            } else if (moveNoteName) {
-                // check if we haven't meaningfully moved
-                if (moveTick == lastMoveTick && moveNoteName == lastMoveNoteName) {
-                    //console.log("Move at same spot: " + moveTick + ":" + moveNoteName);
-                    return;
-                }
-
-                // check if we have a notename
-                if (!originalNote && moveNoteName) {
-                    // parse moveNoteName into fret and string
-                    var [fret, string] = SongUtils.splitNoteName(moveNoteName);
-                    // search for an existing note near the cursor
-                    // if the tab is active, search for a note with any frets on that string
-                    moveNote = song.getNote(moveTick, tabEnabled ? null : fret, string, editNoteLength-1, editNoteLength-1);
-                    if (moveNote) {
-                        moveNoteNew = false;
-                        moveType = tabEnabled ? "tab" : "roll";
-                        //console.log("Move near existing " + moveType + " note at: " + moveNote);
-                    }
-                }
-            }
-
-            // an empty space
-            if (!moveNote && moveNoteName) {
-                moveNote = new Note(moveNoteName, moveTick);
-                moveNoteNew = true;
-                moveType = tabEnabled ? "tab" : "roll";
-                //console.log("Move at new " + moveType + " note at: " + moveNote + ", o: " + originalNote);
-                // stop touch screen scrolling
-                //e.stopImmediatePropagation();
-            }
-
-            updateLastMoveNote(moveNote, false, moveNoteNew, moveTick, moveNoteName, moveType);
+            editNote = null;
         }
 
-        function resetLastMoveNote() {
-            lastMoveNote = null;
-            lastMoveNoteNew = null;
-            lastMoveTick = null;
-            lastMoveNoteName = null;
-            lastMoveType = null;
+        function initOriginalNote() {
+            originalNote = editNote;
+            originalNoteNew = editNoteNew;
+            originalNoteSide = editNoteSide;
+            originalNoteOffsetTick = editNoteOffsetTick;
+            originalNoteHasMoved = false;
         }
 
-        function updateLastMoveNote(moveNote, force=false,
-                moveNoteNew=lastMoveNoteNew,
-                moveTick=lastMoveTick,
-                moveNoteName=lastMoveNoteName,
-                moveType=lastMoveType) {
-            if (!force && lastMoveNote == moveNote) {
+        function notesEqual(n1, n2) {
+            return n1.tick == n2.tick && n1.toNoteName() == n2.toNoteName();
+        }
+
+        function noteEqualToCurrentPosition(n) {
+            return n != null && editTick == n.tick && editNoteName == n.toNoteName();
+        }
+
+        var handlingEditEvent = false;
+
+        function handleEditEvent(e, isDownEvent=false, isUpEvent=false, isOutEvent=false) {
+            // haha, shit, we have to prevent recursive calls coming from changing the fret/chord mode
+            // and undoing/redoing edit actions
+            if (handlingEditEvent) {
                 return;
             }
-            // console.log("TRACK tick: " + moveTick + ", note: " + noteName);
-            if (originalNote && (force || lastMoveNoteName != moveNoteName)) {
-                Playback.playNote(moveNoteName);
-            }
-            if (lastMoveNote && lastMoveNote.view) {
-                if (lastMoveNoteNew) {
-                    lastMoveNote.view.clear();
-                } else {
-                    lastMoveNote.view.setHover(false);
+            handlingEditEvent = true;
+            try {
+                editEvent = e;
+                // jesus christ okay just assemble all the state
+                var isButtonDown = isUpEvent ? false : isDownEvent ? true : e.buttons == 1;
+
+                // hax
+                if (isOutEvent) {
+                    editEvent.clientY = null;
                 }
-            }
+                updateEditTickNoteName();
 
-            lastMoveNote = moveNote;
-            lastMoveNoteNew = moveNoteNew;
-            lastMoveTick = moveTick;
-            lastMoveNoteName = moveNoteName;
-            lastMoveType = moveType;
+                console.log("Event at " +
+                        editTick + ":" + editNoteName + "(" + editNoteOffsetTick + ") " +
+                        (isDownEvent ? "(down) " : isUpEvent ? "(up) " : isOutEvent ? "(out) " : "(move) ") +
+                        (isButtonDown ? "(buttonDown) " : "" ) +
+                        (isDragging ? "(dragging) " : "" ) +
+                        (isDragPaused ? "(dragPaused) " : "" ) +
+                        (isOutside ? "(outside) " : "" ) +
+                        (isInsideActive ? "(insideActive) " : "" )
+                );
 
-            //console.log("lastMoveNoteNew: " + lastMoveNoteNew);
-            //console.log("lastMoveType: " + lastMoveType);
-
-            if (lastMoveNote) {
-                if (lastMoveNoteNew || originalNote != null) {
-                    lastMoveNoteOffsetTick = 0;
-                    //console.log("lastMoveNoteOffsetTick: " + lastMoveNoteOffsetTick)
-                    var outline = originalNote == null;
-                    var temp = originalNote != null;
-                    var view = new NoteView(lastMoveNote, temp, outline);
-                    view.build();
-                    if (originalNote && (lastMoveNote.tick != originalNote.tick || !lastMoveNote.equals(originalNote))) {
-                        originalNoteHasMoved = true;
+                if (!isInsideActive) {
+                    if (isDragging) {
+                        console.log("pausing edit");
+                        // remove last Edit Note
+                        clearEditNote();
+                        // cancel undo combo
+                        // this should also re-add any note that was removed
+                        cancelAction();
+                        // pause drag
+                        isDragging = false;
+                        isDragPaused = true;
+                        if (isOutside) {
+                            // reset any trackbar mode changes
+                            revertTrackBarMode();
+                        }
+                    } else {
+                        clearEditNote();
                     }
-                } else {
-                    lastMoveNoteOffsetTick = lastMoveNote.tick - moveTick;
-                    //console.log("lastMoveNoteOffsetTick: " + lastMoveNoteOffsetTick)
-                    lastMoveNote.view.setHover(true);
                 }
+
+                if (isOutside) {
+                    //console.log("outside");
+                    // nothing
+                    return;
+                }
+
+                if (isDragPaused) {
+                    // unpause dragging if the button is still down and we're on the same side as
+                    // the originally dragged note
+                    if (isButtonDown && originalNoteSide == editNoteSide) {
+                        // start undo combo
+                        startAction();
+                        // remove originalNote from song if not new
+                        if (!originalNoteNew) {
+                            removeNote(originalNote);
+                        }
+                        // setTrackBarMode
+                        updateTrackBarMode();
+                        // unpause drag
+                        isDragPaused = false;
+                        isDragging = true;
+
+                    } else if (!isButtonDown) {
+                        originalNote = null;
+                        originalNoteOffsetTick = 0;
+                        // cancel drag
+                        isDragPaused = false;
+                        // reset any trackbar mode changes
+                        revertTrackBarMode();
+                    }
+
+                    if (isDragPaused) {
+                        return;
+                    }
+                }
+
+                if (isDragging && isInsideActive) {
+                    if (!noteEqualToCurrentPosition(editNote)) {
+                        if (editNote == null || editNoteName != editNote.toNoteName()) {
+                            Playback.playNote(editNoteName);
+                        }
+                        setDragEditNote();
+                    }
+
+                    if (isButtonDown) {
+                        // record if there's be any movement away from the original
+                        if (!notesEqual(originalNote, editNote)) {
+                            originalNoteHasMoved = true;
+                        }
+
+                    } else {
+                        originalNoteOffsetTick = 0;
+                        if (!originalNoteNew && notesEqual(originalNote, editNote)) {
+                            // cancel undo combo
+                            cancelAction();
+                            // check if there's be any movement away from the original
+                            if (!originalNoteHasMoved) {
+                                // note menu
+                                noteMenu(editEvent, originalNote);
+                            }
+                            // reset any trackbar mode changes
+                            revertTrackBarMode();
+
+                        } else {
+                            // create new note from editNote
+                            var newNote = new Note(editNote.toNoteName(), editNote.tick);
+                            // remove editNote
+                            clearEditNote();
+                            // fully add note
+                            addNote(newNote);
+                            // end undo combo
+                            endAction(originalNoteNew ? "Create Note" : "Modify Note");
+                            // reset any trackbar mode changes
+                            revertTrackBarMode();
+                        }
+                        isDragging = false;
+                    }
+                }
+
+                if (!isDragging) {
+                    // check event target
+                    if (editEvent.target && editEvent.target.noteView && !editEvent.target.noteView.temp) {
+                        //   check if it's different from the current editNote
+                        //     clear editNote
+                        //     setHoverEditNote
+                        // todo: error if it's not one of these?
+                        var side = editEvent.target.className == "roll-note-grab" ? sideRoll :
+                                   editEvent.target.className == "tab-grab" ? sideTab :
+                                   null;
+                        setHoverEditNote(editEvent.target.noteView.note, side);
+
+                    } else if (isInsideActive) {
+                        // check if it's different from the current editNote
+                        if (!noteEqualToCurrentPosition(editNote)) {
+                            // parse moveNoteName into fret and string
+                            var [fret, string] = SongUtils.splitNoteName(editNoteName);
+                            // search for an existing note near the cursor
+                            // if the tab is active, search for a note with any frets on that string
+                            var hoverNote = song.getNote(editTick, tabEnabled ? null : fret, string, editNoteLength-1, editNoteLength-1);
+                            if (hoverNote) {
+                                setHoverEditNote(hoverNote);
+
+                            } else {
+                                setTempEditNote();
+                            }
+                        }
+                    }
+                }
+
+                var hasEditNote = editNote != null;
+
+                if (!isDragging && isButtonDown) {
+                    if (hasEditNote) {
+                        // copy edit Note to the original note
+                        initOriginalNote();
+                        // setTrackBarMode before setting the drag edit note
+                        updateTrackBarMode();
+                        // remove the edit note and replace it with a drag note at the current position
+                        setDragEditNote();
+                        // start undo combo
+                        startAction();
+                        // if the original note is not new
+                        if (!originalNoteNew) {
+                            // then remove it
+                            removeNote(originalNote);
+                        }
+                        // start dragging
+                        isDragging = true;
+                        Playback.playNote(editNoteName);
+
+                    } else if (isDownEvent) {
+                        setPlaybackBar(editEvent);
+                    }
+                }
+            } finally {
+                handlingEditEvent = false;
             }
+        }
+        
+        ////////////////////////////////////////////////////////////////
+        // end event handler meat
+        ////////////////////////////////////////////////////////////////
+
+        function setTrackBarMode(note, side) {
+            var clickFret = note.fret;
+            switch (side) {
+                case sideRoll:
+                    TrackBar.setChordModeForFretsTemporarily(clickFret);
+                    break;
+                case sideTab:
+                    TrackBar.setFretsTemporarily(clickFret);
+                    break;
+            }
+        }
+
+        function resetTrackBarMode() {
+            TrackBar.revertTemporarySettings();
         }
 
         function noteMenu(event, note) {
@@ -1537,16 +1662,34 @@ var Track = (function() {
 
         function removeNote(note) {
             return Undo.doAction(
-                () => { return doRemoveNote(note); },
-                () => { doAddNote(note); },
+                () => {
+                    var ret = doRemoveNote(note);
+                    Model.scheduleUpdate();
+                    rerunEditEvent();
+                    return ret;
+                },
+                () => {
+                    doAddNote(note);
+                    Model.scheduleUpdate();
+                    rerunEditEvent();
+                },
                 "Remove Note"
             );
         }
 
         function addNote(note) {
             Undo.doAction(
-                () => { doAddNote(note); },
-                () => { doRemoveNote(note); },
+                () => {
+                    doAddNote(note);
+                    Model.scheduleUpdate();
+                    rerunEditEvent();
+                },
+                () => {
+                    var ret = doRemoveNote(note);
+                    Model.scheduleUpdate();
+                    rerunEditEvent();
+                    return ret;
+                },
                 "Add Note"
             );
         }
@@ -1557,14 +1700,6 @@ var Track = (function() {
             var next = removedNote.next;
             removedNote.view.clear();
             rebuildNoteViews(removedNote, prev, next);
-            if (note == lastMoveNote) {
-                resetLastMoveNote();
-                // todo: re-run move event to set the cursor correctly?
-                //if (lastMoveEvent) {
-                //    lastMoveEvent.target = null;
-                //    updateMoveNote(lastMoveEvent);
-                //}
-            }
             return removedNote;
         }
 
@@ -1685,7 +1820,7 @@ var Track = (function() {
             registerEventListeners: registerEventListeners, // ()
             setEditing: setEditing, // (newEditing)
             isEditing: isEditing, // ()
-            scrollUpdated: scrollUpdated, // ()
+            scrollUpdated: rerunEditEvent, // ()
             updateFrets: updateFrets, // (fretsEnabled[4])
         };
     })();

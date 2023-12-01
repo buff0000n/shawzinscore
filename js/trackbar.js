@@ -332,7 +332,9 @@ var TrackBar = (function() {
         }
 
         if (newChordMode != chordMode) {
-            oldChordMode = chordMode;
+            if (!oldChordMode) {
+                oldChordMode = chordMode;
+            }
             setChordMode(newChordMode);
         }
 
@@ -341,8 +343,10 @@ var TrackBar = (function() {
     }
 
     function setFretsTemporarily(fret) {
-        // clone the old fret settings
-        oldFretEnabled = fretEnabled.slice();
+        if (!oldFretEnabled) {
+            // clone the old fret settings
+            oldFretEnabled = fretEnabled.slice();
+        }
         for (var i = 0; i < 4; i++) {
             setFretEnabled(i, fret.indexOf(i) >= 0);
         }

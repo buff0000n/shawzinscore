@@ -554,6 +554,8 @@ var Model = (function() {
                 );
             }
         },
+        // schedule a URL update when something in the model changes
+        scheduleUpdate: scheduleUpdate, // ()
 
         // build a URL containing all the model data
         buildUrl: buildUrl, // ()
