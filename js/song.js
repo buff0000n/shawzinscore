@@ -96,6 +96,8 @@ class Note {
         // doubly linked list
         this.prev = null;
         this.next = null;
+
+        this.errors = null;
     }
 
     // parse a three character code for string, fret, and timing
@@ -196,6 +198,34 @@ class Note {
     // shift the tick time
     shiftTick(offsetTicks) {
         this.tick += offsetTicks;
+    }
+
+    hasErrors() {
+        return this.errors != null;
+    }
+
+    addError(error) {
+        if (!this.errors) {
+            this.errors = [error];
+            if (this.view) {
+                this.view.setHasErrors(true);
+            }
+        } else {
+            DomUtils.addToListIfNotPresent(this.errors, error);
+        }
+    }
+
+    removeError(error) {
+        if (this.errors) {
+            if (DomUtils.removeFromList(this.errors, error) >= 0) {
+                if (this.errors.length == 0) {
+                    this.errors = null;
+                    if (this.view) {
+                        this.view.setHasErrors(false);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -306,6 +336,8 @@ class Song {
         } else {
             this.notes[index].next = null;
         }
+
+        this.noteAdded(note);
     }
 
     // get the index of the given note
@@ -394,48 +426,9 @@ class Song {
         // remove from the array
         this.notes.splice(index, 1);
 
+        this.noteRemoved(noteToRemove);
         return noteToRemove;
     }
-
-//    // internal function swap the notes at two indices
-//    swap(index1, index2) {
-//        // temp variables
-//        var t1 = this.notes[index1];
-//        var t2prev = t2.prev;
-//        var t2next = t2.next;
-//
-//        // put note 1 where note 2 was
-//        this.notes[index1] = this.notes[index2];
-//        this.notes[index1].prev = t1.prev;
-//        this.notes[index1].next = t1.next;
-//
-//        // put note 2 where note 1 was using the temp variables
-//        this.notes[index2] = t1;
-//        this.notes[index2].prev = t2prev;
-//        this.notes[index2].next = t2next;
-//    }
-
-//    // move the given note to the given time
-//    moveNote(note, tick) {
-//        // find the note
-//        var index = this.getNoteIndex(note);
-//        // sanity check
-//        if (index < 0) {
-//            throw "Note not found: " + note;
-//        }
-//
-//        // update the note's tick
-//        note.tick = tick;
-//        // Assume we don't have to move it far and be a little efficient about it
-//        // move backwards in the list if we decreased its tick
-//        while (index > 0 && this.notes[index - 1].tick > note.tick) {
-//            this.swap(index - 1, index);
-//        }
-//        // move forwrads in the list if we increased its tick
-//        while (index < this.notes.length - 1 && this.notes[index + 1].tick <= note.tick) {
-//            this.swap(index, index + 1);
-//        }
-//    }
 
     // find the first note after the given one matching the given condition
     findNextNote(note, condition = (n1, n2) => true) {
@@ -533,6 +526,75 @@ class Song {
     getEndTick() {
         return this.notes.length == 0 ? 0 : this.notes[this.notes.length - 1].tick;
     }
+
+    // rules
+
+    noteAdded(note) {
+        if (this.notes.length > 1000) {
+            note.addError("Exceeds max note count")
+            if (this.notes.length == 1001) {
+                for (var i = 0; i < this.notes.length; i++) {
+                    this.notes[i].addError("Exceeds max note count")
+                }
+            }
+        }
+        if (note.tick >= Metadata.maxTickLength) {
+            note.addError("Exceeds song time limit")
+        }
+
+        if ((note.prev != null && note.prev.tick == note.tick) ||
+            (note.next != null && note.next.tick == note.tick)) {
+            this.checkInvalidConcurrentNotes(note);
+        }
+    }
+
+    noteRemoved(note) {
+        if (this.notes.length == 1000) {
+            for (var i = 0; i < this.notes.length; i++) {
+                this.notes[i].removeError("Exceeds max note count")
+            }
+        }
+
+        if (note.prev != null && note.prev.tick == note.tick) {
+            this.checkInvalidConcurrentNotes(note.prev);
+
+        } else if (note.next != null && note.next.tick == note.tick) {
+            this.checkInvalidConcurrentNotes(note.next);
+        }
+    }
+
+    checkInvalidConcurrentNotes(note) {
+        var tickStartNote = note;
+        while (tickStartNote.prev != null && tickStartNote.prev.tick == note.tick) {
+            tickStartNote = tickStartNote.prev;
+        }
+
+        var invalid = false;
+
+        for (var n = tickStartNote; n.next != null && n.next.tick == note.tick; n = n.next) {
+            if (n.equals(n.next)) {
+                n.addError("Duplicate note");
+                n.next.addError("Duplicate note");
+
+            } else {
+                n.removeError("Duplicate note");
+                n.next.removeError("Duplicate note");
+
+                if (n.fret != n.next.fret) {
+                    invalid = true;
+                }
+            }
+        }
+
+        for (var n = tickStartNote; n != null && n.tick == note.tick; n = n.next) {
+            if (invalid) {
+                n.addError("Invalid concurrent notes");
+            } else {
+                n.removeError("Invalid concurrent notes");
+            }
+        }
+    }
+
 }
 
 function what() {

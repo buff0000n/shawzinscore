@@ -645,6 +645,8 @@ var Track = (function() {
             this.outline = outline;
             this.selected = selected;
             this.hover = hover;
+            this.hasErrors = false;
+            this.setHasErrors(note.hasErrors());
             // backreference
             note.view = this;
             // containing bar
@@ -688,6 +690,13 @@ var Track = (function() {
             this.updateStyle();
         }
 
+        setHasErrors(newHasErrors) {
+            if (newHasErrors != this.hasErrors) {
+                this.hasErrors = newHasErrors;
+                this.updateStyle();
+            }
+        }
+
         // get the bar container for the tablature elements (false) or piano roll elements (true)
         getBar(roll) {
             // lazily initialize the bar
@@ -699,17 +708,21 @@ var Track = (function() {
         }
 
         updateStyle() {
-            PageUtils.setImgSrc(this.dot, this.getTabDotImage());
-            for (var i = 0; i < this.rollRow.noteList.length; i++) {
-                this.styleRollDiv(this.rollRow.noteList[i]);
+            if (this.dot) {
+                PageUtils.setImgSrc(this.dot, this.getTabDotImage());
+                for (var i = 0; i < this.rollRow.noteList.length; i+=2) {
+                    this.styleRollDiv(this.rollRow.noteList[i]);
+                }
             }
         }
 
         getTabDotImage() {
             return this.outline ? "tab-note-outline.png" :
-                   this.hover ? "tab-note-hover.png" :
-                   this.selected ? "tab-note-selected.png" :
-                   "tab-note-dot.png";
+                   this.hover ?
+                     this.hasErrors ? "tab-note-hover-error.png" : "tab-note-hover.png" :
+                   this.selected ?
+                     this.hasErrors ? "tab-note-selected-error.png" : "tab-note-selected.png" :
+                   this.hasErrors ? "tab-note-selected-error.png" : "tab-note-dot.png";
         }
 
         // actually build the tablature elements
@@ -856,8 +869,9 @@ var Track = (function() {
                 div.style.backgroundColor = div.color;
                 // set a border color to keep consecutive notes from merging together
                 // hovered notes are slightly lighter, and selected notes are white
-                div.style.borderColor = this.selected ? "#FFFFFF" :
-                                        "#202020";
+                div.style.borderColor = this.selected ?
+                                          this.hasErrors ? "#FFB0B0" : "#FFFFFF" :
+                                          this.hasErrors ? "#FF0000" : "#202020";
                 div.style.filter = this.hover ? "brightness(250%) saturate(50%)" : "";
             }
         }
@@ -1249,16 +1263,6 @@ var Track = (function() {
             }
         }
 
-        function handleDownEvent(e) {
-            if (editing) {
-                handleEditEvent(e, true, false, false);
-                e.preventDefault();
-
-            } else {
-                setPlaybackBar(e);
-            }
-        }
-
         function setPlaybackBar(e, tick=getTickForEvent(e)) {
             if (tick != null) {
                 // clear any existing playback marker
@@ -1268,6 +1272,16 @@ var Track = (function() {
                 // also create a playback start marker.  Playback will start here until the user rewinds or clicks
                 // somewhere else
                 setPlaybackStartTick(tick);
+            }
+        }
+
+        function handleDownEvent(e) {
+            if (editing) {
+                handleEditEvent(e, true, false, false);
+                e.preventDefault();
+
+            } else {
+                setPlaybackBar(e);
             }
         }
 
@@ -1458,19 +1472,19 @@ var Track = (function() {
                 }
                 updateEditTickNoteName();
 
-                console.log("Event at " +
-                        editTick + ":" + editNoteName + "(" + editNoteOffsetTick + ") " +
-                        (isDownEvent ? "(down) " : isUpEvent ? "(up) " : isOutEvent ? "(out) " : "(move) ") +
-                        (isButtonDown ? "(buttonDown) " : "" ) +
-                        (isDragging ? "(dragging) " : "" ) +
-                        (isDragPaused ? "(dragPaused) " : "" ) +
-                        (isOutside ? "(outside) " : "" ) +
-                        (isInsideActive ? "(insideActive) " : "" )
-                );
+                //console.log("Event at " +
+                //        editTick + ":" + editNoteName + "(" + editNoteOffsetTick + ") " +
+                //        (isDownEvent ? "(down) " : isUpEvent ? "(up) " : isOutEvent ? "(out) " : "(move) ") +
+                //        (isButtonDown ? "(buttonDown) " : "" ) +
+                //        (isDragging ? "(dragging) " : "" ) +
+                //        (isDragPaused ? "(dragPaused) " : "" ) +
+                //        (isOutside ? "(outside) " : "" ) +
+                //        (isInsideActive ? "(insideActive) " : "" )
+                //);
 
                 if (!isInsideActive) {
                     if (isDragging) {
-                        console.log("pausing edit");
+                        //console.log("pausing edit");
                         // remove last Edit Note
                         clearEditNote();
                         // cancel undo combo
@@ -1700,6 +1714,10 @@ var Track = (function() {
             var next = removedNote.next;
             removedNote.view.clear();
             rebuildNoteViews(removedNote, prev, next);
+            // avoid cleanup issues if we're currently hovering over this note
+            if (removedNote == editNote) {
+                editNote = null;
+            }
             return removedNote;
         }
 
