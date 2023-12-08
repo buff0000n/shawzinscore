@@ -261,7 +261,7 @@ var Model = (function() {
     }
 
     // easiest to just handle threse three parameters all at the same time
-    function doSetStructure(newMeter, newTempo, newLeadin) {
+    function doSetStructure(newMeter, newTempo, newLeadin, changeSong = false) {
         // check for a change
         if (newMeter == meter && newTempo == tempo && newLeadin == leadin) return;
 
@@ -348,14 +348,25 @@ var Model = (function() {
         var leadinInput = document.getElementById("config-leadin-input");
         leadinInput.value = leadin ? leadin : "";
 
-        // apply the leadin to the song
-        setLeadInTicksOnSong(song);
+        if (changeSong) {
+            // apply the leadin to the song
+            setLeadInTicksOnSong(song);
+        }
 
         // update the Track
         Track.updateStructure();
 
         // update the Playback UI, basically it just needs to know whether to enable the metronome
         Playback.updateStructure();
+    }
+
+    function setLeadInTicks(leadInTicks, changeSong = true) {
+        if (meter) {
+            // we have to reverse the calculation in doSetStructure()
+            var newLeadIn = (leadInTicks / ((Metadata.ticksPerSecond * 60) / tempo)).toFixed(4);
+            setStructure(meter, tempo, newLeadIn, changeSong);
+        }
+        // todo: implemment lead-in seconds for when there's no meter?
     }
 
     function setLeadInTicksOnSong(song) {
@@ -381,7 +392,7 @@ var Model = (function() {
         }
     }
 
-    function setStructure(newMeter, newTempo, newLeadin) {
+    function setStructure(newMeter, newTempo, newLeadin, changeSong) {
         // save the current values to this function closure
         var currentMeter = meter;
         var currentTempo = tempo;
@@ -390,8 +401,8 @@ var Model = (function() {
         if (newMeter != currentMeter || newTempo != currentTempo || newLeadin != currentLeadin) {
             // build do and undo actions, execute the do action and put it on the undo stack
             Undo.doAction(
-                () => { doSetStructure(newMeter, newTempo, newLeadin); scheduleUpdate(); },
-                () => { doSetStructure(currentMeter, currentTempo, currentLeadin); scheduleUpdate(); },
+                () => { doSetStructure(newMeter, newTempo, newLeadin, changeSong); scheduleUpdate(); },
+                () => { doSetStructure(currentMeter, currentTempo, currentLeadin, changeSong); scheduleUpdate(); },
                 "Set Structure"
             );
         }
@@ -518,6 +529,8 @@ var Model = (function() {
         setLeadin: function(newLeadin) { setStructure(meter, tempo, newLeadin); },
         // convenience to set all three at the same time
         setStructure: setStructure, // (newMeter, newTempo, newLeadin)
+        // just set the leadin without changing the song
+        setLeadInTicks: setLeadInTicks, // (leadInTicks)
 
         // units per line getter/setter
         getUnitsPerLine: function() { return unitsPerLine; },

@@ -1176,12 +1176,10 @@ var Track = (function() {
     }
 
 /* todo:
-    error checking/showing
     do something about draw order
       - z-index?
       - ordering elements in bar div?
     note offset for dragging chords
-    recalculate lead-in when saving
 */
     // let's encapsulate this
     var Editor = (function() {
@@ -1726,6 +1724,7 @@ var Track = (function() {
             var view = new NoteView(note, false, false);
             view.build();
             rebuildNoteViews(note);
+            checkLeadin();
         }
 
         function rebuildNoteViews(note, prev=note.prev, next=note.next) {
@@ -1832,6 +1831,15 @@ var Track = (function() {
                 }
             }
             return noteName + "-" + string;
+        }
+
+        function checkLeadin() {
+            if (song.notes.length == 0) {
+                Model.setLeadInTicks(0);
+
+            } else {
+                Model.setLeadInTicks(-song.notes[0].tick, false);
+            }
         }
 
         return {
