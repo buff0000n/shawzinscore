@@ -186,14 +186,71 @@
     <div id="debug-bar">
     </div>
 
-    <div id="edit-bar" class="expandBar">
-        <div class="expandTitle">
+    <div class="expandBar">
+        <div id="edit-bar" class="expandTitle">
             <img id="edit-bar-img" src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-            Editing
+            Edit Mode
         </div>
-    </div>
-    <div id="edit-toolbar" style="display: none">
-        I AM aN EDITING TOOLBARR
+        <div id="edit-toolbar" class="field-div" style="display: none">
+            <div>
+                <span class="field-entry-dark tooltip" id="edit-note-count">
+                    <span class="fieldTitle">Notes:</span>
+                    <input id="edit-note-count-input" type="text" value="" placeholder="" disabled size="5">
+                    <span class="tooltiptextbottom">Cannot exceed 1000 notes, or 100 notes if you want to be able to share in-game</span>
+                </span>
+                <span class="field-entry-dark tooltip" id="edit-duration">
+                    <span class="fieldTitle">Duration:</span>
+                    <input id="edit-duration-input" type="text" value="" placeholder="" disabled size="5"/>
+                    <span class="tooltiptextbottom">Duration of the somg</span>
+                </span>
+            </div>
+            <table class="layoutTable">
+                <tr>
+                    <td>
+                        <div class="field-entry tooltip" id="config-meter">
+                            <span class="fieldTitle">Meter:</span>
+                            <input id="config-meter-input" type="text" value="" placeholder="4/4" size="5"/>
+                            <span class="tooltiptextbottom">The meter of the song</span>
+                        </div>
+                        <div class="field-entry tooltip" id="config-tempo">
+                            <span class="fieldTitle">Tempo:</span>
+                            <select id="config-tempo-input" >
+                            </select>
+                            <span class="tooltiptextbottom">The Tempo of the song</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="song-buttons-metro-settings" class="button-disabled tooltip">
+                            <img src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x" alt="Metronome" class="icon-disabled"/>
+                            <span class="tooltiptextbottom">It's a metronome</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="field-entry tooltip" id="config-leadin">
+                <span class="fieldTitle">Lead-in beats:</span>
+                <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
+                <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
+            </div>
+            <div class="field-entry tooltip" id="edit-change-tempo">
+                <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                <span class="fieldTitle">Change Tempo</span>
+                <span class="tooltiptextbottom">Speed up or slow down the song to match a new tempo</span>
+            </div>
+            <div class="field-entry tooltip" id="edit-delete-all">
+                <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                <span class="fieldTitle">Delete All</span>
+                <span class="tooltiptextbottom">Enable to change the direction of song UI</span>
+            </div>
+            <div class="field-entry tooltip">
+                <div class="fieldTitle">Key:</div>
+                <div id="select-keysig" class="selectButtonDark tooltip">
+                    <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                    <span id="select-keysig-text"></span>
+                </div>
+                <span class="tooltiptextbottom">Transpose the pitch to a different key</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -202,12 +259,11 @@
         <table id="song-toolbar-table" style="width: 688px;">
             <tr>
                 <td id="song-buttons" style="width: 344px; text-align: center;">
+                    <!--
                     <div id="song-buttons-config" class="button tooltip">
                         <img src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x" class="icon"/>
                         <span class="tooltiptextbottom">Song configuration</span>
                     </div>
-
-                    <!--
                     <div id="song-buttons-select" class="smallButton">
                         <img src="img/icon-select.png" srcset="img2x/icon-select.png 2x" alt="select" class="icon"/>
                     </div>
@@ -353,45 +409,6 @@
 
 <!-- holding pen for pop-up menus and dialogs that I didn't feel like building from scratch in javascript -->
 <div id="hidden-things" style="display: none;">
-
-    <div id="config-structure" class="field-div" style="width: 40ex;">
-        <table class="layoutTable">
-            <tr>
-                <td>
-                    <div class="field-entry tooltip" id="config-meter">
-                        <div class="fieldTitle">Meter:</div>
-                        <input id="config-meter-input" type="text" value="" placeholder="4/4"/>
-                        <span class="tooltiptextbottom">The meter of the song</span>
-                    </div>
-                    <div class="field-entry tooltip" id="config-tempo">
-                        <div class="fieldTitle">Tempo:</div>
-                        <select id="config-tempo-input" >
-                        </select>
-                        <span class="tooltiptextbottom">The Tempo of the song</span>
-                    </div>
-                </td>
-                <td>
-                    <div id="song-buttons-metro-settings" class="button-disabled tooltip">
-                        <img src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x" alt="Metronome" class="icon-disabled"/>
-                        <span class="tooltiptextbottom">It's a metronome</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
-        <div class="field-entry tooltip" id="config-leadin">
-            <div class="fieldTitle">Lead-in beats:</div>
-            <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
-            <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
-        </div>
-        <div class="field-entry tooltip">
-            <div class="fieldTitle">Key:</div>
-            <div id="select-keysig" class="selectButtonDark tooltip">
-                <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-                <span id="select-keysig-text"></span>
-            </div>
-            <span class="tooltiptextbottom">Transpose the pitch to a different key</span>
-        </div>
-    </div>
 
     <div id="config-shawzintab">
         <div id="config-shawzintab-fields" class="field-div">
@@ -2733,8 +2750,24 @@
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
+                <li>Editing stuff
+                    <ul>
+                        <li>Fasten/Slowen</li>
+                        <li>Clear Song</li>
+                        <li>Quanitize</li>
+                        <li>MIDI recording</li>
+                        <li>Multi-select
+                            <ul>
+                                <li>...by note</li>
+                                <li>...by measure</li>
+                                <li>Move</li>
+                                <li>Delete</li>
+                                <li>Copy/cut/paste</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
                 <li>Volume setting for Shawzins and metronome</li>
-                <li><strong class="fret12">EDITING</strong></li>
                 <li>Chord pop-up display</li>
                 <li>Library</li>
                 <li>Local storage</li>
@@ -2743,6 +2776,8 @@
             </ul>
             <h2>Maybe</h2>
             <ul>
+                <li>do something about draw order when adding notes out of order in edit mode</li>
+                <li>note offset for dragging chords in edit mode</li>
                 <li>Keep metronome playing if the song configuration dialog is open when playback is stopped?</li>
                 <li>sort options for shawzin list?</li>
                 <li>Support meter/tempo changing mid-song?</li>

@@ -258,10 +258,13 @@ var Model = (function() {
 
         // update the track
         Track.setSong(song);
+
+        // update editing
+        Editing.updateSongStats();
     }
 
     // easiest to just handle threse three parameters all at the same time
-    function doSetStructure(newMeter, newTempo, newLeadin, changeSong = false) {
+    function doSetStructure(newMeter, newTempo, newLeadin, changeSong = true) {
         // check for a change
         if (newMeter == meter && newTempo == tempo && newLeadin == leadin) return;
 
@@ -360,10 +363,12 @@ var Model = (function() {
         Playback.updateStructure();
     }
 
+    var numberTrimRegex = /(\.)?0+$/i;
+
     function setLeadInTicks(leadInTicks, changeSong = true) {
         if (meter) {
             // we have to reverse the calculation in doSetStructure()
-            var newLeadIn = (leadInTicks / ((Metadata.ticksPerSecond * 60) / tempo)).toFixed(4);
+            var newLeadIn = (leadInTicks / ((Metadata.ticksPerSecond * 60) / tempo)).toFixed(4).replace(numberTrimRegex, "");
             setStructure(meter, tempo, newLeadIn, changeSong);
         }
         // todo: implemment lead-in seconds for when there's no meter?
@@ -518,15 +523,15 @@ var Model = (function() {
         getMeterTop: function() { return meterArray ? meterArray[0] : null; },
         getMeterBottom: function() { return meterArray ? meterArray[1] : null; },
         // setter pulls in the other two values because they're all tied together
-        setMeter: function(newMeter) { setStructure(newMeter, tempo, leadin); },
+        setMeter: function(newMeter) { setStructure(newMeter, tempo, leadin, true); },
         // tempo
         getTempo: function() { return tempo; },
         // setter pulls in the other two values because they're all tied together
-        setTempo: function(newTempo) { setStructure(meter, newTempo, leadin); },
+        setTempo: function(newTempo) { setStructure(meter, newTempo, leadin, true); },
         // lead-in
         getLeadin: function() { return leadin; },
         // setter pulls in the other two values because they're all tied together
-        setLeadin: function(newLeadin) { setStructure(meter, tempo, newLeadin); },
+        setLeadin: function(newLeadin) { setStructure(meter, tempo, newLeadin, true); },
         // convenience to set all three at the same time
         setStructure: setStructure, // (newMeter, newTempo, newLeadin)
         // just set the leadin without changing the song

@@ -1175,12 +1175,6 @@ var Track = (function() {
         }
     }
 
-/* todo:
-    do something about draw order
-      - z-index?
-      - ordering elements in bar div?
-    note offset for dragging chords
-*/
     // let's encapsulate this
     var Editor = (function() {
         var editing = false;
@@ -1716,6 +1710,8 @@ var Track = (function() {
             if (removedNote == editNote) {
                 editNote = null;
             }
+            // update editing
+            Editing.updateSongStats();
             return removedNote;
         }
 
@@ -1725,6 +1721,8 @@ var Track = (function() {
             view.build();
             rebuildNoteViews(note);
             checkLeadin();
+            // update editing
+            Editing.updateSongStats();
         }
 
         function rebuildNoteViews(note, prev=note.prev, next=note.next) {
