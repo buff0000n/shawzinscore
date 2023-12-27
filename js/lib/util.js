@@ -328,12 +328,22 @@ var PageUtils = (function() {
         }
     }
 
+    function extractUrlQuery(url) {
+        var m = url.match(/\?.*/);
+        var query = m ? m[0] : null;
+        if (query) {
+            url = url.substring(0, url.length - query.length);
+        }
+        return [url, query];
+    }
+
     function buildQueryUrl(query) {
         // get the current URL and strip out any query string
-        var [url, anchor] = extractUrlAnchor(getHref());
+        var [url, query0] = extractUrlQuery(getHref());
         // append our parameters
         url += query;
-        return url + (anchor ? anchor : "");
+        // omit any existing query or anchor
+        return url;
     }
 
     function getQueryParam(name, plusIsSpace=true) {
