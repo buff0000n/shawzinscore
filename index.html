@@ -201,7 +201,7 @@
                 <span class="field-entry-dark tooltip" id="edit-duration">
                     <span class="fieldTitle">Duration:</span>
                     <input id="edit-duration-input" type="text" value="" placeholder="" disabled size="5"/>
-                    <span class="tooltiptextbottom">Duration of the somg</span>
+                    <span class="tooltiptextbottom">Duration of the song</span>
                 </span>
             </div>
             <table class="layoutTable">
@@ -227,10 +227,15 @@
                     </td>
                 </tr>
             </table>
-            <div class="field-entry tooltip" id="config-leadin">
-                <span class="fieldTitle">Lead-in beats:</span>
-                <input id="config-leadin-input" type="number" value="0" step="0.125" size="5" min="0" placeholder="0"/>
+            <div class="field-entry tooltip" id="config-leadin-seconds">
+                <span class="fieldTitle">Lead-in seconds:</span>
+                <input id="config-leadin-seconds-input" type="number" value="0" step="0.125" size="6" min="0" placeholder="0" style="width: 5em;"/>
                 <span class="tooltiptextbottom">Use this to align the song on a measure boundary if the first note is not at the beginning of a measure</span>
+            </div>
+            <div class="field-entry tooltip" id="config-leadin-beats" style="display:none">
+                <span class="fieldTitle">Lead-in beats:</span>
+                <input id="config-leadin-beats-input" type="number" value="0" step="0.0625" size="6" min="0" placeholder="0" style="width: 5em;"/>
+                <span class="tooltiptextbottom">Use this to move the song's first note foward or backward on the track</span>
             </div>
             <div class="field-entry tooltip" id="edit-change-tempo">
                 <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>

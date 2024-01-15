@@ -14,8 +14,10 @@ var Editing = (function() {
         // tempo combobox event handlers
         document.getElementById("config-tempo-input").addEventListener("change", commitTempoChange, { passive: false });
         // lead-in textbox event handlers
-        Events.setupTextInput(document.getElementById("config-leadin-input"), true);
-        document.getElementById("config-leadin-input").addEventListener("change", commitLeadinChange, { passive: false });
+        Events.setupTextInput(document.getElementById("config-leadin-beats-input"), true);
+        document.getElementById("config-leadin-beats-input").addEventListener("change", commitLeadInBeatsChange, { passive: false });
+        Events.setupTextInput(document.getElementById("config-leadin-seconds-input"), true);
+        document.getElementById("config-leadin-seconds-input").addEventListener("change", commitLeadInSecondsChange, { passive: false });
         // key signature selection event handlers
         document.getElementById("select-keysig").addEventListener("click", doKeySigSelect, { passive: false });
 
@@ -222,14 +224,24 @@ var Editing = (function() {
         Model.setTempo(intValue);
     }
 
-    function commitLeadinChange() {
+    function commitLeadInBeatsChange() {
         // get the textbox
-        var input = document.getElementById("config-leadin-input");
+        var input = document.getElementById("config-leadin-beats-input");
         // get its value, removing any extra spaces
         var value = input.value ? input.value.trim() : null;
 
         // update the model
-        Model.setLeadin(value);
+        Model.setLeadInBeats(value, true);
+    }
+
+    function commitLeadInSecondsChange() {
+        // get the textbox
+        var input = document.getElementById("config-leadin-seconds-input");
+        // get its value, removing any extra spaces
+        var value = input.value ? input.value.trim() : null;
+
+        // update the model
+        Model.setLeadInSeconds(value, true);
     }
 
     return {

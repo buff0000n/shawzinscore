@@ -19,10 +19,8 @@ var Model = (function() {
     var meterArray = null;
     // tempo as an int
     var tempo = null;
-    // lead-in string
-    var leadin = null;
-    // lead in ticks, as calculated from the lead-in string and the tempo
-    var leadinTicks = null;
+    // lead in ticks
+    var leadInTicks = null;
     // either measures per line or seconds per line for shawzin tab, depending on whether a structure is defined
     // this depends on the song, so it's saved as part of the model
     var unitsPerLine = null;
@@ -39,6 +37,8 @@ var Model = (function() {
         // control scheme comes from preferences and isn't tied to the song data
         doSetControlScheme(ControlSchemeUI.preferenceToControlScheme(Settings.getControlScheme()));
 
+        var updateUrl = false;
+
         // load settings from the URL query parameters
         var shawzin = PageUtils.getQueryParam("s", false);
         var songName = PageUtils.urlDecodeString(PageUtils.getQueryParam("n"));
@@ -46,7 +46,22 @@ var Model = (function() {
         var songCode = PageUtils.getQueryParam("c", false);
         var songTempo = PageUtils.getQueryParam("t", false);
         var songMeter = PageUtils.getQueryParam("m", false);
-        var songLeadin = PageUtils.getQueryParam("l", false);
+        // new lead-in parameter
+        var songLeadInTicks = PageUtils.getQueryParam("lt", false);
+        // try old lead-in parameter
+        if (songLeadInTicks == null) {
+            // read lead-in beats string
+            var songLeadIn = PageUtils.getQueryParam("l", false);
+            // if we have a lead-in value and a tempo, convert to ticks
+            if (songLeadIn != null && songTempo != null) {
+                songLeadInTicks = beatsStringToTicks(songLeadIn, MiscUtils.parseInt(songTempo));
+                // hack: remove the l=... parameter
+                PageUtils.removeUrlQueryParam("l");
+                // update the URL when we're done
+                updateUrl = true;
+            }
+        }
+
         var tabUnitsPerLine = PageUtils.getQueryParam("u", false);
 
         // default shawzin
@@ -60,7 +75,8 @@ var Model = (function() {
         // parse the tempo if present
         var songTempoInt = (songTempo && songTempo != "") ? MiscUtils.parseInt(songTempo) : null;
         // set the structure (meter, tempo, and lead-in)
-        doSetStructure(songMeter, songTempoInt, songLeadin);
+        doSetStructure(songMeter, songTempoInt, songLeadIn);
+        doSetLeadInTicks(songLeadInTicks ? MiscUtils.parseInt(songLeadInTicks) : null, changeSong=true, forceUpdate=true);
 
         // set the measures/seconds per line for shawzin tab
         doSetUnitsPerLine(tabUnitsPerLine); // can be null
@@ -82,6 +98,10 @@ var Model = (function() {
             newSong.setScale(Metadata.scaleOrder[0]);
             // set the song object
             doSetSong(newSong);
+        }
+
+        if (updateUrl) {
+            scheduleUpdate();
         }
     }
 
@@ -119,7 +139,7 @@ var Model = (function() {
             "s": shawzin,
             "m": meter,
             "t": tempo,
-            "l": leadin,
+            "lt": leadInTicks,
             "u": unitsPerLine,
             // todo: compressed format?
             // any of the usual compression formats are going to have to be base64 encoded anyway,
@@ -263,27 +283,24 @@ var Model = (function() {
         Editing.updateSongStats();
     }
 
-    // easiest to just handle threse three parameters all at the same time
-    function doSetStructure(newMeter, newTempo, newLeadin, changeSong = true) {
+    // easiest to just handle these two parameters at the same time
+    function doSetStructure(newMeter, newTempo) {
         // check for a change
-        if (newMeter == meter && newTempo == tempo && newLeadin == leadin) return;
+        if (newMeter == meter && newTempo == tempo) return;
 
         // standardize non-values
         if (newMeter == "") newMeter = null;
         if (newTempo == 0) newTempo = null;
-        if (newLeadin == "") newLeadin = null;
 
         // if we're transition from no structure to some structure, fill in any missing values with defaults
-        if (!meter && (newMeter || newTempo || newLeadin)) {
+        if (!meter && (newMeter || newTempo)) {
             if (!newMeter) newMeter = MetadataUI.defaultMeter;
-            if (!newTempo) newTempo = MetadataUI.detaultTempo;
-            // if leadin is null then it can stay null
+            if (!newTempo) newTempo = MetadataUI.defaultTempo;
 
         // if we're transition from having structure no structure, clear everything out
         } else if (meter && (!newMeter || !newTempo)) {
             newMeter = null;
             newTempo = null;
-            newLeadin = null;
         }
 
         if (!newMeter) {
@@ -291,8 +308,6 @@ var Model = (function() {
             meter = null;
             meterArray = null;
             tempo = null;
-            leadin = null;
-            leadinTicks = null;
 
         } else {
             // parse meter, throw an error if there's any format issues
@@ -311,34 +326,10 @@ var Model = (function() {
                 newMeter = newMeterArray[0] + "/" + newMeterArray[1];
             }
 
-            // parse lead-in and convert from beats to ticks
-            var newLeadInTicks;
-            if (!newLeadin || newLeadin == "") {
-                // no lead-in, so zero lead-in ticks
-                newLeadin = null;
-                newLeadInTicks = 0;
-
-            } else {
-                // parse as a float
-                var newLeadinFloat = MiscUtils.parseFloat(newLeadin);
-                // lead-in beats needs to be less than one measure's worth of beats
-                while (newLeadinFloat > newMeterArray[0]) {
-                    newLeadinFloat -= newMeterArray[0];
-                }
-                // might as well fix negative numbers, too
-                while (newLeadinFloat < 0) {
-                    newLeadinFloat += newMeterArray[0];
-                }
-                // calculate the lead-in ticks based on the tempo
-                newLeadInTicks = Math.round(newLeadinFloat * ((Metadata.ticksPerSecond * 60) / newTempo));
-            }
-
             // after all the parsing/checking is done, save the values
             meter = newMeter;
             meterArray = newMeterArray;
             tempo = newTempo;
-            leadin = newLeadin;
-            leadinTicks = newLeadInTicks;
         }
 
         // update UI controls
@@ -348,67 +339,124 @@ var Model = (function() {
         var tempoInput = document.getElementById("config-tempo-input");
         tempoInput.value = tempo ? tempo : "";
 
-        var leadinInput = document.getElementById("config-leadin-input");
-        leadinInput.value = leadin ? leadin : "";
-
-        if (changeSong) {
-            // apply the leadin to the song
-            setLeadInTicksOnSong(song);
+        // if there is a lead-in then don't actually change the lead-in ticks, but
+        // update the UI for the new or lack of meter/tempo
+        if (leadInTicks) {
+            doSetLeadInTicks(leadInTicks, false, true);
         }
-
-        // update the Track
-        Track.updateStructure();
 
         // update the Playback UI, basically it just needs to know whether to enable the metronome
         Playback.updateStructure();
     }
+    
+    function doSetLeadInTicks(newLeadInTicks, changeSong = true, forceUpdate = false) {
+        // optional equality check, we might need to force an update to the UI for a new meter/tempo
+        if (!forceUpdate && newLeadInTicks == leadInTicks) {
+            return;
+        }
+        leadInTicks = newLeadInTicks;
+
+        var leadInBeatsContainer = document.getElementById("config-leadin-beats");
+        var leadInSecondsContainer = document.getElementById("config-leadin-seconds");
+
+        if (meter) {
+            var leadInInput = document.getElementById("config-leadin-beats-input");
+            leadInInput.value = leadInTicks ? ticksToBeatsString(leadInTicks, tempo) : "";
+            leadInBeatsContainer.style.display = "";
+            leadInSecondsContainer.style.display = "none";
+
+        } else {
+            var leadInInput = document.getElementById("config-leadin-seconds-input");
+            leadInInput.value = leadInTicks ? ticksToBeatsString(leadInTicks, 60) : "";
+            leadInBeatsContainer.style.display = "none";
+            leadInSecondsContainer.style.display = "";
+        }
+
+        if (changeSong) {
+            // apply the lead-in to the song
+            setLeadInTicksOnSong(song);
+            // update the Track
+            Track.updateStructure();
+        }
+    }
 
     var numberTrimRegex = /(\.)?0+$/i;
+    function ticksToBeatsString(ticks, tempo) {
+        return (ticks == null || ticks == 0) ? "" :
+            (ticks / ((Metadata.ticksPerSecond * 60) / tempo)).toFixed(4).replace(numberTrimRegex, "");
+    }
 
-    function setLeadInTicks(leadInTicks, changeSong = true) {
-        if (meter) {
-            // we have to reverse the calculation in doSetStructure()
-            var newLeadIn = (leadInTicks / ((Metadata.ticksPerSecond * 60) / tempo)).toFixed(4).replace(numberTrimRegex, "");
-            setStructure(meter, tempo, newLeadIn, changeSong);
+    function beatsStringToTicks(beatsString, tempo, meterArray=null) {
+        if (beatsString == null) {
+            return null;
         }
-        // todo: implemment lead-in seconds for when there's no meter?
+        // parse as a float
+        var beatsFloat = MiscUtils.parseFloat(beatsString);
+        if (meterArray) {
+            // lead-in beats needs to be less than one measure's worth of beats
+            while (beatsFloat > meterArray[0]) {
+                beatsFloat -= meterArray[0];
+            }
+            // might as well fix negative numbers, too
+            while (beatsFloat < 0) {
+                beatsFloat += meterArray[0];
+            }
+        }
+        // calculate the lead-in ticks based on the tempo
+        return Math.round(beatsFloat * ((Metadata.ticksPerSecond * 60) / tempo));
     }
 
     function setLeadInTicksOnSong(song) {
         // sanity check
         if (!song) return;
 
+        var songLeadInTicks = leadInTicks ? leadInTicks : 0;
+
         // check if there's structure
-        if (leadinTicks && tempo && meterArray) {
+        if (tempo && meterArray) {
             // calculate the ticks per measure
             var beatsPerMeasure = meterArray[0];
             var ticksPerMeasure = (60.0 / tempo) * Metadata.ticksPerSecond * beatsPerMeasure;
             // if the lead-in ticks are less than half a measure, then make lead-in negative,
             // so those notes occur before measure 1
-            if (leadinTicks < ticksPerMeasure / 2) {
-                song.setLeadInTicks(-leadinTicks);
+            if (songLeadInTicks < ticksPerMeasure / 2) {
+                song.setLeadInTicks(-songLeadInTicks);
             // otherwise, measure 1 is lead-in to measure 2
             } else {
-                song.setLeadInTicks(ticksPerMeasure - leadinTicks);
+                song.setLeadInTicks(ticksPerMeasure - songLeadInTicks);
             }
         } else {
-            // no structure, so no lead-in
-            song.setLeadInTicks(0);
+            // no structure, so use the lead-in directly
+            // todo: some kind of sanity check?
+            song.setLeadInTicks(songLeadInTicks);
         }
     }
 
-    function setStructure(newMeter, newTempo, newLeadin, changeSong) {
+    function setStructure(newMeter, newTempo) {
         // save the current values to this function closure
         var currentMeter = meter;
         var currentTempo = tempo;
-        var currentLeadin = leadin;
         // check for any value change
-        if (newMeter != currentMeter || newTempo != currentTempo || newLeadin != currentLeadin) {
+        if (newMeter != currentMeter || newTempo != currentTempo) {
             // build do and undo actions, execute the do action and put it on the undo stack
             Undo.doAction(
-                () => { doSetStructure(newMeter, newTempo, newLeadin, changeSong); scheduleUpdate(); },
-                () => { doSetStructure(currentMeter, currentTempo, currentLeadin, changeSong); scheduleUpdate(); },
+                () => { doSetStructure(newMeter, newTempo); scheduleUpdate(); },
+                () => { doSetStructure(currentMeter, currentTempo); scheduleUpdate(); },
                 "Set Structure"
+            );
+        }
+    }
+
+    function setLeadInTicks(newLeadInTicks, changeSong) {
+        // save the current values to this function closure
+        var currentLeadInTicks = leadInTicks;
+        // check for any value change
+        if (newLeadInTicks != currentLeadInTicks) {
+            // build do and undo actions, execute the do action and put it on the undo stack
+            Undo.doAction(
+                () => { doSetLeadInTicks(newLeadInTicks, changeSong); scheduleUpdate(); },
+                () => { doSetLeadInTicks(currentLeadInTicks, changeSong); scheduleUpdate(); },
+                "Set Lead-in"
             );
         }
     }
@@ -522,20 +570,29 @@ var Model = (function() {
         // convenience getters for the two parts of the the meter
         getMeterTop: function() { return meterArray ? meterArray[0] : null; },
         getMeterBottom: function() { return meterArray ? meterArray[1] : null; },
-        // setter pulls in the other two values because they're all tied together
-        setMeter: function(newMeter) { setStructure(newMeter, tempo, leadin, true); },
+        // setter pulls in the other value because they're tied together
+        setMeter: function(newMeter) { setStructure(newMeter, tempo); },
         // tempo
         getTempo: function() { return tempo; },
-        // setter pulls in the other two values because they're all tied together
-        setTempo: function(newTempo) { setStructure(meter, newTempo, leadin, true); },
-        // lead-in
-        getLeadin: function() { return leadin; },
-        // setter pulls in the other two values because they're all tied together
-        setLeadin: function(newLeadin) { setStructure(meter, tempo, newLeadin, true); },
-        // convenience to set all three at the same time
-        setStructure: setStructure, // (newMeter, newTempo, newLeadin)
-        // just set the leadin without changing the song
-        setLeadInTicks: setLeadInTicks, // (leadInTicks)
+        // setter pulls in the other values because they're tied together
+        setTempo: function(newTempo) { setStructure(meter, newTempo); },
+        // convenience to set both at the same time
+        setStructure: setStructure, // (newMeter, newTempo)
+        // lead-in getter, just for debugging right now
+        getLeadInTicks: function() { return leadInTicks; },
+        // direct setter for lead-in ticks
+        setLeadInTicks: setLeadInTicks, // (leadInTicks, updateSong)
+        // setter for lead-in beats
+        setLeadInBeats: function(leadInBeatsString, updateSong) {
+            // convert to ticks using the current tempo/meter
+            // todo: check if there is a meter?
+            setLeadInTicks(beatsStringToTicks(leadInBeatsString, tempo, meterArray), updateSong);
+        },
+        // setter for lead-in seconds
+        setLeadInSeconds: function(leadInSecondsString, updateSong) {
+            // convert to ticks, repurposing the beat method with 60 bpm
+            setLeadInTicks(beatsStringToTicks(leadInSecondsString, 60), updateSong);
+        },
 
         // units per line getter/setter
         getUnitsPerLine: function() { return unitsPerLine; },

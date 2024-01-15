@@ -1710,6 +1710,7 @@ var Track = (function() {
             if (removedNote == editNote) {
                 editNote = null;
             }
+            checkLeadIn();
             // update editing
             Editing.updateSongStats();
             return removedNote;
@@ -1720,7 +1721,7 @@ var Track = (function() {
             var view = new NoteView(note, false, false);
             view.build();
             rebuildNoteViews(note);
-            checkLeadin();
+            checkLeadIn();
             // update editing
             Editing.updateSongStats();
         }
@@ -1831,7 +1832,7 @@ var Track = (function() {
             return noteName + "-" + string;
         }
 
-        function checkLeadin() {
+        function checkLeadIn() {
             if (song.notes.length == 0) {
                 Model.setLeadInTicks(0);
 
