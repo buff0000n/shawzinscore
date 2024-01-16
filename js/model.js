@@ -74,9 +74,8 @@ var Model = (function() {
 
         // parse the tempo if present
         var songTempoInt = (songTempo && songTempo != "") ? MiscUtils.parseInt(songTempo) : null;
-        // set the structure (meter, tempo, and lead-in)
-        doSetStructure(songMeter, songTempoInt, songLeadIn);
-        doSetLeadInTicks(songLeadInTicks ? MiscUtils.parseInt(songLeadInTicks) : null, changeSong=true, forceUpdate=true);
+        // set the structure (meter, tempo)
+        doSetStructure(songMeter, songTempoInt);
 
         // set the measures/seconds per line for shawzin tab
         doSetUnitsPerLine(tabUnitsPerLine); // can be null
@@ -99,6 +98,9 @@ var Model = (function() {
             // set the song object
             doSetSong(newSong);
         }
+
+        // apply lead-in after loading the song
+        doSetLeadInTicks(songLeadInTicks ? MiscUtils.parseInt(songLeadInTicks) : null, changeSong=true, forceUpdate=true);
 
         if (updateUrl) {
             scheduleUpdate();
@@ -347,6 +349,8 @@ var Model = (function() {
 
         // update the Playback UI, basically it just needs to know whether to enable the metronome
         Playback.updateStructure();
+        // update editing
+        Editing.updateStructure();
     }
     
     function doSetLeadInTicks(newLeadInTicks, changeSong = true, forceUpdate = false) {
@@ -428,8 +432,11 @@ var Model = (function() {
         } else {
             // no structure, so use the lead-in directly
             // todo: some kind of sanity check?
-            song.setLeadInTicks(songLeadInTicks);
+            song.setLeadInTicks(-songLeadInTicks);
         }
+
+        // update editing
+        Editing.updateSongStats();
     }
 
     function setStructure(newMeter, newTempo) {
@@ -602,6 +609,16 @@ var Model = (function() {
         // song getters
         getSong: function() { return song; },
         getSongCode: doGetSongCode,
+        // direct song object setter
+        setSong: function(newSong) {
+            var currentSong = song;
+            Undo.doAction(
+                // set the song object directly, to preserve and references in the undo/redo lists.
+                () => { doSetSong(newSong); scheduleUpdate(); },
+                () => { doSetSong(currentSong); scheduleUpdate(); },
+                "Set Song"
+            );
+        },
         // song code setter
         setSongCode: function(newCode) {
             // todo: factor this out?
@@ -629,6 +646,7 @@ var Model = (function() {
                 );
             }
         },
+
         // schedule a URL update when something in the model changes
         scheduleUpdate: scheduleUpdate, // ()
 

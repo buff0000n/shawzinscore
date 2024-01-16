@@ -237,15 +237,15 @@
                 <input id="config-leadin-beats-input" type="number" value="0" step="0.0625" size="6" min="0" placeholder="0" style="width: 5em;"/>
                 <span class="tooltiptextbottom">Use this to move the song's first note foward or backward on the track</span>
             </div>
-            <div class="field-entry tooltip" id="edit-change-tempo">
+            <div class="field-button tooltip" id="edit-change-speed">
                 <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-                <span class="fieldTitle">Change Tempo</span>
-                <span class="tooltiptextbottom">Speed up or slow down the song to match a new tempo</span>
+                <span class="fieldTitle">Change Sped</span>
+                <span class="tooltiptextbottom">Speed up or slow down the song</span>
             </div>
-            <div class="field-entry tooltip" id="edit-delete-all">
+            <div class="field-button tooltip disabled" id="edit-delete-all">
                 <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                 <span class="fieldTitle">Delete All</span>
-                <span class="tooltiptextbottom">Enable to change the direction of song UI</span>
+                <span class="tooltiptextbottom">Delete all notes in the song</span>
             </div>
             <div class="field-entry tooltip">
                 <div class="fieldTitle">Key:</div>
@@ -499,6 +499,49 @@
         <div class="tooltip inline-field">
             <span id="ccs-delete-button" class="lightButton">Delete</span>
             <span class="tooltiptextbottom">Delete this control scheme</span>
+        </div>
+    </div>
+
+    <div id="change-speed-dialog" class="field-div">
+        <div class="field-entry-span" id="change-speed-type">
+            <span id="change-speed-type-percent" class="tooltip">
+                <input id="change-speed-type-percent-input" type="radio" name="change-speed-type" checked="checked"/>
+                <span class="fieldTitle">Percent</span>
+                <span class="tooltiptextbottom">Change speed by percentage</span>
+            </span>
+            <span id="change-speed-type-tempo" class="tooltip disabled">
+                <input id="change-speed-type-tempo-input" type="radio" name="change-speed-type" disabled/>
+                <span class="fieldTitle">Tempo</span>
+                <span class="tooltiptextbottom">Change speed to a new tempo</span>
+            </span>
+        </div>
+
+        <div class="field-entry tooltip" id="change-speed-percent">
+            <span class="fieldTitle">New Speed:</span>
+            <select id="change-speed-percent-input" >
+                <option value="50">50%</option>
+                <option value="100" selected>100%</option>
+                <option value="200">200%</option>
+            </select>
+            <span class="tooltiptextbottom">Speed change percentage</span>
+        </div>
+
+        <div class="field-entry tooltip" id="change-speed-tempo" style="display:none">
+            <span class="fieldTitle">New Tempo:</span>
+            <select id="change-speed-tempo-input" >
+            </select>
+            <span class="tooltiptextbottom">The new tempo of the song</span>
+        </div>
+
+        <div class="selection-div">
+            <div class="tooltip inline-field">
+                <span id="change-speed-ok-button" class="lightButton">OK</span>
+                <span class="tooltiptextbottom">Change the speed</span>
+            </div>
+            <div class="tooltip inline-field">
+                <span id="change-speed-cancel-button" class="lightButton">Cancel</span>
+                <span class="tooltiptextbottom">Cancel changing the speed</span>
+            </div>
         </div>
     </div>
 </div>

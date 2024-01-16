@@ -70,6 +70,14 @@ var DomUtils = (function() {
         return list;
     }
 
+    function addClass(node, clazz) {
+        node.classList.add(clazz);
+    }
+
+    function removeClass(node, clazz) {
+        node.classList.remove(clazz);
+    }
+
     function deleteNode(node) {
         // delete an element from its parent
         node.parentNode.removeChild(node);
@@ -114,6 +122,8 @@ var DomUtils = (function() {
         getLastChild: getLastChild, // (node, childClass)
         getAllChildren: getAllChildren, // (node, childClass)
         deleteNode: deleteNode, // (node)
+        addClass: addClass, // (node, clazz)
+        removeClass: removeClass, // (node, clazz)
         // returns the index of the item was removed, or -1 if nothing was removed
         removeFromList: removeFromList, // (list, item)
         // returns true if the list was changed

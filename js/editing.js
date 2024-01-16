@@ -6,18 +6,29 @@ var Editing = (function() {
 
 //        // config menu button (structure)
 //        document.getElementById("song-buttons-config").addEventListener("click", doConfigMenu, { passive: false });
+
         // individual controls in the config menu
         // these are hidden by default, so we can just keep then up-to-date all the time like everything else
+
         // meter textbox event handlers
         Events.setupTextInput(document.getElementById("config-meter-input"), true);
         document.getElementById("config-meter-input").addEventListener("change", commitMeterChange, { passive: false });
+
         // tempo combobox event handlers
         document.getElementById("config-tempo-input").addEventListener("change", commitTempoChange, { passive: false });
+
         // lead-in textbox event handlers
         Events.setupTextInput(document.getElementById("config-leadin-beats-input"), true);
         document.getElementById("config-leadin-beats-input").addEventListener("change", commitLeadInBeatsChange, { passive: false });
         Events.setupTextInput(document.getElementById("config-leadin-seconds-input"), true);
         document.getElementById("config-leadin-seconds-input").addEventListener("change", commitLeadInSecondsChange, { passive: false });
+
+        // Change speed button
+        document.getElementById("edit-change-speed").addEventListener("click", changeSpeed, { passive: false });
+
+        // Delete all button
+        document.getElementById("edit-delete-all").addEventListener("click", deleteAll, { passive: false });
+
         // key signature selection event handlers
         document.getElementById("select-keysig").addEventListener("click", doKeySigSelect, { passive: false });
 
@@ -60,7 +71,7 @@ var Editing = (function() {
     function updateSongStats() {
         var song = Model.getSong();
 
-        var count = song.notes.length;
+        var count = song ? song.notes.length : 0;
         var countInput = document.getElementById("edit-note-count-input");
         countInput.value = count;
 
@@ -68,16 +79,33 @@ var Editing = (function() {
         var durationInput = document.getElementById("edit-duration-input");
         if (count == 0) {
             duration = "Empty";
+            DomUtils.addClass(document.getElementById("edit-delete-all"), "disabled");
+
         } else {
-            // todo: add lead-in or subtract first note?
-            var ticks = song.notes[count - 1].tick;
+            var ticks = song.notes[count - 1].tick - Math.min(0, song.notes[0].tick);
             // todo: add duration of last note
             var seconds = Math.round(ticks / Metadata.ticksPerSecond);
             var minutes = Math.floor(seconds / 60);
             seconds -= (minutes * 60);
             duration = minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+            DomUtils.removeClass(document.getElementById("edit-delete-all"), "disabled");
         }
+
         durationInput.value = duration;
+
+    }
+
+    function updateStructure() {
+        if (Model.getMeter()) {
+            DomUtils.removeClass(document.getElementById("change-speed-type-tempo"), "disabled");
+            document.getElementById("change-speed-type-tempo-input").disabled = false;
+
+        } else {
+            DomUtils.addClass(document.getElementById("change-speed-type-tempo"), "disabled");
+            document.getElementById("change-speed-type-tempo-input").disabled = true;
+            document.getElementById("change-speed-type-percent-input").checked = true;
+            updateChangeSpeedType();
+        }
     }
 
     function initTempoControl() {
@@ -91,6 +119,11 @@ var Editing = (function() {
         option.innerHTML = `None`;
         input.appendChild(option);
 
+        // fill in the tempos
+        populateTempoSelection(input);
+    }
+
+    function populateTempoSelection(input) {
         // loop over the metadata tempos
         // because shawzin song code time is quantized by eighths of a second, we can't support just any tempo
         // just ones that come out to an integer number of ticks per beat
@@ -244,8 +277,133 @@ var Editing = (function() {
         Model.setLeadInSeconds(value, true);
     }
 
+    var changeSpeedDialogClose = null;
+
+    function updateChangeSpeedType() {
+        if (document.getElementById("change-speed-type-percent-input").checked) {
+            document.getElementById("change-speed-percent").style.display = "";
+            document.getElementById("change-speed-tempo").style.display = "none";
+        } else {
+            document.getElementById("change-speed-percent").style.display = "none";
+            document.getElementById("change-speed-tempo").style.display = "";
+        }
+    }
+
+    function initChangeSpeedDialog() {
+        var div = document.getElementById("change-speed-dialog");
+        // only initialize once
+        if (div.initialized) {
+            return;
+        }
+
+        // type selectors
+        document.getElementById("change-speed-type-percent-input").addEventListener("change", updateChangeSpeedType, { passive: false });
+        document.getElementById("change-speed-type-tempo-input").addEventListener("change", updateChangeSpeedType, { passive: false });
+
+        // init the tempo selection
+        populateTempoSelection(document.getElementById("change-speed-tempo-input"));
+
+        // okay button
+        document.getElementById("change-speed-ok-button").addEventListener("click", () => {
+            commitChangeSpeed();
+            changeSpeedDialogClose();
+        }, { passive: false });
+
+        // cancel button
+        document.getElementById("change-speed-cancel-button").addEventListener("click", () => {
+            changeSpeedDialogClose();
+        }, { passive: false });
+
+        // only initialize once
+        div.initialized = true;
+    }
+
+    function changeSpeed() {
+        // get the hidden dialog div from the document
+        var dialogDiv = document.getElementById("change-speed-dialog");
+        initChangeSpeedDialog(dialogDiv);
+
+        // update the tempo selector with the current tempo, if there is one
+        var tempo = Model.getTempo();
+        if (tempo != null) {
+            document.getElementById("change-speed-tempo-input").value = `${tempo}`;
+        }
+
+        // remove it
+        dialogDiv.remove();
+
+        // show the menu with a custom close callback
+        changeSpeedDialogClose = Menus.showMenu(dialogDiv, this, "Change Speed", false, () => {
+            // when the settings menu is closed, remove the the original container
+            dialogDiv.remove();
+            // and add it back to the hidden area of the document
+            document.getElementById("hidden-things").appendChild(dialogDiv);
+        });
+    }
+
+    function commitChangeSpeed() {
+        var percentTypeInput = document.getElementById("change-speed-type-percent-input");
+        if (percentTypeInput.checked) {
+            var percentInput = document.getElementById("change-speed-percent-input");
+            var scale = 100 / MiscUtils.parseInt(percentInput.value);
+            if (scale != 1) {
+                scaleSongLength(scale);
+            }
+        } else {
+            var tempoInput = document.getElementById("change-speed-tempo-input");
+            var newTempo = MiscUtils.parseInt(tempoInput.value);
+            var tempo = Model.getTempo();
+            if (newTempo != tempo) {
+                doChangeSpeedToTempo(tempo, newTempo);
+            }
+        }
+    }
+
+    function scaleSongLength(scale, updateLeadin = true) {
+
+        var song = Model.getSong();
+        var newSong = new Song();
+        newSong.setScale(song.getScale());
+        for (var n = 0; n < song.notes.length; n++) {
+            var note = song.notes[n];
+            var newNote = new Note(note.toNoteName(), Math.round(note.tick * scale));
+            newSong.addNote(newNote);
+        }
+
+        Undo.startUndoCombo();
+
+        if (Model.getLeadInTicks()) {
+            Model.setLeadInTicks(Math.round(Model.getLeadInTicks() * scale));
+        }
+        Model.setSong(newSong);
+
+        Undo.endUndoCombo("Change Speed");
+    }
+
+    function doChangeSpeedToTempo(oldTempo, newTempo) {
+        var scaleLengthFactor = oldTempo / newTempo;
+
+        Undo.startUndoCombo();
+
+        scaleSongLength(scaleLengthFactor);
+        Model.setTempo(newTempo);
+
+        Undo.endUndoCombo("Change Tempo");
+    }
+
+    function deleteAll() {
+        var song = Model.getSong();
+        if (!song || song.notes.length == 0) {
+            return;
+        }
+        var newSong = new Song();
+        newSong.setScale(song.getScale());
+        Model.setSong(newSong);
+    }
+
     return {
         registerEventListeners: registerEventListeners,
         updateSongStats: updateSongStats,
+        updateStructure: updateStructure,
     };
 })();

@@ -101,14 +101,36 @@ td.label {
 .selection-item:hover > *, .selection-item-selected:hover > * {
     color: #FFFFFF;
 }
-.field-entry, .field-entry-span, .field-entry-dark {
+.field-entry, .field-entry-span, .field-button, .field-entry-dark {
     padding: 0.5ex;
     margin: 0.5ex;
     border-radius: 1ex;
 }
 
-.field-entry, .field-entry-span {
+.field-entry:not(.disabled), .field-entry-span:not(.disabled) {
     background-color: #404040;
+}
+
+.field-entry:is(.disabled), .field-entry-span:is(.disabled) {
+    background-color: #202020;
+}
+
+.field-button:not(.disabled) {
+    background-color: #404040;
+    cursor: pointer;
+}
+
+.field-button:is(.disabled) {
+    background-color: #202020;
+}
+
+.disabled > .fieldTitle {
+    color: #606060;
+}
+
+.disabled > img {
+    color: #606060;
+    filter: brightness(50%) saturate(0%);
 }
 
 .field-entry-span {

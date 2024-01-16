@@ -24,7 +24,7 @@ var ShawzinTab = (function() {
         // save the model data
         song = newSong;
         controlScheme = newControlScheme;
-        title = newTitle;
+        title = newTitle ? newTitle : "Untitled";
         ticksPerBeat = newTicksPerBeat;
         beatsPerMeasure = newBeatsPerMeasure;
 
