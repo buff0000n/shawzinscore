@@ -308,6 +308,7 @@ var Menus = (function() {
         // Wrap the given div in a menu and pop it up under the given element with a title,
         // optionally full width, and with an optional callback when the menu is closed
         showMenu: showMenuAtElement, // (contentDiv, element, title, fullWidth = false, closeCallback = null)
+        // show a menu at the location of the given event
         showMenuAtEvent: showMenuAtEvent, // (contentDiv, event, title, fullWidth = false, closeCallback = null)
     }
 })();

@@ -131,6 +131,7 @@ var Undo = (function() {
 //    }
 //
     function cancelUndoCombo() {
+        // sanity check
         if (undoCombos.length == 0) {
             throw "No undo combo to cancel";
         }
@@ -150,6 +151,7 @@ var Undo = (function() {
 //    }
     
     function doUndo() {
+        // sanity check
         if (undoCombos.length > 0) {
             // ignore undo/redo requests when an acton combo is in progress
             throw "Cannot undo, action combo in progress";
@@ -172,6 +174,7 @@ var Undo = (function() {
     }
     
     function doRedo() {
+        // sanity check
         if (undoCombos.length > 0) {
             // ignore undo/redo requests when an acton combo is in progress
             throw "Cannot redo, action combo in progress";
@@ -218,6 +221,7 @@ var Undo = (function() {
         }
     
         undoAction() {
+            // keep track of the last return value
             var ret = null;
             // iterate over the action list in reverse order to undo
             for (var a = this.actions.length - 1; a >= 0; a--) {
@@ -227,6 +231,7 @@ var Undo = (function() {
         }
     
         redoAction() {
+            // keep track of the last return value
             var ret = null;
             // iterate over the action list in original order to redo
             for (var a = 0; a < this.actions.length; a++) {
@@ -273,6 +278,7 @@ var Undo = (function() {
         startUndoCombo();
         // add the action
         addUndoAction(action);
+            // keep track of the return value
         var ret = null;
         try {
             // perform the action
@@ -288,6 +294,7 @@ var Undo = (function() {
         endUndoCombo(description);
         // seems like a good time to clear any errors
         PageUtils.clearErrors();
+        // return the result
         return ret;
     }
 
@@ -309,6 +316,8 @@ var Undo = (function() {
         // perform an action and store it, along with an undo action and a description, in the undo stack
         // If this action recursively calls doAction() with another action then it will all be combined
         // into a single undo action when the top-level undo action exits
+        // the given do and undo functions can have return values, the result of the
+        // do action will be returned from this function call
         doAction: doAction, // (doFunc, undoFunc, description)
 //        // debugging
 //        getUndoStack: () => { return undoStack; }, // ()

@@ -1,4 +1,5 @@
 var Editing = (function() {
+    // whether the editing controls are enabled
     var editing = false;
 
     function registerEventListeners() {
@@ -7,7 +8,7 @@ var Editing = (function() {
 //        // config menu button (structure)
 //        document.getElementById("song-buttons-config").addEventListener("click", doConfigMenu, { passive: false });
 
-        // individual controls in the config menu
+        // individual controls in the editing menu
         // these are hidden by default, so we can just keep then up-to-date all the time like everything else
 
         // meter textbox event handlers
@@ -38,17 +39,19 @@ var Editing = (function() {
     }
 
     function toggleEditing() {
+        // flip the flag
         editing = !editing;
+
 
         var buttonImg = document.getElementById("edit-bar-img");
         var toolbar = document.getElementById("edit-toolbar");
-        var songScroll = document.getElementById("song-scroll");
 
 
         if (editing) {
+            // change the icon
             PageUtils.setImgSrc(buttonImg, "icon-dropup.png");
+            // display the editing controls
             toolbar.style.display = "block";
-            songScroll.classList.remove("cursor-pointer");
 
             // make sure the key signature item is displaying the current key signature
             document.getElementById("select-keysig-text").innerHTML = getKeySigHTMLAndTooltip(Model.getKeySig())[0];
@@ -57,52 +60,72 @@ var Editing = (function() {
             Playback.showSettingsMetronome();
 
         } else {
+            // change the icon
             PageUtils.setImgSrc(buttonImg, "icon-dropdown.png");
+            // hide the editing controls
             toolbar.style.display = "none";
-            songScroll.classList.add("cursor-pointer");
 
             // notify playback that the other metronome button is gone
             Playback.hideSettingsMetronome();
         }
 
+        // set the track up for editing
         Track.setEditing(editing);
     }
 
     function updateSongStats() {
+        // get the song
         var song = Model.getSong();
 
+        // count the song notes
         var count = song ? song.notes.length : 0;
+        // update the UI count
         var countInput = document.getElementById("edit-note-count-input");
         countInput.value = count;
 
+        // duration and UI element
         var duration;
         var durationInput = document.getElementById("edit-duration-input");
         if (count == 0) {
+            // If there are no notes then just put the word "Empty" in there
             duration = "Empty";
+            // disable the Delete All option if there are no notes
             DomUtils.addClass(document.getElementById("edit-delete-all"), "disabled");
 
         } else {
+            // calculate the song duration
+            // todo: add duration of last note?
             var ticks = song.notes[count - 1].tick - Math.min(0, song.notes[0].tick);
-            // todo: add duration of last note
+            // split into seconds and minutes
             var seconds = Math.round(ticks / Metadata.ticksPerSecond);
             var minutes = Math.floor(seconds / 60);
             seconds -= (minutes * 60);
+            // build a duration string
             duration = minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+            // make sure the Delete All option is enabled
             DomUtils.removeClass(document.getElementById("edit-delete-all"), "disabled");
         }
 
+        // update the UI duration
         durationInput.value = duration;
-
     }
 
     function updateStructure() {
+        // check if there is a meter and tempo
         if (Model.getMeter()) {
+            // If there is a meter/tempo, then enable the option to change speed based on tempo
+            // enable the label
             DomUtils.removeClass(document.getElementById("change-speed-type-tempo"), "disabled");
+            // enable the checkbox
             document.getElementById("change-speed-type-tempo-input").disabled = false;
 
         } else {
+            // If there is no meter/tempo, then disble the option to change speed based on tempo
+            // disable the label
             DomUtils.addClass(document.getElementById("change-speed-type-tempo"), "disabled");
+            // disable the checkbox
             document.getElementById("change-speed-type-tempo-input").disabled = true;
+            // make sure the percent option is selected
             document.getElementById("change-speed-type-percent-input").checked = true;
             updateChangeSpeedType();
         }
@@ -277,39 +300,44 @@ var Editing = (function() {
         Model.setLeadInSeconds(value, true);
     }
 
+    // close callback for the change speed dialog, I can't figure out a good way to not need this as a global variable
     var changeSpeedDialogClose = null;
 
     function updateChangeSpeedType() {
+        // check if the percent option is checked
         if (document.getElementById("change-speed-type-percent-input").checked) {
+            // show the percent selector and hide the tempo selector
             document.getElementById("change-speed-percent").style.display = "";
             document.getElementById("change-speed-tempo").style.display = "none";
         } else {
+            // show the tempo selector and hide the percent selector
             document.getElementById("change-speed-percent").style.display = "none";
             document.getElementById("change-speed-tempo").style.display = "";
         }
     }
 
     function initChangeSpeedDialog() {
+        // get the prebuilt UI element
         var div = document.getElementById("change-speed-dialog");
         // only initialize once
         if (div.initialized) {
             return;
         }
 
-        // type selectors
+        // type selectors listeners
         document.getElementById("change-speed-type-percent-input").addEventListener("change", updateChangeSpeedType, { passive: false });
         document.getElementById("change-speed-type-tempo-input").addEventListener("change", updateChangeSpeedType, { passive: false });
 
         // init the tempo selection
         populateTempoSelection(document.getElementById("change-speed-tempo-input"));
 
-        // okay button
+        // okay button listener
         document.getElementById("change-speed-ok-button").addEventListener("click", () => {
             commitChangeSpeed();
             changeSpeedDialogClose();
         }, { passive: false });
 
-        // cancel button
+        // cancel button listener
         document.getElementById("change-speed-cancel-button").addEventListener("click", () => {
             changeSpeedDialogClose();
         }, { passive: false });
@@ -334,7 +362,7 @@ var Editing = (function() {
 
         // show the menu with a custom close callback
         changeSpeedDialogClose = Menus.showMenu(dialogDiv, this, "Change Speed", false, () => {
-            // when the settings menu is closed, remove the the original container
+            // when the change speed menu is closed, remove the the original container
             dialogDiv.remove();
             // and add it back to the hidden area of the document
             document.getElementById("hidden-things").appendChild(dialogDiv);
@@ -342,68 +370,104 @@ var Editing = (function() {
     }
 
     function commitChangeSpeed() {
+        // look at one of the radio buttons
         var percentTypeInput = document.getElementById("change-speed-type-percent-input");
+        // check if it's a percentage change
         if (percentTypeInput.checked) {
+            // get the percentage
             var percentInput = document.getElementById("change-speed-percent-input");
+            // convert to a length scaling factor
             var scale = 100 / MiscUtils.parseInt(percentInput.value);
+            // if the scaling factor is 1 then do nothing
             if (scale != 1) {
+                // scale the note times
                 scaleSongLength(scale);
             }
         } else {
+            // get the selected tempo
             var tempoInput = document.getElementById("change-speed-tempo-input");
             var newTempo = MiscUtils.parseInt(tempoInput.value);
+            // get the current tempo
             var tempo = Model.getTempo();
+            // check if they're different
             if (newTempo != tempo) {
+                // run the tempo change
                 doChangeSpeedToTempo(tempo, newTempo);
             }
         }
     }
 
-    function scaleSongLength(scale, updateLeadin = true) {
-
+    function scaleSongLength(scale) {
+        // get the current song
         var song = Model.getSong();
+        // create a new song
         var newSong = new Song();
+        // copy over the song scale
         newSong.setScale(song.getScale());
+        // loop over the current song's notes
         for (var n = 0; n < song.notes.length; n++) {
+            // get a note
             var note = song.notes[n];
+            // create a new note with the same note name and a scaled time
             var newNote = new Note(note.toNoteName(), Math.round(note.tick * scale));
+            // add the new note to the new song
             newSong.addNote(newNote);
         }
 
+        // start an Undo combo
         Undo.startUndoCombo();
 
-        if (Model.getLeadInTicks()) {
-            Model.setLeadInTicks(Math.round(Model.getLeadInTicks() * scale));
-        }
+        var startingLeadInTicks = Model.getLeadInTicks();
+
+        // set the new song
         Model.setSong(newSong);
 
+        // scale the lead-in ticks, if there is one
+        if (startingLeadInTicks) {
+            Model.setLeadInTicks(Math.round(Model.getLeadInTicks() * scale));
+        }
+
+        // end the undo combo
         Undo.endUndoCombo("Change Speed");
     }
 
     function doChangeSpeedToTempo(oldTempo, newTempo) {
+        // calcluate the length scaling factor to go from the old tempo to the new one
         var scaleLengthFactor = oldTempo / newTempo;
 
+        // start an Undo combo
         Undo.startUndoCombo();
 
-        scaleSongLength(scaleLengthFactor);
+        // change the tempo, this doesn't affect the song or lead-in
         Model.setTempo(newTempo);
+        // change the song and lead-in
+        scaleSongLength(scaleLengthFactor);
 
+        // end the undo combo
         Undo.endUndoCombo("Change Tempo");
     }
 
     function deleteAll() {
+        // get the current song
         var song = Model.getSong();
+        // if the current song is blank then do nothing
         if (!song || song.notes.length == 0) {
             return;
         }
+        // create a new song
         var newSong = new Song();
+        // copy over the song scale
         newSong.setScale(song.getScale());
+        // set it as a new song
         Model.setSong(newSong);
     }
 
     return {
+        // register event listeners
         registerEventListeners: registerEventListeners,
+        // notify that something with the song itself has changed
         updateSongStats: updateSongStats,
+        // notify that something with the meter/tempo has changed
         updateStructure: updateStructure,
     };
 })();

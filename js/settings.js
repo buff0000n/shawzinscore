@@ -6,7 +6,6 @@ var Settings = (function() {
 
     // default setting values
     var trackReversed = true;
-//    var showFrets = false;
     var controlScheme = null;
     var darkMode = false;
     var oldMode = false;
@@ -25,9 +24,6 @@ var Settings = (function() {
             if (props.trackReversed != null) {
                 trackReversed = props.trackReversed;
             }
-//            if (props.showFrets != null) {
-//                showFrets = props.showFrets;
-//            }
             if (props.controlScheme != null) {
                 controlScheme = props.controlScheme;
             }
@@ -58,7 +54,6 @@ var Settings = (function() {
         // build something we can JSONify
         var props = {
             "trackReversed": trackReversed,
-//            "showFrets": showFrets,
             "controlScheme": controlScheme,
             "darkMode": darkMode,
             "oldMode": oldMode,
@@ -78,9 +73,6 @@ var Settings = (function() {
         // getter/setter for track direction setting
         isTrackReversed: function() { return trackReversed; },
         setTrackReversed: function(v) { if (v != trackReversed) { trackReversed = v; save(); } },
-//        // getter/setter for show frets/strings setting
-//        isShowFrets: function() { return showFrets; },
-//        setShowFrets: function(v) { if (v != showFrets) { showFrets = v; save(); } },
         // getter/setter for control scheme setting
         getControlScheme: function() { return controlScheme; },
         setControlScheme: function(v) { if (v != controlScheme) { controlScheme = v; save(); } },

@@ -37,6 +37,7 @@ var Model = (function() {
         // control scheme comes from preferences and isn't tied to the song data
         doSetControlScheme(ControlSchemeUI.preferenceToControlScheme(Settings.getControlScheme()));
 
+        // keep track of whether we need to update the URL due to deprecated parameters
         var updateUrl = false;
 
         // load settings from the URL query parameters
@@ -102,6 +103,7 @@ var Model = (function() {
         // apply lead-in after loading the song
         doSetLeadInTicks(songLeadInTicks ? MiscUtils.parseInt(songLeadInTicks) : null, changeSong=true, forceUpdate=true);
 
+        // update the URL if there were some deprecated parameters in there
         if (updateUrl) {
             scheduleUpdate();
         }
@@ -344,9 +346,11 @@ var Model = (function() {
         // if there is a lead-in then don't actually change the lead-in ticks, but
         // update the UI for the new or lack of meter/tempo
         if (leadInTicks) {
-            doSetLeadInTicks(leadInTicks, false, true);
+            doSetLeadInTicks(leadInTicks, true, true);
         }
 
+        // update the track
+        Track.updateStructure();
         // update the Playback UI, basically it just needs to know whether to enable the metronome
         Playback.updateStructure();
         // update editing
@@ -358,20 +362,29 @@ var Model = (function() {
         if (!forceUpdate && newLeadInTicks == leadInTicks) {
             return;
         }
+        // set the new value
         leadInTicks = newLeadInTicks;
 
+        // get the UI containers for the two states
         var leadInBeatsContainer = document.getElementById("config-leadin-beats");
         var leadInSecondsContainer = document.getElementById("config-leadin-seconds");
 
+        // check if there is structure
         if (meter) {
+            // UI element for lead-in beats
             var leadInInput = document.getElementById("config-leadin-beats-input");
+            // set the UI value
             leadInInput.value = leadInTicks ? ticksToBeatsString(leadInTicks, tempo) : "";
+            // show the beats one and hide the seconds one
             leadInBeatsContainer.style.display = "";
             leadInSecondsContainer.style.display = "none";
 
         } else {
+            // UI element for lead-in seconds
             var leadInInput = document.getElementById("config-leadin-seconds-input");
+            // set the UI value
             leadInInput.value = leadInTicks ? ticksToBeatsString(leadInTicks, 60) : "";
+            // show the seconds one and hide the beats one
             leadInBeatsContainer.style.display = "none";
             leadInSecondsContainer.style.display = "";
         }
@@ -384,18 +397,25 @@ var Model = (function() {
         }
     }
 
+    // regex for trimming trailing decimal zeros from a number string
     var numberTrimRegex = /(\.)?0+$/i;
+
+    // convert ticks to beats according to a tempo
     function ticksToBeatsString(ticks, tempo) {
         return (ticks == null || ticks == 0) ? "" :
+            // convert from ticks to beats according to the tempo and format as a string
             (ticks / ((Metadata.ticksPerSecond * 60) / tempo)).toFixed(4).replace(numberTrimRegex, "");
     }
 
+    // convert beats to ticks according to a tempo and optional meter
     function beatsStringToTicks(beatsString, tempo, meterArray=null) {
+        // null check
         if (beatsString == null) {
             return null;
         }
         // parse as a float
         var beatsFloat = MiscUtils.parseFloat(beatsString);
+        // optionally normalize with the meter beats
         if (meterArray) {
             // lead-in beats needs to be less than one measure's worth of beats
             while (beatsFloat > meterArray[0]) {
@@ -454,7 +474,7 @@ var Model = (function() {
         }
     }
 
-    function setLeadInTicks(newLeadInTicks, changeSong) {
+    function setLeadInTicks(newLeadInTicks, changeSong=true) {
         // save the current values to this function closure
         var currentLeadInTicks = leadInTicks;
         // check for any value change
@@ -588,7 +608,7 @@ var Model = (function() {
         // lead-in getter, just for debugging right now
         getLeadInTicks: function() { return leadInTicks; },
         // direct setter for lead-in ticks
-        setLeadInTicks: setLeadInTicks, // (leadInTicks, updateSong)
+        setLeadInTicks: setLeadInTicks, // (leadInTicks, updateSong=true)
         // setter for lead-in beats
         setLeadInBeats: function(leadInBeatsString, updateSong) {
             // convert to ticks using the current tempo/meter

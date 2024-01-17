@@ -64,20 +64,6 @@ var TrackBar = (function() {
             setChordMode("slap");
         });
 
-//        // event handler for the fret/string switch button
-//        var switchHandler = () => {
-//            // invert the preference value
-//            var newShowFrets = !Settings.isShowFrets();
-//            // apply the new setting
-//            setShowFrets(newShowFrets);
-//            // save the new preference
-//            Settings.setShowFrets(newShowFrets);
-//        };
-//        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
-//        switchFretsDiv.addEventListener("click", switchHandler);
-//        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
-//        switchStringsDiv.addEventListener("click", switchHandler);
-
         // later
 //        var chordDiv = document.getElementById("roll-chord-button");
 //        chordDiv.addEventListener("click", selectChord);
@@ -127,7 +113,6 @@ var TrackBar = (function() {
 
         // read preferences and apply them
         setTrackDirection(Settings.isTrackReversed());
-//        setShowFrets(Settings.isShowFrets());
     }
 
     // drag drop listener for the piano element
@@ -258,6 +243,7 @@ var TrackBar = (function() {
         }
     }
 
+    // build a lookup table for getNearestScaleNoteName()
     function buildNoteLookupArray(noteMap) {
         var lookup = [];
         // dumb way
@@ -301,13 +287,18 @@ var TrackBar = (function() {
         rebuildPiano();
     }
 
+    // given one or more frets, determine the roll side chord mode and set it temporarily
     function setChordModeForFretsTemporarily(fret) {
         var newChordMode = null;
         if (fret.length <= 1) {
+            // 1 fret means no chord mode
             newChordMode = "none";
         } else {
+            // get the scale metadata
             var scaleMd = getScaleMetadata();
+            // calculate based o the scale's chord type
             switch (scaleMd.config.chordtype) {
+                // Dual type has two chord modes
                 case Metadata.chordTypeDual:
                     switch (fret) {
                         case "12":
@@ -323,45 +314,58 @@ var TrackBar = (function() {
                     }
                     break;
                 case Metadata.chordTypeSingle:
+                    // single chord type has one chord mode
                     newChordMode = "ab";
                     break;
                 case Metadata.chordTypeSlap:
+                    // slap chord type has one chord mode
                     newChordMode = "slap";
                     break;
             }
         }
 
+        // check against the current chord mode
         if (newChordMode != chordMode) {
+            // save the current chord mode if it hasn't already been saved
             if (!oldChordMode) {
                 oldChordMode = chordMode;
             }
+            // set the new chord mode
             setChordMode(newChordMode);
         }
 
-        // clear out frets
+        // clear out the tab side frets temporarily
         setFretsTemporarily("");
     }
 
+    // clear out the tab side frets temporarily
     function setFretsTemporarily(fret) {
+        // save the current frets if it hasn't already been saved
         if (!oldFretEnabled) {
             // clone the old fret settings
             oldFretEnabled = fretEnabled.slice();
         }
+        // new fret settings
         for (var i = 0; i < 4; i++) {
             setFretEnabled(i, fret.indexOf(i) >= 0);
         }
     }
 
+    // return the tab side frets and roll side chord mode to their previous values
     function revertTemporarySettings() {
+        // revert tab side frets
         if (oldFretEnabled) {
             for (var i = 0; i < 4; i++) {
                 setFretEnabled(i, oldFretEnabled[i]);
             }
+            // clear out temp values
             oldFretEnabled = null;
         }
 
+        // revert roll side chord mode
         if (oldChordMode) {
             setChordMode(oldChordMode);
+            // clear out temp values
             oldChordMode = null;
         }
     }
@@ -596,8 +600,6 @@ var TrackBar = (function() {
 
         // get some buttons inside the trackbar that we will have to move
         var dirDiv = document.getElementById("track-direction");
-//        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
-//        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
         var chordDiv = document.getElementById("roll-chord-button");
         var chordInfoDiv = document.getElementById("roll-chord-info");
 
@@ -613,11 +615,6 @@ var TrackBar = (function() {
             // move the direction button to the top of the header bar
             dirDiv.style.top = "0px";
             dirDiv.style.bottom = "";
-//            // move the fret/string switch buttons to the bottom of the header bar
-//            switchFretsDiv.style.top = "";
-//            switchFretsDiv.style.bottom = "0px";
-//            switchStringsDiv.style.top = "";
-//            switchStringsDiv.style.bottom = "0px";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-up.png");
             chordInfoDiv.style.top = "0px";
@@ -636,11 +633,6 @@ var TrackBar = (function() {
             // move the direction button to the bottom of the header bar
             dirDiv.style.top = "";
             dirDiv.style.bottom = "0px";
-//            // move the fret/string switch buttons to the top of the header bar
-//            switchFretsDiv.style.top = "0px";
-//            switchFretsDiv.style.bottom = "";
-//            switchStringsDiv.style.top = "0px";
-//            switchStringsDiv.style.bottom = "";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-down.png");
             chordInfoDiv.style.top = "";
@@ -675,12 +667,6 @@ var TrackBar = (function() {
     function setShowFrets(newShowFrets) {
         // sanity check
         if (showFrets == newShowFrets) return;
-
-//        // show/hide the switch buttons
-//        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
-//        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
-//        switchFretsDiv.style.display = newShowFrets ? "none" : "inline-block";
-//        switchStringsDiv.style.display = newShowFrets ? "inline-block" : "none";
 
         // show or hide the string elements
         for (var i = 1; i <= 3; i++) {
@@ -721,6 +707,7 @@ var TrackBar = (function() {
         }
         // save the state
         fretEnabled[fret] = enabled;
+        // update the track, if this update doesn't already come from the track
         if (runUpdate) {
             Track.updateFrets(fretEnabled);
         }

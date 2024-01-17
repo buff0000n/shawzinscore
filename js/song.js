@@ -28,6 +28,7 @@ var SongUtils = (function() {
         while (m <= n) {
             var k = (n + m) >> 1;
 
+            // customized comparison section
             var cmp = tick - arr[k].tick;
             if (cmp == 0 && fret) {
                 cmp = fret.localeCompare(arr[k].fret);
@@ -36,6 +37,7 @@ var SongUtils = (function() {
                 cmp = string.localeCompare(arr[k].string);
             }
 
+            // carry on
             if (cmp > 0) {
                 m = k + 1;
 
@@ -50,6 +52,7 @@ var SongUtils = (function() {
         return ~m;
     }
 
+    // split a note name into a two-element array with the fret(s) and string(s)
     function splitNoteName(noteName) {
         var split = noteName.split("-");
         if (split.length == 2) {
@@ -60,6 +63,7 @@ var SongUtils = (function() {
         throw "Invalid note name: \"" + noteName + "\"";
     }
 
+    // for debugging, give each Note object an ID
     var noteCount = 0;
     function noteId() {
         return noteCount++;
@@ -71,9 +75,11 @@ var SongUtils = (function() {
         base64ToInt: base64ToInt, // (char)
         // convert a single 6-bit int to a base64 char
         intToBase64: intToBase64, // (i)
-        // time based comparator for sorting notes
+        // parse a note name into fret(s) and string(s)
         splitNoteName: splitNoteName, // (noteName): [fret, string]
+        // search an array of notes for the given tick and optional note info
         binarySearchSong: binarySearchSong, // (array, tick, fret=null, string=null)
+        // generate an ID for a note
         noteId: noteId, // ()
     };
 })();
@@ -82,11 +88,14 @@ var SongUtils = (function() {
 // object representing a single note
 class Note {
     constructor(noteName = null, tick = 0) {
+        // note ID for debugging
         this.id = SongUtils.noteId();
+        // one or more strings
         this.string = null;
+        // zero or more frets
         this.fret = null;
 
-        // string, fret
+        // parse the note name
         if (noteName) {
             [this.fret, this.string] = SongUtils.splitNoteName(noteName);
         }
@@ -97,6 +106,7 @@ class Note {
         this.prev = null;
         this.next = null;
 
+        // list of errors on this note
         this.errors = null;
     }
 
@@ -112,6 +122,7 @@ class Note {
         var measureTick = SongUtils.base64ToInt(code.charAt(2));
 
         // bits 1-3 of the note int are the strings
+        // apparently more than one string is fine
         this.string = "";
         if (noteInt & 0x01) this.string = this.string + "1";
         if (noteInt & 0x02) this.string = this.string + "2";
@@ -121,14 +132,13 @@ class Note {
         if (noteInt & 0x08) this.fret = this.fret + "1";
         if (noteInt & 0x10) this.fret = this.fret + "2";
         if (noteInt & 0x20) this.fret = this.fret + "3";
+        // replace no fret with the zero fret
         if (this.fret.length == 0) {
             this.fret = "0";
         }
 
         // combine measure int and tick into into a single tick, number of ticks from the beginning of the song
         this.tick = (measure * 64) + measureTick;
-
-        // apparently more than one string is fine
 
         return this;
     }
@@ -172,14 +182,17 @@ class Note {
         return SongUtils.intToBase64(b1) + SongUtils.intToBase64(b2) + SongUtils.intToBase64(b3);
     }
 
+    // human-readable string
     toString() {
         return this.tick + ":" + this.fret + "-" + this.string;
     }
 
+    // equality check
     equals(other) {
         return other && this.fret == other.fret && this.string == other.string;
     }
-    
+
+    // match with optional fret and string info
     matchesNoteName(matchFret=null, matchString=null) {
         return (matchFret == null || matchFret == this.fret)
             && (matchString == null || matchString == this.string);
@@ -200,26 +213,38 @@ class Note {
         this.tick += offsetTicks;
     }
 
+    // whether the note has errors
     hasErrors() {
         return this.errors != null;
     }
 
+    // add an error to the note
     addError(error) {
+        // check for an error list
         if (!this.errors) {
+            // create a new error list
             this.errors = [error];
+            // notify the view, if there is one
             if (this.view) {
                 this.view.setHasErrors(true);
             }
         } else {
+            // add to the existing error list
             DomUtils.addToListIfNotPresent(this.errors, error);
         }
     }
 
+    // remove an error from the note
     removeError(error) {
+        // check for an error list
         if (this.errors) {
+            // look for and remove the error from the list, and check if anything was removed
             if (DomUtils.removeFromList(this.errors, error) >= 0) {
+                // check if the error list is now empty
                 if (this.errors.length == 0) {
+                    // clear out the error list
                     this.errors = null;
+                    // notify the view, if there is one
                     if (this.view) {
                         this.view.setHasErrors(false);
                     }
@@ -268,10 +293,12 @@ class Song {
 
         // note array
         this.notes = Array();
-        // pull out each three-char substring and parse it into a note string, fret, and tick
+        // pull out each three-char substring
         for (var n = 1; n < code.length; n+= 3) {
             var noteCode = code.substring(n, n+3);
+            // parse it into a note string, fret, and tick
             var note = new Note().fromCode(noteCode);
+            // check if it's just a single string
             if (note.string.length == 1) {
                 // add to the note list, sorting by tick and setting up a doubly linked list
                 this.addNote(note);
@@ -530,18 +557,23 @@ class Song {
     // rules
 
     noteAdded(note) {
-        if (this.notes.length > 1000) {
+        // check if we're past the max note count
+        if (this.notes.length > Metadata.maxNotes) {
+            // add an error to the new note
             note.addError("Exceeds max note count")
-            if (this.notes.length == 1001) {
+            // check if we just passed the max note count with this note
+            if (this.notes.length == Metadata.maxNotes + 1) {
+                // we gotta add the error to every note in the list
                 for (var i = 0; i < this.notes.length; i++) {
                     this.notes[i].addError("Exceeds max note count")
                 }
             }
         }
+        // check against the max song duration
         if (note.tick >= Metadata.maxTickLength) {
             note.addError("Exceeds song time limit")
         }
-
+        // pre-check if there are concurrent notes, then run the invalid concurrent note check
         if ((note.prev != null && note.prev.tick == note.tick) ||
             (note.next != null && note.next.tick == note.tick)) {
             this.checkInvalidConcurrentNotes(note);
@@ -549,47 +581,70 @@ class Song {
     }
 
     noteRemoved(note) {
+        // check if we just dropped to the max note count
         if (this.notes.length == 1000) {
+            // clear all those errors
             for (var i = 0; i < this.notes.length; i++) {
                 this.notes[i].removeError("Exceeds max note count")
             }
         }
 
+        // pre-check if there are concurrent notes before the removed one
         if (note.prev != null && note.prev.tick == note.tick) {
+            // run the invalid concurrent note check on the previous notes
             this.checkInvalidConcurrentNotes(note.prev);
 
+        // pre-check if there are concurrent notes after the removed one
         } else if (note.next != null && note.next.tick == note.tick) {
+            // run the invalid concurrent note check on the next notes
             this.checkInvalidConcurrentNotes(note.next);
         }
     }
 
+    // concurrent note validity check
     checkInvalidConcurrentNotes(note) {
+        // start at the given note
         var tickStartNote = note;
+        // find the start of the concurrent notes
         while (tickStartNote.prev != null && tickStartNote.prev.tick == note.tick) {
             tickStartNote = tickStartNote.prev;
         }
 
+        // start off valid
         var invalid = false;
 
         for (var n = tickStartNote; n.next != null && n.next.tick == note.tick; n = n.next) {
+            // check straight equality
             if (n.equals(n.next)) {
+                // add an error to both notes
                 n.addError("Duplicate note");
                 n.next.addError("Duplicate note");
 
             } else {
-                n.removeError("Duplicate note");
+                // remove the error from both notes
+                if (!n.prev || !n.equals(n.prev)) {
+                    // only remove n's error if it wasn't already equal to its previous note
+                    n.removeError("Duplicate note");
+                }
+                // remove it from the next note, if that one's equal to its next note then we'll
+                // add the error back in the next iteration
                 n.next.removeError("Duplicate note");
 
+                // check for concurrent notes with different frets.  We only have to check
+                // consecutive notes because they're ordered by fret
                 if (n.fret != n.next.fret) {
                     invalid = true;
                 }
             }
         }
 
+        // loop over all concurrent notes and set or clear the invalid concurrent note error
         for (var n = tickStartNote; n != null && n.tick == note.tick; n = n.next) {
             if (invalid) {
+                // set the error
                 n.addError("Invalid concurrent notes");
             } else {
+                // clear the error
                 n.removeError("Invalid concurrent notes");
             }
         }

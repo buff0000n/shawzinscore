@@ -349,16 +349,6 @@
                         <img src="img/icon-dropup.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
                         <span class="tooltiptextbottom">Switch track direction</span>
                     </div>
-                    <!--
-                    <div id="trackbar-switch-frets" class="smallButton tooltip" style="position: absolute; left: 0px; top: 0px;">
-                        <img src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x" class="icon"/>
-                        <span class="tooltiptextbottom">Show Frets</span>
-                    </div>
-                    <div id="trackbar-switch-strings" class="smallButton tooltip" style="position: absolute; left: 0px; top: 0px; display: none;">
-                        <img src="img/icon-trackbar-switch-strings.png" srcset="img2x/icon-trackbar-switch-strings.png 2x" class="icon"/>
-                        <span class="tooltiptextbottom">Show Strings</span>
-                    </div>
-                    -->
                     <div id="roll-chord-buttons" style="position: absolute; right: 0px; top: 0px; display: block">
                         <div id="roll-chord-button-none" class="smallButton chordButton tooltip" style="">
                             <img src="img/icon-chord-none-selected.png" srcset="img2x/icon-chord-none-selected.png 2x" class="icon"/>
@@ -519,8 +509,7 @@
         <div class="field-entry tooltip" id="change-speed-percent">
             <span class="fieldTitle">New Speed:</span>
             <select id="change-speed-percent-input" >
-                <option value="50">50%</option>
-                <option value="100" selected>100%</option>
+                <option value="50" selected>50%</option>
                 <option value="200">200%</option>
             </select>
             <span class="tooltiptextbottom">Speed change percentage</span>
@@ -2823,8 +2812,10 @@
             </ul>
             <h2>Maybe</h2>
             <ul>
+                <li>Get editing working better on mobile</li>
                 <li>do something about draw order when adding notes out of order in edit mode</li>
                 <li>note offset for dragging chords in edit mode</li>
+                <li>Error display in the editing section</li>
                 <li>Keep metronome playing if the song configuration dialog is open when playback is stopped?</li>
                 <li>sort options for shawzin list?</li>
                 <li>Support meter/tempo changing mid-song?</li>

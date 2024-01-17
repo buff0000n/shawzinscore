@@ -408,6 +408,7 @@ var Piano = (function() {
         }
 
         if (tick) {
+            // add half a tick mark at each of the top and bottom of the image
             context.strokeStyle = "#202020";
             context.lineWidth = lineWidth * xScale / 4;
 
@@ -431,8 +432,10 @@ var Piano = (function() {
     // dividing lines, so we need to actually save them as PNGs
     function testPianoCanvas(keySig, xScale, yScale, colors = []) {
         var div = document.createElement("div");
+        // normal image
         var rollCanvas = buildPianoRollCanvas(keySig, xScale, 20, false, 106);
         div.append(rollCanvas);
+        // image with ticks
         var rollCanvasTick = buildPianoRollCanvas(keySig, xScale, 20, false, 106, true);
         div.append(rollCanvasTick);
         var rollCanvas2 = buildPianoRollCanvas(keySig, xScale, 2, true, 0);

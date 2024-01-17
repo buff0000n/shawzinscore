@@ -58,7 +58,9 @@ var Track = (function() {
     // copy of the setting
     var oldFretLayout = null;
 
+    // opacity for notes that are being dragged
     var tempNoteOpacity = "50%";
+    // basically the number of ticks before and after the cursor to search for a note
     var editNoteLength = 2;
 
     function registerEventListeners() {
@@ -91,6 +93,7 @@ var Track = (function() {
         // resize listener on both the window viewport and the mobile visual viewport
         Events.addCombinedResizeListener(resize);
 
+        // Editor object has its own listeners
         Editor.registerEventListeners();
 
         // initialize here
@@ -164,12 +167,12 @@ var Track = (function() {
     }
 
     function setRollBackground() {
-        // change the piano roll side's background image
+        // change the piano roll side's background image depending on key signature and whether editing is enabled
         roll.style.backgroundImage = "url('img2x/track/keys-bg-" + Model.getKeySig() + (Editor.isEditing() ? "-ticks" : "") + ".png')";
     }
 
     function setTabBackground() {
-        // change the tab side's background image
+        // change the tab side's background image depending on whether editing is enabled
         tab.style.backgroundImage = "url('img2x/track/tab-bg" + (Editor.isEditing() ? "-ticks" : "") + ".png')";
     }
 
@@ -197,6 +200,7 @@ var Track = (function() {
     }
 
     function rebuildTabNotes() {
+        // always set the tab background
         setTabBackground();
         // sanity check
         if (song) {
@@ -588,7 +592,9 @@ var Track = (function() {
     // huh
     function getNoteDisplayLength(note, noteLength, poly, temp=false, outline=false) {
         // common logic factored out to here
+        // notes being dragged are their default length
         if (temp) return noteLength;
+        // cursor is the length of the search size
         if (outline) return editNoteLength;
 
         // okay, so when a shawzin is some kind of monophonic then we need to trim each note so it ends when
@@ -640,12 +646,14 @@ var Track = (function() {
         constructor(note, temp=false, outline=false, selected=false, hover=false) {
             // store the note
             this.note = note;
-            // style setting
+            // style settings
             this.temp = temp;
             this.outline = outline;
             this.selected = selected;
             this.hover = hover;
+            // errors flag
             this.hasErrors = false;
+            // initialize the errors flag with the note's errors, if any
             this.setHasErrors(note.hasErrors());
             // backreference
             note.view = this;
@@ -678,18 +686,21 @@ var Track = (function() {
             this.bar = null;
         }
 
+        // style update for selected note
         setSelected(newSelected) {
             if (newSelected == this.selected) return;
             this.selected = newSelected;
             this.updateStyle();
         }
 
+        // style update for hovered note
         setHover(newHover) {
             if (newHover == this.hover) return;
             this.hover = newHover;
             this.updateStyle();
         }
 
+        // style update for note with/without errors
         setHasErrors(newHasErrors) {
             if (newHasErrors != this.hasErrors) {
                 this.hasErrors = newHasErrors;
@@ -707,21 +718,30 @@ var Track = (function() {
             return this.bar[roll ? 1 : 0];
         }
 
+        // update the display style of the note
         updateStyle() {
+            // sanity check
             if (this.dot) {
+                // tab side is a different image for the central dot
                 PageUtils.setImgSrc(this.dot, this.getTabDotImage());
+                // roll side is css styling on the box div
                 for (var i = 0; i < this.rollRow.noteList.length; i+=2) {
                     this.styleRollDiv(this.rollRow.noteList[i]);
                 }
             }
         }
 
+        // determine which tab-side image to use for the central dot
         getTabDotImage() {
+            // outline has jsut a single option and takes precedence
             return this.outline ? "tab-note-outline.png" :
+                   // hovering has two options depending on whether there are errors
                    this.hover ?
                      this.hasErrors ? "tab-note-hover-error.png" : "tab-note-hover.png" :
+                   // selected has two options depending on whether there are errors
                    this.selected ?
                      this.hasErrors ? "tab-note-selected-error.png" : "tab-note-selected.png" :
+                   // default two options depending on whether there are errors
                    this.hasErrors ? "tab-note-selected-error.png" : "tab-note-dot.png";
         }
 
@@ -734,9 +754,10 @@ var Track = (function() {
             // container div, absolutely positioned
             var div = document.createElement("div");
             div.style.position = "absolute";
-            // set transparency if it's a temp note
+            // set transparency if it's a temp note being dragged
             if (this.temp) {
                 div.style.opacity = tempNoteOpacity;
+            // otherwise, if this is a cursor note then disable events on it
             } else if (this.outline) {
                 div.style.pointerEvents = "none";
                 div.style.touchEvents = "none";
@@ -760,6 +781,7 @@ var Track = (function() {
             // add the dot element
             div.appendChild(dot);
 
+            // save the dot image if it's not a playing note
             if (!playing) {
                 this.dot = dot;
             }
@@ -797,6 +819,7 @@ var Track = (function() {
                 }
             }
 
+            // if it's not a cursor note then add the central string image
             if (!this.outline) {
                 // build the string image and alt based on the control scheme
                 var stringImg = PageUtils.makeImage(controlScheme.strings[string].imgBase + "_b.png", "centerImg");
@@ -858,20 +881,26 @@ var Track = (function() {
             return div;
         }
 
+        // set the CSS style on a roll note box div
         styleRollDiv(div) {
+            // check if it's a cursor note
             if (this.outline) {
-                // set a border color to keep consecutive notes from merging together
+                // set just the border color
                 div.style.borderColor = div.color;
+                // disable events on this note
                 div.style.pointerEvents = "none";
                 div.style.touchEvents = "none";
             } else {
                 // color the div background, this is what makes it show up
                 div.style.backgroundColor = div.color;
                 // set a border color to keep consecutive notes from merging together
-                // hovered notes are slightly lighter, and selected notes are white
+                // color the div border
                 div.style.borderColor = this.selected ?
+                                        // selected notes are pink or white, depending on whether there's an error'
                                           this.hasErrors ? "#FFB0B0" : "#FFFFFF" :
+                                        // default notes are red or gray, depending on whether there's an error'
                                           this.hasErrors ? "#FF0000" : "#202020";
+                // hovered notes are slightly lighter
                 div.style.filter = this.hover ? "brightness(250%) saturate(50%)" : "";
             }
         }
@@ -888,6 +917,7 @@ var Track = (function() {
             div.noteLength = length;
             div.noteColor = color;
             div.noteView = this;
+            // if it's a cursor div then we're done, no need for the grab element
             if (this.outline) {
                 return [div];
             }
@@ -897,7 +927,6 @@ var Track = (function() {
 //            var grabDiv = this.buildRollNoteDiv(name, editNoteLength);
             // meh, it's too confusing when you can't grab anywhere on the note
             var grabDiv = this.buildRollNoteDiv(name, length);
-            // classname depends on whether it's outline mode
             grabDiv.className = "roll-note-grab";
             grabDiv.noteView = this;
 
@@ -1175,36 +1204,47 @@ var Track = (function() {
         }
     }
 
-    // let's encapsulate this
+    // let's encapsulate editor functions
     var Editor = (function() {
+        // editing enabled flag
         var editing = false;
-        var isDragging = false;
-        var isDragPaused = false;
 
+        // editor state flags
         var tabEnabled = false;
         var rollEnabled = false;
+        // which frets are enabled
         var fretsEnabled = [false];
 
         function registerEventListeners() {
+            // mouse listeners on the whole track area
             scroll.addEventListener("mousedown",  (e) => { handleDownEvent(Events.mouseEventToMTEvent(e)); }, { "passive": false } );
             scroll.addEventListener("mousemove",  (e) => { handleMoveEvent(Events.mouseEventToMTEvent(e)); }, { "passive": false } );
             scroll.addEventListener("mouseup",    (e) => { handleUpEvent(Events.mouseEventToMTEvent(e));   }, { "passive": true  } );
             scroll.addEventListener("mouseleave", (e) => { handleOutEvent(Events.mouseEventToMTEvent(e));  }, { "passive": true  } );
 
+            // touch listeners on the whole track area
+            // todo: these don't work that great
             scroll.addEventListener("touchstart", (e) => {
+                // convert
                 var e2 = Events.touchEventToMTEvent(e);
+                // if there's only one touch, then treat it like a mouse down event
                 if (e.touches.length == 1) {
                     handleDownEvent(e2);
                 }
             }, { "passive": false});
             scroll.addEventListener("touchmove", (e) => {
+                // convert
                 var e2 = Events.touchEventToMTEvent(e);
+                // if there's only one touch, then treat it like a mouse move event
                 if (e.touches.length == 1) {
                     handleMoveEvent(e2);
                 }
             }, { "passive": false } );
             scroll.addEventListener("touchend", (e) => {
+                // convert
                 var e2 = Events.touchEventToMTEvent(e);
+                // if there are no touches left and there was a previous edit event then treat it like a mouse up event
+                // plus a mouse leave event
                 if (e.touches.length == 0 && editEvent) {
                     handleUpEvent(e2);
                     handleOutEvent(e2);
@@ -1212,45 +1252,70 @@ var Track = (function() {
             }, { "passive": true});
         }
 
+        // toggle editing enabled
         function setEditing(newEditing) {
             // check for change
             if (newEditing == editing) return;
 
             // set a local flag
             editing = newEditing;
+
+            // get the track area
+            var songScroll = document.getElementById("song-scroll");
+            if (editing) {
+                // remove the blanket pointer cursor from the track area, now only certain areas should have pointer cursors
+                songScroll.classList.remove("cursor-pointer");
+
+            } else {
+                // reinstate the blanket pointer cursor from the track area
+                songScroll.classList.add("cursor-pointer");
+            }
+
             // change the track backgrounds
             setRollBackground();
             setTabBackground();
             // show or don't show the fret buttons in the track bar
             TrackBar.setShowFrets(editing);
 
+            // update fret-related state
             editingUpdated();
         }
 
+        // getter for flag
         function isEditing() {
             return editing;
         }
 
         function editingUpdated() {
+            // that's a pretty fancy way to determine if any fret flags are true
             var anyFretEnabled = fretsEnabled.reduce((a, b) => a || b);
+            // if there are any enabled frets then the tab side is enabled
             var newTabEnabled = editing && anyFretEnabled;
+            // if there are no enabled frets then the roll side is enabled
             var newRollEnabled = editing && !anyFretEnabled;
 
+            // update flags
             tabEnabled = newTabEnabled;
             rollEnabled = newRollEnabled;
 
+            // rerun the last edit event to update the track UI
             rerunEditEvent();
         }
 
         function updateFrets(newFretsEnabled) {
+            // enable/disable frets
             fretsEnabled = newFretsEnabled;
+            // update fret-related state
             editingUpdated();
         }
 
+        // rerun the last edit event to update the track UI
         function rerunEditEvent() {
+            // check if there was a last edit event
             if (editEvent) {
                 // recalculate event target
                 editEvent.target = document.elementFromPoint(editEvent.clientX, editEvent.clientY);
+                // handle event again, with flags set to treat it like a move event
                 handleEditEvent(editEvent);
             }
         }
@@ -1268,32 +1333,42 @@ var Track = (function() {
         }
 
         function handleDownEvent(e) {
+            // if we're editing then call the edit event handler
             if (editing) {
                 handleEditEvent(e, true, false, false);
+                // prevent default handlers
                 e.preventDefault();
 
             } else {
+                // otherwise just set the playback bar location
                 setPlaybackBar(e);
             }
         }
 
         function handleUpEvent(e) {
+            // if we're editing then call the edit event handler
             if (editing) {
                 handleEditEvent(e, false, true, false);
+                // allow default handlers to also run
+                // I forget why we do this
                 //e.preventDefault();
             }
         }
 
         function handleMoveEvent(e) {
+            // if we're editing then call the edit event handler
             if (editing) {
                 handleEditEvent(e, false, false, false);
+                // prevent default handlers
                 e.preventDefault();
             }
         }
 
         function handleOutEvent(e) {
+            // if we're editing then call the edit event handler
             if (editing) {
                 handleEditEvent(e, false, false, true);
+                // allow default handlers to also run
             }
         }
         
@@ -1301,39 +1376,66 @@ var Track = (function() {
         // event handler meat
         ////////////////////////////////////////////////////////////////
 
+        // we need a shitload of state
+
+        // last edit event
         var editEvent = null;
 
+        // enum constants representing the two editor sides
         var sideTab = "t";
         var sideRoll = "r";
 
+        // state for the note currently being edited
+        // the current tick
         var editTick = null;
+        // the current note name
         var editNoteName = null;
+        // the current note object
         var editNote = null;
+        // whether the current note is brand new or an edited existing note
         var editNoteNew = null;
+        // the editor side where editing started
         var editNoteSide = null;
+        // the vertical offset where the current note was clicked
         var editNoteOffsetTick = null;
+        // todo: horiontal offset for chords
 //        var editNoteOffsetNoteName = 0;
 
+        // state for the original note, if we're editing an existing note or adding a new one
+        // original note object
         var originalNote = null;
+        // whether the original note was new or an existing note
         var originalNoteNew = false;
+        // side where the original note was clicked
         var originalNoteSide = null;
+        // the vertical offset where the original note was clicked
         var originalNoteOffsetTick = 0;
+        // todo: horiontal offset for chords
 //        var originalNoteOffsetNoteName = 0;
+        // whether the current note has been moved off the original note in any direction
         var originalNoteHasMoved = false;
 
+        // editing state flags
+        // whether we're currently dragging a note
         var isDragging = false;
+        // whether the current note was dragged outside the track area
         var isDragPaused = false;
+        // whether the last event was outside the track area, it can happen apparently
         var isOutside = true;
+        // whether the cursor is currently inside the active side of the track area
         var isInsideActive = false;
 
+        // get the tick and note name positions of the edit event
         function updateEditTickNoteName() {
             // get the tick postion of the event
             // there are issues with detecting when we leave the boundary through coordinates alone, so
             // short-circuit if we know it's an out event.
             editTick = editEvent.clientY == null ? null : getTickForEvent(editEvent);
+            // if there's an original note, then add the tick offset
             if (editTick != null && originalNote) {
                 editTick += originalNoteOffsetTick;
             }
+            // if there's a tick for the event then get the note name for the event
             editNoteName = (editTick != null) ? getNoteNameForEvent(editEvent) : null;
             // todo: originalNoteOffsetNote
 
@@ -1345,26 +1447,38 @@ var Track = (function() {
             editNoteSide = isOutside ? null : getCurrentEditSide(!isInsideActive);
         }
 
+        // temporarily update the trackbar fret/chord mode for the current event
         function updateTrackBarMode() {
+            // oh boy.  To prevent infinite loops, temporarily clear out the edit event
             var t = editEvent;
             editEvent = null;
+            // set the trackbar fret/chord mode based on the original note
             setTrackBarMode(originalNote, originalNoteSide);
+            // restore the edit event
             editEvent = t;
+            // recalculate the current tick and node name positions
             updateEditTickNoteName();
         }
 
+        // revert the trackbar fret/chord mode temporary settings
         function revertTrackBarMode() {
+            // Cripes.  To prevent infinite loops, temporarily clear out the edit event
             var t = editEvent;
             editEvent = null;
+            // revert the trackbar fret/chord mode
             resetTrackBarMode();
+            // restore the edit event
             editEvent = t;
+            // recalculate the current tick and node name positions
             updateEditTickNoteName();
         }
 
+        // wrapper for starting an undo combo
         function startAction() {
             Undo.startUndoCombo();
         }
 
+        // wrapper for ending an undo combo and checking for errors
         function endAction(name) {
             if (!Undo.endUndoCombo(name)) {
                 console.log("Error finishing " + name + " operation");
@@ -1372,6 +1486,7 @@ var Track = (function() {
             }
         }
 
+        // wrapper for canceling an undo combo and checking for errors
         function cancelAction() {
             if (!Undo.cancelUndoCombo()) {
                 console.log("Error canceling undo");
@@ -1379,73 +1494,111 @@ var Track = (function() {
             }
         }
 
+        // get the currently active editor side, or the opposite of that if specified
         function getCurrentEditSide(inverse=false) {
             // holy crap ladies and gentlemen, it's an XOR
             return (tabEnabled ^ inverse) ? sideTab : sideRoll;
         }
 
+        // build a new cursor edit note
         function setTempEditNote() {
+            // clear any previous edit note
             clearEditNote();
+            // buld a new note
             editNote = new Note(editNoteName, editTick);
+            // it's new
             editNoteNew = true;
-            // todo: redundant?
+            // save the side
             editNoteSide = getCurrentEditSide();
+            // no offset tick, this is directly under the cursor
             editNoteOffsetTick = 0;
+            // create a new view on top of the edit note
             var view = new NoteView(editNote, false, true);
+            // build the view, this associates itself with the note
             view.build();
         }
 
+        // set the current note to an existing note and put it in hover mode
         function setHoverEditNote(hoverNote, side=getCurrentEditSide()) {
+            // check to see if it's a change
             if (hoverNote != editNote || side != editNoteSide) {
+                // clear any previous edit note
                 clearEditNote();
+                // save the existing note as the new edit note
                 editNote = hoverNote;
+                // not a new note
                 editNoteNew = false;
+                // save the side
                 editNoteSide = side;
+                // set the note style
                 editNote.view.setHover(true);
             }
             // do this every time because the offset can change while still hovering over the same note
             editNoteOffsetTick = hoverNote.tick - editTick;
         }
 
+        // set the current note to a dragging note
         function setDragEditNote() {
+            // clear any previous edit note
             clearEditNote();
+            // create a new note
             editNote = new Note(editNoteName, editTick);
+            // it's a new note
             editNoteNew = true;
+            // save the side
             editNoteSide = getCurrentEditSide();
+            // copy the offset from the original note, presumably the original note that was dragged
             editNoteOffsetTick = originalNoteOffsetTick;
+            // create a new view on top of the edit note
             var view = new NoteView(editNote, true, false);
+            // build the view, this associates itself with the note
             view.build();
         }
 
+        // clear out the current edit note
         function clearEditNote() {
+            // check if there is an edit note and a view
             if (editNote && editNote.view) {
                 if (editNoteNew) {
+                    // if it's a new note then remove the view
                     editNote.view.clear();
                 } else {
+                    // otherwise it's an exsiting note, so unset the hover style
                     editNote.view.setHover(false);
                 }
             }
+            // clear out the reference
             editNote = null;
         }
 
+        // copy the edit note to the original note in anticipation of dragging it
         function initOriginalNote() {
+            // copy note reference
             originalNote = editNote;
+            // copy flags
             originalNoteNew = editNoteNew;
             originalNoteSide = editNoteSide;
             originalNoteOffsetTick = editNoteOffsetTick;
+            // reset the moved flag
             originalNoteHasMoved = false;
         }
 
+        // determine if two notes are equal
         function notesEqual(n1, n2) {
-            return n1.tick == n2.tick && n1.toNoteName() == n2.toNoteName();
+            // Note.equals() just compares the note name
+            return n1.tick == n2.tick && n1.equals(n2);
         }
 
+        // determine if a note is equal to the current edit cursor position
         function noteEqualToCurrentPosition(n) {
             return n != null && editTick == n.tick && editNoteName == n.toNoteName();
         }
 
+        // ugh, after all that we still need a stopgap to prevent infinite loops
         var handlingEditEvent = false;
 
+        // Main event handler
+        // I went through several iterations before just putting everything in a single function with a million cases
         function handleEditEvent(e, isDownEvent=false, isUpEvent=false, isOutEvent=false) {
             // haha, shit, we have to prevent recursive calls coming from changing the fret/chord mode
             // and undoing/redoing edit actions
@@ -1453,17 +1606,22 @@ var Track = (function() {
                 return;
             }
             handlingEditEvent = true;
+
             try {
+                // save the last edit event
                 editEvent = e;
-                // jesus christ okay just assemble all the state
+                // button state
                 var isButtonDown = isUpEvent ? false : isDownEvent ? true : e.buttons == 1;
 
-                // hax
+                // hax: signify that this event takes place outside the track area
+                // we cna do this because it's a our own event wrapper object
                 if (isOutEvent) {
                     editEvent.clientY = null;
                 }
+                // update the current tab/note name position
                 updateEditTickNoteName();
 
+                // enable this for ludicrous debug logging
                 //console.log("Event at " +
                 //        editTick + ":" + editNoteName + "(" + editNoteOffsetTick + ") " +
                 //        (isDownEvent ? "(down) " : isUpEvent ? "(up) " : isOutEvent ? "(out) " : "(move) ") +
@@ -1476,6 +1634,10 @@ var Track = (function() {
 
                 if (!isInsideActive) {
                     if (isDragging) {
+                        // Case: not inside the active editor side, but currently dragging
+                        // Action: cancel any note edits and pause the drag operation until the cursor enters the
+                        // active side again, or appears in the inactive side with no buttons pressed
+
                         //console.log("pausing edit");
                         // remove last Edit Note
                         clearEditNote();
@@ -1485,25 +1647,31 @@ var Track = (function() {
                         // pause drag
                         isDragging = false;
                         isDragPaused = true;
+                        // if it's totally outside the edit area then reset any trackbar mode changes
                         if (isOutside) {
-                            // reset any trackbar mode changes
                             revertTrackBarMode();
                         }
                     } else {
+                        // Case: not inside the active editor side, not dragging anything
+                        // Action: clear the cursor edit note
                         clearEditNote();
                     }
                 }
 
                 if (isOutside) {
+                    // Case: completely outside the edit area, possibly having just canceled a drag operation
+                    // Action: we're done
+
                     //console.log("outside");
                     // nothing
                     return;
                 }
 
                 if (isDragPaused) {
-                    // unpause dragging if the button is still down and we're on the same side as
-                    // the originally dragged note
                     if (isButtonDown && originalNoteSide == editNoteSide) {
+                        // Case: Dragging is paused, but inside the active edit side with the button down
+                        // Action: resume dragging
+
                         // start undo combo
                         startAction();
                         // remove originalNote from song if not new
@@ -1517,6 +1685,10 @@ var Track = (function() {
                         isDragging = true;
 
                     } else if (!isButtonDown) {
+                        // Case: Dragging is paused, but inside either side of the edit area with no buttons down
+                        // Action: completely cancel the drag operation
+
+                        // clear out the original note
                         originalNote = null;
                         originalNoteOffsetTick = 0;
                         // cancel drag
@@ -1526,30 +1698,50 @@ var Track = (function() {
                     }
 
                     if (isDragPaused) {
+                        // Case: Dragging is still paused, on the inactive side of the edit area
+                        // Action: we're done
+
                         return;
                     }
                 }
 
                 if (isDragging && isInsideActive) {
+                    // Case: dragging and in the active side of the editor
+                    // Action: handle drag movement
+
+                    // check to see if the current position has moved from the current edit note
                     if (!noteEqualToCurrentPosition(editNote)) {
+                        // if there was no previous edit note, or the current position has moved
+                        // to a different note name, then play audio for the new note name
                         if (editNote == null || editNoteName != editNote.toNoteName()) {
                             Playback.playNote(editNoteName);
                         }
+                        // build or rebuild a drag note under the cursor
                         setDragEditNote();
                     }
 
                     if (isButtonDown) {
-                        // record if there's be any movement away from the original
+                        // Case: active dragging and the button is still down
+                        // Action: record if there's be any movement away from the original
+
                         if (!notesEqual(originalNote, editNote)) {
                             originalNoteHasMoved = true;
                         }
 
                     } else {
+                        // Case: active dragging and the button is up
+                        // Action: finish the drag operation
+
+                        // reset the original offset, gotta do it somewhere
                         originalNoteOffsetTick = 0;
                         if (!originalNoteNew && notesEqual(originalNote, editNote)) {
-                            // cancel undo combo
+                            // Case: Drag operation finished where it started
+                            // Action: cancel the drag operation, add the original note back, and possibly
+                            // open the note menu if there was no movement
+
+                            // cancel undo combo, this will also add the original note back
                             cancelAction();
-                            // check if there's be any movement away from the original
+                            // check if there's any movement away from the original
                             if (!originalNoteHasMoved) {
                                 // note menu
                                 noteMenu(editEvent, originalNote);
@@ -1558,6 +1750,9 @@ var Track = (function() {
                             revertTrackBarMode();
 
                         } else {
+                            // Case: Drag operation finished at a new location
+                            // Action: add a new note
+
                             // create new note from editNote
                             var newNote = new Note(editNote.toNoteName(), editNote.tick);
                             // remove editNote
@@ -1569,6 +1764,7 @@ var Track = (function() {
                             // reset any trackbar mode changes
                             revertTrackBarMode();
                         }
+                        // unset flag
                         isDragging = false;
                     }
                 }
@@ -1576,38 +1772,51 @@ var Track = (function() {
                 if (!isDragging) {
                     // check event target
                     if (editEvent.target && editEvent.target.noteView && !editEvent.target.noteView.temp) {
-                        //   check if it's different from the current editNote
-                        //     clear editNote
-                        //     setHoverEditNote
+                        // Case: Not dragging and hovering over a note on either side of the edit area
+                        // Action: start hovering on the note
+
+                        // get the side the note is on, which might not be the active side
                         // todo: error if it's not one of these?
                         var side = editEvent.target.className == "roll-note-grab" ? sideRoll :
                                    editEvent.target.className == "tab-grab" ? sideTab :
                                    null;
+                        // start hovering on the note
                         setHoverEditNote(editEvent.target.noteView.note, side);
 
                     } else if (isInsideActive) {
                         // check if it's different from the current editNote
                         if (!noteEqualToCurrentPosition(editNote)) {
+                            // Case: Not dragging, on the active edit side, not hovering directly over a note, and
+                            // cursor has moved from its previous position
+                            // Action: search for a note near the cursor
+
                             // parse moveNoteName into fret and string
                             var [fret, string] = SongUtils.splitNoteName(editNoteName);
                             // search for an existing note near the cursor
                             // if the tab is active, search for a note with any frets on that string
                             var hoverNote = song.getNote(editTick, tabEnabled ? null : fret, string, editNoteLength-1, editNoteLength-1);
                             if (hoverNote) {
+                                // if one was found, start hovering on it
                                 setHoverEditNote(hoverNote);
 
                             } else {
+                                // otherwise show a cursor outline
                                 setTempEditNote();
                             }
                         }
                     }
                 }
 
+                // determine whether there's a current edit note, there probably should be
                 var hasEditNote = editNote != null;
 
                 if (!isDragging && isButtonDown) {
                     if (hasEditNote) {
+                        // Case: not dragging, button is down, and currently has either a cursor position or a hover note
+                        // Action: Start dragging either a new note edit or an existing note
+
                         // copy edit Note to the original note
+                        // this is either an exsiting note being hovered or our position cursor
                         initOriginalNote();
                         // setTrackBarMode before setting the drag edit note
                         updateTrackBarMode();
@@ -1622,38 +1831,51 @@ var Track = (function() {
                         }
                         // start dragging
                         isDragging = true;
+                        // start off by playing audio for the current note
                         Playback.playNote(editNoteName);
 
                     } else if (isDownEvent) {
+                        // Case: not dragging, button is down, but not on over a note and not on the active side of
+                        // the edit area
+                        // Action: set the playback marker
                         setPlaybackBar(editEvent);
                     }
                 }
             } finally {
+                // clear the stopgap flag
                 handlingEditEvent = false;
             }
+            // sheesh
         }
         
         ////////////////////////////////////////////////////////////////
         // end event handler meat
         ////////////////////////////////////////////////////////////////
 
+        // temporarily set the trackbar fret/chord mode for the given note
         function setTrackBarMode(note, side) {
+            // get the frets
             var clickFret = note.fret;
             switch (side) {
                 case sideRoll:
+                    // if the note is on the roll side, set the chord mode
                     TrackBar.setChordModeForFretsTemporarily(clickFret);
                     break;
                 case sideTab:
+                    // if the note is on the tab side, set the frets
                     TrackBar.setFretsTemporarily(clickFret);
                     break;
             }
         }
 
+        // revert temporary fret/chord mode settings in the trackbar
         function resetTrackBarMode() {
             TrackBar.revertTemporarySettings();
         }
 
+        // show the note menu
         function noteMenu(event, note) {
+            // todo: better
             var menuDiv = document.createElement("div");
             var deleteButton = document.createElement("div");
             deleteButton.className = "button";
@@ -1666,17 +1888,27 @@ var Track = (function() {
             var close = Menus.showMenuAtEvent(menuDiv, event);
         }
 
+        // remove a note from the song
         function removeNote(note) {
+            // wrap in an undo action that returns the actual note that was removed
             return Undo.doAction(
                 () => {
+                    // actually remove the note from the song, returning the object that was actually removed
                     var ret = doRemoveNote(note);
+                    // schedule a URL update
                     Model.scheduleUpdate();
+                    // re-run the last edit event as a move event to fix hovering/cursor status
                     rerunEditEvent();
+                    // return the note object that was removed
                     return ret;
                 },
                 () => {
+                    // undo action
+                    // add the note back
                     doAddNote(note);
+                    // schedule a URL update
                     Model.scheduleUpdate();
+                    // re-run the last edit event as a move event to fix hovering/cursor status
                     rerunEditEvent();
                 },
                 "Remove Note"
@@ -1684,16 +1916,24 @@ var Track = (function() {
         }
 
         function addNote(note) {
+            // wrap in an undo action
             Undo.doAction(
                 () => {
+                    // add the note back
                     doAddNote(note);
+                    // schedule a URL update
                     Model.scheduleUpdate();
+                    // re-run the last edit event as a move event to fix hovering/cursor status
                     rerunEditEvent();
                 },
                 () => {
+                    // actually remove the note from the song, returning the object that was actually removed
                     var ret = doRemoveNote(note);
+                    // schedule a URL update
                     Model.scheduleUpdate();
+                    // re-run the last edit event as a move event to fix hovering/cursor status
                     rerunEditEvent();
+                    // return the note object that was removed
                     return ret;
                 },
                 "Add Note"
@@ -1701,33 +1941,49 @@ var Track = (function() {
         }
 
         function doRemoveNote(note) {
+            // remove the note or its equivalent from the song, getting the actual note object that was removed
             var removedNote = song.removeNote(note);
+            // the note object still has the linkages set up
             var prev = removedNote.prev;
             var next = removedNote.next;
+            // clear the note's UI
             removedNote.view.clear();
+            // rebuild any notes around the removed one,
+            // changing their UI lengths in case they're some flavor of monophonic
             rebuildNoteViews(removedNote, prev, next);
             // avoid cleanup issues if we're currently hovering over this note
             if (removedNote == editNote) {
                 editNote = null;
             }
+            // Check if we've removed the first note in the song and have to change the lead-in setting
             checkLeadIn();
             // update editing
             Editing.updateSongStats();
+            // return the note object that was removed
             return removedNote;
         }
 
         function doAddNote(note) {
+            // add the note to the song
             song.addNote(note);
+            // create a UI for the note
             var view = new NoteView(note, false, false);
+            // build the UI, this associates the view with the note
             view.build();
+            // rebuild any notes around the removed one,
+            // changing their UI lengths in case they're some flavor of monophonic
             rebuildNoteViews(note);
+            // Check if the note we added is now the first note in the song and we have to change the lead-in setting
             checkLeadIn();
             // update editing
             Editing.updateSongStats();
         }
 
+        // look around the given added or removed note and see if we have to rebuild any other note views
         function rebuildNoteViews(note, prev=note.prev, next=note.next) {
+            // look backwards from the reference note
             while (prev != null) {
+                // just always rebuild the note view, not worth optimizing
                 prev.view.clear();
                 prev.view.build();
                 // if the current note is at a different time from the removed note, and the note after
@@ -1739,6 +1995,7 @@ var Track = (function() {
                 prev = prev.prev;
             }
             while (next != null) {
+                // just always rebuild the note view, not worth optimizing
                 next.view.clear();
                 next.view.build();
                 // if the current note is at a different time from the removed note, and the note after
@@ -1751,17 +2008,18 @@ var Track = (function() {
             }
         }
 
+        // get the tick under the event's position
         function getTickForEvent(e) {
-            // screen y-position of the event
+            // screen positions of the event
             var x = e.clientX;
             var y = e.clientY;
             // get the bounds for the scroll area
             var bcr = scroll.getBoundingClientRect();
+            // bounds check, because touch events can go past the boundary of an element and still notify the
+            // originally touched element
             if (x < bcr.left || x >= bcr.left + bcr.width) {
                 return null;
             }
-            // bounds check, because touch events can go past the boundary of an element and still notify the
-            // originally touched element
             if (y < bcr.top || y > bcr.top + bcr.height) {
                 return null;
             }
@@ -1769,26 +2027,31 @@ var Track = (function() {
             return Math.floor(getTickForScreenPosition(y - bcr.top));
         }
 
+        // get the note name closest to the event's position
         function getNoteNameForEvent(e) {
-            var noteName = null;
+            // split into functions for roll side and tab side
             if (rollEnabled) {
-                noteName = getRollNoteForEvent(e);
+                return getRollNoteForEvent(e);
+
             } else if (tabEnabled) {
-                noteName = getTabNoteForEvent(e);
+                return getTabNoteForEvent(e);
             }
-            return noteName;
         }
 
+        // get the roll side note name closest to an event position
         function getRollNoteForEvent(e) {
             // screen x-position of the event
             var x = e.clientX;
             // get the bounds for the piano roll area
             var bcr2 = roll.getBoundingClientRect();
+            // bounds check, because touch events can go past the boundary of an element and still notify the
+            // originally touched element
             var x2 = x - bcr2.left;
             if (x2 < 0) {
                 return null;
             }
             // put the event x-position in piano roll area coordinates, and translate to a note index, possibly fractional
+            // all the hard work is in this function
             var noteIndex = Piano.rollNoteIndexFromOffset(Model.getKeySig(), x2);
 
             // get the nearest scale note, depending on the current chord mode
@@ -1800,6 +2063,7 @@ var Track = (function() {
             return 0;
         }
 
+        // get the tab side note name closest to an event position
         function getTabNoteForEvent(e) {
             // screen x-position of the event
             var x = e.clientX;
@@ -1807,6 +2071,8 @@ var Track = (function() {
             var bcr2 = tab.getBoundingClientRect();
             // put the event x-position in tab area coordinates
             var x2 = x - bcr2.left;
+            // bounds check, because touch events can go past the boundary of an element and still notify the
+            // originally touched element
             if (x2 >= bcr2.width) {
                 return null;
             }
@@ -1814,29 +2080,38 @@ var Track = (function() {
             var string = null;
             var dist = bcr2.width;
 
+            // iterate over the three string offsets
             for (var s in MetadataUI.tabStringXOffsets) {
                 var offset = MetadataUI.tabStringXOffsets[s];
+                // get the x-distance
                 var newDist = Math.abs(x2 - offset);
+                // track the smallest distance
                 if (newDist < dist) {
                     string = s;
                     dist = newDist;
                 }
             }
 
+            // build a note name
             var noteName = "";
+            // add all the active frets in the trackbar
             for (var i = 0; i < fretsEnabled.length; i++) {
                 if (fretsEnabled[i]) {
                     noteName = noteName + i;
                 }
             }
+            // add the string
             return noteName + "-" + string;
         }
 
+        // check if we need to update the lead-in
         function checkLeadIn() {
             if (song.notes.length == 0) {
-                Model.setLeadInTicks(0);
+                // if there's no notes then there is no lead-in
+                Model.setLeadInTicks(0, false);
 
             } else {
+                // set the lead-in to the time of the first note
                 Model.setLeadInTicks(-song.notes[0].tick, false);
             }
         }
