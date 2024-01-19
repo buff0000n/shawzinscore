@@ -152,23 +152,25 @@ var Menus = (function() {
         // get the global position of the element
         var bcr = menuDiv.getBoundingClientRect();
         // get the window dimensions
-        var w = window.innerWidth;
-        var h = window.innerHeight;
+        var wx1 = window.scrollX;
+        var wx2 = wx1 + window.innerWidth;
+        var wy1 = window.scrollY;
+        var wy2 = wy1 + window.innerHeight;
 
         // snap to the left, if overlapping
-        if (left < 0) left = 0;
+        if (left < wx1) left = wx1;
 
         // snap to the top, if overlapping
-        if (top < 0) top = 0;
+        if (top < wy1) top = wy1;
 
         // snap to the right, if overlapping and it won't push it back over the left border
-        if (left + bcr.width > w) {
-            left = Math.max(0, w - bcr.width);
+        if (left + bcr.width > wx2) {
+            left = Math.max(0, wx2 - bcr.width);
         }
 
         // snap to the bottom, if overlapping and it won't push it back over the top border
-        if (top + bcr.height > h) {
-            top = Math.max(0, h - bcr.height);
+        if (top + bcr.height > wy2) {
+            top = Math.max(0, wy2 - bcr.height);
         }
 
         // don't mess with the width/height, yet

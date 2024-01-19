@@ -458,8 +458,13 @@ var Editing = (function() {
         var newSong = new Song();
         // copy over the song scale
         newSong.setScale(song.getScale());
+
+        // start an undo combo so we can get this Set Song action a different name
+        Undo.startUndoCombo();
         // set it as a new song
         Model.setSong(newSong);
+        // end the undo combo
+        Undo.endUndoCombo("Delete All");
     }
 
     return {

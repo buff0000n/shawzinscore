@@ -1875,17 +1875,25 @@ var Track = (function() {
 
         // show the note menu
         function noteMenu(event, note) {
-            // todo: better
-            var menuDiv = document.createElement("div");
-            var deleteButton = document.createElement("div");
-            deleteButton.className = "button";
-            deleteButton.innerHTML = "delete";
-            deleteButton.addEventListener("click", (e) => {
+            // get the hidden dialog div from the document
+            var menuDiv = document.getElementById("note-menu");
+
+            // setup listeners
+            document.getElementById("note-edit-delete").onclick = (e) => {
                 removeNote(note);
-                close();
+                noteMenuClose();
+            };
+
+            // remove it
+            menuDiv.remove();
+
+            // show the menu with a custom close callback
+            var noteMenuClose = Menus.showMenuAtEvent(menuDiv, event, null, false, () => {
+                // when the change speed menu is closed, remove the the original container
+                menuDiv.remove();
+                // and add it back to the hidden area of the document
+                document.getElementById("hidden-things").appendChild(menuDiv);
             });
-            menuDiv.appendChild(deleteButton);
-            var close = Menus.showMenuAtEvent(menuDiv, event);
         }
 
         // remove a note from the song

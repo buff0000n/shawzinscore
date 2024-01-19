@@ -101,7 +101,7 @@ td.label {
 .selection-item:hover > *, .selection-item-selected:hover > * {
     color: #FFFFFF;
 }
-.field-entry, .field-entry-span, .field-button, .field-entry-dark {
+.field-entry, .field-entry-span, .field-button, .field-button-light, .field-entry-dark {
     padding: 0.5ex;
     margin: 0.5ex;
     border-radius: 1ex;
@@ -122,6 +122,21 @@ td.label {
 
 .field-button:is(.disabled) {
     background-color: #202020;
+}
+
+.field-button-light:not(.disabled) {
+    background-color: #808080;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.field-button-light:is(.disabled) {
+    color: #808080;
+    background-color: #404040;
+}
+
+.field-button-light > .fieldTitle {
+    color: #FFFFFF;
 }
 
 .disabled > .fieldTitle {

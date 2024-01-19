@@ -99,7 +99,7 @@ var Undo = (function() {
         var undoList = undoCombos.pop()
         var action = null;
         // if there's more than one action, build a composite action
-        if (undoList.length >1) {
+        if (undoList.length > 1 || description != null) {
             action = new CompositeAction(undoList, description);
 
         // if there's exactly one action then just use that one
@@ -218,6 +218,7 @@ var Undo = (function() {
         constructor(actions, description=null) {
             super();
             this.actions = actions;
+            this.description = description;
         }
     
         undoAction() {

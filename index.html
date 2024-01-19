@@ -189,6 +189,7 @@
     <div class="expandBar">
         <div id="edit-bar" class="expandTitle">
             <img id="edit-bar-img" src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+            <img id="edit-bar-other-img" src="img/icon-edit.png" srcset="img2x/icon-edit.png 2x" class="icon"/>
             Edit Mode
         </div>
         <div id="edit-toolbar" class="field-div" style="display: none">
@@ -238,12 +239,12 @@
                 <span class="tooltiptextbottom">Use this to move the song's first note foward or backward on the track</span>
             </div>
             <div class="field-button tooltip" id="edit-change-speed">
-                <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                <img src="img/icon-edit-change-speed.png" srcset="img2x/icon-edit-change-speed.png 2x" class="icon"/>
                 <span class="fieldTitle">Change Speed</span>
                 <span class="tooltiptextbottom">Speed up or slow down the song</span>
             </div>
             <div class="field-button tooltip disabled" id="edit-delete-all">
-                <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                <img src="img/icon-edit-delete.png" srcset="img2x/icon-edit-delete.png 2x" class="icon"/>
                 <span class="fieldTitle">Delete All</span>
                 <span class="tooltiptextbottom">Delete all notes in the song</span>
             </div>
@@ -533,6 +534,14 @@
             </div>
         </div>
     </div>
+
+    <div id="note-menu">
+        <div class="field-button-light lightbutton tooltip" id="note-edit-delete">
+            <img src="img/icon-edit-delete.png" srcset="img2x/icon-edit-delete.png 2x" class="icon"/>
+            <span class="fieldTitle">Delete</span>
+            <span class="tooltiptextbottom">Delete the selected note</span>
+        </div>
+    </div>
 </div>
 
 <div class="titleBar">
@@ -611,8 +620,8 @@
                 </li>
                 <li><a href="#tocTrackArea">The Track Area</a>
                     <ul>
-                        <li><a href="#tocTrackAreaLeft">The Tablature Section</a></li>
-                        <li><a href="#tocTrackAreaRight">The Piano Roll Section</a></li>
+                        <li><a href="#tocTrackAreaLeft">The Tablature Side</a></li>
+                        <li><a href="#tocTrackAreaRight">The Piano Roll Side</a></li>
                         <li><a href="#tocTrackAreaFret">Strings/Frets</a></li>
                         <li>
                             <a href="#tocTrackAreaKeyboard">The Keyboard</a>
@@ -643,16 +652,48 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="#tocAdvancedStructure">Song Configuration</a>
+                <li><a href="#tocSettings">Settings</a></li>
+                <li><a href="#tocEditingMode">Edit Mode</a>
                     <ul>
-                        <li><a href="#tocMeter">Meter</a></li>
-                        <li><a href="#tocTempo">Tempo</a></li>
-                        <li><a href="#tocMeterTempoMetronome">Metronome</a></li>
-                        <li><a href="#tocLeadin">Lead-in beats</a></li>
-                        <li><a href="#tocKeySig">Key Signature</a></li>
+                        <li><a href="#tocNoteEditing">Note Editing</a>
+                            <ul>
+                                <li><a href="#tocTablatureSide">Tablature Side</a>
+                                    <ul>
+                                        <li><a href="#tocFretControls">Fret Controls</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#tocPianoRollSide">Piano Roll Side</a>
+                                    <ul>
+                                        <li><a href="#tocChordMode">Chord Mode</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#tocNoteMenu">Note Menu</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#tocNoteRestrictions">Note restrictions</a></li>
+                        <li><a href="#tocEditingMenu">Tools</a>
+                            <ul>
+                                <li><a href="#tocSongStats">Song Stats</a></li>
+                                <li><a href="#tocStructure">Song Structure</a>
+                                    <ul>
+                                        <li><a href="#tocMeter">Meter</a></li>
+                                        <li><a href="#tocTempo">Tempo</a></li>
+                                        <li><a href="#tocMeterTempoMetronome">Metronome</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#tocChangeSpeed">Change Speed</a>
+                                    <ul>
+                                        <li><a href="#tocChangeSpeedPercent">By Percentage</a></li>
+                                        <li><a href="#tocChangeSpeedTempo">By Tempo</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#tocDeleteAll">Delete All</a></li>
+                                <li><a href="#tocKeySig">Key Signature</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#tocUndoRedo">Undo/Redo</a></li>
                     </ul>
                 </li>
-                <li><a href="#tocSettings">Settings</a></li>
                 <li><a href="#tocGeneral">General Info</a>
                     <ul>
                         <li><a href="#tocMechanics">Shawzin Mechanics</a>
@@ -798,7 +839,7 @@
             <h2 id="tocControlSchemes">Control Scheme</h2>
             <p>
                 Finally, under the Scale selector is a Control Scheme selector.  Use this to change the controls
-                displayed in the <a href="#tocTrackAreaLeft">tablature section</a> of the track area.  There
+                displayed in the <a href="#tocTrackAreaLeft">tablature side</a> of the track area.  There
                 are currently <a href="#tocControlSchemeList">eight stock control schemes available</a>.
             </p>
 
@@ -883,13 +924,13 @@
                 This area is divided into two side-by-side sections.
             </p>
 
-            <h2 id="tocTrackAreaLeft">The Tablature Section</h2>
+            <h2 id="tocTrackAreaLeft">The Tablature Side</h2>
             <p>
                 The left side of the track area shows a recreation of the <a href="#generalSongCodePlayback">in-game
                 Shawzin screen.</a>
             </p>
 
-            <h2 id="tocTrackAreaRight">The Piano Roll Section</h2>
+            <h2 id="tocTrackAreaRight">The Piano Roll Side</h2>
             <p>
                 The right side of the track shows an equivalent musical tone for every Shawzin note on the left.  This
                 is a <strong>piano-roll</strong> display with each tone appearing as a bar in line with a particular
@@ -909,8 +950,8 @@
                 <li><strong class="fret123">Chord Frets</strong>: <strong class="fret1">Sky Fret</strong> + <strong class="fret2">Earth Fret</strong> + <strong class="fret3">Water Fret</strong></li>
             </ul>
             <p>
-                The length of the tones in the piano roll section are dependent on which Shawzin is selected.
-                Some Shawzins have sharp, plucked sounds, which will appear as short bars in the piano roll section.
+                The length of the tones in the piano roll side are dependent on which Shawzin is selected.
+                Some Shawzins have sharp, plucked sounds, which will appear as short bars in the piano roll side.
                 Others have longer, sustained sounds, and the bars in the piano roll will be <i>roughly</i> accurate to
                 how long those tones last.  If a Shawzin is <strong>monophonic</strong>, then tone bars can cut off at
                 the beginning of the next note.
@@ -918,12 +959,8 @@
 
             <h2 id="tocTrackAreaFret">Strings/Frets</h2>
             <p>
-                Above/below the Tablature section is a display for the <strong>String</strong> controls and
-                <strong>Fret</strong> controls.  Click the
-                <img class="smallButton icon" src="img/icon-trackbar-switch-frets.png" srcset="img2x/icon-trackbar-switch-frets.png 2x"/>
-                button to switch to frets, and click the
-                <img class="smallButton icon" src="img/icon-trackbar-switch-strings.png" srcset="img2x/icon-trackbar-switch-strings.png 2x"/>
-                button to switch back to strings.
+                Above/below the Tablature side is a display for the <strong>String</strong> controls.  This is replaced
+                by <strong>Fret</strong> controls when <a href="#tocEditingMode">Edit Mode</a> is enabled.
             </p>
             <p>
                 <strong class="info">Note:</strong> This section doesn't really do anything right now, but it's going to
@@ -931,7 +968,7 @@
             </p>
             <h2 id="tocTrackAreaKeyboard">The Keyboard</h2>
             <p>
-                Above/below the Piano Roll section is a piano keyboard.  The available notes for the currently selected
+                Above/below the Piano Roll side is a piano keyboard.  The available notes for the currently selected
                 scale will be highlighted on the keyboard.  Clicking on a highlighted key will play that tone.
             </p>
             <h3 id="tocChordModes">Chord Modes</h3>
@@ -1015,7 +1052,7 @@
             <h2 id="tocPlaybackStart">Playback Start</h2>
             <p>
                 By default, a fresh playback starts about two seconds before the beginning of the song.  Click anywhere
-                on the background of the tablature or piano roll sections to set a
+                on the background of the tablature or piano roll sides to set a
                 <strong>Playback Start Marker</strong>.  When you start a new playback, or stop and restart playback,
                 then it will start at this marker instead of at the beginning.
             </p>
@@ -1150,23 +1187,189 @@
                 <strong>Note: </strong> Your Old Mode setting is stored in your browser's local storage as a preference.
             </p>
 
-            <h1 id="tocAdvancedStructure">Song Configuration</h1>
+            <h1 id="tocSettings">Settings</h1>
+            <p>
+                Click on the
+                <img class="smallButton icon" src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x"/>
+                <strong>Settings</strong> button to bring up the settings menu.
+            </p>
+            <ul>
+                <li>
+                    <strong>Flipped Direction</strong>: Use this to toggle the direction of the song display.  This has
+                    the same effect as the
+                    <a href="#tocTrackAreaDirection">
+                        <img class="smallButton icon" src="img/icon-dropup.png" srcset="img2x/icon-dropup.png 2x"/>
+                        and
+                        <img class="smallButton icon" src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x"/>
+                        buttons</a>.
+                </li>
+                <li>
+                    <strong>Old Fret Layout</strong>: This reverts the note display to the old layout, where the
+                    fret controls were displayed in a line above the string control instead of in a triangle
+                    underneath it.
+                </li>
+            </ul>
+            <p>
+                <strong>Note: </strong> Your settings are stored in your browser's local storage as a preference.
+            </p>
+
+
+            <h1 id="tocEditingMode">Edit Mode</h1>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-edit.png" srcset="img2x/icon-edit.png 2x"/>
+                <strong>Edit Mode</strong> button to enable edit mode.  This allows you to edit individual
+                notes in the song, and opens a number of editing tools.
+            </p>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-edit.png" srcset="img2x/icon-edit.png 2x"/>
+                button again to exit edit mode.
+            </p>
+
+            <h2 id="tocNoteEditing">Note Editing</h2>
+            <p>
+                When edit mode is enabled, both sides of the <a href="#tocTrackArea">Track Area</a> will show
+                individual <strong>tick marks</strong>.  These show the minimum time resolution of the
+                Shawzin <a href="#tocSongCodeDetails">song sode format</a>, 16 ticks per second.  A note must
+                start on one of those tick marks.
+            </p>
+            <p>
+                Only one side of the track area is <strong>active</strong> for editing at a time.  This is determined
+                by the <strong>Fret Controls</strong> on the tablature side.
+            </p>
+            <ul>
+                <li>Clicking on an empty section of the <strong>active</strong> side will place a note.</li>
+                <li>Clicking on an empty section of the <strong>inactive</strong> side will place the
+                    <a href="#tocPlaybackStart">Playback Start Marker</a>, like it does outside of edit mode.
+                </li>
+                <li>Clicking and dragging on a note on either the <strong>active</strong> or <strong>inactive</strong>
+                    side will move that note.</li>
+            </ul>
+
+            <h3 id="tocTablatureSide">Tablature Side</h3>
+            <p>
+                By default, the tablature side is not <strong>active</strong> for placing new notes until one or more
+                of the <strong>Fret Controls</strong> are enabled.  You can still click and drag tablature side notes
+                at any time.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> Clicking and dragging a note on the tablature side can
+                only change the time or string that note is on.  It cannot change the frets of that note.
+            </p>
+
+            <h4 id="tocFretControls">Fret Controls</h4>
+            <p>
+                When Edit Mode is enabled, the string control display under/above the tablature side of the track
+                area is replaced by four <strong>Fret Controls</strong>.  From left to right:
+            </p>
+            <ul>
+                <li>
+                    <img class="icon" src="img/fret-0.png" srcset="img2x/fret-0.png 2x" style="width: 1em; height: auto;"/>
+                    No Fret
+                </li>
+                <li>
+                    <img class="icon" src="img/fret-1.png" srcset="img2x/fret-1.png 2x" style="width: 1em; height: auto;"/>
+                    Fret 1
+                </li>
+                <li>
+                    <img class="icon" src="img/fret-2.png" srcset="img2x/fret-2.png 2x" style="width: 1em; height: auto;"/>
+                    Fret 2
+                </li>
+                <li>
+                    <img class="icon" src="img/fret-3.png" srcset="img2x/fret-3.png 2x" style="width: 1em; height: auto;"/>
+                    Fret 3
+                </li>
+            </ul>
+
+            <p>
+                Click any combination of the three
+                <img class="icon" src="img/fret-1.png" srcset="img2x/fret-1.png 2x" style="width: 1em; height: auto;"/>
+                <img class="icon" src="img/fret-2.png" srcset="img2x/fret-2.png 2x" style="width: 1em; height: auto;"/>
+                <img class="icon" src="img/fret-3.png" srcset="img2x/fret-3.png 2x" style="width: 1em; height: auto;"/>
+                Fret buttons, or click the
+                <img class="icon" src="img/fret-0.png" srcset="img2x/fret-0.png 2x" style="width: 1em; height: auto;"/>
+                No Fret button, to enable those frets and make tablature side active.  Click somewhere on the
+                tablature side to add a note on that string with that fret combination.
+            </p>
+            <p>
+                Click again on an enabled fret control to disable it.  You can also click on the
+                <img class="icon" src="img/fret-0.png" srcset="img2x/fret-0.png 2x" style="width: 1em; height: auto;"/>
+                No Fret control while <i>any</i> of fret controls enabled to disable all fret controls with one click.
+                Disabling all fret controls will return the active side to the piano roll side.
+            </p>
+
+            <h3 id="tocPianoRollSide">Piano Roll Side</h3>
+            <p>
+                The piano roll side of the track area is active when there are no Fret Controls enabled on the
+                tablature side.  This is the default state for the editor because I use the piano roll side almost
+                exclusively.
+            </p>
+            <p>
+                Clicking an empty area of the piano roll side while active will add either a note or a chord,
+                depending on whether there is a <strong>chord mode</strong> selected.
+            </p>
+
+            <h4 id="tocChordMode">Chord Mode</h4>
+            <p>
+                The <strong>chord mode</strong> buttons beside the piano keyboard also control what kind of note is
+                added when clicking the piano roll section.  See <a href="#tocChordModes">Chord Modes</a> for more
+                information on chord modes.
+            </p>
+
+            <h3 id="tocNoteMenu">Note Menu</h3>
+            <p>
+                Clicking on a note on either the active or inactive side without dragging it will open the
+                <strong>note menu</strong>.  Currently the only thing you can do with this menu is
+s               <img class="smallButton icon" src="img/icon-edit-delete.png" srcset="img2x/icon-edit-delete.png 2x"/>
+                delete the note.
+            </p>
+
+            <h2 id="tocNoteRestrictions">Note restrictions</h2>
+            <p>
+                Notes that have an error with them will be highlighted <strong class="fret1">in red</strong>.
+                There are number of restrictions to be aware of when adding notes to a song:
+            </p>
+            <ul>
+                <li>A single song can only have up to 1000 notes.  <strong class="fret1">If you add more than 1000
+                    notes then all notes in the song will be errors until the number of notes is reduced.</strong></li>
+                <li>A single song can only be up to four minutes long.  More specifically, the last
+                    note in the song may start no later than the four minute mark.  <strong class="fret1">Any note
+                    that starts after the four minute mark will be an error.</strong></li>
+                <li>You cannot have two copies of exactly the same note at exactly the same time.
+                    <strong class="fret1">Duplicate notes will be an error until one is removed.</strong></li>
+                <li>You cannot have more than one note at exactly the same time, <i>with one exception</i>.  If two
+                    notes use the same frets then they can be at the same time.  They will actually be combined into
+                    a single note when building the song code.  <strong class="fret1">If two notes with different frets
+                    are at the same time then they wil be errors until one is moved or removed.</strong></li>
+            </ul>
+
+            <h2 id="tocEditingMenu">Tools</h2>
+            <p>
+                In addition to note editing in the track area, opening Edit Mode enables a number of tools
+                in the editing section.
+            </p>
+
+            <h3 id="tocSongStats">Song Stats</h3>
+            <p>
+                At the top of the Edit Mode section are displayed the total note count and total song length.
+            </p>
+
+            <h3 id="tocStructure">Song Structure</h3>
             <p>
                 If you know a little about music and time signatures then you can configure some markers to delimit
-                measures and beats.  Use the
-                <img class="smallButton icon" src="img/icon-gear.png" srcset="img2x/icon-gear.png 2x"/> button to bring
-                up the advanced <strong>Song Configuration</strong> menu.
+                measures and beats.
             </p>
             <p>
                 <strong class="warn">Note:</strong> If a song was recorded <i>without</i> a metronome or any other way of
                 keeping a strict tempo then adding structure is not likely to work very well.
             </p>
 
-            <h2 id="tocMeter">Meter</h2>
+            <h4 id="tocMeter">Meter</h4>
             <p>
                 Use the <strong>Meter</strong> text box to enter a time signature.  Time signatures are formatted like
-                &quot;<strong class="info">N / N</strong>&quot;, where <strong class="info">N</strong> is a number.  The first number
-                can vary, but the second one is typically either <strong class="info">4</strong> or
+                &quot;<strong class="info">N / N</strong>&quot;, where <strong class="info">N</strong> is a number.
+                The first number can vary, but the second one is typically either <strong class="info">4</strong> or
                 <strong class="info">8</strong>.
             </p>
             <p>
@@ -1177,10 +1380,10 @@
             <p>
                 <strong class="info">Note:</strong> Currently, Shawzinscore doesn't really care about the second number.
                 All it really needs is the first number, which determines the number of beats in a measure.  That will
-                change once it supports editing.
+                change once I implement some tools that deal with increments smaller than a beat.
             </p>
 
-            <h2 id="tocTempo">Tempo</h2>
+            <h4 id="tocTempo">Tempo</h4>
             <p>
                 Use the <strong>Tempo</strong> drop down to select the number of
                 <strong class="info">Beats per Minute</strong>.  Together with the number of beats in your
@@ -1209,25 +1412,25 @@
                 have both Meter and Tempo or neither of them.
             </p>
 
-            <h2 id="tocMeterTempoMetronome">Metronome</h2>
+            <h4 id="tocMeterTempoMetronome">Metronome</h4>
             <p>
                 Next to the <strong>Meter</strong> and <strong>Tempo</strong> fields is another
                 <img class="smallButton icon" src="img/icon-metro-off.png" srcset="img2x/icon-metro-off.png 2x"/>
                 <strong>Metronome</strong> button.  Click this button to play an example metronome for
                 the selected meter and tempo.  Click
                 <img class="smallButton icon" src="img/icon-metro-on.png" srcset="img2x/icon-metro-on.png 2x"/>
-                again or exit the <strong>Song Configuration</strong> dialog to turn it off.
+                again or exit <strong>Edit Mode</strong> dialog to turn it off.
             </p>
 
-            <h2 id="tocLeadin">Lead-in beats</h2>
+            <h3 id="tocLeadin">Lead-in</h3>
             <p>
                 Shawzin codes always start the first note at time zero, and the timing of subsequent notes is based off
                 that.  This is fine when there's no structure, but it's a problem when you add the correct Meter and Tempo
                 but the measure and beat delimiters are still offset from how the song should be.
             </p>
             <p>
-                Use the <strong>Lead-in beats</strong> text box to correct this.  This tells Shawzinscore how many beats
-                of your song are considered "lead in", before getting to the first full measure.
+                You can use the <strong>Lead-in beats</strong> text box to correct this.  This tells Shawzinscore how
+                many beats of your song are considered "lead in", before getting to the first full measure.
             </p>
             <p>
                 This can be a fractional number of beats.  For example, if your Meter is 4/4 and you have an eighth-note
@@ -1235,13 +1438,60 @@
                 note is half a beat.
             </p>
             <p>
-                <strong class="info">Note:</strong> When I finally add editing I'll have a less hacky way to handle this
-                in the UI.
+                If there no structure specified then you can still have a lead-in seconds, give mby a fractional number
+                of seconds.
+            </p>
+            <p>
+                <strong class="info">Note</strong>: If you are using the note editor to place notes then lead-in will
+                be set automatically when you place or move the first note in the song.
             </p>
 
-            <h2 id="tocKeySig">Key Signature</h2>
+            <h3 id="tocChangeSpeed">Change Speed</h3>
             <p>
-                For lack of a better place to put it, the Song Configuration menu also contains the option for changing
+                Click the
+                <img class="smallButton icon" src="img/icon-edit-change-speed.png" srcset="img2x/icon-edit-change-speed.png 2x"/>
+                <strong>Change Speed</strong> button to bring up the change speed menu.  This allows you to make the
+                entire song faster or slower.
+            </p>
+            <p>
+                There are two options for determining how to change the song's speed, by percentage and by tempo.
+            </p>
+
+            <h4 id="tocChangeSpeedPercent">By Percentage</h4>
+            <p>
+                Select <strong>Percent</strong>, select a new speed from the dropdoen, and then click
+                <strong>OK</strong> to change the song's speed by a percentage.  Currently the only supported options
+                are:
+            </p>
+            <ul>
+                <li><strong>50% speed</strong>: Makes the song half the speed and twice as long</li>
+                <li><strong>200% speed</strong>: Makes the song twice the speed and half as long</li>
+            </ul>
+
+            <h4 id="tocChangeSpeedTempo">By Tempo</h4>
+            <p>
+                If you have a tempo defined then you have the option to change your song's speed to match a new tempo.
+            </p>
+            <p>
+                Select <strong>Tempo</strong>, select a new tempo from the dropdown, and then click
+                <strong>OK</strong> to change the song's tempo, and the song's speed to match the new tempo.
+            </p>
+            <p>
+                If the new tempo is faster than the old one, then the song will be shorter.  Likewise, if the new
+                tempo is slower than the old tempo then the song will be longer.
+            </p>
+
+            <h3 id="tocDeleteAll">Delete All</h3>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-edit-delete.png" srcset="img2x/icon-edit-delete.png 2x"/>
+                <strong>Delete All</strong> button to delete all notes in the song.  This does not affect any other
+                settings like title, scale, meter, tempo, etc.
+            </p>
+
+            <h3 id="tocKeySig">Key Signature</h3>
+            <p>
+                For lack of a better place to put it, the Edit Mode tools also contain the option for changing
                 the pitch of the Shawzin.  This is done with a <strong>Key Signature</strong> dropdown at the bottom of
                 the <strong>Song Configuration</strong> menu.
             </p>
@@ -1266,36 +1516,28 @@
                 it's just changing the pitch in the most basic way, by changing the playback rate of the sounds.
                 There's a limit to how far you can take that before it starts sounding weird.
             </p>
-            <p>
-                <strong class="warn">Note: </strong> This is fun to play with, but the key signature setting will not
-                persist in any Shawzinscore links or between browser sessions.  This won't really be useful until
-                editing is implemented.
-            </p>
 
-            <h1 id="tocSettings">Settings</h1>
+            <h2 id="tocUndoRedo">Undo/Redo</h2>
             <p>
-                Click on the
-                <img class="smallButton icon" src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x"/>
-                <strong>Settings</strong> button to bring up the settings menu.
+                Use the
+                <img class="smallButton icon" src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x"/>
+                <strong>Undo</strong> button, or press <strong class="fret2">Ctrl-Z</strong>, to undo the last
+                edit action taken.  This includes anything in <strong>Edit Mode</strong> along with pasting in
+                a <strong>song code</strong>, changing the <strong>Title</strong>, changing the
+                <strong>Shawzin</strong>, or changing the <strong>scale</strong>.
             </p>
-            <ul>
-                <li>
-                    <strong>Flipped Direction</strong>: Use this to toggle the direction of the song display.  This has
-                    the same effect as the
-                    <a href="#tocTrackAreaDirection">
-                        <img class="smallButton icon" src="img/icon-dropup.png" srcset="img2x/icon-dropup.png 2x"/>
-                        and
-                        <img class="smallButton icon" src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x"/>
-                        buttons</a>.
-                </li>
-                <li>
-                    <strong>Old Fret Layout</strong>: This reverts the note display to the old layout, where the
-                    fret controls were displayed in a line above the string control instead of in a triangle
-                    underneath it.
-                </li>
-            </ul>
             <p>
-                <strong>Note: </strong> Your settings are stored in your browser's local storage as a preference.
+                <strong class="fret2">Note:</strong> You can undo up to the last 250 actions, so go nuts.
+            </p>
+            <p>
+                Use the
+                <img class="smallButton icon" src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x"/>
+                <strong>Redo</strong> button, or press <strong class="fret2">Ctrl-Y</strong> or
+                <strong class="fret2">Ctrl-Shift-Z</strong>, to redo the most recently undone action.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> if you undo some actions and then do a new action then you can no
+                longer redo your previously undone actions.
             </p>
 
             <div style="text-align: center;">
@@ -1573,7 +1815,7 @@
             </p>
             <p>
                 <strong class="warn">Note:</strong> You must record a minimum of six notes, otherwise it will tell you your
-                recording is too short and not save it.
+                recording is too short and won't save it.
             </p>
 
             <h5 id="generalSongCodeMetronome">Metronome</h5>
@@ -1828,10 +2070,10 @@
                             40<img class="icon" src="img/icon-plat.png" srcset="img2x/icon-plat.png 2x" alt="plat"/>
                         </p>
                         <p>
-                            The Dax Shawzin was first seen as a background object in the Sacrifice quest in Update 23.0 (2018), when
-                            it was also released as a static decoration.  It was released as a playable instrument in Update 25.4 (2019).
-                            Its sound and look are based on a <strong>Shamisen</strong>, a traditional Japanese instrument with
-                            three strings.
+                            The Dax Shawzin was first seen as a background object in the Sacrifice quest in Update 23.0 (2018),
+                            and then as a static decoration in Update 25.4 (2019).  It was released as a playable
+                            instrument in Update 25.7 (2019).  Its sound and look are based on a
+                            <strong>Shamisen</strong>, a traditional Japanese instrument with three strings.
                         </p>
                         <p>
                             There are a number of Shawzin skins that all share the same sound and basic model as the Dax:
@@ -1858,7 +2100,7 @@
                             60<img class="icon" src="img/icon-plat.png" srcset="img2x/icon-plat.png 2x" alt="plat"/>
                         </p>
                         <p>
-                            The Nelumbo Shawzin was released in Update 25.4 (2019). Its sound is based on a
+                            The Nelumbo Shawzin was released in Update 25.7 (2019). Its sound is based on a
                             six-string <strong>Acoustic Guitar</strong>.
                         </p>
                         <p>
@@ -2790,6 +3032,7 @@
             <ul>
                 <li>Editing stuff
                     <ul>
+                        <li>Note count and the 1000 note restriction should take into account double/triple notes</li>
                         <li>Quanitize</li>
                         <li>MIDI recording</li>
                         <li>Multi-select

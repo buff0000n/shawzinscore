@@ -688,29 +688,50 @@ var TrackBar = (function() {
 
     function setFretEnabled(fret, enabled, runUpdate=true) {
         // sanity check
-        if (fretEnabled[fret] == enabled) return;
+        if (fretEnabled[fret] == enabled) {
+            return;
+        }
+
+        if (fret > 0) {
+            // if it's fret 1-3, then disable the 0 fret
+            setFretEnabled(0, false, false);
+
+        } else {
+            // if it's fret 0, disable the other three frets
+            if (enabled) {
+                // disable the other three frets and track whether any of them were enabled before
+                var changed = false;
+                for (var f = 1; f < 4; f++) {
+                    changed |= setFretEnabled(f, false, false);
+                }
+                // if any were enabled before, then don't enable the 0 yet, it was just clearing the other frets.
+                // The user will have to click again to enable the 0.
+                if (changed) {
+                    enabled = false;
+                }
+            }
+        }
+
+        // save the state
+        var prevEnabled = fretEnabled[fret];
+        // set the new state
+        fretEnabled[fret] = enabled;
+
         // get the fret element
         var div = document.getElementById("tab-fret-" + fret);
         /// update the image source
         PageUtils.setImgSrc(div.children[0], "fret-" + (enabled ? "enabled-" : "") + fret + ".png");
         if (fret > 0) {
-            // if it's fret 1-3, then disable the 0 fret
-            setFretEnabled(0, false, false);
             // also switch the color of its control image
             div.children[1].className = enabled ? "tab-fret-button-enabled" : "tab-fret-button";
-        } else {
-            // if it's fret 0, disable the other three frets
-            for (var f = 1; f < 4; f++) {
-                setFretEnabled(f, false, false);
-            }
-            // no control image to update
         }
-        // save the state
-        fretEnabled[fret] = enabled;
+
         // update the track, if this update doesn't already come from the track
         if (runUpdate) {
             Track.updateFrets(fretEnabled);
         }
+        // return the previous state
+        return prevEnabled;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
