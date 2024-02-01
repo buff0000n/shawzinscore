@@ -238,6 +238,11 @@
                 <input id="config-leadin-beats-input" type="number" value="0" step="0.0625" size="6" min="0" placeholder="0" style="width: 5em;"/>
                 <span class="tooltiptextbottom">Use this to move the song's first note foward or backward on the track</span>
             </div>
+            <div class="field-button disabled tooltip" id="edit-quantize">
+                <img src="img/icon-edit-quantize.png" srcset="img2x/icon-edit-quantize.png 2x" class="icon"/>
+                <span class="fieldTitle">Quantize</span>
+                <span class="tooltiptextbottom">Round each note to the nearest time unit</span>
+            </div>
             <div class="field-button tooltip" id="edit-change-speed">
                 <img src="img/icon-edit-change-speed.png" srcset="img2x/icon-edit-change-speed.png 2x" class="icon"/>
                 <span class="fieldTitle">Change Speed</span>
@@ -283,6 +288,10 @@
                         <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="cut" class="icon"/>
                     </div>
                     -->
+                    <div id="song-buttons-record" class="button-disabled tooltip">
+                        <img src="img/icon-record.png" srcset="img2x/icon-record.png 2x" alt="record" class="icon-disabled"/>
+                        <span class="tooltiptextbottom">Record</span>
+                    </div>
                     <div id="song-buttons-play" class="button tooltip">
                         <img src="img/icon-play.png" srcset="img2x/icon-play.png 2x" alt="play" class="icon"/>
                         <span class="tooltiptextbottom">Play</span>
@@ -493,6 +502,54 @@
         </div>
     </div>
 
+    <div id="quantize-dialog" class="selection-div">
+        <div class="selection-item" id="quantize-1_1">
+            <img src="img/icon-edit-quantize-1_1.png" srcset="img2x/icon-edit-quantize-1_1.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_1" class="info">4 beats</strong>
+            (Whole notes)
+        </div>
+        <div class="selection-item" id="quantize-1_2">
+            <img src="img/icon-edit-quantize-1_2.png" srcset="img2x/icon-edit-quantize-1_2.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_2" class="info">2 beats</strong>
+            (Half notes)
+        </div>
+        <div class="selection-item" id="quantize-1_4">
+            <img src="img/icon-edit-quantize-1_4.png" srcset="img2x/icon-edit-quantize-1_4.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_4" class="info">1 beat</strong>
+            (Quarter notes)
+        </div>
+        <div class="selection-item" id="quantize-1_6">
+            <img src="img/icon-edit-quantize-1_6.png" srcset="img2x/icon-edit-quantize-1_6.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_6" class="warn">2/3 beat</strong>
+            (Quarter note triplets)
+        </div>
+        <div class="selection-item" id="quantize-1_8">
+            <img src="img/icon-edit-quantize-1_8.png" srcset="img2x/icon-edit-quantize-1_8.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_8" class="info">1/2 beat</strong>
+            (Eighth notes)
+        </div>
+        <div class="selection-item" id="quantize-1_12">
+            <img src="img/icon-edit-quantize-1_12.png" srcset="img2x/icon-edit-quantize-1_12.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_12" class="warn">1/3 beat</strong>
+            (Eighth note triplets)
+        </div>
+        <div class="selection-item" id="quantize-1_16">
+            <img src="img/icon-edit-quantize-1_16.png" srcset="img2x/icon-edit-quantize-1_16.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_16" class="info">1/4 beat</strong>
+            (Sixteenth notes)
+        </div>
+        <div class="selection-item" id="quantize-1_24">
+            <img src="img/icon-edit-quantize-1_24.png" srcset="img2x/icon-edit-quantize-1_24.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_24" class="warn">1/6 beat</strong>
+            (Sixteenth note triplets)
+        </div>
+        <div class="selection-item" id="quantize-1_32">
+            <img src="img/icon-edit-quantize-1_32.png" srcset="img2x/icon-edit-quantize-1_32.png 2x" class="icon"/>
+            <strong id="quantize_beats_1_32" class="info">1/8 beat</strong>
+            (Thirty-second notes)
+        </div>
+    </div>
+
     <div id="change-speed-dialog" class="field-div">
         <div class="field-entry-span" id="change-speed-type">
             <span id="change-speed-type-percent" class="tooltip">
@@ -681,6 +738,7 @@
                                         <li><a href="#tocMeterTempoMetronome">Metronome</a></li>
                                     </ul>
                                 </li>
+                                <li><a href="#tocQuantize">Quantize</a>
                                 <li><a href="#tocChangeSpeed">Change Speed</a>
                                     <ul>
                                         <li><a href="#tocChangeSpeedPercent">By Percentage</a></li>
@@ -691,6 +749,7 @@
                                 <li><a href="#tocKeySig">Key Signature</a></li>
                             </ul>
                         </li>
+                        <li><a href="#tocRecording">Recording</a></li>
                         <li><a href="#tocUndoRedo">Undo/Redo</a></li>
                     </ul>
                 </li>
@@ -1368,19 +1427,41 @@ s               <img class="smallButton icon" src="img/icon-edit-delete.png" src
             <h4 id="tocMeter">Meter</h4>
             <p>
                 Use the <strong>Meter</strong> text box to enter a time signature.  Time signatures are formatted like
-                &quot;<strong class="info">N / N</strong>&quot;, where <strong class="info">N</strong> is a number.
-                The first number can vary, but the second one is typically either <strong class="info">4</strong> or
-                <strong class="info">8</strong>.
+                &quot;<strong class="info">B / T</strong>&quot;, where <strong class="info">B</strong> and
+                <strong class="info">T</strong> are numbers.
             </p>
+            <ul>
+                <li>
+                    The first number is the number of <strong>beats</strong> per measure.  This, along with
+                    <strong>Tempo</strong>, determines how long a measure is.  The most common values are
+                    <strong class="info">4</strong>, <strong class="info">3</strong>, <strong class="info">2</strong>,
+                    and <strong class="info">6</strong>, but there's no real restrictions on how many beats you put in
+                    a measure.
+                </li>
+                <li>
+                    The second number basically indicates what <strong>time unit</strong> comprises one beat.  The
+                    most common values are:
+                    <ul>
+                        <li>
+                            <strong class="info">4</strong>: indicates that a <strong>quarter note</strong> is one beat
+                        </li>
+                        <li>
+                            <strong class="info">8</strong>: indicates that an <strong>eighth note</strong> is one beat
+                        </li>
+                        <li>
+                            <strong class="info">2</strong>: indicates that a <strong>half note</strong> is one beat.
+                            This one doesn't show up that often, and is generally referred to as
+                            <strong>cut time</strong>.
+                        </li>
+                    </ul>
+                    You generally only see these three.  Putting something other than a power of two at the bottom of
+                    a time signature is <strong>super weird</strong>.
+                </li>
+            </ul>
             <p>
                 If you enter a Meter and there isn't a Tempo, then a default tempo of <strong class="info">120</strong>
                 BPM will be used.  Likewise, if you remove the Meter then the Tempo will be unset as well.  You can
                 either have both Meter and Tempo or neither of them.
-            </p>
-            <p>
-                <strong class="info">Note:</strong> Currently, Shawzinscore doesn't really care about the second number.
-                All it really needs is the first number, which determines the number of beats in a measure.  That will
-                change once I implement some tools that deal with increments smaller than a beat.
             </p>
 
             <h4 id="tocTempo">Tempo</h4>
@@ -1438,12 +1519,48 @@ s               <img class="smallButton icon" src="img/icon-edit-delete.png" src
                 note is half a beat.
             </p>
             <p>
-                If there no structure specified then you can still have a lead-in seconds, give mby a fractional number
+                If there no structure specified then you can still have a lead-in seconds, given by a fractional number
                 of seconds.
             </p>
             <p>
                 <strong class="info">Note</strong>: If you are using the note editor to place notes then lead-in will
                 be set automatically when you place or move the first note in the song.
+            </p>
+
+            <h3 id="tocQuantize">Quantize</h3>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-edit-quantize.png" srcset="img2x/icon-edit-quantize.png 2x"/>
+                <strong>Quantize</strong> button to bring up the quantize menu.  This allows you to adjust the timing
+                of the song's notes to align them with the meter and tempo.
+            </p>
+            <p>
+                The quantize menu always has the same list of options, from <strong>whole notes</strong> all the way
+                down to <strong>thirty-second notes</strong>.  However, what the options actually do and how well they
+                work depend on the selected <a href="#tocMeter">meter</a> and <a href="#tocTempo">tempo</a>.
+            </p>
+            <p>
+                Beside each option is a count of how many whole or fractional beats the option corresponds to.  This
+                depends on the second number of the meter, usually <strong>4</strong> or <strong>8</strong>.  If the
+                second number of the meter is 4, then a <strong>quarter note</strong> is one beat, and if it's 8 then
+                an <strong>eighth note</strong> is one beat.  The beat equivalent for the rest of the note options is
+                calculated from the 1-beat reference.
+            </p>
+            <p>
+                The color of the beat counts shows how well they will work.  The Shawzin has a maximumm resolution of
+                16 ticks per second, see <a href="#tocTempo">Tempo</a> for more information.  Depending on your tempo,
+                not all quantization options will result in a whole number of ticks per division.  Options that result
+                in a whole number of ticks per division will be show in <strong class="info">green</strong>.  Options
+                that don't result in a whole number of ticks per division will be in <strong class="warn">red</strong>.
+            </p>
+            <p>
+                The <strong class="warn">red</strong> options can still be used, but they will result in an uneven
+                quantization and will sound a little weird.  The most common cases of this I run into are
+                <strong>eighth note triplets</strong> with <strong>4/4</strong> at <strong>120</strong> BPM, and
+                <strong>sixteenth notes</strong> with <strong>4/4</strong> at <strong>160</strong> BPM.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> The Quantize option is only available if you have a meter and tempo set.
             </p>
 
             <h3 id="tocChangeSpeed">Change Speed</h3>
@@ -1515,6 +1632,34 @@ s               <img class="smallButton icon" src="img/icon-edit-delete.png" src
                 cover all possible pitches.  They're split in two groups and centered around the natural pitch because
                 it's just changing the pitch in the most basic way, by changing the playback rate of the sounds.
                 There's a limit to how far you can take that before it starts sounding weird.
+            </p>
+
+            <h2 id="tocRecording">Recording</h2>
+            <p>
+                When <strong>Edit Mode</strong> is enabled, click the
+                <img class="smallButton icon" src="img/icon-record.png" srcset="img2x/icon-record.png 2x"/>
+                Record button or hit the <strong>R</strong> key to start recording.
+            </p>
+            <p>
+                Playback will start at the current
+                <a href="#tocPlaybackStart">Playback Start Marker</a>, or at the beginning if no playback start marker
+                is set.  While the song is playing, either click the on-screen keyboard or use a connected MIDI
+                keyboard to enter notes.  To stop recording, click the
+                <img class="smallButton icon" src="img/icon-stop.png" srcset="img2x/icon-stop.png 2x"/> button, or the
+                <img class="smallButton icon" src="img/icon-recording.png" srcset="img2x/icon-recording.png 2x"/>
+                button again, or hit the <strong>R</strong> key, or hit <strong>space bar</strong>.  The playback marker
+                will be returned to the start, where you can play it back immediately, or undo and record again.
+            </p>
+            <p>
+                If the song has a selected <a href="#tocStructure">meter and tempo</a>, then the
+                <a href="#tocPlaybackMetronome">Metronome</a> will be automatically turned on during recording.
+            </p>
+            <p>
+                <strong class="info">Note:</strong> You can use the playback speed slider to record at a slower speed.
+            </p>
+            <p>
+                <strong class="warn">Note:</strong> I'm still tweaking it, but there's going to be a noticeable amount
+                of lag during recording because this is a web browser, not a DAW.
             </p>
 
             <h2 id="tocUndoRedo">Undo/Redo</h2>
@@ -3030,11 +3175,10 @@ s               <img class="smallButton icon" src="img/icon-edit-delete.png" src
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
+                <li>Volume setting for Shawzins and metronome</li>
                 <li>Editing stuff
                     <ul>
                         <li>Note count and the 1000 note restriction should take into account double/triple notes</li>
-                        <li>Quanitize</li>
-                        <li>MIDI recording</li>
                         <li>Multi-select
                             <ul>
                                 <li>...by note</li>
@@ -3046,7 +3190,6 @@ s               <img class="smallButton icon" src="img/icon-edit-delete.png" src
                         </li>
                     </ul>
                 </li>
-                <li>Volume setting for Shawzins and metronome</li>
                 <li>Chord pop-up display</li>
                 <li>Library</li>
                 <li>Local storage</li>

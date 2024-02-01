@@ -20,6 +20,10 @@ var Playback = (function() {
 
     // track whether the stop button is enabled
     var stopEnabled = false;
+    // track whether the record button is enabled
+    var recordEnabled = false;
+    // track whether recording is in progress
+    var recording = false;
     // track whether the metronome button is enabled
     var metronomeEnabled = false;
     // track whether the metronome is on
@@ -33,8 +37,9 @@ var Playback = (function() {
 
     function registerEventListeners() {
         // set up button event listeners
+        document.getElementById("song-buttons-record").addEventListener("click", toggleRecording, { passive: false });
         document.getElementById("song-buttons-play").addEventListener("click", togglePlay, { passive: false });
-        document.getElementById("song-buttons-stop").addEventListener("click", () => { FullPlayer.stopPlaying(); }, { passive: false });
+        document.getElementById("song-buttons-stop").addEventListener("click", stopPlaying, { passive: false });
         document.getElementById("song-buttons-rewind").addEventListener("click", rewind, { passive: false });
         document.getElementById("song-buttons-ff").addEventListener("click", fastForward, { passive: false });
         document.getElementById("song-buttons-metro").addEventListener("click", toggleMetronome, { passive: false });
@@ -52,6 +57,14 @@ var Playback = (function() {
             }
             return true;
         });
+        Events.addKeyDownListener("KeyR", (e) => {
+            // just R with no other keys
+            if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+                toggleRecording();
+                return true;
+            }
+            return false;
+        });
 
         // initialize the metronome buttom state from settings
         setMetronomeOn(Settings.getMetronomeOn());
@@ -67,8 +80,12 @@ var Playback = (function() {
     }
 
     function togglePlay() {
+        // if we're recording, then do a full stop
+        if (recording) {
+            toggleRecording();
+
         // start if we're not playing
-        if (!FullPlayer.isPlaying()) {
+        } else if (!FullPlayer.isPlaying()) {
             FullPlayer.startPlaying();
 
         // pause if we are playing
@@ -78,6 +95,67 @@ var Playback = (function() {
 
         // stop button gets enabled in both cases
         setStopEnabled(true);
+    }
+
+    function stopPlaying() {
+        // if we're recording then stop recording
+        if (recording) {
+            toggleRecording();
+        // otherwise, do a full stop with the player
+        } else {
+            FullPlayer.stopPlaying();
+        }
+    }
+
+    // flag for keeping track of whether we turned the metronome on for recording.
+    var metronomeTempOn = false;
+
+    function toggleRecording() {
+        if (!recording) {
+            // start recording
+            // if we're already playing, stop
+            if (FullPlayer.isPlaying()) {
+                FullPlayer.stopPlaying();
+            }
+            // turn on the metronome if we have structure and it's not on already
+            if (metronomeEnabled && !metronomeOn) {
+                // turn on the metronome
+                setMetronomeOn(true);
+                // set a flag so we turn it off again after recording is finished
+                metronomeTempOn = true;
+
+            } else {
+                // disable the flag
+                metronomeTempEnabled = false;
+            }
+
+            // update UI button
+            setRecording();
+            // update the track editor
+            Track.setRecording(true);
+            // update the flag
+            recording = true;
+
+            // todo: add some lead-in?
+            // todo: turn on metronome?
+            // start playback
+            FullPlayer.startPlaying();
+
+        } else {
+            // stop recording
+            // fully stop playback
+            FullPlayer.stopPlaying();
+            // update UI button
+            setNotRecording();
+            // update the track editor
+            Track.setRecording(false);
+            // update the flag
+            recording = false;
+            // turn off the metronome if we turned it on for recording
+            if (metronomeTempOn) {
+                setMetronomeOn(false);
+            }
+        }
     }
 
     function setPlayEnabled() {
@@ -95,6 +173,9 @@ var Playback = (function() {
     }
 
     function setStopEnabled(enabled) {
+        if (enabled == stopEnabled) {
+            return;
+        }
         // enable or disable the stop button
         var div = document.getElementById("song-buttons-stop");
         var img = div.children[0];
@@ -102,6 +183,39 @@ var Playback = (function() {
         img.className = enabled ? "icon" : "icon-disabled";
         // save the state
         stopEnabled = enabled;
+    }
+
+    function setRecordEnabled(enabled) {
+        // check
+        if (enabled == recordEnabled) {
+            return;
+        }
+        // if we're disabling recording while recording is in progress then stop recording
+        if (!enabled && recording) {
+            toggleRecording();
+        }
+
+        // enable or disable the record button
+        var div = document.getElementById("song-buttons-record");
+        var img = div.children[0];
+        div.className = enabled ? "button tooltip" : "button-disabled tooltip";
+        img.className = enabled ? "icon" : "icon-disabled";
+        // save the state
+        recordEnabled = enabled;
+    }
+
+    function setRecording() {
+        // update the record button to be the in progress icon
+        var div = document.getElementById("song-buttons-record");
+        var img = div.children[0];
+        PageUtils.setImgSrc(img, "icon-recording.png");
+    }
+
+    function setNotRecording() {
+        // update the record button to be a start recording button
+        var div = document.getElementById("song-buttons-record");
+        var img = div.children[0];
+        PageUtils.setImgSrc(img, "icon-record.png");
     }
 
     function setMetronomeEnabled(enabled) {
@@ -688,7 +802,8 @@ var Playback = (function() {
             }
 
             // check if the current song tick is past the end of the song, and if all sounds have finished playing
-            if ((songTick > song.getEndTick()) && soundBank.isIdle(realTime)) {
+            // and if we're not currently recording
+            if ((songTick > song.getEndTick()) && soundBank.isIdle(realTime) && !recording) {
                 // stop playing at the end of the song
                 stopPlaying();
 
@@ -902,6 +1017,8 @@ var Playback = (function() {
         setSong: setSong, // (newSong)
         // play a single note immediately
         playNote: playNote, // (noteName)
+        // enable/disable record buttom
+        setRecordEnabled: setRecordEnabled, // (enabled)
 
         // notify when the song setting dialog is shown or hidden so it can manage the other metronome button
         showSettingsMetronome: showSettingsMetronome, // ()

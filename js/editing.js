@@ -24,6 +24,9 @@ var Editing = (function() {
         Events.setupTextInput(document.getElementById("config-leadin-seconds-input"), true);
         document.getElementById("config-leadin-seconds-input").addEventListener("change", commitLeadInSecondsChange, { passive: false });
 
+        // Quantize button
+        document.getElementById("edit-quantize").addEventListener("click", quantize, { passive: false });
+
         // Change speed button
         document.getElementById("edit-change-speed").addEventListener("click", changeSpeed, { passive: false });
 
@@ -41,7 +44,6 @@ var Editing = (function() {
     function toggleEditing() {
         // flip the flag
         editing = !editing;
-
 
         var buttonImg = document.getElementById("edit-bar-img");
         var toolbar = document.getElementById("edit-toolbar");
@@ -69,6 +71,9 @@ var Editing = (function() {
             Playback.hideSettingsMetronome();
         }
 
+        // enable/disable the record button
+        Playback.setRecordEnabled(editing);
+
         // set the track up for editing
         Track.setEditing(editing);
     }
@@ -89,7 +94,8 @@ var Editing = (function() {
         if (count == 0) {
             // If there are no notes then just put the word "Empty" in there
             duration = "Empty";
-            // disable the Delete All option if there are no notes
+            // disable the Delete All, Change Speed, and Quantize options if there are no notes
+            DomUtils.addClass(document.getElementById("edit-delete-all"), "disabled");
             DomUtils.addClass(document.getElementById("edit-delete-all"), "disabled");
 
         } else {
@@ -118,6 +124,8 @@ var Editing = (function() {
             DomUtils.removeClass(document.getElementById("change-speed-type-tempo"), "disabled");
             // enable the checkbox
             document.getElementById("change-speed-type-tempo-input").disabled = false;
+            // enable the quantize function
+            DomUtils.removeClass(document.getElementById("edit-quantize"), "disabled");
 
         } else {
             // If there is no meter/tempo, then disble the option to change speed based on tempo
@@ -127,6 +135,9 @@ var Editing = (function() {
             document.getElementById("change-speed-type-tempo-input").disabled = true;
             // make sure the percent option is selected
             document.getElementById("change-speed-type-percent-input").checked = true;
+            // disable the quantize function
+            DomUtils.addClass(document.getElementById("edit-quantize"), "disabled");
+            // deselect the Tempo option in the change speed dialog, if selected
             updateChangeSpeedType();
         }
     }
@@ -300,6 +311,169 @@ var Editing = (function() {
         Model.setLeadInSeconds(value, true);
     }
 
+//    function roundToNearestPowerOfTwo(int n) {
+//        return 1 << Math.floor(Math.log2(n));
+//    }
+//
+
+    // close callback for the change speed dialog, I can't figure out a good way to not need this as a global variable
+    var quantizeDialogClose = null;
+
+    function initQuantizeDialog(div) {
+        var itemIdRegex = /(\w+)-(\d)_(\d+)/i;
+
+        // only initialize listeners once
+        if (!div.initialized) {
+            // click handler
+            function quantizeClick(e) {
+                // get the clicked items' division
+                // use currentTarget to get the parent item that actually has the listener registered
+                var division = e.currentTarget.division;
+                // console.log("Division: " + division);
+                // do the quantization
+                commitQuantize(division);
+                // close the dialog
+                quantizeDialogClose();
+            }
+
+            // loop over the quantize menu items
+            for (var i = 0; i < div.childElementCount; i++) {
+                // get the item
+                var item = div.children[i];
+                // get it's id
+                var id = item.id;
+
+                // parse the division out of the id
+                // man I'm going through almost more trouble than it would be to just generate the dang UI in code
+                var results = itemIdRegex.exec(id);
+                if (!results) {
+                    return;
+                }
+                var division = parseInt(results[3]);
+                // save the division to the item for later
+                item.division = division;
+
+                // register listener
+                item.addEventListener("click", quantizeClick, { passive: false });
+            }
+            // set the flag so we don't initialize again
+            div.initialized = true;
+        }
+
+        // calculate ticks per beat
+        var ticksPerBeat = (Metadata.ticksPerSecond * 60) / Model.getTempo();
+
+        // loop over the selection items (again)
+        for (var i = 0; i < div.childElementCount; i++) {
+            // get the item
+            var item = div.children[i];
+            // get its division
+            var division = item.division;
+
+            // calculate the quantize ticks for this selection
+            var qTicks = getQuantizeTicks(division);
+            // calculate how many beats the quantize ticks is
+            var beatFraction = qTicks / ticksPerBeat;
+
+            // get the item label
+            var label = document.getElementById("quantize_beats_1_" + division);
+            // build a description string
+            // start by generating a reduced fraction representation of the beat fraction
+            // multiply the beat fraction by 3 times a large enough power of 2 in order to produce an integer
+            // in all cases, then reduce the fraction using that factor as the denominator
+            var fraction = MiscUtils.reduceFraction(Math.round(beatFraction * 96), 96);
+            // start the string with the numerator of the fraction
+            var fractionString = fraction[0] + "";
+            // if the denominator is something other than 1, then add the denominator
+            if (fraction[1] != 1) {
+                fractionString = fractionString + "/" + fraction[1];
+            }
+            // add a singular or plural dependong on if the fraction is greater than 1
+            if (beatFraction > 1) {
+                fractionString = fractionString + " beats";
+            } else {
+                fractionString = fractionString + " beat";
+            }
+            // set the label.
+            label.innerHTML = fractionString;
+            // set the color of the label depending on whether this option produces an integer number of ticks to
+            // quantize by
+            if (Math.floor(qTicks) == qTicks) {
+                label.className = "info";
+            } else {
+                label.className = "warn";
+            }
+            // That was a surprisingly large amount of work
+        }
+    }
+
+    function quantize() {
+        // check for a meter
+        if (!Model.getMeter()) {
+            return;
+        }
+        // get the hidden dialog div from the document
+        var dialogDiv = document.getElementById("quantize-dialog");
+
+        initQuantizeDialog(dialogDiv);
+
+        // remove it
+        dialogDiv.remove();
+
+        // show the menu with a custom close callback
+        quantizeDialogClose = Menus.showMenu(dialogDiv, this, "Quantize", false, () => {
+            // when the menu is closed, remove the the original container
+            dialogDiv.remove();
+            // and add it back to the hidden area of the document
+            document.getElementById("hidden-things").appendChild(dialogDiv);
+        });
+    }
+
+    function getQuantizeTicks(division) {
+        // get the tempo
+        var tempo = Model.getTempo();
+        // get the bottom of the time signature, which tells us which time unit is one beat
+        var meterBottom = Model.getMeterBottom();
+
+        // calculate ticks per beat
+        var ticksPerBeat = (Metadata.ticksPerSecond * 60) / tempo;
+
+        // calculate the number of ticks for each quantized interval, which may be a fraction
+        // todo: keep the fraction separate to prevent rounding errors?
+        var qTicks = (ticksPerBeat * meterBottom) / division;
+        return qTicks;
+    }
+
+    function commitQuantize(division) {
+        // get the quantization ticks
+        var qTicks = getQuantizeTicks(division);
+
+        // start an Undo combo
+        Undo.startUndoCombo();
+
+        // Fudge factor 1 and Fudge Factor 2 determined experimentally to do two things:
+        // 1. Favor moving notes earlier
+        // 2. split 0-7 into 3 at 0, 3, and 6
+        var FF1 = -0.001;
+        var FF2 = 0.25;
+
+        // run note-by-note transformation in the track
+        // this also takes care of keeping the lead-in up to date
+        Track.transformNotes((note) => {
+            // calculate the quantized time
+            // Divide by the quantize ticks, round to the nearest whole number, multiply by the quantized ticks, and round again.
+            // add in fudge factors to make common cases come out "right"
+            var newTick = Math.round((Math.round((note.tick / qTicks) + FF1) * qTicks) + FF2);
+            // create a new note with the same note name and a quantized time
+            var newNote = new Note(note.toNoteName(), newTick);
+            // return the transformed note
+            return newNote;
+        });
+
+        // end the undo combo
+        Undo.endUndoCombo("Quantize");
+    }
+
     // close callback for the change speed dialog, I can't figure out a good way to not need this as a global variable
     var changeSpeedDialogClose = null;
 
@@ -316,9 +490,7 @@ var Editing = (function() {
         }
     }
 
-    function initChangeSpeedDialog() {
-        // get the prebuilt UI element
-        var div = document.getElementById("change-speed-dialog");
+    function initChangeSpeedDialog(div) {
         // only initialize once
         if (div.initialized) {
             return;
@@ -398,34 +570,17 @@ var Editing = (function() {
     }
 
     function scaleSongLength(scale) {
-        // get the current song
-        var song = Model.getSong();
-        // create a new song
-        var newSong = new Song();
-        // copy over the song scale
-        newSong.setScale(song.getScale());
-        // loop over the current song's notes
-        for (var n = 0; n < song.notes.length; n++) {
-            // get a note
-            var note = song.notes[n];
-            // create a new note with the same note name and a scaled time
-            var newNote = new Note(note.toNoteName(), Math.round(note.tick * scale));
-            // add the new note to the new song
-            newSong.addNote(newNote);
-        }
-
         // start an Undo combo
         Undo.startUndoCombo();
 
-        var startingLeadInTicks = Model.getLeadInTicks();
-
-        // set the new song
-        Model.setSong(newSong);
-
-        // scale the lead-in ticks, if there is one
-        if (startingLeadInTicks) {
-            Model.setLeadInTicks(Math.round(Model.getLeadInTicks() * scale));
-        }
+        // run note-by-note transformation in the track
+        // this also takes care of keeping the lead-in up to date
+        Track.transformNotes((note) => {
+            // create a new note with the same note name and a scaled time time
+            var newNote = new Note(note.toNoteName(), Math.round(note.tick * scale));
+            // return the transformed note
+            return newNote;
+        });
 
         // end the undo combo
         Undo.endUndoCombo("Change Speed");

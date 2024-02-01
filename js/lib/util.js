@@ -655,10 +655,21 @@ var MiscUtils = (function(){
          return s;
 	}
 
+    // ganked from https://stackoverflow.com/questions/4652468/is-there-a-javascript-function-that-reduces-a-fraction
+    function reduceFraction(numerator,denominator){
+        var gcd = function gcd(a,b){
+            return b ? gcd(b, a%b) : a;
+        };
+        gcd = gcd(numerator,denominator);
+
+        return [numerator/gcd, denominator/gcd];
+    }
+
 	return {
 	    parseInt: parseInt, // (s)
 	    parseFloat: parseFloat, // (s)
 	    sanitizeString: sanitizeString,// (s, maxLength = 25)
+	    reduceFraction: reduceFraction, // (numerator, denominator): [num, den]
 	}
 })();
 

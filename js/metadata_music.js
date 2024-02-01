@@ -146,6 +146,26 @@ var MetadataMusic = (function() {
         };
     }
 
+//    function roundToNearestPowerOfTwo(int n) {
+//        return 1 << Math.floor(Math.log2(n));
+//    }
+//
+//    function verifyMeterBottom(meterBottom) {
+//        if (meterBottom != 2 && meterBottom 1= 4 && meterBottom != 8 && meterBottom != 16) {
+//            throw "Invalid Meter: " + meterBottom;
+//        }
+//    }
+//
+//    function getQuantizeOptions(meterTop, meterBottom, tempo) {
+//        meterBottom = roundToNearestPowerOfTwo(meterBottom);
+//
+//        var ticksPerBeat = (Metadata.ticksPerSecond * 60) / tempo;
+//
+//
+//
+//
+//    }
+
     // public members
     return  {
         note: note,

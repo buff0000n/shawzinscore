@@ -1208,6 +1208,8 @@ var Track = (function() {
     var Editor = (function() {
         // editing enabled flag
         var editing = false;
+        // recording flag
+        var recording = false;
 
         // editor state flags
         var tabEnabled = false;
@@ -2124,12 +2126,58 @@ var Track = (function() {
             }
         }
 
+        function setRecording(newRecording) {
+            // check
+            if (recording == newRecording) {
+                return;
+            }
+            // set the flag
+            recording = newRecording;
+            if (recording) {
+                // if recording is starting, start an undo combo to contain all the recording events
+                Undo.startUndoCombo();
+            } else {
+                // if recording is done, end the undo combo
+                Undo.endUndoCombo("Recording");
+            }
+        }
+
+        function notePlayed(noteName) {
+            if (recording && playbackMarker) {
+                // todo tweak this?
+                var tick = Math.round(playbackMarker.playTick);
+                // console.log("Recorded: " + noteName + " at " + tick);
+                addNote(new Note(noteName, tick));
+            }
+        }
+
+        function transformNotes(func) {
+            // clone the note list
+            var notesCopy = song.notes.slice();
+            // start an undo combo
+            Undo.startUndoCombo();
+            // loop
+            for (var n = 0; n < notesCopy.length; n++) {
+                var note = notesCopy[n];
+                var newNote = func(note);
+                if (!note.equals(newNote) || note.tick != newNote.tick) {
+                    removeNote(note);
+                    addNote(newNote);
+                }
+            }
+            // end the undo combo
+            Undo.endUndoCombo("Bulk Edit");
+        }
+
         return {
             registerEventListeners: registerEventListeners, // ()
             setEditing: setEditing, // (newEditing)
             isEditing: isEditing, // ()
             scrollUpdated: rerunEditEvent, // ()
             updateFrets: updateFrets, // (fretsEnabled[4])
+            setRecording: setRecording, // (newRecording)
+            notePlayed: notePlayed, // (notename)
+            transformNotes: transformNotes, // ((note) => new note)
         };
     })();
 
@@ -2181,6 +2229,12 @@ var Track = (function() {
         resize: resize, // (width, height)
         // set whether editing mode is enabled
         setEditing: Editor.setEditing, // (newEditing)
+        // set whether recording is enabled
+        setRecording: Editor.setRecording, // (newRecording)
+        // notify when a note was manually played
+        notePlayed: Editor.notePlayed, // (notename)
+        // run a 1-1 note transformation according to some rule
+        transformNotes: Editor.transformNotes, // ((note) => new note)
     }
 })();
 
