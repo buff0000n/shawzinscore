@@ -262,6 +262,8 @@ var MetadataUI = (function() {
     ];
     var minPlaybackSpeed = 0.1;
     var maxPlaybackSpeed = 10;
+    var minVolume = 0;
+    var maxVolume = 2;
 
     var midiNoteC = 48;
     var midiNoteChord1 = 44;
@@ -287,6 +289,8 @@ var MetadataUI = (function() {
         playbackSpeeds: playbackSpeeds,
         minPlaybackSpeed: minPlaybackSpeed,
         maxPlaybackSpeed: maxPlaybackSpeed,
+        minVolume: minVolume,
+        maxVolume: maxVolume,
         midiNoteC: midiNoteC,
         midiNoteChord1: midiNoteChord1,
         midiNoteChord2: midiNoteChord2,

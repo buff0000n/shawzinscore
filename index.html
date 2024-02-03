@@ -288,6 +288,10 @@
                         <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="cut" class="icon"/>
                     </div>
                     -->
+                    <div id="song-buttons-volume" class="button tooltip">
+                        <img src="img/icon-volume.png" srcset="img2x/icon-volume.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Volume</span>
+                    </div>
                     <div id="song-buttons-record" class="button-disabled tooltip">
                         <img src="img/icon-record.png" srcset="img2x/icon-record.png 2x" alt="record" class="icon-disabled"/>
                         <span class="tooltiptextbottom">Record</span>
@@ -591,6 +595,22 @@
             </div>
         </div>
     </div>
+    
+    <div id="volume-menu" class="field-div">
+        <div class="field-entry-dark tooltip">
+            <div class="fieldTitle">Shawzin Volume</div>
+            <span id="volume-shawzin-range-container" class="sliderContainer"><input id="volume-shawzin" type="range" min="0"/></span>
+            <span id="volume-shawzin-label"><input id="volume-shawzin-label-input" size="4" value="100"/>%</span>
+            <span class="tooltiptextbottom">Adjust the Shawzin volume</span>
+        </div>
+        <div class="field-entry-dark tooltip">
+            <div class="fieldTitle">Metronome Volume</div>
+            <span id="volume-metronome-range-container" class="sliderContainer"><input id="volume-metronome" type="range" min="0"/></span>
+            <span id="volume-metronome-label"><input id="volume-metronome-label-input" size="4" value="100"/>%</span>
+            <span class="tooltiptextbottom">Adjust the Metronome volume</span>
+        </div>
+        
+    </div>
 
     <div id="note-menu">
         <div class="field-button-light lightbutton tooltip" id="note-edit-delete">
@@ -694,6 +714,7 @@
                         <li><a href="#tocPlaybackStart">Playback Start</a></li>
                         <li><a href="#tocPlaybackSpeed">Playback Speed</a></li>
                         <li><a href="#tocPlaybackMetronome">Metronome</a></li>
+                        <li><a href="#tocVolume">Volume</a></li>
                     </ul>
                 </li>
                 <li><a href="#tocSharing">Sharing</a>
@@ -1140,8 +1161,9 @@
                 You can enter up to <strong>10x</strong> speed in here, because it's <strong class="info">funny</strong>.
             </p>
             <p>
-                <strong>Note: </strong> Your current playback speed is stored in your browser's local storage as a
-                preference.  It will persist across browser sessions on any song you work with in Shawzinscore.
+                <strong class="info">Note: </strong> Your current playback speed is stored in your browser's local
+                storage as a preference.  It will persist across browser sessions on any song you work with in
+                Shawzinscore.
             </p>
             <p>
                 <strong class="warn">Note: </strong> You can adjust the speed while the song is playing, but it's
@@ -1165,6 +1187,23 @@
             <p>
                 <strong class="warn">Note:</strong> The metronome is only enabled if you have a Meter and Tempo
                 configured (see <a href="#tocAdvancedStructure">Song Configuration</a>).
+            </p>
+
+            <h2 id="tocVolume">Volume</h2>
+            <p>
+                Click the
+                <img class="smallButton icon" src="img/icon-volume.png" srcset="img2x/icon-volume.png 2x"/>
+                <strong>Volume</strong> button to bring up the volume controls.  There are two volume sliders, one
+                for the Shawzin and one for the <a href="#tocPlaybackMetronome">Metronome</a>.
+            </p>
+            <p>
+                You can set the volume on each anywhere from <strong class="info">0%</strong> to
+                <strong class="info">200%</strong>.  The mark in the middle of the slider is
+                <strong class="info">100%</strong>.
+            </p>
+            <p>
+                <strong class="info">Note:</strong> Volume settings are stored in your browser's local storage as
+                preferences.
             </p>
 
             <h1 id="tocSharing">Sharing</h1>
@@ -1228,7 +1267,8 @@
                 <strong>Dark Mode</strong> to generate it as white on a black background instead.
             </p>
             <p>
-                <strong>Note: </strong> Your Dark Mode setting is stored in your browser's local storage as a preference.
+                <strong class="info">Note: </strong> Your Dark Mode setting is stored in your browser's local storage as
+                a preference.
             </p>
 
             <h3 id="tocShawzinTabOldMode">Old Mode</h3>
@@ -1243,7 +1283,8 @@
                 them to group them together as a chord.
             </p>
             <p>
-                <strong>Note: </strong> Your Old Mode setting is stored in your browser's local storage as a preference.
+                <strong class="info">Note: </strong> Your Old Mode setting is stored in your browser's local storage as
+                a preference.
             </p>
 
             <h1 id="tocSettings">Settings</h1>
@@ -1269,7 +1310,8 @@
                 </li>
             </ul>
             <p>
-                <strong>Note: </strong> Your settings are stored in your browser's local storage as a preference.
+                <strong class="info">Note: </strong> Your settings are stored in your browser's local storage as a
+                preference.
             </p>
 
 
@@ -3175,7 +3217,6 @@ s               <img class="smallButton icon" src="img/icon-edit-delete.png" src
             <h1 id="tocTodo">To do</h1>
             <h2>Definitely</h2>
             <ul>
-                <li>Volume setting for Shawzins and metronome</li>
                 <li>Editing stuff
                     <ul>
                         <li>Note count and the 1000 note restriction should take into account double/triple notes</li>

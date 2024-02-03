@@ -37,6 +37,7 @@ var Playback = (function() {
 
     function registerEventListeners() {
         // set up button event listeners
+        document.getElementById("song-buttons-volume").addEventListener("click", volumeMenu, { passive: false });
         document.getElementById("song-buttons-record").addEventListener("click", toggleRecording, { passive: false });
         document.getElementById("song-buttons-play").addEventListener("click", togglePlay, { passive: false });
         document.getElementById("song-buttons-stop").addEventListener("click", stopPlaying, { passive: false });
@@ -283,8 +284,22 @@ var Playback = (function() {
         if (shawzin && scale) {
             // update the sound bank
             soundBank = ShawzinAudio.getSoundBank(shawzin, scale);
+            // make sure the volume is up to date
+            setVolume(Settings.getShawzinVolume());
+            // and the pitch
             updateKeySig();
         }
+    }
+
+    function setVolume(volume) {
+        // convert to percentage
+        soundBank.setVolume(volume/100);
+    }
+
+    function setMetronomeVolume(volume) {
+        // convert to percentage
+        // take the easy route and just grab the singleton metronome sound bank from the cache
+        ShawzinAudio.getMetronomeSoundBank().setVolume(volume/100);
     }
 
     function updateKeySig() {
@@ -364,6 +379,145 @@ var Playback = (function() {
         }
     }
 
+    function setupVolumeSlider(name, initialValue, setCallback, commitCallback) {
+        // todo: refactor this and the playback speed slider to some common base control?
+        // how granular the slider is
+        var granularity = 200;
+        // the maximum Value of the slider
+        var maxValue = 200;
+
+        // define a function for converting slider value to label value
+        function sliderToLabel(sliderValue) {
+            // no translation, we cna just set an int on the label
+            return sliderValue;
+        }
+
+        // function for converting label value to slider value
+        function labelToSlider(labelValue) {
+            // have to parse the string to an int
+            return parseInt(labelValue);
+        }
+
+        // get the two inputs
+        var rangeInput = document.getElementById("volume-" + name);
+        var labelInput = document.getElementById("volume-" + name + "-label-input");
+        // update function so we can reuse it
+        function updateUI(newVolume) {
+            labelInput.value = newVolume;
+        }
+
+        // change listener for the text box
+        labelInput.addEventListener("change", (e) => {
+            try {
+                // parse the value
+                var newValue = MiscUtils.parseInt(labelInput.value);
+                // okay, I guess we need some range checking
+                if (newValue > MetadataUI.maxVolume) {
+                    newValue = MetadataUI.maxVolume;
+                    labelInput.value = newValue;
+                }
+                if (newValue < MetadataUI.minVolume) {
+                    newValue = MetadataUI.minVolume;
+                    labelInput.value = newValue;
+                }
+                // update
+                setCallback(newValue);
+                // convert to slider value and update the slider
+                rangeInput.value = labelToSlider(newValue);
+                // blur the text box because why doesn't it do this by default
+                labelInput.blur();
+                // commit immediately
+                commitCallback(newValue);
+
+            } catch (error) {
+                // if any error occurs, most likely an invalid format, then just revert
+                console.log(error);
+                labelInput.value = sliderToLabel(document.getElementById("volume-" + name).value);
+            }
+
+        });
+        // initialize the UI with the preference value
+        updateUI(initialValue);
+
+        // generate a list of snap values in slider units
+        var snaps = [100];
+
+        // build the slider controller
+        slider = new Slider(
+            // elements
+            document.getElementById("volume-" + name + "-range-container"),
+            rangeInput,
+            // range
+            maxValue,
+            // getter
+            () => {
+                return labelToSlider(initialValue);
+            },
+            // setter
+            (value) => {
+                var newValue = sliderToLabel(value);
+                setCallback(newValue);
+                updateUI(newValue);
+            },
+            // commiter
+            (value) => {
+                commitCallback(sliderToLabel(value));
+            },
+            // snap list and distance
+            snaps, 15
+        );
+    }
+
+    function volumeMenu() {
+        // get the hidden dialog div from the document
+        var menuDiv = document.getElementById("volume-menu");
+
+        // remove it
+        menuDiv.remove();
+
+        // show the menu with a custom close callback
+        var close = Menus.showMenu(menuDiv, this, "Volume", false, () => {
+            // when the volume menu is closed, remove the the original container
+            menuDiv.remove();
+            // and add it back to the hidden area of the document
+            document.getElementById("hidden-things").appendChild(menuDiv);
+        });
+
+        // only initialize it once
+        if (!menuDiv.initialized) {
+            // can't initialize the slider UIs until they're actually displayed, which means yielding
+            // the event queue so it can get layed out.
+            setTimeout(() => {
+                setupVolumeSlider("shawzin",
+                    // initial value
+                    Settings.getShawzinVolume(),
+                    // value setter
+                    (value) => {
+                        //console.log("Shawzin Slider Volume: " + value);
+                        setVolume(value);
+                    },
+                    // value committer
+                    (value) => {
+                        Settings.setShawzinVolume(value);
+                    });
+                setupVolumeSlider("metronome",
+                    // initial value
+                    Settings.getMetronomeVolume(),
+                    // value setter
+                    (value) => {
+                        //console.log("Metronome Slider Volume: " + value);
+                        setMetronomeVolume(value);
+                    },
+                    // value committer
+                    (value) => {
+                        Settings.setMetronomeVolume(value);
+                    });
+                // set the flag
+                menuDiv.initialized = true;
+            }, 10);
+        }
+    }
+
     // metronome tracker
     class MetronomeTrack {
         constructor(startTick, toRealTime) {
@@ -372,6 +526,8 @@ var Playback = (function() {
             this.toRealTime = toRealTime;
             // get the sound bank, this is cached by ShawzinAudio
             this.soundBank = ShawzinAudio.getMetronomeSoundBank();
+            // initialize the volume
+            this.setVolume(Settings.getMetronomeVolume());
 
             this.init(startTick);
         }
@@ -390,6 +546,12 @@ var Playback = (function() {
             this.nextBeat = Math.ceil(startTick / this.ticksPerBeat);
             // and the time of the next beat
             this.nextBeatTick = this.nextBeat * this.ticksPerBeat;
+        }
+
+        setVolume(volume) {
+            //console.log("metronome track volume: " + volume);
+            // convert percent to fraction
+            this.soundBank.setVolume(volume / 100);
         }
 
         playbackLoop(songTick, songScheduleBufferTicks) {
@@ -591,7 +753,7 @@ var Playback = (function() {
             if (isPlaying()) return;
 
             if (settingsMetronomeOn) {
-                console.log("stop playing metronome");
+                //console.log("stop playing metronome");
                 MetronomePlayer.stopPlaying();
                 if (!metronomeOn) {
                     setMetronomeOn(true);
@@ -990,6 +1152,7 @@ var Playback = (function() {
         return {
             startPlaying: startPlaying,
             stopPlaying: stopPlaying,
+            setVolume: setVolume,
         };
     })();
 

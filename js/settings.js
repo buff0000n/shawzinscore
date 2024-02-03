@@ -12,6 +12,8 @@ var Settings = (function() {
     var playbackSpeed = 1.0;
     var oldFretLayout = false;
     var metronomeOn = false;
+    var shawzinVolume = 100;
+    var metronomeVolume = 100;
 
     function load() {
         // load the local storage item
@@ -42,6 +44,12 @@ var Settings = (function() {
             if (props.metronomeOn != null) {
                 metronomeOn = props.metronomeOn;
             }
+            if (props.shawzinVolume != null) {
+                shawzinVolume = props.shawzinVolume;
+            }
+            if (props.metronomeVolume != null) {
+                metronomeVolume = props.metronomeVolume;
+            }
         }
     }
 
@@ -60,6 +68,8 @@ var Settings = (function() {
             "playbackSpeed": playbackSpeed,
             "oldFretLayout": oldFretLayout,
             "metronomeOn": metronomeOn,
+            "shawzinVolume": shawzinVolume,
+            "metronomeVolume": metronomeVolume,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -91,5 +101,11 @@ var Settings = (function() {
         // getter/setter for old fret layout
         getMetronomeOn: function() { return metronomeOn; },
         setMetronomeOn: function(v) { if (v != metronomeOn) { metronomeOn = v; save(); } },
+        // getter/setter for shawzin volume
+        getShawzinVolume: function() { return shawzinVolume; },
+        setShawzinVolume: function(v) { if (v != shawzinVolume) { shawzinVolume = v; save(); } },
+        // getter/setter for metronome volume
+        getMetronomeVolume: function() { return metronomeVolume; },
+        setMetronomeVolume: function(v) { if (v != metronomeVolume) { metronomeVolume = v; save(); } },
     }
 })()

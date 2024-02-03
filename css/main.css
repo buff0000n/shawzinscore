@@ -502,6 +502,14 @@ img.showcase:hover {
 #speedLabel {
     width: 5ex;
 }
+
+#volume-shawzin-range-container, #volume-shawzin, #volume-metronome-range-container, #volume-metronome {
+    width: 25ex;
+}
+#volume-shawzin-range-container, #volume-metronome-range-container {
+    z-index: 1;
+}
+
 .fret0 { color: #BF8340; }
 .fret1 { color: #C03F3F; }
 .fret2 { color: #3FC03F; }
