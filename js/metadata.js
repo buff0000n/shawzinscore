@@ -601,7 +601,7 @@ var Metadata = (function() {
                     "123-3": {
                         "name": "Gsus2/A",
                         "length": 2, "monoFadeTime": 0.5,
-                        "notes": [note.G1, note.A1, note.C2]
+                        "notes": [note.A1, note.B1, note.D2]
                     }
                 }
             },
