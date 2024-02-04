@@ -458,6 +458,10 @@ img.showcase:hover {
     margin: 0px;
     padding: 0px;
     cursor: pointer;
+    border-radius: 1ex;
+}
+.tab-fret-div:hover {
+    background-color: #404040;
 }
 .tab-string-div {
     position: absolute;

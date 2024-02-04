@@ -497,8 +497,6 @@ var TrackBar = (function() {
         action(group) {
             // play the note immediately
             Playback.playNote(group.noteName);
-            // notify the track in case we're recording
-            Track.notePlayed(group.noteName);
 
             // put this in a function for closure
             function doPlay(boxStyle) {

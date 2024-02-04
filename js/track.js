@@ -484,8 +484,8 @@ var Track = (function() {
             buildStartBar();
         }
         //var count = 0;
-        // add capacity while we're below the given tick and the maximum tick length
-        while (tickCapacity < Metadata.maxTickLength && tickCapacity <= ticks + tickBuffer) {
+        // add capacity while we're below the given tick
+        while (tickCapacity <= ticks + tickBuffer) {
             //console.log("ensuring: " + tickCapacity + " > " + ticks + " + " + tickBuffer + " (" + (++count) + ")");
             insertBar();
         }
@@ -2142,10 +2142,10 @@ var Track = (function() {
             }
         }
 
-        function notePlayed(noteName) {
+        function notePlayed(noteName, currentSongTick) {
             if (recording && playbackMarker) {
-                // todo tweak this?
-                var tick = Math.round(playbackMarker.playTick);
+                // todo tweak this? floor instead?
+                var tick = Math.round(currentSongTick);
                 // console.log("Recorded: " + noteName + " at " + tick);
                 addNote(new Note(noteName, tick));
             }
@@ -2176,7 +2176,7 @@ var Track = (function() {
             scrollUpdated: rerunEditEvent, // ()
             updateFrets: updateFrets, // (fretsEnabled[4])
             setRecording: setRecording, // (newRecording)
-            notePlayed: notePlayed, // (notename)
+            notePlayed: notePlayed, // (notename, currentSongTick)
             transformNotes: transformNotes, // ((note) => new note)
         };
     })();
@@ -2232,7 +2232,7 @@ var Track = (function() {
         // set whether recording is enabled
         setRecording: Editor.setRecording, // (newRecording)
         // notify when a note was manually played
-        notePlayed: Editor.notePlayed, // (notename)
+        notePlayed: Editor.notePlayed, // (notename, currentSongTick)
         // run a 1-1 note transformation according to some rule
         transformNotes: Editor.transformNotes, // ((note) => new note)
     }

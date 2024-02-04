@@ -240,13 +240,12 @@ var MetadataUI = (function() {
     var defaultMeter = "4/4";
     var defaultTempo = 120;
     var tempoList = [
+        60,
+        80,
+        96,
         120,
         160,
         240,
-        192,
-        96,
-        80,
-        60
     ];
 
     var defaultUnitsPerLine = 4;

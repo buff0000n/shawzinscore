@@ -78,6 +78,30 @@ var Editing = (function() {
         Track.setEditing(editing);
     }
 
+    function enableButtons() {
+        // get the song note count
+        var song = Model.getSong();
+        var noteCount = song ? song.notes.length : 0;
+
+        if (noteCount == 0) {
+            // disable the Delete All, Change Speed if there are no notes
+            DomUtils.addClass(document.getElementById("edit-change-speed"), "disabled");
+            DomUtils.addClass(document.getElementById("edit-delete-all"), "disabled");
+
+        } else {
+            // make sure the change Speed and Delete All options are enabled
+            DomUtils.removeClass(document.getElementById("edit-change-speed"), "disabled");
+            DomUtils.removeClass(document.getElementById("edit-delete-all"), "disabled");
+        }
+
+        // enable the quantize option only if there are notes and a meter is specified
+        if (noteCount > 0 && Model.getMeter() != null) {
+            DomUtils.removeClass(document.getElementById("edit-quantize"), "disabled");
+        } else {
+            DomUtils.addClass(document.getElementById("edit-quantize"), "disabled");
+        }
+    }
+
     function updateSongStats() {
         // get the song
         var song = Model.getSong();
@@ -94,9 +118,6 @@ var Editing = (function() {
         if (count == 0) {
             // If there are no notes then just put the word "Empty" in there
             duration = "Empty";
-            // disable the Delete All, Change Speed, and Quantize options if there are no notes
-            DomUtils.addClass(document.getElementById("edit-delete-all"), "disabled");
-            DomUtils.addClass(document.getElementById("edit-delete-all"), "disabled");
 
         } else {
             // calculate the song duration
@@ -108,12 +129,12 @@ var Editing = (function() {
             seconds -= (minutes * 60);
             // build a duration string
             duration = minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
-            // make sure the Delete All option is enabled
-            DomUtils.removeClass(document.getElementById("edit-delete-all"), "disabled");
         }
 
         // update the UI duration
         durationInput.value = duration;
+        // update button states
+        enableButtons();
     }
 
     function updateStructure() {
@@ -140,6 +161,9 @@ var Editing = (function() {
             // deselect the Tempo option in the change speed dialog, if selected
             updateChangeSpeedType();
         }
+
+        // update button states
+        enableButtons();
     }
 
     function initTempoControl() {

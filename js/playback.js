@@ -888,14 +888,15 @@ var Playback = (function() {
             var songTick = toSongTick(realTime);
             //console.log("SONG TICK: " + songTick);
 
-            // need to check at the beginning if we've exceeded the maximum song time
-            // this can happen if we set the playback speed to something ridiculously high
-            if (songTick > Metadata.maxTickLength) {
-                // stop playing
-                stopPlaying();
-                // end the loop
-                return;
-            }
+            // don't need to worry about this as long as we're allowing it to scroll past 4 minutes
+            //// need to check at the beginning if we've exceeded the maximum song time
+            //// this can happen if we set the playback speed to something ridiculously high
+            //if (songTick > Metadata.maxTickLength) {
+            //    // stop playing
+            //    stopPlaying();
+            //    // end the loop
+            //    return;
+            //}
 
             // update the track and playback marker positions
             updateTrack(songTick);
@@ -1040,6 +1041,13 @@ var Playback = (function() {
             }
         }
 
+        function getCurrentSongTick() {
+            // get the current audio time, this is the most reliable time
+            var realTime = soundBank.getCurrentTime();
+            // convert real time to song tick
+            return toSongTick(realTime);
+        }
+
         return {
             setup: setup,
             isPlaying: isPlaying,
@@ -1047,6 +1055,7 @@ var Playback = (function() {
             setPlaybackSpeed: setPlaybackSpeed,
             pausePlaying: pausePlaying,
             stopPlaying: stopPlaying,
+            getCurrentSongTick: getCurrentSongTick,
         };
     })();
 
@@ -1157,12 +1166,21 @@ var Playback = (function() {
     })();
 
     function playNote(noteName) {
+        // do this foist
+        if (recording) {
+            // get the current time
+            var currentSongTick = FullPlayer.getCurrentSongTick()
+            // notify the track in case we're recording
+            Track.notePlayed(noteName, currentSongTick);
+        }
+
         // just play a note immediately, this is to support clicking on the roll keyboard
         // always need to do this inside an initialization check
         soundBank.checkInit(() => {
             // play immediately
             soundBank.play(noteName);
         });
+
     }
 
     return {
