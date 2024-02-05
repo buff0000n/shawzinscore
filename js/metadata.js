@@ -601,7 +601,7 @@ var Metadata = (function() {
                     "123-3": {
                         "name": "Gsus2/A",
                         "length": 2, "monoFadeTime": 0.5,
-                        "notes": [note.G1, note.A1, note.C2]
+                        "notes": [note.A1, note.B1, note.D2]
                     }
                 }
             },
@@ -999,12 +999,12 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.C1, note.G1, note.C1]
+                        "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "E\u266D",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.Eb1, note.G1, note.C2]
+                        "notes": [note.Eb1, note.Bb1, note.Eb2]
                     },
                     "12-3": {
                         "name": "F",
@@ -1034,7 +1034,7 @@ var Metadata = (function() {
                     "13-2": {
                         "name": "E\u266D",
                         "length": 32, "monoFadeTime": 0.25,
-                        "notes": [note.Eb1, note.Eb1]
+                        "notes": [note.Eb1, note.Eb2]
                     },
                     "13-3": {
                         "name": "F",
@@ -1134,7 +1134,7 @@ var Metadata = (function() {
                     "12-2": {
                         "name": "C\u266F",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.Gs1, note.Gs1, note.Cs2]
+                        "notes": [note.Gs1, note.Cs2, note.Gs2]
                     },
                     "12-3": {
                         "name": "D",
@@ -1159,7 +1159,7 @@ var Metadata = (function() {
                     "13-1": {
                         "name": "F\u266F",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.Fs1, note.Cs2, note.FS2],
+                        "notes": [note.Fs1, note.Cs2, note.Fs2],
                         // todo: figure out a better way to remove this during the merge
                         "comment": ""
                     },
@@ -1197,12 +1197,12 @@ var Metadata = (function() {
                     "12-1": {
                         "name": "C",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.C1, note.G1, note.C1]
+                        "notes": [note.C1, note.G1, note.C2]
                     },
                     "12-2": {
                         "name": "E\u266D",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.Eb1, note.G1, note.C2]
+                        "notes": [note.Eb1, note.Bb1, note.Eb2]
                     },
                     "12-3": {
                         "name": "F",

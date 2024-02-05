@@ -70,6 +70,14 @@ var DomUtils = (function() {
         return list;
     }
 
+    function addClass(node, clazz) {
+        node.classList.add(clazz);
+    }
+
+    function removeClass(node, clazz) {
+        node.classList.remove(clazz);
+    }
+
     function deleteNode(node) {
         // delete an element from its parent
         node.parentNode.removeChild(node);
@@ -114,6 +122,8 @@ var DomUtils = (function() {
         getLastChild: getLastChild, // (node, childClass)
         getAllChildren: getAllChildren, // (node, childClass)
         deleteNode: deleteNode, // (node)
+        addClass: addClass, // (node, clazz)
+        removeClass: removeClass, // (node, clazz)
         // returns the index of the item was removed, or -1 if nothing was removed
         removeFromList: removeFromList, // (list, item)
         // returns true if the list was changed
@@ -234,7 +244,14 @@ var PageUtils = (function() {
     }
     
     function windowOnError(msg, url, lineNo, columnNo, error) {
-        showErrors([msg.replace("Uncaught ", "")]);
+        var array = [];
+        array.push(msg.replace("Uncaught ", ""));
+//        if (error && error.stack) {
+//            array.push(error.stack);
+//        } else if (url && lineNo) {
+//            array.push(url + ":" + lineNo);
+//        }
+        showErrors(array);
         return false;
     }
     
@@ -244,7 +261,7 @@ var PageUtils = (function() {
         // find the error bar
         var debugBarElement = document.getElementById("debug-bar");
         if (debugBarElement.children.length == 0) {
-            debugBarElement.innerHTML = `<div id="debug">`;
+            debugBarElement.innerHTML = `<div id="debug"></div>`;
         }
         var debugElement = document.getElementById("debug");
     
@@ -496,6 +513,7 @@ var PageUtils = (function() {
         urlDecodeString: urlDecodeString, // (string, plusIsSpace=true)
         getQueryParam: getQueryParam, // (name, plusIsSpace=true)
         setQueryParam: setQueryParam, // (name, value, plusIsSpace=true)
+        removeUrlQueryParam: removeUrlQueryParam, // (name, value, plusIsSpace=true)
         setQueryParamMap: setQueryParamMap, // (map, plusIsSpace=true)
         buildQueryUrlWithMap: buildQueryUrlWithMap, // (map, plusIsSpace=true)
         removeUrlAnchor: removeUrlAnchor, // ()
@@ -637,10 +655,21 @@ var MiscUtils = (function(){
          return s;
 	}
 
+    // ganked from https://stackoverflow.com/questions/4652468/is-there-a-javascript-function-that-reduces-a-fraction
+    function reduceFraction(numerator,denominator){
+        var gcd = function gcd(a,b){
+            return b ? gcd(b, a%b) : a;
+        };
+        gcd = gcd(numerator,denominator);
+
+        return [numerator/gcd, denominator/gcd];
+    }
+
 	return {
 	    parseInt: parseInt, // (s)
 	    parseFloat: parseFloat, // (s)
 	    sanitizeString: sanitizeString,// (s, maxLength = 25)
+	    reduceFraction: reduceFraction, // (numerator, denominator): [num, den]
 	}
 })();
 

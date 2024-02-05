@@ -90,14 +90,16 @@ var Undo = (function() {
     function startUndoCombo() {
         // push a new list on the top of the nested action stack
         undoCombos.push([]);
+        //console.log("Starting combo action level " + undoCombos.length);
     }
     
     function endUndoCombo(description=null) {
+        //console.log("Ending combo action level " + undoCombos.length);
         // pop the last combo list off the stack
         var undoList = undoCombos.pop()
         var action = null;
         // if there's more than one action, build a composite action
-        if (undoList.length >1) {
+        if (undoList.length > 1 || description != null) {
             action = new CompositeAction(undoList, description);
 
         // if there's exactly one action then just use that one
@@ -109,10 +111,14 @@ var Undo = (function() {
         if (action) {
             // if there are still open nested actions then add this action to the next level down.
             if (undoCombos.length > 0) {
-                undoCombos.push(action);
+                undoCombos[undoCombos.length - 1].push(action);
+                // still nested undo combos in progress
+                return false;
             // otherwise, there are no more nested actions and we can add this to our undo stack
             } else {
                 addUndoAction(action)
+                // comb is finished
+                return true;
             }
         }
     }
@@ -125,10 +131,17 @@ var Undo = (function() {
 //    }
 //
     function cancelUndoCombo() {
+        // sanity check
+        if (undoCombos.length == 0) {
+            throw "No undo combo to cancel";
+        }
+        //console.log("Canceling combo action level" + undoCombos.length);
         var undoList = undoCombos.pop()
         for (var i = undoList.length - 1; i >= 0; i--) {
             undoList[i].undoAction();
         }
+        // return whether there are still nested undo combos in progress
+        return undoCombos.length == 0;
     }
 
 //    function cancelAllUndoCombos() {
@@ -138,6 +151,12 @@ var Undo = (function() {
 //    }
     
     function doUndo() {
+        // sanity check
+        if (undoCombos.length > 0) {
+            // ignore undo/redo requests when an acton combo is in progress
+            throw "Cannot undo, action combo in progress";
+            return;
+        }
         // pop the last action
         var action = undoStack.pop();
         // make sure there was a last action
@@ -155,6 +174,12 @@ var Undo = (function() {
     }
     
     function doRedo() {
+        // sanity check
+        if (undoCombos.length > 0) {
+            // ignore undo/redo requests when an acton combo is in progress
+            throw "Cannot redo, action combo in progress";
+            return;
+        }
         // pop the next action
         var action = redoStack.pop();
         // make sure is a next action
@@ -193,20 +218,27 @@ var Undo = (function() {
         constructor(actions, description=null) {
             super();
             this.actions = actions;
+            this.description = description;
         }
     
         undoAction() {
+            // keep track of the last return value
+            var ret = null;
             // iterate over the action list in reverse order to undo
             for (var a = this.actions.length - 1; a >= 0; a--) {
-                this.actions[a].undoAction();
+                ret = this.actions[a].undoAction();
             }
+            return ret;
         }
     
         redoAction() {
+            // keep track of the last return value
+            var ret = null;
             // iterate over the action list in original order to redo
             for (var a = 0; a < this.actions.length; a++) {
-                this.actions[a].redoAction();
+                ret = this.actions[a].redoAction();
             }
+            return ret;
         }
     
         toString() {
@@ -225,11 +257,13 @@ var Undo = (function() {
         }
 
         undoAction() {
-            this.undoFunc();
+            //console.log("Undoing: " + this.description);
+            return this.undoFunc();
         }
 
         redoAction() {
-            this.doFunc();
+            //console.log("Doing: " + this.description);
+            return this.doFunc();
         }
 
         toString() {
@@ -245,9 +279,11 @@ var Undo = (function() {
         startUndoCombo();
         // add the action
         addUndoAction(action);
+            // keep track of the return value
+        var ret = null;
         try {
             // perform the action
-            action.redoAction();
+            ret = action.redoAction();
 
         } catch (error) {
             // cancel the undo combo and undo any actions that might already be in it
@@ -259,6 +295,8 @@ var Undo = (function() {
         endUndoCombo(description);
         // seems like a good time to clear any errors
         PageUtils.clearErrors();
+        // return the result
+        return ret;
     }
 
     // public members
@@ -274,11 +312,17 @@ var Undo = (function() {
 //        addUndoAction: addUndoAction,
 
         startUndoCombo: startUndoCombo, // ()
-        endUndoCombo: endUndoCombo, // (description)
+        endUndoCombo: endUndoCombo, // (description): boolean (true if there are no more open combos)
+        cancelUndoCombo: cancelUndoCombo, // (): boolean (true if there are no more open combos)
         // perform an action and store it, along with an undo action and a description, in the undo stack
         // If this action recursively calls doAction() with another action then it will all be combined
         // into a single undo action when the top-level undo action exits
+        // the given do and undo functions can have return values, the result of the
+        // do action will be returned from this function call
         doAction: doAction, // (doFunc, undoFunc, description)
+//        // debugging
+//        getUndoStack: () => { return undoStack; }, // ()
+//        getRedoStack: () => { return redoStack; }, // ()
     };
 })();
 

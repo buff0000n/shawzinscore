@@ -6,13 +6,14 @@ var Settings = (function() {
 
     // default setting values
     var trackReversed = true;
-    var showFrets = false;
     var controlScheme = null;
     var darkMode = false;
     var oldMode = false;
     var playbackSpeed = 1.0;
     var oldFretLayout = false;
     var metronomeOn = false;
+    var shawzinVolume = 100;
+    var metronomeVolume = 100;
 
     function load() {
         // load the local storage item
@@ -24,9 +25,6 @@ var Settings = (function() {
             // check for each setting and override the default if present
             if (props.trackReversed != null) {
                 trackReversed = props.trackReversed;
-            }
-            if (props.showFrets != null) {
-                showFrets = props.showFrets;
             }
             if (props.controlScheme != null) {
                 controlScheme = props.controlScheme;
@@ -46,6 +44,12 @@ var Settings = (function() {
             if (props.metronomeOn != null) {
                 metronomeOn = props.metronomeOn;
             }
+            if (props.shawzinVolume != null) {
+                shawzinVolume = props.shawzinVolume;
+            }
+            if (props.metronomeVolume != null) {
+                metronomeVolume = props.metronomeVolume;
+            }
         }
     }
 
@@ -58,13 +62,14 @@ var Settings = (function() {
         // build something we can JSONify
         var props = {
             "trackReversed": trackReversed,
-            "showFrets": showFrets,
             "controlScheme": controlScheme,
             "darkMode": darkMode,
             "oldMode": oldMode,
             "playbackSpeed": playbackSpeed,
             "oldFretLayout": oldFretLayout,
             "metronomeOn": metronomeOn,
+            "shawzinVolume": shawzinVolume,
+            "metronomeVolume": metronomeVolume,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -78,9 +83,6 @@ var Settings = (function() {
         // getter/setter for track direction setting
         isTrackReversed: function() { return trackReversed; },
         setTrackReversed: function(v) { if (v != trackReversed) { trackReversed = v; save(); } },
-        // getter/setter for show frets/strings setting
-        isShowFrets: function() { return showFrets; },
-        setShowFrets: function(v) { if (v != showFrets) { showFrets = v; save(); } },
         // getter/setter for control scheme setting
         getControlScheme: function() { return controlScheme; },
         setControlScheme: function(v) { if (v != controlScheme) { controlScheme = v; save(); } },
@@ -99,5 +101,11 @@ var Settings = (function() {
         // getter/setter for old fret layout
         getMetronomeOn: function() { return metronomeOn; },
         setMetronomeOn: function(v) { if (v != metronomeOn) { metronomeOn = v; save(); } },
+        // getter/setter for shawzin volume
+        getShawzinVolume: function() { return shawzinVolume; },
+        setShawzinVolume: function(v) { if (v != shawzinVolume) { shawzinVolume = v; save(); } },
+        // getter/setter for metronome volume
+        getMetronomeVolume: function() { return metronomeVolume; },
+        setMetronomeVolume: function(v) { if (v != metronomeVolume) { metronomeVolume = v; save(); } },
     }
 })()

@@ -49,9 +49,9 @@ var ShawzinAudio = (function() {
         var monoGroups = typeToMonoGroups[shawzinMetadata.config.type];
 
         // create a blank sound bank
-        var soundBank = Audio.createSoundBank();
-        // init its volume, the individual sounds are a little loud
-        soundBank.setVolume(Metadata.defaultShawzinVolume);
+        var soundBank = Audio.createSoundBank(shawzinName + ":" + scaleName);
+        // init its base volume, the individual sounds are a little loud
+        soundBank.setBaseVolume(Metadata.defaultShawzinVolume);
 
         // get the mono fade time for all notes, if applicable
         var noteMonoFadeTime = shawzinMetadata.notes.monoFadeTime;
@@ -177,9 +177,9 @@ var ShawzinAudio = (function() {
     function getMetronomeSoundBank() {
         // lazily load
         if (metronomeSoundBank == null) {
-            var metronomeSoundBank = Audio.createSoundBank();
+            metronomeSoundBank = Audio.createSoundBank("metronome");
             // init its volume, the individual sounds are pretty loud
-            metronomeSoundBank.setVolume(Metadata.defaultMetronomeVolume);
+            metronomeSoundBank.setBaseVolume(Metadata.defaultMetronomeVolume);
             // metronome sounds
             metronomeSoundBank.addSound("bar", [baseUrl + "misc/bar.mp3"], 1, 0.1);
             metronomeSoundBank.addSound("beat", [baseUrl + "misc/beat.mp3"], 1, 0.1);

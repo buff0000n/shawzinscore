@@ -6,11 +6,18 @@ var TrackBar = (function() {
     // show frets or strings
     var showFrets = false;
     // tracking for which frets are enabled
-    // this is just a toy for now, it doesn't do anything
     var fretEnabled = [false, false, false, false];
-    // current chord mode, (null, "a", "b", "ab")
-    var chordMode = null;
+    // current chord mode, ("none", "a", "b", "ab", "slap")
+    var chordMode = "none";
+
+    // temp settings that we can revert
+    var oldFretEnabled = null;
+    var oldChordMode = null;
+
+    // midi handler for changing chord modes
     var chordModeMidiMap = null;
+    // lookup helper for getNearestScaleNoteName
+    var noteLookupArray = null;
 
     // keyboard div container, easier to rebuild if I keep track of a container
     var rollKeyButtonDiv = null;
@@ -34,7 +41,7 @@ var TrackBar = (function() {
         var noneDiv = document.getElementById("roll-chord-button-none");
         noneDiv.addEventListener("click", () => {
             // apply the new setting
-            setChordMode(null);
+            setChordMode("none");
         });
         var aDiv = document.getElementById("roll-chord-button-a");
         aDiv.addEventListener("click", () => {
@@ -56,20 +63,6 @@ var TrackBar = (function() {
             // apply the new setting
             setChordMode("slap");
         });
-
-        // event handler for the fret/string switch button
-        var switchHandler = () => {
-            // invert the preference value
-            var newShowFrets = !Settings.isShowFrets();
-            // apply the new setting
-            setShowFrets(newShowFrets);
-            // save the new preference
-            Settings.setShowFrets(newShowFrets);
-        };
-        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
-        switchFretsDiv.addEventListener("click", switchHandler);
-        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
-        switchStringsDiv.addEventListener("click", switchHandler);
 
         // later
 //        var chordDiv = document.getElementById("roll-chord-button");
@@ -108,13 +101,18 @@ var TrackBar = (function() {
             // handled
             return true;
         }, { passive: true });
+        Events.addKeyDownListener("ArrowUp", (e) => {
+            // up toggles no fret
+            toggleFretEnabled(0);
+            // handled
+            return true;
+        }, { passive: true });
 
         // oh god is this is a freakin' MIDI listener?!  What the hell.
         Midi.addMidiListener(scaleMidiListener);
 
         // read preferences and apply them
         setTrackDirection(Settings.isTrackReversed());
-        setShowFrets(Settings.isShowFrets());
     }
 
     // drag drop listener for the piano element
@@ -172,7 +170,7 @@ var TrackBar = (function() {
 
     // build a map from note fingerings to display notes for the given scale and chord mode
     function buildNoteMap(scaleMd, chordMode) {
-        if (chordMode == null) {
+        if (chordMode == "none") {
             // no chord mode, just the normal single note fingerings and notes
             return scaleMd.notes;
 
@@ -233,8 +231,8 @@ var TrackBar = (function() {
                 } else {
                     // get a chord fingering, offset if necessary
                     var offsetNoteName = Metadata.scaleChordOrder[n + noteOffset];
-                    // use he default slap map to map that chord fingering to a regular note fingering, then get
-                    // the corrdponding note from the scale
+                    // use the default slap map to map that chord fingering to a regular note fingering, then get
+                    // the corresponding note from the scale
                     note = scaleMd.notes[Metadata.slapMap[offsetNoteName]];
                 }
                 // finally, map the fingering to tone
@@ -243,6 +241,18 @@ var TrackBar = (function() {
             // that was a lot of work
             return noteMap;
         }
+    }
+
+    // build a lookup table for getNearestScaleNoteName()
+    function buildNoteLookupArray(noteMap) {
+        var lookup = [];
+        // dumb way
+        for (var noteName in noteMap) {
+            var note = noteMap[noteName];
+            var noteIndex = Metadata.noteOrder.indexOf(note);
+            lookup[noteIndex] = noteName;
+        }
+        return lookup;
     }
 
     // build a coloring for the given note map, based on the map key fingerings
@@ -277,6 +287,89 @@ var TrackBar = (function() {
         rebuildPiano();
     }
 
+    // given one or more frets, determine the roll side chord mode and set it temporarily
+    function setChordModeForFretsTemporarily(fret) {
+        var newChordMode = null;
+        if (fret.length <= 1) {
+            // 1 fret means no chord mode
+            newChordMode = "none";
+        } else {
+            // get the scale metadata
+            var scaleMd = getScaleMetadata();
+            // calculate based o the scale's chord type
+            switch (scaleMd.config.chordtype) {
+                // Dual type has two chord modes
+                case Metadata.chordTypeDual:
+                    switch (fret) {
+                        case "12":
+                        case "23":
+                            newChordMode = "a";
+                            break;
+                        case "13":
+                        case "123":
+                            newChordMode = "b";
+                            break;
+                        default:
+                            throw "invalid frets: " + fret;
+                    }
+                    break;
+                case Metadata.chordTypeSingle:
+                    // single chord type has one chord mode
+                    newChordMode = "ab";
+                    break;
+                case Metadata.chordTypeSlap:
+                    // slap chord type has one chord mode
+                    newChordMode = "slap";
+                    break;
+            }
+        }
+
+        // check against the current chord mode
+        if (newChordMode != chordMode) {
+            // save the current chord mode if it hasn't already been saved
+            if (!oldChordMode) {
+                oldChordMode = chordMode;
+            }
+            // set the new chord mode
+            setChordMode(newChordMode);
+        }
+
+        // clear out the tab side frets temporarily
+        setFretsTemporarily("");
+    }
+
+    // clear out the tab side frets temporarily
+    function setFretsTemporarily(fret) {
+        // save the current frets if it hasn't already been saved
+        if (!oldFretEnabled) {
+            // clone the old fret settings
+            oldFretEnabled = fretEnabled.slice();
+        }
+        // new fret settings
+        for (var i = 0; i < 4; i++) {
+            setFretEnabled(i, fret.indexOf(i) >= 0);
+        }
+    }
+
+    // return the tab side frets and roll side chord mode to their previous values
+    function revertTemporarySettings() {
+        // revert tab side frets
+        if (oldFretEnabled) {
+            for (var i = 0; i < 4; i++) {
+                setFretEnabled(i, oldFretEnabled[i]);
+            }
+            // clear out temp values
+            oldFretEnabled = null;
+        }
+
+        // revert roll side chord mode
+        if (oldChordMode) {
+            setChordMode(oldChordMode);
+            // clear out temp values
+            oldChordMode = null;
+        }
+    }
+
     //
     function updateChordMode() {
         // get the scale metadata
@@ -284,8 +377,7 @@ var TrackBar = (function() {
         // todo: there's a code path that gets in here before everything is initialized
         if (!scaleMd) return;
 
-        // translate null to "none" to make things easier
-        var mode = chordMode ? chordMode : "none";
+        var mode = chordMode;
         // util function to enable/disable and show/hide a chord mode button
         function setChordButtonEnabled(suffix, enabled) {
             // get the button div
@@ -321,7 +413,7 @@ var TrackBar = (function() {
     // rebuild the piano container and chord mode buttons for the chosen shawzin + scale
     function updateScale() {
         // reset the chord mode
-        chordMode = null;
+        chordMode = "none";
         // build the midi listeners for changing chord modes
         buildChordModeMidiListeners();
         // update and show/hide chord mode buttons
@@ -497,6 +589,9 @@ var TrackBar = (function() {
         }
         // update the midi listener with the new note map
         scaleMidiListener.setMidiNoteMap(midiMap);
+
+        // build the lookup array for getNearestScaleNoteName()
+        noteLookupArray = buildNoteLookupArray(noteMap);
     }
 
     function setTrackDirection(reverse) {
@@ -505,8 +600,6 @@ var TrackBar = (function() {
 
         // get some buttons inside the trackbar that we will have to move
         var dirDiv = document.getElementById("track-direction");
-        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
-        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
         var chordDiv = document.getElementById("roll-chord-button");
         var chordInfoDiv = document.getElementById("roll-chord-info");
 
@@ -522,11 +615,6 @@ var TrackBar = (function() {
             // move the direction button to the top of the header bar
             dirDiv.style.top = "0px";
             dirDiv.style.bottom = "";
-            // move the fret/string switch buttons to the bottom of the header bar
-            switchFretsDiv.style.top = "";
-            switchFretsDiv.style.bottom = "0px";
-            switchStringsDiv.style.top = "";
-            switchStringsDiv.style.bottom = "0px";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-up.png");
             chordInfoDiv.style.top = "0px";
@@ -545,11 +633,6 @@ var TrackBar = (function() {
             // move the direction button to the bottom of the header bar
             dirDiv.style.top = "";
             dirDiv.style.bottom = "0px";
-            // move the fret/string switch buttons to the top of the header bar
-            switchFretsDiv.style.top = "0px";
-            switchFretsDiv.style.bottom = "";
-            switchStringsDiv.style.top = "0px";
-            switchStringsDiv.style.bottom = "";
 
             PageUtils.setImgSrc(chordInfoDiv.children[0], "icon-chord-down.png");
             chordInfoDiv.style.top = "";
@@ -585,12 +668,6 @@ var TrackBar = (function() {
         // sanity check
         if (showFrets == newShowFrets) return;
 
-        // show/hide the switch buttons
-        var switchFretsDiv = document.getElementById("trackbar-switch-frets");
-        var switchStringsDiv = document.getElementById("trackbar-switch-strings");
-        switchFretsDiv.style.display = newShowFrets ? "none" : "inline-block";
-        switchStringsDiv.style.display = newShowFrets ? "inline-block" : "none";
-
         // show or hide the string elements
         for (var i = 1; i <= 3; i++) {
             document.getElementById(`tab-string-${i}`).style.display = newShowFrets ? "none" : "inline-block";
@@ -609,27 +686,52 @@ var TrackBar = (function() {
         setFretEnabled(fret, !fretEnabled[fret]);
     }
 
-    function setFretEnabled(fret, enabled) {
+    function setFretEnabled(fret, enabled, runUpdate=true) {
         // sanity check
-        if (fretEnabled[fret] == enabled) return;
+        if (fretEnabled[fret] == enabled) {
+            return;
+        }
+
+        if (fret > 0) {
+            // if it's fret 1-3, then disable the 0 fret
+            setFretEnabled(0, false, false);
+
+        } else {
+            // if it's fret 0, disable the other three frets
+            if (enabled) {
+                // disable the other three frets and track whether any of them were enabled before
+                var changed = false;
+                for (var f = 1; f < 4; f++) {
+                    changed |= setFretEnabled(f, false, false);
+                }
+                // if any were enabled before, then don't enable the 0 yet, it was just clearing the other frets.
+                // The user will have to click again to enable the 0.
+                if (changed) {
+                    enabled = false;
+                }
+            }
+        }
+
+        // save the state
+        var prevEnabled = fretEnabled[fret];
+        // set the new state
+        fretEnabled[fret] = enabled;
+
         // get the fret element
         var div = document.getElementById("tab-fret-" + fret);
         /// update the image source
         PageUtils.setImgSrc(div.children[0], "fret-" + (enabled ? "enabled-" : "") + fret + ".png");
         if (fret > 0) {
-            // if it's fret 1-3, then disable the 0 fret
-            setFretEnabled(0, false);
             // also switch the color of its control image
             div.children[1].className = enabled ? "tab-fret-button-enabled" : "tab-fret-button";
-        } else {
-            // if it's fret 0, disable the other three frets
-            for (var f = 1; f < 4; f++) {
-                setFretEnabled(f, false);
-            }
-            // no control image to update
         }
-        // save the state
-        fretEnabled[fret] = enabled;
+
+        // update the track, if this update doesn't already come from the track
+        if (runUpdate) {
+            Track.updateFrets(fretEnabled);
+        }
+        // return the previous state
+        return prevEnabled;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -753,7 +855,7 @@ var TrackBar = (function() {
             else if (aOn) setChordMode("a");
             else if (bOn) setChordMode("b");
             // no chord keys pressed
-            else setChordMode(null);
+            else setChordMode("none");
         };
         // for dual chord type, add a listener on the Ab below the starting C for chord mode A
         midiMap[MetadataUI.midiNoteC + midiNoteOffset - 4] = {
@@ -801,7 +903,7 @@ var TrackBar = (function() {
             // if at least one of the keys is pressed, set the chord mode
             if (downCountSingle > 0) setChordMode("ab");
             // otherwise, no chord mode
-            else setChordMode(null);
+            else setChordMode("none");
         };
         var box = {
             "action": function() {
@@ -834,7 +936,7 @@ var TrackBar = (function() {
             // if at least one key is pressed, set the chord mode
             if (downCountSlap > 0) setChordMode("slap");
             // otherwise, no chord mode
-            else setChordMode(null);
+            else setChordMode("none");
         };
         var box = {
             "action": function() {
@@ -870,11 +972,57 @@ var TrackBar = (function() {
         setTrackDirection(Settings.isTrackReversed());
     }
 
+    function getNearestScaleNoteName(noteIndex) {
+        // noteIndex can be fractional
+        // check for direct hit
+        var floorNoteIndex = Math.floor(noteIndex);
+        if (noteLookupArray[floorNoteIndex]) {
+            return noteLookupArray[floorNoteIndex];
+        }
+        // search for the next hit below
+        var lower = floorNoteIndex - 1;
+        while (lower > 0 && !noteLookupArray[lower]) {
+            lower -= 1;
+        }
+        // search for the next hit above
+        var upper = floorNoteIndex + 1;
+        while (upper < Metadata.noteOrder.length && !noteLookupArray[upper]) {
+            upper += 1;
+        }
+        // this shouldn't happen
+        if (!noteLookupArray[lower] && !noteLookupArray[upper]) {
+            throw "oopsie!";
+        }
+        // if there is no upper hit, use the lower one.
+        if (!noteLookupArray[upper]) {
+            return noteLookupArray[lower];
+        }
+        // if there is no lower hit, use the upper one.
+        if (!noteLookupArray[lower]) {
+            return noteLookupArray[upper];
+        }
+        // figure out which hit is closer
+        // take 1 off the lower distance to account for the width of the lower note
+        if ((noteIndex - lower - 1) <= (upper - noteIndex)) {
+            return noteLookupArray[lower];
+
+        } else {
+            return noteLookupArray[upper];
+        }
+        // that was a surprising amount of work
+    }
+
     return {
         registerEventListeners: registerEventListeners,  // ()
         updateControlScheme: updateControlScheme, // ()
         updateScale: updateScale,  // ()
         updateShawzin: updateScale,  // ()
+        setShowFrets: setShowFrets, // (showFrets)
         updateTrackDirection: updateTrackDirection, // ()
+        // noteIndex here can be fractional
+        getNearestScaleNoteName: getNearestScaleNoteName, // (noteIndex)
+        setChordModeForFretsTemporarily: setChordModeForFretsTemporarily, // (fret)
+        setFretsTemporarily: setFretsTemporarily, // (fret)
+        revertTemporarySettings: revertTemporarySettings, // ()
     };
 })();

@@ -1,2 +1,5 @@
 # shawzinscore
-Coming Soon(TM) and by "Soon(TM)" I mean maybe some time in the Fall
+Viewer, Player, and Editor for Warframe Shawzin song codes
+
+For more info, RTF Help section built into the page.
+https://buff0000n.github.io/shawzinscore/

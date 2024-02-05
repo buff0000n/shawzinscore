@@ -303,7 +303,7 @@ var Piano = (function() {
     // build the background image
     // Note: I don't know of a way to use a canvas directly as a CSS background-image.  These need to be generated and
     // saved as PNGs to be usable
-    function buildPianoRollCanvas(keySig, xScale, yScale, negative=false, padding=0) {
+    function buildPianoRollCanvas(keySig, xScale, yScale, negative=false, padding=0, tick=false) {
         // create a canvas
         var canvas = document.createElement("canvas");
         // set size explicitly with CSS, this is what allows us to make a high DPI canvas
@@ -407,6 +407,22 @@ var Piano = (function() {
             noteIndex = (noteIndex + 1) % noteConfOrder.length;
         }
 
+        if (tick) {
+            // add half a tick mark at each of the top and bottom of the image
+            context.strokeStyle = "#202020";
+            context.lineWidth = lineWidth * xScale / 4;
+
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.lineTo(canvas.width, 0);
+            context.stroke();
+
+            context.beginPath();
+            context.moveTo(0, canvas.height);
+            context.lineTo(canvas.width, canvas.height);
+            context.stroke();
+        }
+
         // that was fun
         return canvas;
     }
@@ -416,8 +432,12 @@ var Piano = (function() {
     // dividing lines, so we need to actually save them as PNGs
     function testPianoCanvas(keySig, xScale, yScale, colors = []) {
         var div = document.createElement("div");
-        var rollCanvas = buildPianoRollCanvas(keySig, xScale, 32, false, 106);
+        // normal image
+        var rollCanvas = buildPianoRollCanvas(keySig, xScale, 20, false, 106);
         div.append(rollCanvas);
+        // image with ticks
+        var rollCanvasTick = buildPianoRollCanvas(keySig, xScale, 20, false, 106, true);
+        div.append(rollCanvasTick);
         var rollCanvas2 = buildPianoRollCanvas(keySig, xScale, 2, true, 0);
         div.append(rollCanvas2);
 
@@ -447,6 +467,8 @@ var Piano = (function() {
         // download links
         div.append(ExportUtils.convertToPngLink(rollCanvas, "keys-bg-" + keySig));
         div.append(document.createElement("br"));
+        div.append(ExportUtils.convertToPngLink(rollCanvasTick, "keys-bg-" + keySig + "-ticks"));
+        div.append(document.createElement("br"));
         div.append(ExportUtils.convertToPngLink(rollCanvas2, "measure-marker-1-roll-" + keySig));
 
         return div;
@@ -461,6 +483,16 @@ var Piano = (function() {
     // get the piano roll offset for the given note
     function rollNoteOffset(keySig, noteName) {
         return noteConfs[keySig].keyXOffset + noteToRollOffsets[noteName];
+    }
+
+    function rollNoteIndexFromOffset(keySig, xOffset) {
+        return (xOffset - noteConfs[keySig].keyXOffset) / rollNoteWidth;
+    }
+
+    // get the note covering the given x offset
+    function rollNoteFromOffset(keySig, xOffset) {
+        var num = Math.floor(rollNoteIndexFromOffset(keySig, xOffset));
+        return (num >= 0 && num < Metadata.noteOrder.length) ? Metadata.noteOrder[num] : null;
     }
 
     // get the audio pitch offset in half-tones for the given key signature
@@ -482,6 +514,8 @@ var Piano = (function() {
         keySigOrder: keySigOrder,
         rollNoteWidth: rollNoteWidth,
         rollNoteOffset: rollNoteOffset, // (keySig, noteName)
+        rollNoteIndexFromOffset: rollNoteIndexFromOffset, // (keySig, xOffset)
+        rollNoteFromOffset: rollNoteFromOffset, // (keySig, xOffset)
         numNotes: numNotes,
         getPitchOffset: getPitchOffset, // (keySig)
     }

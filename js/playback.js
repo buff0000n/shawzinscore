@@ -20,6 +20,10 @@ var Playback = (function() {
 
     // track whether the stop button is enabled
     var stopEnabled = false;
+    // track whether the record button is enabled
+    var recordEnabled = false;
+    // track whether recording is in progress
+    var recording = false;
     // track whether the metronome button is enabled
     var metronomeEnabled = false;
     // track whether the metronome is on
@@ -33,8 +37,10 @@ var Playback = (function() {
 
     function registerEventListeners() {
         // set up button event listeners
+        document.getElementById("song-buttons-volume").addEventListener("click", volumeMenu, { passive: false });
+        document.getElementById("song-buttons-record").addEventListener("click", toggleRecording, { passive: false });
         document.getElementById("song-buttons-play").addEventListener("click", togglePlay, { passive: false });
-        document.getElementById("song-buttons-stop").addEventListener("click", () => { FullPlayer.stopPlaying(); }, { passive: false });
+        document.getElementById("song-buttons-stop").addEventListener("click", stopPlaying, { passive: false });
         document.getElementById("song-buttons-rewind").addEventListener("click", rewind, { passive: false });
         document.getElementById("song-buttons-ff").addEventListener("click", fastForward, { passive: false });
         document.getElementById("song-buttons-metro").addEventListener("click", toggleMetronome, { passive: false });
@@ -52,6 +58,14 @@ var Playback = (function() {
             }
             return true;
         });
+        Events.addKeyDownListener("KeyR", (e) => {
+            // just R with no other keys
+            if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+                toggleRecording();
+                return true;
+            }
+            return false;
+        });
 
         // initialize the metronome buttom state from settings
         setMetronomeOn(Settings.getMetronomeOn());
@@ -67,8 +81,12 @@ var Playback = (function() {
     }
 
     function togglePlay() {
+        // if we're recording, then do a full stop
+        if (recording) {
+            toggleRecording();
+
         // start if we're not playing
-        if (!FullPlayer.isPlaying()) {
+        } else if (!FullPlayer.isPlaying()) {
             FullPlayer.startPlaying();
 
         // pause if we are playing
@@ -78,6 +96,67 @@ var Playback = (function() {
 
         // stop button gets enabled in both cases
         setStopEnabled(true);
+    }
+
+    function stopPlaying() {
+        // if we're recording then stop recording
+        if (recording) {
+            toggleRecording();
+        // otherwise, do a full stop with the player
+        } else {
+            FullPlayer.stopPlaying();
+        }
+    }
+
+    // flag for keeping track of whether we turned the metronome on for recording.
+    var metronomeTempOn = false;
+
+    function toggleRecording() {
+        if (!recording) {
+            // start recording
+            // if we're already playing, stop
+            if (FullPlayer.isPlaying()) {
+                FullPlayer.stopPlaying();
+            }
+            // turn on the metronome if we have structure and it's not on already
+            if (metronomeEnabled && !metronomeOn) {
+                // turn on the metronome
+                setMetronomeOn(true);
+                // set a flag so we turn it off again after recording is finished
+                metronomeTempOn = true;
+
+            } else {
+                // disable the flag
+                metronomeTempEnabled = false;
+            }
+
+            // update UI button
+            setRecording();
+            // update the track editor
+            Track.setRecording(true);
+            // update the flag
+            recording = true;
+
+            // todo: add some lead-in?
+            // todo: turn on metronome?
+            // start playback
+            FullPlayer.startPlaying();
+
+        } else {
+            // stop recording
+            // fully stop playback
+            FullPlayer.stopPlaying();
+            // update UI button
+            setNotRecording();
+            // update the track editor
+            Track.setRecording(false);
+            // update the flag
+            recording = false;
+            // turn off the metronome if we turned it on for recording
+            if (metronomeTempOn) {
+                setMetronomeOn(false);
+            }
+        }
     }
 
     function setPlayEnabled() {
@@ -95,6 +174,9 @@ var Playback = (function() {
     }
 
     function setStopEnabled(enabled) {
+        if (enabled == stopEnabled) {
+            return;
+        }
         // enable or disable the stop button
         var div = document.getElementById("song-buttons-stop");
         var img = div.children[0];
@@ -102,6 +184,39 @@ var Playback = (function() {
         img.className = enabled ? "icon" : "icon-disabled";
         // save the state
         stopEnabled = enabled;
+    }
+
+    function setRecordEnabled(enabled) {
+        // check
+        if (enabled == recordEnabled) {
+            return;
+        }
+        // if we're disabling recording while recording is in progress then stop recording
+        if (!enabled && recording) {
+            toggleRecording();
+        }
+
+        // enable or disable the record button
+        var div = document.getElementById("song-buttons-record");
+        var img = div.children[0];
+        div.className = enabled ? "button tooltip" : "button-disabled tooltip";
+        img.className = enabled ? "icon" : "icon-disabled";
+        // save the state
+        recordEnabled = enabled;
+    }
+
+    function setRecording() {
+        // update the record button to be the in progress icon
+        var div = document.getElementById("song-buttons-record");
+        var img = div.children[0];
+        PageUtils.setImgSrc(img, "icon-recording.png");
+    }
+
+    function setNotRecording() {
+        // update the record button to be a start recording button
+        var div = document.getElementById("song-buttons-record");
+        var img = div.children[0];
+        PageUtils.setImgSrc(img, "icon-record.png");
     }
 
     function setMetronomeEnabled(enabled) {
@@ -169,8 +284,22 @@ var Playback = (function() {
         if (shawzin && scale) {
             // update the sound bank
             soundBank = ShawzinAudio.getSoundBank(shawzin, scale);
+            // make sure the volume is up to date
+            setVolume(Settings.getShawzinVolume());
+            // and the pitch
             updateKeySig();
         }
+    }
+
+    function setVolume(volume) {
+        // convert to percentage
+        soundBank.setVolume(volume/100);
+    }
+
+    function setMetronomeVolume(volume) {
+        // convert to percentage
+        // take the easy route and just grab the singleton metronome sound bank from the cache
+        ShawzinAudio.getMetronomeSoundBank().setVolume(volume/100);
     }
 
     function updateKeySig() {
@@ -250,6 +379,145 @@ var Playback = (function() {
         }
     }
 
+    function setupVolumeSlider(name, initialValue, setCallback, commitCallback) {
+        // todo: refactor this and the playback speed slider to some common base control?
+        // how granular the slider is
+        var granularity = 200;
+        // the maximum Value of the slider
+        var maxValue = 200;
+
+        // define a function for converting slider value to label value
+        function sliderToLabel(sliderValue) {
+            // no translation, we cna just set an int on the label
+            return sliderValue;
+        }
+
+        // function for converting label value to slider value
+        function labelToSlider(labelValue) {
+            // have to parse the string to an int
+            return parseInt(labelValue);
+        }
+
+        // get the two inputs
+        var rangeInput = document.getElementById("volume-" + name);
+        var labelInput = document.getElementById("volume-" + name + "-label-input");
+        // update function so we can reuse it
+        function updateUI(newVolume) {
+            labelInput.value = newVolume;
+        }
+
+        // change listener for the text box
+        labelInput.addEventListener("change", (e) => {
+            try {
+                // parse the value
+                var newValue = MiscUtils.parseInt(labelInput.value);
+                // okay, I guess we need some range checking
+                if (newValue > MetadataUI.maxVolume) {
+                    newValue = MetadataUI.maxVolume;
+                    labelInput.value = newValue;
+                }
+                if (newValue < MetadataUI.minVolume) {
+                    newValue = MetadataUI.minVolume;
+                    labelInput.value = newValue;
+                }
+                // update
+                setCallback(newValue);
+                // convert to slider value and update the slider
+                rangeInput.value = labelToSlider(newValue);
+                // blur the text box because why doesn't it do this by default
+                labelInput.blur();
+                // commit immediately
+                commitCallback(newValue);
+
+            } catch (error) {
+                // if any error occurs, most likely an invalid format, then just revert
+                console.log(error);
+                labelInput.value = sliderToLabel(document.getElementById("volume-" + name).value);
+            }
+
+        });
+        // initialize the UI with the preference value
+        updateUI(initialValue);
+
+        // generate a list of snap values in slider units
+        var snaps = [100];
+
+        // build the slider controller
+        slider = new Slider(
+            // elements
+            document.getElementById("volume-" + name + "-range-container"),
+            rangeInput,
+            // range
+            maxValue,
+            // getter
+            () => {
+                return labelToSlider(initialValue);
+            },
+            // setter
+            (value) => {
+                var newValue = sliderToLabel(value);
+                setCallback(newValue);
+                updateUI(newValue);
+            },
+            // commiter
+            (value) => {
+                commitCallback(sliderToLabel(value));
+            },
+            // snap list and distance
+            snaps, 15
+        );
+    }
+
+    function volumeMenu() {
+        // get the hidden dialog div from the document
+        var menuDiv = document.getElementById("volume-menu");
+
+        // remove it
+        menuDiv.remove();
+
+        // show the menu with a custom close callback
+        var close = Menus.showMenu(menuDiv, this, "Volume", false, () => {
+            // when the volume menu is closed, remove the the original container
+            menuDiv.remove();
+            // and add it back to the hidden area of the document
+            document.getElementById("hidden-things").appendChild(menuDiv);
+        });
+
+        // only initialize it once
+        if (!menuDiv.initialized) {
+            // can't initialize the slider UIs until they're actually displayed, which means yielding
+            // the event queue so it can get layed out.
+            setTimeout(() => {
+                setupVolumeSlider("shawzin",
+                    // initial value
+                    Settings.getShawzinVolume(),
+                    // value setter
+                    (value) => {
+                        //console.log("Shawzin Slider Volume: " + value);
+                        setVolume(value);
+                    },
+                    // value committer
+                    (value) => {
+                        Settings.setShawzinVolume(value);
+                    });
+                setupVolumeSlider("metronome",
+                    // initial value
+                    Settings.getMetronomeVolume(),
+                    // value setter
+                    (value) => {
+                        //console.log("Metronome Slider Volume: " + value);
+                        setMetronomeVolume(value);
+                    },
+                    // value committer
+                    (value) => {
+                        Settings.setMetronomeVolume(value);
+                    });
+                // set the flag
+                menuDiv.initialized = true;
+            }, 10);
+        }
+    }
+
     // metronome tracker
     class MetronomeTrack {
         constructor(startTick, toRealTime) {
@@ -258,6 +526,8 @@ var Playback = (function() {
             this.toRealTime = toRealTime;
             // get the sound bank, this is cached by ShawzinAudio
             this.soundBank = ShawzinAudio.getMetronomeSoundBank();
+            // initialize the volume
+            this.setVolume(Settings.getMetronomeVolume());
 
             this.init(startTick);
         }
@@ -276,6 +546,12 @@ var Playback = (function() {
             this.nextBeat = Math.ceil(startTick / this.ticksPerBeat);
             // and the time of the next beat
             this.nextBeatTick = this.nextBeat * this.ticksPerBeat;
+        }
+
+        setVolume(volume) {
+            //console.log("metronome track volume: " + volume);
+            // convert percent to fraction
+            this.soundBank.setVolume(volume / 100);
         }
 
         playbackLoop(songTick, songScheduleBufferTicks) {
@@ -477,7 +753,7 @@ var Playback = (function() {
             if (isPlaying()) return;
 
             if (settingsMetronomeOn) {
-                console.log("stop playing metronome");
+                //console.log("stop playing metronome");
                 MetronomePlayer.stopPlaying();
                 if (!metronomeOn) {
                     setMetronomeOn(true);
@@ -488,12 +764,16 @@ var Playback = (function() {
 
             // see if the track already has a playback marker placed somewhere
             playbackStartTick = Track.getPlaybackTick();
-            // otherwise, check for a playback start marker
+            // if the current playback marker is after the end of the song, ignore it
+            if (playbackStartTick > song.getEndTick()) {
+                playbackStartTick = null;
+            }
+            // if we don't have a current playback marker, check for a playback start marker
             if (playbackStartTick == null) {
                 playbackStartTick = Track.getPlaybackStartTick();
             }
-            // check if the track's marker is missing or after the end of the song
-            if (playbackStartTick == null || playbackStartTick > song.getEndTick()) {
+            // if we get this far still without a playback start, start at the beginning
+            if (playbackStartTick == null) {
                 // If playback speed is 1x or greater, start playback at the beginning, minus the playback lead-in
                 // (which is different from the song lead-in)
                 if (playbackSpeed >= 1) {
@@ -608,14 +888,15 @@ var Playback = (function() {
             var songTick = toSongTick(realTime);
             //console.log("SONG TICK: " + songTick);
 
-            // need to check at the beginning if we've exceeded the maximum song time
-            // this can happen if we set the playback speed to something ridiculously high
-            if (songTick > Metadata.maxTickLength) {
-                // stop playing
-                stopPlaying();
-                // end the loop
-                return;
-            }
+            // don't need to worry about this as long as we're allowing it to scroll past 4 minutes
+            //// need to check at the beginning if we've exceeded the maximum song time
+            //// this can happen if we set the playback speed to something ridiculously high
+            //if (songTick > Metadata.maxTickLength) {
+            //    // stop playing
+            //    stopPlaying();
+            //    // end the loop
+            //    return;
+            //}
 
             // update the track and playback marker positions
             updateTrack(songTick);
@@ -672,27 +953,20 @@ var Playback = (function() {
                     break;
                 }
 
-                // get the note names
-                var noteNames = nextScheduledNote.toNoteNames();
+                // get the note name
+                var noteName = nextScheduledNote.toNoteName();
                 // schedule the note to play
                 var noteTime = toRealTime(noteTick);
                 //console.log("SCHEDULED NOTE TIME: " + noteTime);
-                // worth having an optimized case for a single note name
-                if (noteNames.length == 1) {
-                    soundBank.play(noteNames[0], noteTime);
-                } else {
-                    // todo: polyphony check?
-                    for (var n = 0; n < noteNames.length; n++) {
-                        soundBank.play(noteNames[n], noteTime);
-                    }
-                }
+                soundBank.play(noteName, noteTime);
                 // go to the next note
                 nextScheduledNote = nextScheduledNote.next;
                 //console.log("NEXT SCHEDULED: " + (nextScheduledNote ? nextScheduledNote.tick : "null"));
             }
 
             // check if the current song tick is past the end of the song, and if all sounds have finished playing
-            if ((songTick > song.getEndTick()) && soundBank.isIdle(realTime)) {
+            // and if we're not currently recording
+            if ((songTick > song.getEndTick()) && soundBank.isIdle(realTime) && !recording) {
                 // stop playing at the end of the song
                 stopPlaying();
 
@@ -767,6 +1041,13 @@ var Playback = (function() {
             }
         }
 
+        function getCurrentSongTick() {
+            // get the current audio time, this is the most reliable time
+            var realTime = soundBank.getCurrentTime();
+            // convert real time to song tick
+            return toSongTick(realTime);
+        }
+
         return {
             setup: setup,
             isPlaying: isPlaying,
@@ -774,6 +1055,7 @@ var Playback = (function() {
             setPlaybackSpeed: setPlaybackSpeed,
             pausePlaying: pausePlaying,
             stopPlaying: stopPlaying,
+            getCurrentSongTick: getCurrentSongTick,
         };
     })();
 
@@ -879,16 +1161,26 @@ var Playback = (function() {
         return {
             startPlaying: startPlaying,
             stopPlaying: stopPlaying,
+            setVolume: setVolume,
         };
     })();
 
     function playNote(noteName) {
+        // do this foist
+        if (recording) {
+            // get the current time
+            var currentSongTick = FullPlayer.getCurrentSongTick()
+            // notify the track in case we're recording
+            Track.notePlayed(noteName, currentSongTick);
+        }
+
         // just play a note immediately, this is to support clicking on the roll keyboard
         // always need to do this inside an initialization check
         soundBank.checkInit(() => {
             // play immediately
             soundBank.play(noteName);
         });
+
     }
 
     return {
@@ -906,6 +1198,8 @@ var Playback = (function() {
         setSong: setSong, // (newSong)
         // play a single note immediately
         playNote: playNote, // (noteName)
+        // enable/disable record buttom
+        setRecordEnabled: setRecordEnabled, // (enabled)
 
         // notify when the song setting dialog is shown or hidden so it can manage the other metronome button
         showSettingsMetronome: showSettingsMetronome, // ()

@@ -118,7 +118,7 @@ var Audio = (function() {
             this.gain.connect(context.destination);
 
             // schedule the sound
-            //console.log("Playing at " + this.startTime + ": " + this.name);
+            //console.log("Playing at " + this.startTime + ": " + this.name + ", volume " + this.volume);
             this.source.start(this.startTime);
         }
 
@@ -339,7 +339,8 @@ var Audio = (function() {
     }
 
     class SoundBank {
-        constructor() {
+        constructor(name) {
+            this.name = name;
             // init flag
             this.initialized = false;
             // map of sound entries
@@ -349,7 +350,9 @@ var Audio = (function() {
             // one event queue for sounds that aren't in a mono group
             this.polySoundEventQueue = null;
 
-            // default volume
+            // base volume
+            this.baseVolume = 1.0;
+            // volume that can be changed by the user
             this.volume = 1.0;
             // default playback rate
             this.rate = 1.0;
@@ -446,13 +449,20 @@ var Audio = (function() {
             });
         }
 
+        setBaseVolume(newBaseVolume) {
+            // store the volume
+            this.baseVolume = newBaseVolume;
+        }
+
         setVolume(volume) {
             // store the volume
             this.volume = volume;
+            // calculate final volume for entries
+            var entryVolume = this.baseVolume * this.volume;
             // propagate to sound entries
             if (this.nameToSoundEntry) {
                 for (name in this.nameToSoundEntry) {
-                    this.nameToSoundEntry[name].setVolume(volume);
+                    this.nameToSoundEntry[name].setVolume(entryVolume);
                 }
             }
         }
@@ -1078,8 +1088,8 @@ var Audio = (function() {
     // public members
     return  {
         // create a new, blank sound back
-        createSoundBank: function() {
-            return new SoundBank()
+        createSoundBank: function(name) {
+            return new SoundBank(name)
         },
         // set the global time offset for scheduling sounds
         setTimeOffset: setTimeOffset // (offset=0)

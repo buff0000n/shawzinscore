@@ -58,7 +58,7 @@ class Slider {
                 width: ${snapTickWidth}px;
                 height: ${snapTickHeight}px;
             `;
-            this.container.appendChild(snapDiv);
+            this.container.prepend(snapDiv);
         }
 
         // initialize the starting value

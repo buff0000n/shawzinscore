@@ -252,7 +252,7 @@
         border-radius: 0.5ex;
         padding: 1ex;
         position: absolute;
-        z-index: 1;
+        z-index: 10;
         top: 1ex;
         left: calc(100% + 2ex);
         pointer-events: none;
@@ -283,7 +283,7 @@
         border-radius: 0.5ex;
         padding: 1ex;
         position: absolute;
-        z-index: 1;
+        z-index: 10;
         top: 120%;
         left: calc(50% - 15ex);
         margin-left: -2ex;
@@ -323,7 +323,7 @@
         border-radius: 0.5ex;
         padding: 1ex;
         position: absolute;
-        z-index: 1;
+        z-index: 10;
         top: 120%;
         left: -44ex;
         margin-left: -2ex;
