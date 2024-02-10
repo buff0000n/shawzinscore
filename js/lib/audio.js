@@ -16,10 +16,12 @@ var Audio = (function() {
     // some browsers don't support AudioContext.outputLatency, and by "some browsers" I mean Apple
     var audioContextHasLatency;
 
-    // get the context latency, if supported
-    function getLatency() {
-        // return no latency if it's not supported
-        return audioContextHasLatency ? context.outputLatency : 0;
+    // adjust the given time for latency, if supported
+    function timeWithLatency(time) {
+        // subtract latency, if supported
+        if (audioContextHasLatency) time -= context.outputLatency;
+        // bounds check
+        return time < 0 ? 0 : time;
     }
 
     function initAudioContext() {
@@ -130,12 +132,12 @@ var Audio = (function() {
             // schedule the sound
             //console.log("Playing at " + this.startTime + ": " + this.name + ", volume " + this.volume);
             // account for latency, if supported
-            this.source.start(this.startTime - getLatency());
+            this.source.start(timeWithLatency(this.startTime));
         }
 
         stopAt(time) {
             // account for latency, if supported
-            var outputTime = time - getLatency();
+            var outputTime = timeWithLatency(time);
             // schedule the stop
             // We can't just stop the sound instantly because there will be an audible pop
             // schedule the start of a fade
@@ -157,7 +159,7 @@ var Audio = (function() {
                 this.gain.gain.cancelScheduledValues(this.startTime);
                 // reset the stop time
                 this.endTime = this.startTime + this.duration;
-                this.source.stop(this.endTime - getLatency());
+                this.source.stop(timeWithLatency(this.endTime));
             }
         }
 
