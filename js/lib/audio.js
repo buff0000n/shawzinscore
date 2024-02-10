@@ -13,12 +13,22 @@ var Audio = (function() {
     var timeUlp = 0.01;
     // grace period for canceling sounds so we don't have some audibly cut off.
     var dropGracePeriod = 0.1;
+    // some browsers don't support AudioContext.outputLatency, and by "some browsers" I mean Apple
+    var audioContextHasLatency;
+
+    // get the context latency, if supported
+    function getLatency() {
+        // return no latency if it's not supported
+        return audioContextHasLatency ? context.outputLatency : 0;
+    }
 
     function initAudioContext() {
         // init the audio context if it's not initialized
         if (context == null) {
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             context = new AudioContext();
+            // determine whether outputLatency is supported
+            audioContextHasLatency = typeof context.outputLatency !== 'undefined';
             // if the time offset has already been set, reset it now that we have an audio context
             if (timeOffset != 0) {
                 setTimeOffset(timeOffset);
@@ -119,18 +129,21 @@ var Audio = (function() {
 
             // schedule the sound
             //console.log("Playing at " + this.startTime + ": " + this.name + ", volume " + this.volume);
-            this.source.start(this.startTime);
+            // account for latency, if supported
+            this.source.start(this.startTime - getLatency());
         }
 
         stopAt(time) {
+            // account for latency, if supported
+            var outputTime = time - getLatency();
             // schedule the stop
             // We can't just stop the sound instantly because there will be an audible pop
             // schedule the start of a fade
-            this.gain.gain.setValueAtTime(this.volume, time);
+            this.gain.gain.setValueAtTime(this.volume, outputTime);
             // schedule a very quick fade, down to 0.01 volume because it doesn't like 0.
-            this.gain.gain.exponentialRampToValueAtTime(0.01, time + this.monoFadeTime);
+            this.gain.gain.exponentialRampToValueAtTime(0.01, outputTime + this.monoFadeTime);
             // stop the source at the end of the fade
-            this.source.stop(time + this.monoFadeTime);
+            this.source.stop(outputTime + this.monoFadeTime);
             // update the event stop time
             // don't include the fade time, so it doesn't try to reset its end time to later and cause audio glitches
             this.endTime = time
@@ -144,7 +157,7 @@ var Audio = (function() {
                 this.gain.gain.cancelScheduledValues(this.startTime);
                 // reset the stop time
                 this.endTime = this.startTime + this.duration;
-                this.source.stop(this.endTime);
+                this.source.stop(this.endTime - getLatency());
             }
         }
 
