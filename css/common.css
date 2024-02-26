@@ -123,6 +123,9 @@
     }
 
     /* help section formatting */
+    #helpEmbed {
+        width: 100%;
+    }
     #lotsOfWordsContainer, .footerContainer {
         background-color: #202020;
         margin: 1ex;
