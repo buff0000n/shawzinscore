@@ -623,7 +623,7 @@ var TrackBar = (function() {
             // remove the header bar entirely
             songBarDiv.remove();
             // insert the header bar after the scroll area
-            DomUtils.insertAfter(songBarDiv, songScrollDiv);
+            DomUtils.insertAfter(songBarDiv, songScrollDiv.parentNode);
 
         // "normal" is when the note direction is top to bottom
         // this mirrows how I think of things when I'm editing music
@@ -641,7 +641,7 @@ var TrackBar = (function() {
             // remove the header bar entirely
             songBarDiv.remove();
             // insert the header bar before the scroll area
-            DomUtils.insertBefore(songBarDiv, songScrollDiv);
+            DomUtils.insertBefore(songBarDiv, songScrollDiv.parentNode);
         }
 
         // save the setting

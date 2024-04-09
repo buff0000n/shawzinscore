@@ -1,4 +1,6 @@
 // Lib handling the scrolling note tablature and piano roll section
+// also handles all note-level editing
+// todo: this should probably be like four separate files
 var Track = (function() {
 
     // main scroll container
@@ -1252,6 +1254,8 @@ var Track = (function() {
                     handleOutEvent(e2);
                 }
             }, { "passive": true});
+
+            Selection.registerEventListeners();
         }
 
         // toggle editing enabled
@@ -1299,6 +1303,15 @@ var Track = (function() {
             // update flags
             tabEnabled = newTabEnabled;
             rollEnabled = newRollEnabled;
+
+            if (tabEnabled) {
+                document.getElementById("edit-buttons").style.left = "inherit";
+                document.getElementById("edit-buttons").style.right = "55%";
+
+            } else if (rollEnabled) {
+                document.getElementById("edit-buttons").style.left = "53%";
+                document.getElementById("edit-buttons").style.right = "inherit";
+            }
 
             // rerun the last edit event to update the track UI
             rerunEditEvent();
@@ -2168,6 +2181,79 @@ var Track = (function() {
             // end the undo combo
             Undo.endUndoCombo("Bulk Edit");
         }
+
+        // OH GOD WE'RE NESTING THESE THINGS
+        var Selection = (function() {
+            var selectMode = false;
+            var measureMode = false;
+
+            function registerEventListeners() {
+                // Edit buttons
+                document.getElementById("button-select").addEventListener("click", toggleSelectMode, { passive: false });
+                Events.addKeyDownListener("ShiftLeft", toggleSelectModeOn);
+                Events.addKeyDownListener("ShiftRight", toggleSelectModeOn);
+                Events.addKeyUpListener("ShiftLeft", toggleSelectModeOff);
+                Events.addKeyUpListener("ShiftRight", toggleSelectModeOff);
+
+                document.getElementById("button-measure").addEventListener("click", toggleMeasureMode, { passive: false });
+
+                document.getElementById("button-copy").addEventListener("click", doCopy, { passive: false });
+                Events.addKeyDownListener("KeyC", doCopy, ctrlKey = true);
+
+                document.getElementById("button-cut").addEventListener("click", doCut, { passive: false });
+                Events.addKeyDownListener("KeyX", doCut, ctrlKey = true);
+
+                document.getElementById("button-paste").addEventListener("click", doPaste, { passive: false });
+                Events.addKeyDownListener("KeyV", doPaste, ctrlKey = true);
+
+                document.getElementById("button-delete").addEventListener("click", doDelete, { passive: false });
+                Events.addKeyDownListener("Delete", doDelete);
+            }
+
+            function toggleSelectMode(e, newSelectMode = !selectMode) {
+                if (newSelectMode == selectMode) return;
+                if (newSelectMode) {
+                    document.getElementById("button-select").children[0].className = "icon";
+                } else {
+                    document.getElementById("button-select").children[0].className = "icon-disabled";
+                }
+                selectMode = newSelectMode;
+            }
+
+            function toggleSelectModeOn(e) {
+                toggleSelectMode(e, true);
+            }
+
+            function toggleSelectModeOff(e) {
+                toggleSelectMode(e, false);
+            }
+
+            function toggleMeasureMode(e, newMeasureMode = !measureMode) {
+                if (newMeasureMode == measureMode) return;
+                if (newMeasureMode) {
+                    document.getElementById("button-measure").children[0].className = "icon";
+                } else {
+                    document.getElementById("button-measure").children[0].className = "icon-disabled";
+                }
+                measureMode = newMeasureMode;
+            }
+
+            function doCopy() {
+            }
+
+            function doCut() {
+            }
+
+            function doPaste() {
+            }
+
+            function doDelete() {
+            }
+
+            return {
+                registerEventListeners: registerEventListeners, // ()
+            }
+        })();
 
         return {
             registerEventListeners: registerEventListeners, // ()

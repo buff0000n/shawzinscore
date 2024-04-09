@@ -309,6 +309,18 @@ td.label {
     border-spacing: 0px;
 }
 
+#edit-buttons {
+    position: absolute;
+    top: 0.5ex;
+    left: 53%;
+    /*right: 55%;*/
+    /*transform: translate(0%, 0);*/
+    z-index: 100;
+}
+#song-scroll-container {
+    position: relative;
+}
+
 .tab-dot {
     position: absolute;
     z-index: 1;

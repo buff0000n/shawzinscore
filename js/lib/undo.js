@@ -45,18 +45,19 @@ var Undo = (function() {
         // If there's actions in the stack
         if (stack.length > 0) {
             // enable the button
-            button.className = "smallButton";
+            DomUtils.removeClass(button.children[0], "icon-disabled");
+            DomUtils.addClass(button.children[0], "icon");
             button.children[0].className = "icon";
             // set the alt-text to the description of the first action on the stack
-            button.children[0].title = prefix + " " + stack[stack.length - 1].toString();
+            button.children[1].innerHTML = prefix + " " + stack[stack.length - 1].toString();
 
         // if there action stack is empty
         } else {
             // disable the button
-            button.className = "smallButton-disabled";
-            button.children[0].className = "icon-disabled";
+            DomUtils.removeClass(button.children[0], "icon");
+            DomUtils.addClass(button.children[0], "icon-disabled");
             // reset the alt text
-            button.alt = prefix;
+            button.children[1].innerHTML = prefix;
         }
     }
     

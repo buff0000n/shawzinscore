@@ -40,9 +40,22 @@ var Events = (function() {
         window.visualViewport.addEventListener('resize', visualResize);
     }
 
+    function wrapListener(listener, shiftKey = false, altKey = false, ctrlKey = false) {
+        return (e) => {
+            if (e.shiftKey == shiftKey && e.altKey == altKey && e.ctrlKey == ctrlKey) {
+                return listener(e);
+            } else {
+                return false;
+            }
+        };
+    }
+
     // add a global listener for a specific key
     // The listener returns true if it did something
-    function addKeyDownListener(key, listener) {
+    function addKeyDownListener(key, listener, shiftKey = false, altKey = false, ctrlKey = false) {
+        if (shiftKey || altKey || ctrlKey) {
+            listener = wrapListener(listener, shiftKey, altKey, ctrlKey);
+        }
         // lazily create a listener list for this key
         if (!keyDownListeners[key]) {
             keyDownListeners[key] = [];

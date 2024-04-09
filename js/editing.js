@@ -38,7 +38,6 @@ var Editing = (function() {
 
         // the options in the tempo dropdown are built dynamically from metadata
         initTempoControl();
-
     }
 
     function toggleEditing() {
@@ -47,16 +46,17 @@ var Editing = (function() {
 
         var buttonImg = document.getElementById("edit-bar-img");
         var toolbar = document.getElementById("edit-toolbar");
-
+        var buttonbar = document.getElementById("edit-buttons");
 
         if (editing) {
             // change the icon
             PageUtils.setImgSrc(buttonImg, "icon-dropup.png");
             // display the editing controls
             toolbar.style.display = "block";
+            buttonbar.style.display = "block";
 
             // make sure the key signature item is displaying the current key signature
-            document.getElementById("select-keysig-text").innerHTML = getKeySigHTMLAndTooltip(Model.getKeySig())[0];
+            updateKeySig();
 
             // notify playback that the other metronome button is shown
             Playback.showSettingsMetronome();
@@ -66,6 +66,7 @@ var Editing = (function() {
             PageUtils.setImgSrc(buttonImg, "icon-dropdown.png");
             // hide the editing controls
             toolbar.style.display = "none";
+            buttonbar.style.display = "none";
 
             // notify playback that the other metronome button is gone
             Playback.hideSettingsMetronome();
@@ -76,6 +77,14 @@ var Editing = (function() {
 
         // set the track up for editing
         Track.setEditing(editing);
+    }
+
+    function updateKeySig() {
+        // we can get in here during startup without being fully initialized, we need both a shawzin and a scale
+        if (Model.getScale() && Model.getShawzin()) {
+            // make sure the key signature item is displaying the current key signature
+            document.getElementById("select-keysig-text").innerHTML = getKeySigHTMLAndTooltip(Model.getKeySig())[0];
+        }
     }
 
     function enableButtons() {
@@ -653,5 +662,7 @@ var Editing = (function() {
         updateSongStats: updateSongStats,
         // notify that something with the meter/tempo has changed
         updateStructure: updateStructure,
+        // notify that the selected shawzin has changed
+        updateShawzin: updateKeySig,
     };
 })();

@@ -174,10 +174,12 @@ var Model = (function() {
         var text = document.getElementById("select-shawzin-text");
         text.innerHTML = Metadata.shawzinList[shawzin].config.name;
 
-        // propagate the update to the track, trackbar, and the player
+        // propagate the update to the track, trackbar, the player, and the editor
+        // todo: I really need to make these some kind of event listeners
         Track.updateShawzin();
         TrackBar.updateShawzin();
         Playback.updateShawzin();
+        Editing.updateShawzin();
     }
 
     function getScale() {
