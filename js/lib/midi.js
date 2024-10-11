@@ -10,11 +10,15 @@ class MidiListener {
 // generic MIDI event library
 var Midi = (function() {
     // device map
-    var devices = new Map();
+    var devices = {};
     // listener list
     var midiListenerList = [];
+    // midi access object
+    var midiAccess = null;
 
     function init() {
+        // sanity check
+        if (midiAccess) return;
         try {
             // setting up MIDI access is pretty weird
             navigator.requestMIDIAccess()
@@ -33,21 +37,41 @@ var Midi = (function() {
                     access.inputs.forEach((input) => {
                         handleInput(input);
                     });
+                    // save so we can disable midi, also serves as the initialization flag
+                    midiAccess = access;
                 });
         } catch (error) {
-            //console.log(error);
+            console.log(error);
             // ignore, it's not the end of the world if MIDI support doesn't work
         }
     }
 
+    function disable() {
+        // sanity check
+        if (!midiAccess) return;
+
+        // clear the midi state listener
+        midiAccess.onstatechange = null;
+
+        // clear device listeners
+        for (var id in devices) {
+            devices[id].disconnect();
+        }
+
+        // clear the device handler map
+        devices = {};
+        // clear the main midi object
+        midiAccess = null;
+    }
+
     function handleInput(input) {
         // check if we have a handler for this device
-        if (!devices.has(input.id)) {
+        if (!devices.hasOwnProperty(input.id)) {
             // create a new handler and save in the map
-            devices.set(input.id, new MidiDevice(input));
+            devices[input.id] = new MidiDevice(input);
         }
         // run the state change handler
-        devices.get(input.id).onStateChange(input.state);
+        devices[input.id].onStateChange(input.state);
     }
 
     function addMidiListener(listener) {
@@ -109,16 +133,30 @@ var Midi = (function() {
 
         onStateChange(state) {
             // connected event
-            if ("connected" == state && !this.connected) {
+            if ("connected" == state) {
+                // connect to the device
+                this.connect();
+
+            // disconnected event
+            } else if ("disconnected" == state) {
+                // disconnect from the device
+                this.disconnect();
+            }
+        }
+
+        connect() {
+            if (!this.connected) {
                 // register our event listener
                 this.input.onmidimessage = (e) => this.onEvent(e);
                 // set state
                 this.connected = true;
                 // notify event listeners
                 deviceOn(this.name);
+            }
+        }
 
-            // disconnected event
-            } else if ("disconnected" == state && this.connected) {
+        disconnect() {
+            if (this.connected) {
                 // unregister the listener
                 this.input.onmidimessage = null;
                 // set state
@@ -181,8 +219,10 @@ var Midi = (function() {
 //    }
 
     return {
-        // init the MIDI event handlers
+        // enable and init the MIDI event handlers
         init: init,
+        // disable midi, clear event handlers
+        disable: disable,
         // add an event listener
         addMidiListener: addMidiListener,
     }

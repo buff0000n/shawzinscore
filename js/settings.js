@@ -14,6 +14,7 @@ var Settings = (function() {
     var metronomeOn = false;
     var shawzinVolume = 100;
     var metronomeVolume = 100;
+    var midiEnabled = false;
 
     function load() {
         // load the local storage item
@@ -50,6 +51,9 @@ var Settings = (function() {
             if (props.metronomeVolume != null) {
                 metronomeVolume = props.metronomeVolume;
             }
+            if (props.midiEnabled != null) {
+                midiEnabled = props.midiEnabled;
+            }
         }
     }
 
@@ -70,6 +74,7 @@ var Settings = (function() {
             "metronomeOn": metronomeOn,
             "shawzinVolume": shawzinVolume,
             "metronomeVolume": metronomeVolume,
+            "midiEnabled": midiEnabled,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -98,7 +103,7 @@ var Settings = (function() {
         // getter/setter for old fret layout
         getOldFretLayout: function() { return oldFretLayout; },
         setOldFretLayout: function(v) { if (v != oldFretLayout) { oldFretLayout = v; save(); } },
-        // getter/setter for old fret layout
+        // getter/setter for metronome enabled
         getMetronomeOn: function() { return metronomeOn; },
         setMetronomeOn: function(v) { if (v != metronomeOn) { metronomeOn = v; save(); } },
         // getter/setter for shawzin volume
@@ -107,5 +112,8 @@ var Settings = (function() {
         // getter/setter for metronome volume
         getMetronomeVolume: function() { return metronomeVolume; },
         setMetronomeVolume: function(v) { if (v != metronomeVolume) { metronomeVolume = v; save(); } },
+        // getter/setter for midi enabled
+        getMidiEnabled: function() { return midiEnabled; },
+        setMidiEnabled: function(v) { if (v != midiEnabled) { midiEnabled = v; save(); } },
     }
 })()
