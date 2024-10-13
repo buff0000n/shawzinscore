@@ -22,7 +22,9 @@ function initModel() {
         Playback.registerEventListeners();
         ControlSchemeUI.registerEventListeners();
         Editing.registerEventListeners();
-        Midi.init();
+        if (Settings.getMidiEnabled()) {
+            Midi.init();
+        }
 
         // initialize the model from the page URL
         Model.init();

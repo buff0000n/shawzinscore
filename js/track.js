@@ -422,8 +422,8 @@ var Track = (function() {
         var scrollTop = scroll.scrollTop;
         // build a new bar object, which is a 2-element array of the tablature and piano roll bars
         var bar = [
-            buildBar(false, "1-tab", "2-tab"),
-            buildBar(false, "1-roll-" + Model.getKeySig(), "2-roll")
+            buildBar(false, "1-tab", "2-tab", null, null),
+            buildBar(false, "1-roll-" + Model.getKeySig(), "2-roll", null, index=(bars.length + 1))
         ];
 
         if (reversed) {
@@ -520,8 +520,8 @@ var Track = (function() {
     function buildStartBar() {
         // build the 2-element tablature and piano roll bar
         startBar = [
-            buildBar(true, "1-tab", "2-tab", tickOffset),
-            buildBar(true, "1-roll-" + Model.getKeySig(), "2-roll", tickOffset)
+            buildBar(true, "1-tab", "2-tab", ticks=tickOffset, null),
+            buildBar(true, "1-roll-" + Model.getKeySig(), "2-roll", ticks=tickOffset, null)
         ];
         // setup the bar properties
         startBar[0].startTick = -tickOffset;
@@ -545,7 +545,7 @@ var Track = (function() {
     }
 
     // build either a tablature or piano roll bar
-    function buildBar(first, pngSuffix1, pngSuffix2, ticks = null) {
+    function buildBar(first, pngSuffix1, pngSuffix2, ticks = null, index = null) {
         // bar div
         var div = document.createElement("div");
         div.className = "measure-spacer";
@@ -583,6 +583,17 @@ var Track = (function() {
                 div.appendChild(buildMarker("track/measure-marker-" + pngSuffix2 + ".png", b * ticksPerBeat * tickSpacing));
             }
             // todo: even more minor tick delimiters if the zoom is big enough?
+
+            // add a measure number, if given
+            if (index) {
+                // create element and set style
+                var indexElement = document.createElement("div");
+                indexElement.className = reversed ? "measure-index-reversed" : "measure-index";
+                // set the contents to the measure number
+                indexElement.innerHTML = index;
+                // add to bar
+                div.appendChild(indexElement);
+            }
 
             // save the bar tick capacity to the container for some reason
             div.ticks = getBarTicks(); // should be the same as ticksPerBeat * beats;

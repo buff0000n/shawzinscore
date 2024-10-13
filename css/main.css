@@ -455,6 +455,21 @@ img.showcase:hover {
     z-index: 0;
 }
 
+.measure-index, .measure-index-reversed {
+    position: absolute;
+    pointer-events: none;
+    font-weight: bold;
+    font-size: 200%;
+    color: #A0A0A0;
+    right: 0.5ex;
+}
+.measure-index {
+    top: 0.5ex;
+}
+.measure-index-reversed {
+    bottom: 0.5ex;
+}
+
 .playback-marker {
     z-index: 10;
     pointer-events: none;

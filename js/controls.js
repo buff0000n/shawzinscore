@@ -53,14 +53,19 @@ var Controls = (function() {
         document.getElementById("toolbar-buttons-settings").addEventListener("click", doSettingsMenu, { passive: false });
         // individual controls in the settings menu
         // these are hidden by default, so we can just keep then up-to-date all the time like everything else
+        // reverse track control
         Events.setupCheckbox(document.getElementById("config-trackreversed-input"), true);
         document.getElementById("config-trackreversed-input").addEventListener("change", commitTrackReversedChange, { passive: false });
-        //
+        // Old fret layout control
         Events.setupCheckbox(document.getElementById("config-oldfretlayout-input"), true);
         document.getElementById("config-oldfretlayout-input").addEventListener("change", commitOldFretLayoutChange, { passive: false });
+        // MIDI enabled
+        Events.setupCheckbox(document.getElementById("config-midienabled-input"), true);
+        document.getElementById("config-midienabled-input").addEventListener("change", commitMidiEnabled, { passive: false });
         // initialize these from local storage. they are preferences and not part of the song model
         document.getElementById("config-trackreversed-input").checked = !Settings.isTrackReversed();
         document.getElementById("config-oldfretlayout-input").checked = Settings.getOldFretLayout();
+        document.getElementById("config-midienabled-input").checked = Settings.getMidiEnabled();
 
         // event handlers for the copy URL button
         document.getElementById("toolbar-buttons-copyurl").addEventListener("click", doCopyUrlMenu, { passive: false });
@@ -291,6 +296,22 @@ var Controls = (function() {
         Settings.setOldFretLayout(value);
         // update Track
         Track.updateSettings();
+    }
+
+    function commitMidiEnabled() {
+        // get the textbox
+        var input = document.getElementById("config-midienabled-input");
+        // get its value, just a boolean
+        var value = input.checked;
+
+        // save to preferences
+        Settings.setMidiEnabled(value);
+        // update MIDI state
+        if (value) {
+            Midi.init();
+        } else {
+            Midi.disable();
+        }
     }
 
     function doCopyUrlMenu() {

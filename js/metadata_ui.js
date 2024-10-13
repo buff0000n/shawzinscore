@@ -245,6 +245,7 @@ var MetadataUI = (function() {
         96,
         120,
         160,
+        192,
         240,
     ];
 
