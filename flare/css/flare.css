@@ -1,0 +1,81 @@
+
+.chat_name {
+    font-weight: bold;
+}
+
+.chat_name_Drifter {
+    color: #FF8080;
+}
+
+.chat_name_Liminus_Star {
+    color: #8080FF;
+}
+
+div.chat_day {
+    background: #404040;
+    border-radius: 1ex;
+    padding: 1ex;
+    margin: 1ex 0ex;
+}
+
+table.chat_day_header {
+    cursor: pointer;
+}
+
+tr.chat_day_header_row {}
+
+td.chat_day_label {
+    color: #c0c0c0;
+    font-weight: bold;
+    margin: 1ex 0ex;
+    width: 100%;
+}
+
+td.chat_day_arrow {}
+
+div.chat_day_table_div {
+    background: #202020;
+    border-radius: 1ex;
+    padding: 0ex 1ex;
+    margin: 0ex 0ex;
+}
+
+table.chat_day_table {
+    border-spacing: 0.5ex 1ex;
+}
+
+tr.chat_item, tr.chat_item_first {}
+
+td.chat_icon {}
+
+img.chat_icon_img {}
+
+td.chat_text {
+    vertical-align: top;
+}
+
+td.chat_text div {
+    margin: 0.25ex;
+    padding: 0;
+}
+
+p.chat_gold {
+    color: #c0b070;
+}
+
+td.chat_text p {
+    margin: 0.25ex;
+    padding: 0;
+}
+
+td.chat_dots_text {
+    text-align: center;
+}
+
+span.dotsButton {
+    background-color: #303030;
+    border-radius: 0.5ex;
+    margin: 0ex 1ex;
+    padding: 0ex 1ex;
+    cursor: pointer;
+}

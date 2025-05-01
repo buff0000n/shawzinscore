@@ -67,7 +67,7 @@ var Playback = (function() {
             return false;
         });
 
-        // initialize the metronome buttom state from settings
+        // initialize the metronome button state from settings
         setMetronomeOn(Settings.getMetronomeOn());
 
         FullPlayer.setup();

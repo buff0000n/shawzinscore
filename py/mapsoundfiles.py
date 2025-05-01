@@ -1,5 +1,5 @@
 # hell no I didn't sit down and record 1379 individual shawzin sounds
-# I downloaded the .wavs from kasumata and built this script to convert/reorganize them
+# I downloaded the .wavs from kasumata.ee and built this script to convert/reorganize them
 
 import os
 from pathlib import Path
@@ -68,7 +68,8 @@ shawzinNameMap = {
     "ZarimanVoidShawzin": "void",
     "ZarimanShawzin": "kira",
     "DuviriErsatzShawzin": "lonesome",
-    "DuviriShawzin": "courtly"
+    "DuviriShawzin": "courtly",
+    "LizzieShawzin": "lizzie"
 }
 
 shawzinScaleNameMap = {

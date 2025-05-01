@@ -15,6 +15,8 @@ var Settings = (function() {
     var shawzinVolume = 100;
     var metronomeVolume = 100;
     var midiEnabled = false;
+    var flareSpoilerLevel = 1;
+    var flareDay = 0;
 
     function load() {
         // load the local storage item
@@ -54,6 +56,12 @@ var Settings = (function() {
             if (props.midiEnabled != null) {
                 midiEnabled = props.midiEnabled;
             }
+            if (props.flareSpoilerLevel != null) {
+                flareSpoilerLevel = props.flareSpoilerLevel;
+            }
+            if (props.flareDay != null) {
+                flareDay = props.flareDay;
+            }
         }
     }
 
@@ -75,6 +83,8 @@ var Settings = (function() {
             "shawzinVolume": shawzinVolume,
             "metronomeVolume": metronomeVolume,
             "midiEnabled": midiEnabled,
+            "flareSpoilerLevel": flareSpoilerLevel,
+            "flareDay": flareDay,
         }
         // format as JSON and save to local storage
         window.localStorage.setItem(key, JSON.stringify(props));
@@ -115,5 +125,11 @@ var Settings = (function() {
         // getter/setter for midi enabled
         getMidiEnabled: function() { return midiEnabled; },
         setMidiEnabled: function(v) { if (v != midiEnabled) { midiEnabled = v; save(); } },
+        // getter/setter for flare spoiler level
+        getFlareSpoilerLevel: function() { return flareSpoilerLevel; },
+        setFlareSpoilerLevel: function(v) { if (v != flareSpoilerLevel) { flareSpoilerLevel = v; save(); } },
+        // getter/setter for flare open day
+        getFlareDay: function() { return flareDay; },
+        setFlareDay: function(v) { if (v != flareDay) { flareDay = v; save(); } },
     }
 })()
