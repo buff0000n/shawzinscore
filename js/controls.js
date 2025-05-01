@@ -132,7 +132,9 @@ var Controls = (function() {
 
             var tr = document.createElement("div");
             // display it differently if it's the currently selected item
-            tr.className = name == currentShawzin ? "selection-item-selected" : "selection-item";
+            tr.className = name == currentShawzin ? "selection-item-selected" :
+                sm.config.spoiler ? "selection-item spoiler" :
+                "selection-item";
 
             tr.innerHTML = `
                 <div class="tooltip">

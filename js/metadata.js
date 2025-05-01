@@ -70,7 +70,7 @@ var Metadata = (function() {
     // the UI gives you about a 2.75 second lead-in before the song starts
     var leadInTicks = Math.ceil(2.75 * ticksPerSecond);
 
-    var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void", "lonesome", "courtly" ];
+    var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void", "lonesome", "courtly", "lizzie" ];
     var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
     var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
     var scaleChordOrder = [ "12-1", "12-2", "12-3", "23-1", "23-2", "23-3", "13-1", "13-2", "13-3", "123-1", "123-2", "123-3" ];
@@ -116,6 +116,7 @@ var Metadata = (function() {
             "type": polyTypePolyphonic,
             "clef": "treble",
             "tuningCents": 0,
+            "spoiler": false,
         },
         "notes": {
             // todo: individual lengths of each note?  The answer is no
@@ -2134,6 +2135,166 @@ var Metadata = (function() {
         }
     });
 
+    var lizzieShawzin = ObjectUtils.merge(standardShawzin, {
+        "config": {
+            "name": "Lizzie",
+            "comment": "Sentient guitar",
+            "type": polyTypeMonophonic,
+            "spoiler": true,
+        },
+        "notes": {
+            "length": 28,
+            "alts": false,
+            "monoFadeTime": 0.5
+        },
+        "scales": {
+            "pmin": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "pmaj": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "chrom": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "hex": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "maj": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "min": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "hira": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "phry": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            },
+            "yo": {
+                "chords": {
+                    "12-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "12-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "23-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "13-3": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-1": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-2": { "length": 24, "monoFadeTime": 0.5 },
+                    "123-3": { "length": 24, "monoFadeTime": 0.5 }
+                }
+            }
+        }
+    });
+
     // public members
     return  {
         // shawzin metadata
@@ -2161,6 +2322,7 @@ var Metadata = (function() {
             "void": voidShawzin,
             "lonesome": lonesomeShawzin,
             "courtly": courtlyShawzin,
+            "lizzie": lizzieShawzin,
         },
         // more general song format metadata
         ticksPerSecond: ticksPerSecond,

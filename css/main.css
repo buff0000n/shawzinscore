@@ -26,6 +26,10 @@ td {
     width: 100%;
 }
 
+.listTable {
+    border-spacing: 0em 1em;
+}
+
 .listTable td {
     vertical-align: top;
 }
@@ -549,3 +553,13 @@ img.showcase:hover {
 .fret23 { color: #20BA9F; }
 .fret13 { color: #7B609F; }
 .fret123 { color: #E27119; }
+
+.spoiler {
+    cursor: help;
+    filter: blur(8px);
+}
+
+.spoiler:hover, .spoiler:focus {
+    filter: blur(0);
+    transition: filter 0.25s linear 0.25s;
+}
