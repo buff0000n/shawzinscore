@@ -139,7 +139,8 @@ var Model = (function() {
         var songCode = doUpdateSongCode();
         // build an ordered parameter map, putting the song code last
         return {
-            "n": PageUtils.urlEncodeString(songName),
+            // this will get url-encoded elsewhere
+            "n": songName, // PageUtils.urlEncodeString(songName),
             "s": shawzin,
             "m": meter,
             "t": tempo,
