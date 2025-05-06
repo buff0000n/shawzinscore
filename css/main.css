@@ -105,7 +105,7 @@ td.label {
 .selection-item:hover > *, .selection-item-selected:hover > * {
     color: #FFFFFF;
 }
-.field-entry, .field-entry-span, .field-button, .field-button-light, .field-entry-dark {
+.field-entry, .field-entry-span, .field-entry-span-light, .field-button, .field-button-light, .field-entry-dark {
     padding: 0.5ex;
     margin: 0.5ex;
     border-radius: 1ex;
@@ -117,6 +117,23 @@ td.label {
 
 .field-entry:is(.disabled), .field-entry-span:is(.disabled) {
     background-color: #202020;
+}
+
+.field-entry-light:not(.disabled), .field-entry-span-light:not(.disabled) {
+    background-color: #606060;
+}
+
+.field-entry-light:is(.disabled), .field-entry-span-light:is(.disabled) {
+    background-color: #404040;
+}
+
+/* Why do I have to be so specific with these two? */
+.field-entry-light:not(.disabled) .fieldTitle, .field-entry-span-light:not(.disabled) .fieldTitle {
+    color: #D0D0D0;
+}
+
+.field-entry-light:is(.disabled) .fieldTitle, .field-entry-span-light:is(.disabled) .fieldTitle {
+    color: #B0B0B0;
 }
 
 .field-button:not(.disabled) {
@@ -152,7 +169,7 @@ td.label {
     filter: brightness(50%) saturate(0%);
 }
 
-.field-entry-span {
+.field-entry-span, .field-entry-span-light {
     display: inline-block;
 }
 
@@ -311,6 +328,25 @@ td.label {
     padding: 0ex;
     border-width: 0ex;
     border-spacing: 0px;
+}
+
+#edit-buttons {
+    position: absolute;
+    top: 0.5ex;
+    left: 53%;
+    /*right: 55%;*/
+    /*transform: translate(0%, 0);*/
+    z-index: 100;
+}
+#tab-duviri-mode {
+    position: absolute;
+    top: 0.5ex;
+    left: 25%;
+    transform: translate(-50%, 0);
+    z-index: 100;
+}
+#song-scroll-container {
+    position: relative;
 }
 
 .tab-dot {

@@ -62,10 +62,14 @@ var Controls = (function() {
         // MIDI enabled
         Events.setupCheckbox(document.getElementById("config-midienabled-input"), true);
         document.getElementById("config-midienabled-input").addEventListener("change", commitMidiEnabled, { passive: false });
+        // Duviri Mode editing enabled
+        Events.setupCheckbox(document.getElementById("config-duvirimodeeditingenabled-input"), true);
+        document.getElementById("config-duvirimodeeditingenabled-input").addEventListener("change", commitDuviriModeEditingEnabled, { passive: false });
         // initialize these from local storage. they are preferences and not part of the song model
         document.getElementById("config-trackreversed-input").checked = !Settings.isTrackReversed();
         document.getElementById("config-oldfretlayout-input").checked = Settings.getOldFretLayout();
         document.getElementById("config-midienabled-input").checked = Settings.getMidiEnabled();
+        document.getElementById("config-duvirimodeeditingenabled-input").checked = Settings.getDuviriModeEditingEnabled();
 
         // event handlers for the copy URL button
         document.getElementById("toolbar-buttons-copyurl").addEventListener("click", doCopyUrlMenu, { passive: false });
@@ -277,7 +281,7 @@ var Controls = (function() {
     }
 
     function commitTrackReversedChange() {
-        // get the textbox
+        // get the checkbox
         var input = document.getElementById("config-trackreversed-input");
         // get its value, just a boolean
         var value = !input.checked;
@@ -289,7 +293,7 @@ var Controls = (function() {
     }
 
     function commitOldFretLayoutChange() {
-        // get the textbox
+        // get the checkbox
         var input = document.getElementById("config-oldfretlayout-input");
         // get its value, just a boolean
         var value = input.checked;
@@ -301,7 +305,7 @@ var Controls = (function() {
     }
 
     function commitMidiEnabled() {
-        // get the textbox
+        // get the checkbox
         var input = document.getElementById("config-midienabled-input");
         // get its value, just a boolean
         var value = input.checked;
@@ -314,6 +318,18 @@ var Controls = (function() {
         } else {
             Midi.disable();
         }
+    }
+
+    function commitDuviriModeEditingEnabled() {
+        // get the checkbox
+        var input = document.getElementById("config-duvirimodeeditingenabled-input");
+        // get its value, just a boolean
+        var value = input.checked;
+
+        // save to preferences
+        Settings.setDuviriModeEditingEnabled(value);
+
+        // nothing else to update
     }
 
     function doCopyUrlMenu() {

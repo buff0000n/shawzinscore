@@ -57,6 +57,12 @@ var Track = (function() {
 
     // copy of the setting
     var oldFretLayout = null;
+    
+    // whether Duviri mode is available to be enabled or disabled
+    var duviriModeShown = false;
+    // whether Duviri mode is enabled
+    // todo: make this a persistent setting?
+    var duviriModeOn = false;
 
     // opacity for notes that are being dragged
     var tempNoteOpacity = "50%";
@@ -98,6 +104,10 @@ var Track = (function() {
 
         // initialize here
         oldFretLayout = Settings.getOldFretLayout();
+        
+        // duviri mode
+        Events.setupCheckbox(document.getElementById("config-tab-duvirimode-input"), true);
+        document.getElementById("config-tab-duvirimode-input").addEventListener("change", commitDuviriModeChange, { passive: false });
     }
 
     // lazily build a view object tied to the given note object
@@ -123,6 +133,7 @@ var Track = (function() {
         song = newSong;
         // check to make sure there is a new song
         if (song) {
+            updateDuviriModeShown();
             // build the start bar
             ensureTickCapacity(0);
             // build a view for each note
@@ -760,7 +771,7 @@ var Track = (function() {
         buildTabNote(playing=false) {
             // we need the control scheme
             var controlScheme = Model.getControlScheme();
-            var string = this.note.string;
+            var string = isDuviriModeOn() ? this.note.altString : this.note.string;
 
             // container div, absolutely positioned
             var div = document.createElement("div");
@@ -797,12 +808,14 @@ var Track = (function() {
                 this.dot = dot;
             }
 
+            // respect Duviri mode
+            var noteFret = isDuviriModeOn() ? this.note.altFret : this.note.fret;
             // if there are no frets then the central dot is all that's displayed, unless oldFretLayout is enabled
-            if (this.note.fret != "0" || oldFretLayout) {
+            if (noteFret != "0" || oldFretLayout) {
                 // css classes for the three dots, we need to center them differently
                 // also depends on fret style
                 var classes = oldFretLayout ? ["centerImg", "centerImg", "centerImg"] : ["leftImg", "bottomImg", "rightImg"];
-                // offsets, depending on fret stylt
+                // offsets, depending on fret style
                 var fretOffsets = oldFretLayout ? MetadataUI.tabFretOffsets_Old : MetadataUI.tabFretOffsets;
                 // iterate over the three possible frets
                 for (var i = 1; i <= 3; i++) {
@@ -811,7 +824,7 @@ var Track = (function() {
                     // fret image element
                     var fretImg;
                     // check if the fret spec contains the fret
-                    if (this.note.fret.indexOf(fretKey) >= 0) {
+                    if (noteFret.indexOf(fretKey) >= 0) {
                         // build the fret image and alt based on the control scheme
                         fretImg = PageUtils.makeImage(controlScheme.frets[fretKey].imgBase + "_s.png", classes[i - 1]);
                         fretImg.alt = controlScheme.frets[fretKey].altText;
@@ -1001,7 +1014,7 @@ var Track = (function() {
             var scaleMd = shawzinMd.scales[Model.getScale()];
             // get the scale note name
             var noteName = this.note.toNoteName();
-            // get the corresponding color for the note's frets
+            // get the corresponding color for the note's frets, ignore Duviri mode
             var color = MetadataUI.fretToRollColors[this.note.fret];
             // length of the note will be filled in later
             var noteLength = null;
@@ -1316,10 +1329,24 @@ var Track = (function() {
         }
 
         function updateFrets(newFretsEnabled) {
-            // enable/disable frets
-            fretsEnabled = newFretsEnabled;
-            // update fret-related state
-            editingUpdated();
+            // sanity check
+            if (!ObjectUtils.listEquals(fretsEnabled, newFretsEnabled)) {
+                // enable/disable frets
+                fretsEnabled = newFretsEnabled;
+                // update fret-related state
+                editingUpdated();
+            }
+        }
+
+        function convertFretsEnabledToFretString(fe = fretsEnabled) {
+            // null check
+            if (!fe) return "";
+            // convert the currently enabled frets in the editor bar to a fret string
+            var fretsEnabledString = "";
+            for (var i = 0; i < fe.length; i++) {
+                if (fe[i]) fretsEnabledString += i;
+            }
+            return fretsEnabledString;
         }
 
         // rerun the last edit event to update the track UI
@@ -1440,7 +1467,7 @@ var Track = (function() {
 
         // get the tick and note name positions of the edit event
         function updateEditTickNoteName() {
-            // get the tick postion of the event
+            // get the tick position of the event
             // there are issues with detecting when we leave the boundary through coordinates alone, so
             // short-circuit if we know it's an out event.
             editTick = editEvent.clientY == null ? null : getTickForEvent(editEvent);
@@ -1450,6 +1477,10 @@ var Track = (function() {
             }
             // if there's a tick for the event then get the note name for the event
             editNoteName = (editTick != null) ? getNoteNameForEvent(editEvent) : null;
+            console.log("updateEditTickNoteName: " + editNoteName);
+            if (editNoteName == "13-1") {
+                debugger;
+            }
             // todo: originalNoteOffsetNote
 
             // completely outside the track element
@@ -1513,12 +1544,25 @@ var Track = (function() {
             return (tabEnabled ^ inverse) ? sideTab : sideRoll;
         }
 
+        function buildNewEditNote(newEditNoteName, newEditTick) {
+            console.log("buildNewEditNote: " + editNoteName + " @ " + newEditTick);
+            if (originalNote && originalNote.hasAlt()) {
+                if (getCurrentEditSide() == sideTab && isDuviriModeOn()) {
+                    return new Note(originalNote.toNoteName(), newEditTick, newEditNoteName);
+                } else {
+                    return new Note(newEditNoteName, newEditTick, originalNote.toAltNoteName());
+                }
+            } else {
+                return new Note(newEditNoteName, newEditTick);
+            }
+        }
+
         // build a new cursor edit note
         function setTempEditNote() {
             // clear any previous edit note
             clearEditNote();
-            // buld a new note
-            editNote = new Note(editNoteName, editTick);
+            // build a new note
+            editNote = buildNewEditNote(editNoteName, editTick);
             // it's new
             editNoteNew = true;
             // save the side
@@ -1552,10 +1596,11 @@ var Track = (function() {
 
         // set the current note to a dragging note
         function setDragEditNote() {
+            console.log("setDragEditNote: " + editNoteName);
             // clear any previous edit note
             clearEditNote();
-            // create a new note
-            editNote = new Note(editNoteName, editTick);
+            // build a new note
+            editNote = buildNewEditNote(editNoteName, editTick);
             // it's a new note
             editNoteNew = true;
             // save the side
@@ -1576,7 +1621,7 @@ var Track = (function() {
                     // if it's a new note then remove the view
                     editNote.view.clear();
                 } else {
-                    // otherwise it's an exsiting note, so unset the hover style
+                    // otherwise it's an existing note, so unset the hover style
                     editNote.view.setHover(false);
                 }
             }
@@ -1596,6 +1641,15 @@ var Track = (function() {
             originalNoteHasMoved = false;
         }
 
+        function clearOriginalNote() {
+            // reset references and flags
+            originalNote = null;
+            originalNoteNew = null;
+            originalNoteSide = null;
+            originalNoteOffsetTick = null;
+            originalNoteHasMoved = false;
+        }
+
         // determine if two notes are equal
         function notesEqual(n1, n2) {
             // Note.equals() just compares the note name
@@ -1604,7 +1658,16 @@ var Track = (function() {
 
         // determine if a note is equal to the current edit cursor position
         function noteEqualToCurrentPosition(n) {
-            return n != null && editTick == n.tick && editNoteName == n.toNoteName();
+            if (n == null || editTick != n.tick) return false;
+            return noteEqualToCurrent(n);
+        }
+
+        function noteEqualToCurrent(n) {
+            if (getCurrentEditSide() == sideTab && isDuviriModeOn() && n.hasAlt()) {
+                return editNoteName == n.toAltNoteName();
+            } else {
+                return editNoteName == n.toNoteName();
+            }
         }
 
         // ugh, after all that we still need a stopgap to prevent infinite loops
@@ -1627,7 +1690,7 @@ var Track = (function() {
                 var isButtonDown = isUpEvent ? false : isDownEvent ? true : e.buttons == 1;
 
                 // hax: signify that this event takes place outside the track area
-                // we cna do this because it's a our own event wrapper object
+                // we can do this because it's a our own event wrapper object
                 if (isOutEvent) {
                     editEvent.clientY = null;
                 }
@@ -1719,6 +1782,7 @@ var Track = (function() {
                 }
 
                 if (isDragging && isInsideActive) {
+            console.log("setDragEditNote: " + editNoteName);
                     // Case: dragging and in the active side of the editor
                     // Action: handle drag movement
 
@@ -1726,8 +1790,13 @@ var Track = (function() {
                     if (!noteEqualToCurrentPosition(editNote)) {
                         // if there was no previous edit note, or the current position has moved
                         // to a different note name, then play audio for the new note name
-                        if (editNote == null || editNoteName != editNote.toNoteName()) {
-                            Playback.playNote(editNoteName);
+                        if (editNote == null || !noteEqualToCurrent(editNote)) {
+                            if (getCurrentEditSide() == sideTab && isDuviriModeOn() && editNote.hasAlt()) {
+                                playNoteName = editNote.toNoteName();
+                            } else {
+                                playNoteName = editNoteName;
+                            }
+                            Playback.playNote(playNoteName);
                         }
                         // build or rebuild a drag note under the cursor
                         setDragEditNote();
@@ -1754,20 +1823,20 @@ var Track = (function() {
 
                             // cancel undo combo, this will also add the original note back
                             cancelAction();
+                            // reset any trackbar mode changes
+                            revertTrackBarMode();
                             // check if there's any movement away from the original
                             if (!originalNoteHasMoved) {
                                 // note menu
                                 noteMenu(editEvent, originalNote);
                             }
-                            // reset any trackbar mode changes
-                            revertTrackBarMode();
 
                         } else {
                             // Case: Drag operation finished at a new location
                             // Action: add a new note
 
                             // create new note from editNote
-                            var newNote = new Note(editNote.toNoteName(), editNote.tick);
+                            var newNote = new Note(editNote.toNoteName(), editNote.tick, editNote.toAltNoteName());
                             // remove editNote
                             clearEditNote();
                             // fully add note
@@ -1779,6 +1848,8 @@ var Track = (function() {
                         }
                         // unset flag
                         isDragging = false;
+                        // clear the original note
+                        clearOriginalNote();
                     }
                 }
 
@@ -1807,7 +1878,12 @@ var Track = (function() {
                             var [fret, string] = SongUtils.splitNoteName(editNoteName);
                             // search for an existing note near the cursor
                             // if the tab is active, search for a note with any frets on that string
-                            var hoverNote = song.getNote(editTick, tabEnabled ? null : fret, string, editNoteLength-1, editNoteLength-1);
+                            var hoverNote = song.getNote(editTick,
+                                tabEnabled ? null : fret,
+                                string, editNoteLength-1, editNoteLength-1,
+                                // alt
+                                getCurrentEditSide() == sideTab && isDuviriModeOn()
+                            );
                             if (hoverNote) {
                                 // if one was found, start hovering on it
                                 setHoverEditNote(hoverNote);
@@ -1829,7 +1905,7 @@ var Track = (function() {
                         // Action: Start dragging either a new note edit or an existing note
 
                         // copy edit Note to the original note
-                        // this is either an exsiting note being hovered or our position cursor
+                        // this is either an existing note being hovered or our position cursor
                         initOriginalNote();
                         // setTrackBarMode before setting the drag edit note
                         updateTrackBarMode();
@@ -1845,7 +1921,12 @@ var Track = (function() {
                         // start dragging
                         isDragging = true;
                         // start off by playing audio for the current note
-                        Playback.playNote(editNoteName);
+                        if (getCurrentEditSide() == sideTab && isDuviriModeOn() && originalNote.hasAlt()) {
+                            playNoteName = originalNote.toNoteName();
+                        } else {
+                            playNoteName = editNoteName;
+                        }
+                        Playback.playNote(playNoteName);
 
                     } else if (isDownEvent) {
                         // Case: not dragging, button is down, but not on over a note and not on the active side of
@@ -1867,14 +1948,16 @@ var Track = (function() {
 
         // temporarily set the trackbar fret/chord mode for the given note
         function setTrackBarMode(note, side) {
-            // get the frets
-            var clickFret = note.fret;
             switch (side) {
                 case sideRoll:
+                    // the clicked note fret is always the main fret on the roll side
+                    var clickFret = note.fret;
                     // if the note is on the roll side, set the chord mode
                     TrackBar.setChordModeForFretsTemporarily(clickFret);
                     break;
                 case sideTab:
+                    // the clicked fret can be the alt fret on the tab side
+                    var clickFret = isDuviriModeOn() ? note.altFret : note.fret;
                     // if the note is on the tab side, set the frets
                     TrackBar.setFretsTemporarily(clickFret);
                     break;
@@ -1892,10 +1975,51 @@ var Track = (function() {
             var menuDiv = document.getElementById("note-menu");
 
             // setup listeners
-            document.getElementById("note-edit-delete").onclick = (e) => {
+            var deleteButton = document.getElementById("note-edit-delete");
+            deleteButton.onclick = (e) => {
                 removeNote(note);
                 noteMenuClose();
             };
+
+            // oh boy
+            if (Settings.getDuviriModeEditingEnabled()) {
+                // get the duviri mode options
+                var duviriModeButton = document.getElementById("note-edit-duviri-mode");
+                var duviriModeRemoveButton = document.getElementById("note-edit-duviri-mode-remove");
+                // check if the note is already in duviri mode
+                if (note.hasAlt()) {
+                    // disable duviri mode button
+                    duviriModeButton.style.display = "none";
+                    // enable remove duviri mode button
+                    duviriModeRemoveButton.style.display = "";
+                    duviriModeRemoveButton.onclick = (e) => {
+                        setDuviriModeOnNote(note, false);
+                        noteMenuClose();
+                    };
+
+                } else {
+                    // disable remove duviri mode button
+                    duviriModeRemoveButton.style.display = "none";
+
+                    // convert the enabled editor frets to a fret string
+                    var fretsEnabledString = convertFretsEnabledToFretString();
+
+                    // check against the clicked note
+                    if (fretsEnabledString != "" && fretsEnabledString != note.fret) {
+                        // we can enable the duviri mode button, this will change the alt fret
+                        // and allow us to move the tab side independently
+                        duviriModeButton.style.display = "";
+                        duviriModeButton.onclick = (e) => {
+                            setDuviriModeOnNote(note, true);
+                            noteMenuClose();
+                        };
+
+                    } else {
+                        // don't show the button
+                        duviriModeButton.style.display = "none";
+                    }
+                }
+            }
 
             // remove it
             menuDiv.remove();
@@ -1980,6 +2104,7 @@ var Track = (function() {
             checkLeadIn();
             // update editing
             Editing.updateSongStats();
+            updateDuviriModeShown();
             // return the note object that was removed
             return removedNote;
         }
@@ -1998,6 +2123,28 @@ var Track = (function() {
             checkLeadIn();
             // update editing
             Editing.updateSongStats();
+            updateDuviriModeShown();
+        }
+
+        function setDuviriModeOnNote(note, mode) {
+            if (mode) {
+                // convert the currently enabled editor frets to a fret string
+                var altFret = convertFretsEnabledToFretString();
+                var newNote = new Note(note.fret + "-" + note.string, note.tick, altFret + "-" + note.string);
+
+                Undo.startUndoCombo();
+                removeNote(note);
+                addNote(newNote);
+                Undo.endUndoCombo("Switch note to Duviri mode");
+
+            } else if (note.hasAlt()) {
+                var newNote = new Note(note.fret = "-" + note.string, note.tick);
+
+                Undo.startUndoCombo();
+                removeNote(note);
+                addNote(newNote);
+                Undo.endUndoCombo("Switch note out of Duviri mode");
+            }
         }
 
         // look around the given added or removed note and see if we have to rebuild any other note views
@@ -2200,6 +2347,43 @@ var Track = (function() {
         updateStructure();
     }
 
+    function updateDuviriModeShown() {
+        var newDuviriModeShown = song && song.hasAltNotes();
+        if (newDuviriModeShown != duviriModeShown) {
+            duviriModeShown = newDuviriModeShown;
+            var div = document.getElementById("tab-duviri-mode")
+            if (duviriModeShown) {
+                div.style.display = "";
+                setDuviriModeOn(true);
+            } else {
+                div.style.display = "none";
+            }
+        }
+    }
+    
+    function isDuviriModeOn() {
+        return duviriModeOn;
+    }
+
+    function setDuviriModeOn(newDuviriModeOn) {
+        if (newDuviriModeOn != duviriModeOn) {
+            duviriModeOn = newDuviriModeOn;
+            if (duviriModeShown) {
+                var input = document.getElementById("config-tab-duvirimode-input");
+                input.checked = duviriModeOn;
+                rebuildTabNotes();
+            }
+        }
+    }
+
+    function commitDuviriModeChange() {
+        // get the checkbox
+        var input = document.getElementById("config-tab-duvirimode-input");
+        // get its value, just a boolean
+        var value = input.checked;
+        setDuviriModeOn(value);
+    }
+
     // public members
     return  {
         registerEventListeners: registerEventListeners, // ()
@@ -2246,7 +2430,8 @@ var Track = (function() {
         notePlayed: Editor.notePlayed, // (notename, currentSongTick)
         // run a 1-1 note transformation according to some rule
         transformNotes: Editor.transformNotes, // ((note) => new note)
+        // duviriMode flag
+        isDuviriModeOn: isDuviriModeOn, // (): boolean
+        setDuviriModeOn: setDuviriModeOn, // (boolean)
     }
 })();
-
-

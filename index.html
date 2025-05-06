@@ -343,15 +343,27 @@
             </tr>
         </table>
     </div>
-    <div id="song-scroll" class="cursor-pointer">
-        <table id="song-scroll-table" style="width: 688px;">
-            <tr>
-                <td id="song-scroll-tab" style="background-image: url('img2x/track/tab-bg.png'); background-size: 450px 20px; width: 344px; position: relative;">
-                </td>
-                <td id="song-scroll-roll" style="background-image: url('img2x/track/keys-bg-c.png'); background-size: 450px 20px; width: 344px; position: relative; z-index: 0;">
-                </td>
-            </tr>
-        </table>
+    <div id="song-scroll-container">
+        <div id="song-scroll" class="cursor-pointer">
+            <table id="song-scroll-table" style="width: 688px;">
+                <tr>
+                    <td id="song-scroll-tab" style="background-image: url('img2x/track/tab-bg.png'); background-size: 450px 20px; width: 344px; position: relative;">
+                    </td>
+                    <td id="song-scroll-roll" style="background-image: url('img2x/track/keys-bg-c.png'); background-size: 450px 20px; width: 344px; position: relative; z-index: 0;">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="tab-duviri-mode" style="display: none">
+            <div class="field-entry-span-light" id="config-tab-duvirimode">
+                <span class="tooltip">
+                    <input id="config-tab-duvirimode-input" type="checkbox"/>
+                    <img src="img/icon-select.png" srcset="img2x/icon-select.png 2x" alt="undo" class="icon"/>
+                    <span class="fieldTitle">Duviri Mode</span>
+                    <span class="tooltiptextbottom">If enabled, the notes as they appear in Duviri will be shown.  If disabled, the actual notes as they sound will be displayed</span>
+                </span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -396,7 +408,7 @@
     <div id="config-settings" class="field-div">
         <div class="field-entry" id="config-trackreversed">
                 <span class="tooltip">
-                    <input id="config-trackreversed-input" type="checkbox"/>
+                        <input id="config-trackreversed-input" type="checkbox"/>
                     <span class="fieldTitle">Flipped Direction</span>
                     <span class="tooltiptextbottom">Enable to change the direction of song UI</span>
                 </span>
@@ -416,6 +428,16 @@
                     Enable MIDI controller support.
                     <strong class="warn">Note:</strong> This usually requires giving this website permission to access
                     your MIDI devices.
+                </span>
+            </div>
+        </div>
+        <div class="field-entry" id="config-duvirimodeeditingenabled">
+            <div class="tooltip">
+                <input id="config-duvirimodeeditingenabled-input" type="checkbox"/>
+                <span class="fieldTitle">Duviri Mode Editing Enabled</span>
+                <span class="tooltiptextbottom">
+                    Enable adding Duviri-mode notes to a song while editing, meaning
+                    they sound like a different note from what is played.
                 </span>
             </div>
         </div>
@@ -567,6 +589,16 @@
             <img src="img/icon-edit-delete.png" srcset="img2x/icon-edit-delete.png 2x" class="icon"/>
             <span class="fieldTitle">Delete</span>
             <span class="tooltiptextbottom">Delete the selected note</span>
+        </div>
+        <div class="field-button-light lightbutton tooltip" id="note-edit-duviri-mode" style="display: none">
+            <img src="img/icon-edit-duviri-mode.png" srcset="img2x/icon-edit-duviri-mode.png 2x" class="icon"/>
+            <span class="fieldTitle">Duviri Mode</span>
+            <span class="tooltiptextbottom">Switch the note to the currently selected frets without changing the sound that it plays</span>
+        </div>
+        <div class="field-button-light lightbutton tooltip" id="note-edit-duviri-mode-remove" style="display: none">
+            <img src="img/icon-edit-duviri-mode-remove.png" srcset="img2x/icon-edit-duviri-mode-remove.png 2x" class="icon"/>
+            <span class="fieldTitle">Remove Duviri Mode</span>
+            <span class="tooltiptextbottom">Switch the note back so it matches sound that it plays</span>
         </div>
     </div>
 </div>

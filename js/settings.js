@@ -15,6 +15,8 @@ var Settings = (function() {
     var shawzinVolume = 100;
     var metronomeVolume = 100;
     var midiEnabled = false;
+    var editingEnabled = false;
+    var duviriModeEditingEnabled = false;
     var flareSpoilerLevel = 1;
     var flareDay = 0;
 
@@ -56,6 +58,12 @@ var Settings = (function() {
             if (props.midiEnabled != null) {
                 midiEnabled = props.midiEnabled;
             }
+            if (props.editingEnabled != null) {
+                editingEnabled = props.editingEnabled;
+            }
+            if (props.duviriModeEditingEnabled != null) {
+                duviriModeEditingEnabled = props.duviriModeEditingEnabled;
+            }
             if (props.flareSpoilerLevel != null) {
                 flareSpoilerLevel = props.flareSpoilerLevel;
             }
@@ -83,6 +91,8 @@ var Settings = (function() {
             "shawzinVolume": shawzinVolume,
             "metronomeVolume": metronomeVolume,
             "midiEnabled": midiEnabled,
+            "editingEnabled": editingEnabled,
+            "duviriModeEditingEnabled": duviriModeEditingEnabled,
             "flareSpoilerLevel": flareSpoilerLevel,
             "flareDay": flareDay,
         }
@@ -125,6 +135,12 @@ var Settings = (function() {
         // getter/setter for midi enabled
         getMidiEnabled: function() { return midiEnabled; },
         setMidiEnabled: function(v) { if (v != midiEnabled) { midiEnabled = v; save(); } },
+        // getter/setter for editing enabled
+        getEditingEnabled: function() { return editingEnabled; },
+        setEditingEnabled: function(v) { if (v != editingEnabled) { editingEnabled = v; save(); } },
+        // getter/setter for enabling duviri mode editing
+        getDuviriModeEditingEnabled: function() { return duviriModeEditingEnabled; },
+        setDuviriModeEditingEnabled: function(v) { if (v != duviriModeEditingEnabled) { duviriModeEditingEnabled = v; save(); } },
         // getter/setter for flare spoiler level
         getFlareSpoilerLevel: function() { return flareSpoilerLevel; },
         setFlareSpoilerLevel: function(v) { if (v != flareSpoilerLevel) { flareSpoilerLevel = v; save(); } },

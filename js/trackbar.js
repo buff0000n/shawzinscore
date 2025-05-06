@@ -728,7 +728,8 @@ var TrackBar = (function() {
 
         // update the track, if this update doesn't already come from the track
         if (runUpdate) {
-            Track.updateFrets(fretEnabled);
+            // create a copy of the fret array because otherwise things get weird
+            Track.updateFrets(fretEnabled.slice());
         }
         // return the previous state
         return prevEnabled;

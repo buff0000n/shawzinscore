@@ -20,8 +20,106 @@ var SongUtils = (function() {
         return base64Chars[i];
     }
 
+    // marker for an alt note code.  Using this because it represents a time portion of the note code
+    // that is beyond the four minute time limit
+    var altNoteCodeSuffix = "//";
+
+    function parseNoteCode(code) {
+        // sanity check
+        if (code.length != 3) {
+            throw "Invalid note code: \"" + code + "\""
+        }
+        // split three base64 chars and convert to ints
+        var noteInt = base64ToInt(code.charAt(0));
+        var measure = base64ToInt(code.charAt(1));
+        var measureTick = base64ToInt(code.charAt(2));
+
+        var tick = parseMeasure(measure, measureTick);
+        var [fret, string] = parseNoteInt(noteInt);
+
+        return [tick, fret, string];
+    }
+
+    function parseAltNoteCode(code) {
+        // sanity check
+        if (code.length != 3) {
+            throw "Invalid alt note code: \"" + code + "\""
+        }
+        // code format is "N//" where "N" is the note int and "//" is a static marker
+        var noteInt = base64ToInt(code.charAt(0));
+
+        return parseNoteInt(noteInt);
+    }
+
+    function parseMeasure(measure, measureTick) {
+        // combine measure int and tick into into a single tick, number of ticks from the beginning of the song
+        return (measure * 64) + measureTick;
+    }
+
+    function parseNoteInt(noteInt) {
+        // bits 1-3 of the note int are the strings
+        // apparently more than one string is fine
+        var string = "";
+        if (noteInt & 0x01) string = string + "1";
+        if (noteInt & 0x02) string = string + "2";
+        if (noteInt & 0x04) string = string + "3";
+        // bits 4-6 of the note int are the frets
+        var fret = "";
+        if (noteInt & 0x08) fret = fret + "1";
+        if (noteInt & 0x10) fret = fret + "2";
+        if (noteInt & 0x20) fret = fret + "3";
+        // replace no fret with the zero fret
+        if (fret.length == 0) {
+            fret = "0";
+        }
+
+        return [fret, string];
+    }
+    
+    function toNoteCode(tick, fret, string) {
+        // note int
+        var b1 = toNoteInt(fret, string);
+
+        // high-order time
+        var b2 = Math.floor(tick / 64);
+
+        // low-order time
+        var b3 = tick - (b2 * 64);
+
+        // convert to base64
+        return intToBase64(b1) + intToBase64(b2) + intToBase64(b3);
+    }
+    
+    function toAltNoteCode(fret, string) {
+        var b1 = toNoteInt(fret, string);
+
+        // convert to base64 with the static marker
+        return intToBase64(b1) + altNoteCodeSuffix;
+    }
+    
+    function toNoteInt(fret, string) {
+        // build the first character from the string and fret info
+        var b1 = 0;
+        for (var c = 0; c < string.length; c++) {
+            switch (string.charAt(c)) {
+                case "1" : b1 |= 0x01; break;
+                case "2" : b1 |= 0x02; break;
+                case "3" : b1 |= 0x04; break;
+            }
+        }
+        for (var c = 0; c < fret.length; c++) {
+            switch (fret.charAt(c)) {
+                case "1" : b1 |= 0x08; break;
+                case "2" : b1 |= 0x10; break;
+                case "3" : b1 |= 0x20; break;
+                case "0" : break;
+            }
+        }
+        return b1;
+    }
+
     // ganked from https://stackoverflow.com/questions/22697936/binary-search-in-javascript
-    function binarySearchSong(arr, tick, fret=null, string=null) {
+    function binarySearchSong(arr, tick, fret=null, string=null, alt=false) {
         var m = 0;
         var n = arr.length - 1;
 
@@ -31,10 +129,10 @@ var SongUtils = (function() {
             // customized comparison section
             var cmp = tick - arr[k].tick;
             if (cmp == 0 && fret) {
-                cmp = fret.localeCompare(arr[k].fret);
+                cmp = fret.localeCompare(alt ? arr[k].altFret : arr[k].fret);
             }
             if (cmp == 0 && string) {
-                cmp = string.localeCompare(arr[k].string);
+                cmp = string.localeCompare(alt ? arr[k].altString : arr[k].string);
             }
 
             // carry on
@@ -71,12 +169,22 @@ var SongUtils = (function() {
 
     // public members
     return {
-        // convert a single character to a 6-bit int
-        base64ToInt: base64ToInt, // (char)
-        // convert a single 6-bit int to a base64 char
-        intToBase64: intToBase64, // (i)
-        // parse a note name into fret(s) and string(s)
+//        // convert a single character to a 6-bit int
+//        base64ToInt: base64ToInt, // (char)
+//        // convert a single 6-bit int to a base64 char
+//        intToBase64: intToBase64, // (i)
+//        // parse a note name into fret(s) and string(s)
         splitNoteName: splitNoteName, // (noteName): [fret, string]
+        // parse a song code note fragment
+        parseNoteCode: parseNoteCode, // (code): [tick, fret, string]
+        // note code suffix denoting an alt note code
+        altNoteCodeSuffix: altNoteCodeSuffix, //
+        // parse a song code alt note fragment
+        parseAltNoteCode: parseAltNoteCode, // (code): [fret, string]
+        // convert note info to a song code fragment
+        toNoteCode: toNoteCode, // (tick, fret, string): String
+        // convert alt note info to a song code fragment
+        toAltNoteCode: toAltNoteCode, // (fret, string): String
         // search an array of notes for the given tick and optional note info
         binarySearchSong: binarySearchSong, // (array, tick, fret=null, string=null)
         // generate an ID for a note
@@ -87,17 +195,29 @@ var SongUtils = (function() {
 // thanks to https://www.reddit.com/r/Warframe/comments/cxbxoc/shawzin_song_recording_syntax/
 // object representing a single note
 class Note {
-    constructor(noteName = null, tick = 0) {
+    constructor(noteName = null, tick = 0, altNoteName = null) {
         // note ID for debugging
         this.id = SongUtils.noteId();
         // one or more strings
         this.string = null;
         // zero or more frets
         this.fret = null;
+        
+        // duviri-mode alt string
+        this.altString = null;
+        // duviri-mode alt frets
+        this.altFret = null;
 
         // parse the note name
         if (noteName) {
             [this.fret, this.string] = SongUtils.splitNoteName(noteName);
+        }
+        // parse the alt note name, if given
+        if (altNoteName) {
+            [this.altFret, this.altString] = SongUtils.splitNoteName(altNoteName);
+        // otherwise, the alt note name is the same as the note name
+        } else {
+            [this.altFret, this.altString] = [this.fret, this.string]
         }
         // time
         this.tick = tick;
@@ -110,35 +230,21 @@ class Note {
         this.errors = null;
     }
 
-    // parse a three character code for string, fret, and timing
+    // parse a three character code for string, fret, and timing, plus optionally three more for an alt note
     fromCode(code) {
-        // sanity check
-        if (code.length != 3) {
+        if (code.length == 3) {
+            // normal note code
+            [this.tick, this.fret, this.string] = SongUtils.parseNoteCode(code);
+            [this.altFret, this.altString] = [this.fret, this.string];
+
+        } else if (code.length == 6) {
+            // note code with an alt
+            [this.tick, this.fret, this.string] = SongUtils.parseNoteCode(code.substring(0, 3));
+            [this.altFret, this.altString] = SongUtils.parseAltNoteCode(code.substring(3));
+
+        } else {
             throw "Invalid note code: \"" + code + "\""
         }
-        // split three base64 chars and convert to ints
-        var noteInt = SongUtils.base64ToInt(code.charAt(0));
-        var measure = SongUtils.base64ToInt(code.charAt(1));
-        var measureTick = SongUtils.base64ToInt(code.charAt(2));
-
-        // bits 1-3 of the note int are the strings
-        // apparently more than one string is fine
-        this.string = "";
-        if (noteInt & 0x01) this.string = this.string + "1";
-        if (noteInt & 0x02) this.string = this.string + "2";
-        if (noteInt & 0x04) this.string = this.string + "3";
-        // bits 4-6 of the note int are the frets
-        this.fret = "";
-        if (noteInt & 0x08) this.fret = this.fret + "1";
-        if (noteInt & 0x10) this.fret = this.fret + "2";
-        if (noteInt & 0x20) this.fret = this.fret + "3";
-        // replace no fret with the zero fret
-        if (this.fret.length == 0) {
-            this.fret = "0";
-        }
-
-        // combine measure int and tick into into a single tick, number of ticks from the beginning of the song
-        this.tick = (measure * 64) + measureTick;
 
         return this;
     }
@@ -149,53 +255,44 @@ class Note {
         return this.fret + "-" + this.string;
     }
 
+    toAltNoteName() {
+        return this.altFret + "-" + this.altString;
+    }
+
     // convert to a three-character code
-    toCode(offsetTicks = 0) {
-        // build the first character from the string and fret info
-        var b1 = 0;
-        for (var c = 0; c < this.string.length; c++) {
-            switch (this.string.charAt(c)) {
-                case "1" : b1 |= 0x01; break;
-                case "2" : b1 |= 0x02; break;
-                case "3" : b1 |= 0x04; break;
-            }
-        }
-        for (var c = 0; c < this.fret.length; c++) {
-            switch (this.fret.charAt(c)) {
-                case "1" : b1 |= 0x08; break;
-                case "2" : b1 |= 0x10; break;
-                case "3" : b1 |= 0x20; break;
-                case "0" : break;
-            }
+    toCode(offsetTick = 0, justNonAlt = false, justAlt = false) {
+        // generate the base note code, depending on whether we want just the alt or not, offsetting the ticks
+        var code = justAlt ? SongUtils.toNoteCode(this.tick + offsetTick, this.altFret, this.altString) :
+                             SongUtils.toNoteCode(this.tick + offsetTick, this.fret, this.string);
+        // check if there are no extra formatting options and append the alt note code if necessary
+        if (!justNonAlt && !justAlt && this.hasAlt()) {
+            code = code + SongUtils.toAltNoteCode(this.altFret, this.altString);
         }
 
-        // offset the time
-        var saveTick = this.tick - offsetTicks;
-
-        // high-order time
-        var b2 = Math.floor(saveTick / 64);
-
-        // low-order time
-        var b3 = saveTick - (b2 * 64);
-
-        // convert to base64
-        return SongUtils.intToBase64(b1) + SongUtils.intToBase64(b2) + SongUtils.intToBase64(b3);
+        return code;
     }
 
     // human-readable string
     toString() {
-        return this.tick + ":" + this.fret + "-" + this.string;
+        return this.tick + ":" + this.fret + "-" + this.string +
+            (!this.hasAlt() ? "" : (" (" + this.altFret + "-" + this.altString + ")"));
     }
 
     // equality check
     equals(other) {
-        return other && this.fret == other.fret && this.string == other.string;
+        return other && 
+            this.fret == other.fret && this.string == other.string &&
+            this.altFret == other.altFret && this.altString == other.altString;
+    }
+
+    hasAlt() {
+        return this.altFret != this.fret || this.altString != this.string;
     }
 
     // match with optional fret and string info
-    matchesNoteName(matchFret=null, matchString=null) {
-        return (matchFret == null || matchFret == this.fret)
-            && (matchString == null || matchString == this.string);
+    matchesNoteName(matchFret=null, matchString=null, alt=false) {
+        return (matchFret == null || (!alt && matchFret == this.fret) || (alt && matchFret == this.altFret))
+            && (matchString == null || (!alt && matchString == this.string) || (alt && matchString == this.altString));
     }
 
     // convenience function to determine whether this note is a chord or not
@@ -205,12 +302,12 @@ class Note {
 
     // human readable description
     desc() {
-        return "[" + this.tick + " : " + this.toNoteName() + "]";
+        return "[" + this.toString() + "]";
     }
 
     // shift the tick time
-    shiftTick(offsetTicks) {
-        this.tick += offsetTicks;
+    shiftTick(offsetTick) {
+        this.tick += offsetTick;
     }
 
     // whether the note has errors
@@ -261,6 +358,8 @@ class Song {
         this.scale = "";
         // notes
         this.notes = Array();
+        // count of notes with an alt
+        this.notesWithAltCount = 0;
     }
 
     // scale setter
@@ -295,7 +394,18 @@ class Song {
         this.notes = Array();
         // pull out each three-char substring
         for (var n = 1; n < code.length; n+= 3) {
-            var noteCode = code.substring(n, n+3);
+            // check for a note code with an alt note
+            if (n < code.length - 3 &&
+                    code[n + 4] == SongUtils.altNoteCodeSuffix[0] &&
+                    code[n + 5] == SongUtils.altNoteCodeSuffix[1]) {
+                // parse six character note with alt code
+                var noteCode = code.substring(n, n+6);
+                // skip forward
+                n += 3;
+            } else {
+                // parse normal three character note code
+                var noteCode = code.substring(n, n+3);
+            }
             // parse it into a note string, fret, and tick
             var note = new Note().fromCode(noteCode);
             // check if it's just a single string
@@ -306,6 +416,11 @@ class Song {
             } else if (note.string.length == 0) {
                 // what
                 console.log("ignored note code with zero strings specified: " + noteCode);
+
+            } else if (note.hasAlt()) {
+                // yeah, no.  I'm not going to support a multi-string note with a duviri alt.
+                // That's not worth the headache.
+                throw "Invalid note code: \"" + noteCode + "\""
 
             } else {
                 // it's a multi-string code, break it up into multiple notes
@@ -369,13 +484,13 @@ class Song {
 
     // get the index of the given note
     // Jesus why is this so complicated
-    getNoteIndex(tick, fret=null, string=null) {
+    getNoteIndex(tick, fret=null, string=null, alt=false) {
         // search for a note at the correct tick and optional fret and string
-        return SongUtils.binarySearchSong(this.notes, tick, fret, string);
+        return SongUtils.binarySearchSong(this.notes, tick, fret, string, alt=false);
         // that's it that's the function
     }
 
-    getNote(tick, fret=null, string=null, backtrack=0, forwardtrack=0) {
+    getNote(tick, fret=null, string=null, backtrack=0, forwardtrack=0, alt=false) {
         var index = this.getNoteIndex(tick, fret, string);
         if (index >= 0) {
             return this.notes[index];
@@ -390,7 +505,7 @@ class Song {
                 if (note.tick < stopTick) break;
                 if (note.tick <= tick) {
                     //console.log("backTrack: " + index2);
-                    if (note.matchesNoteName(fret, string)) {
+                    if (note.matchesNoteName(fret, string, alt)) {
                         return note;
                     }
                 }
@@ -404,7 +519,7 @@ class Song {
                 if (note.tick > stopTick) break;
                 if (note.tick >= tick) {
                     //console.log("forwardTrack: " + index2);
-                    if (this.notes[index2].matchesNoteName(fret, string)) {
+                    if (this.notes[index2].matchesNoteName(fret, string, alt)) {
                         return this.notes[index2];
                     }
                 }
@@ -479,7 +594,7 @@ class Song {
     }
 
     // convert to a song code
-    toCode() {
+    toCode(justNonAlt = false, justAlt = false) {
         // If it's just a scale and no notes then return blank
         if (this.notes.length == 0) {
             return "";
@@ -491,7 +606,7 @@ class Song {
         buffer += scaleCode;
 
         // All song codes have to start at time 0, offset by the first note's tick time
-        var offsetTicks = this.notes[0].tick;
+        var offsetTick = this.notes[0].tick;
 
         // append each note in chronological order
         for (var n = 0; n < this.notes.length; n++) {
@@ -515,7 +630,7 @@ class Song {
                 n++;
             }
             // convert to a code
-            buffer += note.toCode(offsetTicks);
+            buffer += note.toCode(offsetTick, justNonAlt, justAlt);
         }
         return buffer;
     }
@@ -578,6 +693,11 @@ class Song {
             (note.next != null && note.next.tick == note.tick)) {
             this.checkInvalidConcurrentNotes(note);
         }
+
+        // maintain the alt note count
+        if (note.hasAlt()) {
+            this.notesWithAltCount += 1;
+        }
     }
 
     noteRemoved(note) {
@@ -598,6 +718,11 @@ class Song {
         } else if (note.next != null && note.next.tick == note.tick) {
             // run the invalid concurrent note check on the next notes
             this.checkInvalidConcurrentNotes(note.next);
+        }
+
+        // maintain the alt note count
+        if (note.hasAlt()) {
+            this.notesWithAltCount -= 1;
         }
     }
 
@@ -632,7 +757,9 @@ class Song {
 
                 // check for concurrent notes with different frets.  We only have to check
                 // consecutive notes because they're ordered by fret
-                if (n.fret != n.next.fret) {
+                // simultaneous notes where any of them have duviri alts is also an error, because I'm not going to
+                // support that.
+                if (n.fret != n.next.fret || n.hasAlt() || n.next.hasAlt()) {
                     invalid = true;
                 }
             }
@@ -648,6 +775,10 @@ class Song {
                 n.removeError("Invalid concurrent notes");
             }
         }
+    }
+
+    hasAltNotes() {
+        return this.notesWithAltCount > 0;
     }
 
 }
