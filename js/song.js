@@ -34,7 +34,9 @@ var SongUtils = (function() {
         var measure = base64ToInt(code.charAt(1));
         var measureTick = base64ToInt(code.charAt(2));
 
+        // reconstruct the timestamp
         var tick = parseMeasure(measure, measureTick);
+        // reconstruct the fret and string
         var [fret, string] = parseNoteInt(noteInt);
 
         return [tick, fret, string];
@@ -48,6 +50,7 @@ var SongUtils = (function() {
         // code format is "N//" where "N" is the note int and "//" is a static marker
         var noteInt = base64ToInt(code.charAt(0));
 
+        // reconstruct just the fret and string
         return parseNoteInt(noteInt);
     }
 
@@ -169,11 +172,6 @@ var SongUtils = (function() {
 
     // public members
     return {
-//        // convert a single character to a 6-bit int
-//        base64ToInt: base64ToInt, // (char)
-//        // convert a single 6-bit int to a base64 char
-//        intToBase64: intToBase64, // (i)
-//        // parse a note name into fret(s) and string(s)
         splitNoteName: splitNoteName, // (noteName): [fret, string]
         // parse a song code note fragment
         parseNoteCode: parseNoteCode, // (code): [tick, fret, string]
@@ -233,7 +231,7 @@ class Note {
     // parse a three character code for string, fret, and timing, plus optionally three more for an alt note
     fromCode(code) {
         if (code.length == 3) {
-            // normal note code
+            // normal note code, alt note is the same as the normal one
             [this.tick, this.fret, this.string] = SongUtils.parseNoteCode(code);
             [this.altFret, this.altString] = [this.fret, this.string];
 
@@ -255,6 +253,7 @@ class Note {
         return this.fret + "-" + this.string;
     }
 
+    // same, but for the alt note
     toAltNoteName() {
         return this.altFret + "-" + this.altString;
     }

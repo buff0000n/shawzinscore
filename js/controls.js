@@ -131,18 +131,24 @@ var Controls = (function() {
             button.children[0].className = "icon-disabled";
         }
 
+        // check if we have alternative song codes
         if (playedSongCode) {
+            // fill in the two alternative song code boxes and show them
             document.getElementById("metadata-settings-code-duviri-played-text").value = playedSongCode;
             document.getElementById("metadata-settings-code-duviri-played").style.display = "";
 
             document.getElementById("metadata-settings-code-duviri-sounds-text").value = soundsSongCode;
             document.getElementById("metadata-settings-code-duviri-sounds").style.display = "";
 
+            // if Duviri Mode Editing is not enabled then hide the normal song code box,
+            // the code it contains is not game-compatible
             if (!Settings.getDuviriModeEditingEnabled()) {
                 document.getElementById("metadata-settings-code").style.display = "none";
             }
 
         } else {
+            // no alternative song codes, make sure the regular song code
+            // box is shown and the other two are hidden
             document.getElementById("metadata-settings-code-duviri-played").style.display = "none";
             document.getElementById("metadata-settings-code-duviri-sounds").style.display = "none";
             document.getElementById("metadata-settings-code").style.display = "";
@@ -355,7 +361,11 @@ var Controls = (function() {
         // save to preferences
         Settings.setDuviriModeEditingEnabled(value);
 
-        // nothing else to update
+        // if there is currently a duviri mode song loaded then
+        // update the song code box visibility
+        if (Model.getSong().hasAltNotes()) {
+            document.getElementById("metadata-settings-code").style.display = value ? "" : "none";
+        }
     }
 
     function doCopyUrlMenu() {

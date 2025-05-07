@@ -105,7 +105,7 @@ var Track = (function() {
         // initialize here
         oldFretLayout = Settings.getOldFretLayout();
         
-        // duviri mode
+        // duviri mode setup
         Events.setupCheckbox(document.getElementById("config-tab-duvirimode-input"), true);
         document.getElementById("config-tab-duvirimode-input").addEventListener("change", commitDuviriModeChange, { passive: false });
     }
@@ -133,6 +133,7 @@ var Track = (function() {
         song = newSong;
         // check to make sure there is a new song
         if (song) {
+            // refresh the duviri mode button, if applicable
             updateDuviriModeShown();
             // build the start bar
             ensureTickCapacity(0);
@@ -771,6 +772,7 @@ var Track = (function() {
         buildTabNote(playing=false) {
             // we need the control scheme
             var controlScheme = Model.getControlScheme();
+            // respect duviri mode for the displayed tab note
             var string = isDuviriModeOn() ? this.note.altString : this.note.string;
 
             // container div, absolutely positioned
@@ -808,7 +810,7 @@ var Track = (function() {
                 this.dot = dot;
             }
 
-            // respect Duviri mode
+            // respect Duviri mode for the displayed tab note
             var noteFret = isDuviriModeOn() ? this.note.altFret : this.note.fret;
             // if there are no frets then the central dot is all that's displayed, unless oldFretLayout is enabled
             if (noteFret != "0" || oldFretLayout) {
@@ -1014,7 +1016,8 @@ var Track = (function() {
             var scaleMd = shawzinMd.scales[Model.getScale()];
             // get the scale note name
             var noteName = this.note.toNoteName();
-            // get the corresponding color for the note's frets, ignore Duviri mode
+            // get the corresponding color for the note's frets
+            // ignore Duviri mode for the displayed roll note
             var color = MetadataUI.fretToRollColors[this.note.fret];
             // length of the note will be filled in later
             var noteLength = null;
@@ -1341,7 +1344,7 @@ var Track = (function() {
         function convertFretsEnabledToFretString(fe = fretsEnabled) {
             // null check
             if (!fe) return "";
-            // convert the currently enabled frets in the editor bar to a fret string
+            // convert an enabled frets boolean array to a fret string
             var fretsEnabledString = "";
             for (var i = 0; i < fe.length; i++) {
                 if (fe[i]) fretsEnabledString += i;
@@ -1540,14 +1543,24 @@ var Track = (function() {
             return (tabEnabled ^ inverse) ? sideTab : sideRoll;
         }
 
+        // build a new editor note, taking into account whether we're in Duviri mode and
+        // which side of the track we're editing on
         function buildNewEditNote(newEditNoteName, newEditTick) {
+            // check if we're editing an duviri-mode note
             if (originalNote && originalNote.hasAlt()) {
+                // if we're on the tab side and duviri mode is enabled
                 if (getCurrentEditSide() == sideTab && isDuviriModeOn()) {
+                    // then create a new note with the original's normal note, and the editor's
+                    // note as the alt note.
                     return new Note(originalNote.toNoteName(), newEditTick, newEditNoteName);
                 } else {
+                    // otherwise, we're either on the roll side or duviri mode is not enabled.
+                    // create a new note with the editor's note, and the original's alt note as the alt note.
+                    // editing a duviri-mode note without duviri mode enabled cannot modify the alt note.
                     return new Note(newEditNoteName, newEditTick, originalNote.toAltNoteName());
                 }
             } else {
+                // normal case, doesn't have an alt note
                 return new Note(newEditNoteName, newEditTick);
             }
         }
@@ -1652,14 +1665,20 @@ var Track = (function() {
 
         // determine if a note is equal to the current edit cursor position
         function noteEqualToCurrentPosition(n) {
+            // short circuit
             if (n == null || editTick != n.tick) return false;
+            // check equality
             return noteEqualToCurrent(n);
         }
 
+        // checking note equality depends on the current state of duviri mode
         function noteEqualToCurrent(n) {
+            // if we're editing on the tab side and duviri mode is on and the
+            // given note has an alt note, then check against it alt note.
             if (getCurrentEditSide() == sideTab && isDuviriModeOn() && n.hasAlt()) {
                 return editNoteName == n.toAltNoteName();
             } else {
+                // otherwise, check against the normal note.
                 return editNoteName == n.toNoteName();
             }
         }
@@ -1784,9 +1803,12 @@ var Track = (function() {
                         // if there was no previous edit note, or the current position has moved
                         // to a different note name, then play audio for the new note name
                         if (editNote == null || !noteEqualToCurrent(editNote)) {
+                            // if we're editing on the tab side and duviri mode is enabled and the current note has
+                            // an alt then use the edit note's normal note, copied from the original note
                             if (getCurrentEditSide() == sideTab && isDuviriModeOn() && editNote.hasAlt()) {
                                 playNoteName = editNote.toNoteName();
                             } else {
+                                // otherwise just play what the cursor is pointing at
                                 playNoteName = editNoteName;
                             }
                             Playback.playNote(playNoteName);
@@ -1816,7 +1838,8 @@ var Track = (function() {
 
                             // cancel undo combo, this will also add the original note back
                             cancelAction();
-                            // reset any trackbar mode changes
+                            // reset any trackbar mode changes, do this before we show the note menu
+                            // because some things depend on the original state of the fret buttons
                             revertTrackBarMode();
                             // check if there's any movement away from the original
                             if (!originalNoteHasMoved) {
@@ -1914,9 +1937,12 @@ var Track = (function() {
                         // start dragging
                         isDragging = true;
                         // start off by playing audio for the current note
+                        // if we're editing on the tab side and duviri mode is enabled and the current note has
+                        // an alt then use the edit note's normal note, copied from the original note
                         if (getCurrentEditSide() == sideTab && isDuviriModeOn() && originalNote.hasAlt()) {
                             playNoteName = originalNote.toNoteName();
                         } else {
+                            // otherwise just play what the cursor is pointing at
                             playNoteName = editNoteName;
                         }
                         Playback.playNote(playNoteName);
@@ -2097,6 +2123,7 @@ var Track = (function() {
             checkLeadIn();
             // update editing
             Editing.updateSongStats();
+            // update the duviri mode button
             updateDuviriModeShown();
             // return the note object that was removed
             return removedNote;
@@ -2116,23 +2143,31 @@ var Track = (function() {
             checkLeadIn();
             // update editing
             Editing.updateSongStats();
+            // update the duviri mode button
             updateDuviriModeShown();
         }
 
+        // convert a note to or from duviri mode
         function setDuviriModeOnNote(note, mode) {
             if (mode) {
                 // convert the currently enabled editor frets to a fret string
+                // this is why we need to revert the trackbar settings before getting here
                 var altFret = convertFretsEnabledToFretString();
+                // create a new duviri-mode note with the currently selected frets as its alt frets.
+                // the string will still be the same, but it can not be moved independently of the roll side.
                 var newNote = new Note(note.fret + "-" + note.string, note.tick, altFret + "-" + note.string);
 
+                // create a single undo action involving removing the old note and adding the new one.
                 Undo.startUndoCombo();
                 removeNote(note);
                 addNote(newNote);
                 Undo.endUndoCombo("Switch note to Duviri mode");
 
             } else if (note.hasAlt()) {
+                // create a new note where the alt note equals the normal note.
                 var newNote = new Note(note.fret = "-" + note.string, note.tick);
 
+                // create a single undo action involving removing the old note and adding the new one.
                 Undo.startUndoCombo();
                 removeNote(note);
                 addNote(newNote);
@@ -2340,40 +2375,56 @@ var Track = (function() {
         updateStructure();
     }
 
+    // check the current song to see if we should show the duviri mode checkbox
     function updateDuviriModeShown() {
+        // check if the current song has alt notes
         var newDuviriModeShown = song && song.hasAltNotes();
+        // check if we need to switch
         if (newDuviriModeShown != duviriModeShown) {
             duviriModeShown = newDuviriModeShown;
+            // get the checkbox pop-up
             var div = document.getElementById("tab-duviri-mode")
+            // check if we're showing it or not
             if (duviriModeShown) {
+                // display the checkbox
                 div.style.display = "";
+                // default it to checked
                 setDuviriModeOn(true);
             } else {
+                // hide the checkbox
                 div.style.display = "none";
             }
         }
     }
-    
+
+    // check if duviri mode is on
     function isDuviriModeOn() {
         return duviriModeOn;
     }
 
+    // set duviri mode
     function setDuviriModeOn(newDuviriModeOn) {
+        // short circuit
         if (newDuviriModeOn != duviriModeOn) {
             duviriModeOn = newDuviriModeOn;
+            // this should always be shown, check it anyway
             if (duviriModeShown) {
+                // get the checkbox and set its state
                 var input = document.getElementById("config-tab-duvirimode-input");
                 input.checked = duviriModeOn;
+                // rebuild the tab side of the track view
                 rebuildTabNotes();
             }
         }
     }
 
+    // event handler for the duviri mode checkbox
     function commitDuviriModeChange() {
         // get the checkbox
         var input = document.getElementById("config-tab-duvirimode-input");
         // get its value, just a boolean
         var value = input.checked;
+        // set the mode
         setDuviriModeOn(value);
     }
 
@@ -2425,6 +2476,5 @@ var Track = (function() {
         transformNotes: Editor.transformNotes, // ((note) => new note)
         // duviriMode flag
         isDuviriModeOn: isDuviriModeOn, // (): boolean
-        setDuviriModeOn: setDuviriModeOn, // (boolean)
     }
 })();

@@ -128,7 +128,7 @@ var Model = (function() {
     function doUpdateSongCode() {
         // get or re-generate the song code
         var songCode = doGetSongCode();
-        // update the UI
+        // update the UI, sending the song code and any alternates
         Controls.updateSongCode(songCode[0], songCode[1], songCode[2]);
         // return it for convenience
         return songCode;
@@ -260,7 +260,7 @@ var Model = (function() {
     function doGetSongCode() {
         // check if don't have one cached
         if (!songCode) {
-            // get the song code from the song object, or use a default
+            // get the song code from the song object, along with its two alternatives if applicable
             songCode = [
                 song ? song.toCode() : "",
                 song && song.hasAltNotes() ? song.toCode(false, true) : null,
@@ -281,7 +281,7 @@ var Model = (function() {
 
         // save the song and code
         song = newSong;
-        //songCode = newSongCode;
+        // just clear out the cached song code and let it get regenerated
         songCode = null;
         // the scale is part of the song
         updateScale();
