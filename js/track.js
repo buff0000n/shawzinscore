@@ -1477,10 +1477,6 @@ var Track = (function() {
             }
             // if there's a tick for the event then get the note name for the event
             editNoteName = (editTick != null) ? getNoteNameForEvent(editEvent) : null;
-            console.log("updateEditTickNoteName: " + editNoteName);
-            if (editNoteName == "13-1") {
-                debugger;
-            }
             // todo: originalNoteOffsetNote
 
             // completely outside the track element
@@ -1545,7 +1541,6 @@ var Track = (function() {
         }
 
         function buildNewEditNote(newEditNoteName, newEditTick) {
-            console.log("buildNewEditNote: " + editNoteName + " @ " + newEditTick);
             if (originalNote && originalNote.hasAlt()) {
                 if (getCurrentEditSide() == sideTab && isDuviriModeOn()) {
                     return new Note(originalNote.toNoteName(), newEditTick, newEditNoteName);
@@ -1596,7 +1591,6 @@ var Track = (function() {
 
         // set the current note to a dragging note
         function setDragEditNote() {
-            console.log("setDragEditNote: " + editNoteName);
             // clear any previous edit note
             clearEditNote();
             // build a new note
@@ -1782,7 +1776,6 @@ var Track = (function() {
                 }
 
                 if (isDragging && isInsideActive) {
-            console.log("setDragEditNote: " + editNoteName);
                     // Case: dragging and in the active side of the editor
                     // Action: handle drag movement
 

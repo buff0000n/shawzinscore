@@ -18,6 +18,7 @@ var Controls = (function() {
         // song code box event handlers
         Events.setupTextInput(document.getElementById("metadata-settings-code-text"), true);
         document.getElementById("metadata-settings-code-text").addEventListener("change", commitSongCodeChange, { passive: false });
+        // duviri-mode song code boxes are read-only
 
         // hacky event handler for the paste code button
         document.getElementById("pasteCodeButton").addEventListener("click", (e) => {
@@ -27,6 +28,14 @@ var Controls = (function() {
         // just as hacky event handler for the copy code button
         document.getElementById("copyCodeButton").addEventListener("click", (e) => {
             PageUtils.copyToClipboard(document.getElementById("metadata-settings-code-text").value);
+        }, { passive: false });
+
+        // need handlers for the duviri-mode code copy buttons
+        document.getElementById("copyCodeButton-duviri-played").addEventListener("click", (e) => {
+            PageUtils.copyToClipboard(document.getElementById("metadata-settings-code-duviri-played-text").value);
+        }, { passive: false });
+        document.getElementById("copyCodeButton-duviri-sounds").addEventListener("click", (e) => {
+            PageUtils.copyToClipboard(document.getElementById("metadata-settings-code-duviri-sounds-text").value);
         }, { passive: false });
 
         // shawzintab menu button
@@ -103,13 +112,13 @@ var Controls = (function() {
         }
     }
 
-    function updateSongCode(songCode) {
+    function updateSongCode(songCode, playedSongCode = null, soundsSongCode = null) {
         // update the song code textbox if the given song code is different
-        // todo: is this necessary?
         var codeField = document.getElementById("metadata-settings-code-text");
-        if (codeField.value != songCode) {
-            codeField.value = songCode;
-        }
+        // short-circuit
+        if (codeField.value == songCode) return;
+
+        codeField.value = songCode;
         // if there's a song code then enable the copy button
         if (songCode && songCode.length > 0) {
             var button = document.getElementById("copyCodeButton");
@@ -120,6 +129,23 @@ var Controls = (function() {
             var button = document.getElementById("copyCodeButton");
             button.className = "smallButton-disabled icon tooltip";
             button.children[0].className = "icon-disabled";
+        }
+
+        if (playedSongCode) {
+            document.getElementById("metadata-settings-code-duviri-played-text").value = playedSongCode;
+            document.getElementById("metadata-settings-code-duviri-played").style.display = "";
+
+            document.getElementById("metadata-settings-code-duviri-sounds-text").value = soundsSongCode;
+            document.getElementById("metadata-settings-code-duviri-sounds").style.display = "";
+
+            if (!Settings.getDuviriModeEditingEnabled()) {
+                document.getElementById("metadata-settings-code").style.display = "none";
+            }
+
+        } else {
+            document.getElementById("metadata-settings-code-duviri-played").style.display = "none";
+            document.getElementById("metadata-settings-code-duviri-sounds").style.display = "none";
+            document.getElementById("metadata-settings-code").style.display = "";
         }
     }
 

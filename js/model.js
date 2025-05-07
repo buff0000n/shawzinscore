@@ -129,14 +129,14 @@ var Model = (function() {
         // get or re-generate the song code
         var songCode = doGetSongCode();
         // update the UI
-        Controls.updateSongCode(songCode);
+        Controls.updateSongCode(songCode[0], songCode[1], songCode[2]);
         // return it for convenience
         return songCode;
     }
 
     function getQueryParamMap() {
         // get or re-generate the song code, also updating it in the UI
-        var songCode = doUpdateSongCode();
+        var songCode = doUpdateSongCode()[0];
         // build an ordered parameter map, putting the song code last
         return {
             // this will get url-encoded elsewhere
@@ -261,7 +261,11 @@ var Model = (function() {
         // check if don't have one cached
         if (!songCode) {
             // get the song code from the song object, or use a default
-            songCode = song ? song.toCode() : "";
+            songCode = [
+                song ? song.toCode() : "",
+                song && song.hasAltNotes() ? song.toCode(false, true) : null,
+                song && song.hasAltNotes() ? song.toCode(true, false) : null
+            ];
         }
         return songCode;
     }
@@ -277,7 +281,8 @@ var Model = (function() {
 
         // save the song and code
         song = newSong;
-        songCode = newSongCode;
+        //songCode = newSongCode;
+        songCode = null;
         // the scale is part of the song
         updateScale();
 
@@ -629,7 +634,7 @@ var Model = (function() {
 
         // song getters
         getSong: function() { return song; },
-        getSongCode: doGetSongCode,
+        getSongCode: function() { return doGetSongCode()[0]; },
         // direct song object setter
         setSong: function(newSong) {
             var currentSong = song;
@@ -654,7 +659,7 @@ var Model = (function() {
 
             // store the old song and code
             var currentSong = song;
-            var currentCode = doGetSongCode();
+            var currentCode = doGetSongCode()[0];
 
             // check for change
             if (newCode != currentCode) {
