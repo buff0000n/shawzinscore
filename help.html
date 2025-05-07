@@ -150,6 +150,7 @@
                 <li><a href="#tocUndoRedo">Undo/Redo</a></li>
             </ul>
         </li>
+        <li><a href="#tocDuviriMode">Duviri Mode</a></li>
         <li><a href="#tocGeneral">General Info</a>
             <ul>
                 <li><a href="#tocMechanics">Shawzin Mechanics</a>
@@ -691,6 +692,11 @@
             <strong class="warn">Note:</strong> This usually requires giving this website permission to access
             your MIDI devices.
         </li>
+        <li>
+            <strong>Enable Duviri Mode Editing</strong>: This enables editing Duviri-mode songs, where the note you
+            play isn't always the note you hear.  See <a href="#tocDuviriMode">Duviri Mode</a> for almost no
+            further information.
+        </li>
     </ul>
     <p>
         <strong class="info">Note: </strong> Your settings are stored in your browser's local storage as a
@@ -1123,6 +1129,28 @@
         <img class="showcase" src="img/shawzin-courtly-large.png" srcset="img2x/shawzin-courtly-large.png 2x"/>
         <img class="showcase spoiler" src="img/shawzin-lizzie-large.png" srcset="img2x/shawzin-lizzie-large.png 2x"/>
     </div>
+
+    <h1 id="tocDuviriMode">Duviri Mode</h1>
+    <p>
+        The twelve Shawzin stations in Duviri each a have a song, in both normal and virtuoso mode.  These 24 songs are
+        special in that the notes you play are not always the notes you hear.  This happens mainly with chords,
+        which are played with a single fret in these songs.  Presumably this to make them easier to play.
+    </p>
+    <p>
+        Duviri mode exists for no other reason than to be able to show these songs in Shawzinscore as they appear and
+        sound in game.  When loading one of these songs, you will see a <strong>Duviri Mode</strong> checkbox at the
+        top of the tablature side of the track view.  Enable this to show the notes as they appear in-game.  Disable
+        this to show the notes as they actually sound.
+    </p>
+    <p>
+        <strong class="info">Note: </strong> You can use settings to enable the creation of your own Duviri-mode songs,
+        I guess.  However, there's no way to load them and play them like that in, game.  You will have to pick one
+        type of song code, <strong>as it's played</strong> or <strong>as it sounds</strong>.
+    </p>
+    <p>
+        <strong class="info">Note: </strong> Documentation of how to edit Duviri mode songs is coming
+        <strong class="warn">never</strong> because I'm literally the only one who will ever use it.
+    </p>
 
     <h1 id="tocGeneral">General Info</h1>
     <p>
@@ -2648,6 +2676,12 @@
         <li>Made MIDI an optional setting, defaulting to disabled.</li>
         <li>Added measure numbers (thanks <strong>DialEnder</strong>)</li>
         <li>Added Spoiler Shawzin</li>
+    </ul>
+    <h3 id="tocUpdates2.1">v2.1: 2025-05-08</h3>
+    <ul>
+        <li>Added full display and editing support for Duviri mode, where what you play doesn't match what you hear.
+            Because if it's worth doing then it's worth overdoing.
+        </li>
     </ul>
 
     <h1 id="tocTodo">To do</h1>
