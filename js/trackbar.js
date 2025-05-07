@@ -355,7 +355,9 @@ var TrackBar = (function() {
     function revertTemporarySettings() {
         // revert tab side frets
         if (oldFretEnabled) {
-            for (var i = 0; i < 4; i++) {
+            // doing in reverse order is easier than trying to make the rules play nice when
+            // we set a bunch at once
+            for (var i = 3; i >= 0; i--) {
                 setFretEnabled(i, oldFretEnabled[i]);
             }
             // clear out temp values

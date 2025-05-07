@@ -1453,7 +1453,7 @@ var Track = (function() {
         var originalNoteSide = null;
         // the vertical offset where the original note was clicked
         var originalNoteOffsetTick = 0;
-        // todo: horiontal offset for chords
+        // todo: horizontal offset for chords
 //        var originalNoteOffsetNoteName = 0;
         // whether the current note has been moved off the original note in any direction
         var originalNoteHasMoved = false;

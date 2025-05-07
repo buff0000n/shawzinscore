@@ -108,7 +108,7 @@ var Controls = (function() {
             // do this after checking if the code has changed, this kicks off another change event for some reason
             input.blur();
             // set the state of the textbox and associated copy/paster buttons
-            updateSongCode(value);
+            doUpdateSongCode(value, null, null);
         }
     }
 
@@ -117,7 +117,11 @@ var Controls = (function() {
         var codeField = document.getElementById("metadata-settings-code-text");
         // short-circuit
         if (codeField.value == songCode) return;
+        doUpdateSongCode(songCode, playedSongCode, soundsSongCode);
+    }
 
+    function doUpdateSongCode(songCode, playedSongCode = null, soundsSongCode = null) {
+        var codeField = document.getElementById("metadata-settings-code-text");
         codeField.value = songCode;
         // if there's a song code then enable the copy button
         if (songCode && songCode.length > 0) {
