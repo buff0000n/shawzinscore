@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<!-- Full disclosure: JavaScript is not my forte and neither is CSS. -B -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<!-- disable the weird Google cookie thing that's blocked on github pages -->
+<meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<head>
+  <title>Duviri Shawzin Stations</title>
+</head>
+<link href="img/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+<link rel="stylesheet" type="text/css" href="../css/main.css"/>
+<link rel="stylesheet" type="text/css" href="css/duviri.css"/>
+<body onload="init()">
+<script type="text/javascript" language="javascript" src="../js/lib/util.js"></script>
+<script type="text/javascript" language="javascript" src="../js/lib/events.js"></script>
+<script type="text/javascript" language="javascript" src="../js/lib/menus.js"></script>
+<script type="text/javascript" language="javascript" src="../js/settings.js"></script>
+<script type="text/javascript" language="javascript" src="js/metadata.js"></script>
+<script type="text/javascript" language="javascript" src="js/main.js"></script>
+
+<div class="lotsOfWords">
+    <div class="titleBar">
+        <div class="mainTitle">Duviri Shawzin Stations</div>
+    </div>
+
+    <div id="error-bar">
+        <div id="error">
+            <div class="errorLine">Javascript not enabled.</div>
+        </div>
+    </div>
+
+    <p>
+        <strong class="warn">Note: </strong> You must complete each Duviri station on <strong>Virtuoso</strong>
+        difficulty at least once to obtain the Courtly Shawzin.
+    </p>
+    <p>
+        Click on a station in the map below to see more information.
+    </p>
+
+    <div id="duviri-map">
+        <div class="field-entry-span tooltip" id="change-duviri-mood">
+            <div class="tooltiptextbottom">Change the displayed map to a different mood</div>
+        </div>
+        <div id="duviri-map-area">
+            <div id="duviri-map-container">
+                <img id="duviri-map-image" src="img/map-joy.jpg" srcset="img2x\map-joy.jpg 2x" width="500" height="450"/>
+            </div>
+        </div>
+        <div class="field-entry-span tooltip" id="duviri-reset-station-checks" style="display: none">
+            <div class="lightButton" id="duviri-reset-station-checks-button">Reset</div>
+            <div class="tooltiptextbottom">Reset all stations to unchecked</div>
+        </div>
+    </div>
+
+    <div id="duviri-stations">
+
+
+    </div>
+
+
+
+</div>
+</body>

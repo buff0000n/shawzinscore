@@ -317,6 +317,11 @@ var PageUtils = (function() {
 	}
 
     function buildQueryUrlWithMap(map, plusIsSpace=true) {
+        var query = buildQueryWithMap(map, plusIsSpace);
+        return buildQueryUrl(query);
+    }
+
+    function buildQueryWithMap(map, plusIsSpace=true) {
         // yowza
         var terms = [];
         for (var key in map) {
@@ -326,7 +331,7 @@ var PageUtils = (function() {
             }
         }
         var query = "?" + terms.join("&");
-        return buildQueryUrl(query);
+        return query;
     }
 
     function extractUrlAnchor(url) {
@@ -515,6 +520,7 @@ var PageUtils = (function() {
         setQueryParam: setQueryParam, // (name, value, plusIsSpace=true)
         removeUrlQueryParam: removeUrlQueryParam, // (name, value, plusIsSpace=true)
         setQueryParamMap: setQueryParamMap, // (map, plusIsSpace=true)
+        buildQueryWithMap: buildQueryWithMap, // (map, plusIsSpace=true)
         buildQueryUrlWithMap: buildQueryUrlWithMap, // (map, plusIsSpace=true)
         removeUrlAnchor: removeUrlAnchor, // ()
 
