@@ -64,8 +64,14 @@ var Duviri = (function() {
     function buildMapDots() {
         var container = document.getElementById("duviri-map-container");
         container.style.position = "relative";
-        for (var i = 0; i < DuviriMetadata.stations.length; i++) {
-            var station = DuviriMetadata.stations[i];
+        // sort in decending order by y coordinate
+        // since z-index doesn't work to keep tooltips from appearing underneath other dots, add them to the
+        // container so that lower dots are added before higher dots
+        var list = DuviriMetadata.stations.slice();
+        list.sort((a, b) => { return -(a.coordinates.y - b.coordinates.y); });
+
+        for (var i = 0; i < list.length; i++) {
+            var station = list[i];
 
             var dot = document.createElement("div");
             dot.className = "duviri-map-dot tooltip";
@@ -87,7 +93,6 @@ var Duviri = (function() {
             var tooltip = document.createElement("div");
             tooltip.className = "tooltiptextbottom";
             tooltip.innerHTML = station.name + "<br/>" + buildDifficultyStars(station);
-            // todo: can I make this appear above all the other dots?  z-index doesn't appear to work
             dot.appendChild(tooltip);
         }
     }
