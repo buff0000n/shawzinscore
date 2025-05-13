@@ -118,8 +118,8 @@ var Duviri = (function() {
 
         var image = document.getElementById("duviri-map-image");
 
-        image.src = `img/map-${mood}.jpg`;
-        image.srcset = `img2x/map-${mood}.jpg 2x`;
+        image.src = `img/map-${mood.toLowerCase()}.jpg`;
+        image.srcset = `img2x/map-${mood.toLowerCase()}.jpg 2x`;
 
         Settings.setDuviriMood(mood);
         updateMapDots();
