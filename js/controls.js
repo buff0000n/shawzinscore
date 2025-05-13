@@ -18,6 +18,7 @@ var Controls = (function() {
         // song code box event handlers
         Events.setupTextInput(document.getElementById("metadata-settings-code-text"), true);
         document.getElementById("metadata-settings-code-text").addEventListener("change", commitSongCodeChange, { passive: false });
+        // duviri-mode song code boxes are read-only
 
         // hacky event handler for the paste code button
         document.getElementById("pasteCodeButton").addEventListener("click", (e) => {
@@ -27,6 +28,14 @@ var Controls = (function() {
         // just as hacky event handler for the copy code button
         document.getElementById("copyCodeButton").addEventListener("click", (e) => {
             PageUtils.copyToClipboard(document.getElementById("metadata-settings-code-text").value);
+        }, { passive: false });
+
+        // need handlers for the duviri-mode code copy buttons
+        document.getElementById("copyCodeButton-duviri-played").addEventListener("click", (e) => {
+            PageUtils.copyToClipboard(document.getElementById("metadata-settings-code-duviri-played-text").value);
+        }, { passive: false });
+        document.getElementById("copyCodeButton-duviri-sounds").addEventListener("click", (e) => {
+            PageUtils.copyToClipboard(document.getElementById("metadata-settings-code-duviri-sounds-text").value);
         }, { passive: false });
 
         // shawzintab menu button
@@ -62,10 +71,14 @@ var Controls = (function() {
         // MIDI enabled
         Events.setupCheckbox(document.getElementById("config-midienabled-input"), true);
         document.getElementById("config-midienabled-input").addEventListener("change", commitMidiEnabled, { passive: false });
+        // Duviri Mode editing enabled
+        Events.setupCheckbox(document.getElementById("config-duvirimodeeditingenabled-input"), true);
+        document.getElementById("config-duvirimodeeditingenabled-input").addEventListener("change", commitDuviriModeEditingEnabled, { passive: false });
         // initialize these from local storage. they are preferences and not part of the song model
         document.getElementById("config-trackreversed-input").checked = !Settings.isTrackReversed();
         document.getElementById("config-oldfretlayout-input").checked = Settings.getOldFretLayout();
         document.getElementById("config-midienabled-input").checked = Settings.getMidiEnabled();
+        document.getElementById("config-duvirimodeeditingenabled-input").checked = Settings.getDuviriModeEditingEnabled();
 
         // event handlers for the copy URL button
         document.getElementById("toolbar-buttons-copyurl").addEventListener("click", doCopyUrlMenu, { passive: false });
@@ -95,17 +108,21 @@ var Controls = (function() {
             // do this after checking if the code has changed, this kicks off another change event for some reason
             input.blur();
             // set the state of the textbox and associated copy/paster buttons
-            updateSongCode(value);
+            doUpdateSongCode(value, null, null);
         }
     }
 
-    function updateSongCode(songCode) {
+    function updateSongCode(songCode, playedSongCode = null, soundsSongCode = null) {
         // update the song code textbox if the given song code is different
-        // todo: is this necessary?
         var codeField = document.getElementById("metadata-settings-code-text");
-        if (codeField.value != songCode) {
-            codeField.value = songCode;
-        }
+        // short-circuit
+        if (codeField.value == songCode) return;
+        doUpdateSongCode(songCode, playedSongCode, soundsSongCode);
+    }
+
+    function doUpdateSongCode(songCode, playedSongCode = null, soundsSongCode = null) {
+        var codeField = document.getElementById("metadata-settings-code-text");
+        codeField.value = songCode;
         // if there's a song code then enable the copy button
         if (songCode && songCode.length > 0) {
             var button = document.getElementById("copyCodeButton");
@@ -116,6 +133,29 @@ var Controls = (function() {
             var button = document.getElementById("copyCodeButton");
             button.className = "smallButton-disabled icon tooltip";
             button.children[0].className = "icon-disabled";
+        }
+
+        // check if we have alternative song codes
+        if (playedSongCode) {
+            // fill in the two alternative song code boxes and show them
+            document.getElementById("metadata-settings-code-duviri-played-text").value = playedSongCode;
+            document.getElementById("metadata-settings-code-duviri-played").style.display = "";
+
+            document.getElementById("metadata-settings-code-duviri-sounds-text").value = soundsSongCode;
+            document.getElementById("metadata-settings-code-duviri-sounds").style.display = "";
+
+            // if Duviri Mode Editing is not enabled then hide the normal song code box,
+            // the code it contains is not game-compatible
+            if (!Settings.getDuviriModeEditingEnabled()) {
+                document.getElementById("metadata-settings-code").style.display = "none";
+            }
+
+        } else {
+            // no alternative song codes, make sure the regular song code
+            // box is shown and the other two are hidden
+            document.getElementById("metadata-settings-code-duviri-played").style.display = "none";
+            document.getElementById("metadata-settings-code-duviri-sounds").style.display = "none";
+            document.getElementById("metadata-settings-code").style.display = "";
         }
     }
 
@@ -277,7 +317,7 @@ var Controls = (function() {
     }
 
     function commitTrackReversedChange() {
-        // get the textbox
+        // get the checkbox
         var input = document.getElementById("config-trackreversed-input");
         // get its value, just a boolean
         var value = !input.checked;
@@ -289,7 +329,7 @@ var Controls = (function() {
     }
 
     function commitOldFretLayoutChange() {
-        // get the textbox
+        // get the checkbox
         var input = document.getElementById("config-oldfretlayout-input");
         // get its value, just a boolean
         var value = input.checked;
@@ -301,7 +341,7 @@ var Controls = (function() {
     }
 
     function commitMidiEnabled() {
-        // get the textbox
+        // get the checkbox
         var input = document.getElementById("config-midienabled-input");
         // get its value, just a boolean
         var value = input.checked;
@@ -313,6 +353,22 @@ var Controls = (function() {
             Midi.init();
         } else {
             Midi.disable();
+        }
+    }
+
+    function commitDuviriModeEditingEnabled() {
+        // get the checkbox
+        var input = document.getElementById("config-duvirimodeeditingenabled-input");
+        // get its value, just a boolean
+        var value = input.checked;
+
+        // save to preferences
+        Settings.setDuviriModeEditingEnabled(value);
+
+        // if there is currently a duviri mode song loaded then
+        // update the song code box visibility
+        if (Model.getSong().hasAltNotes()) {
+            document.getElementById("metadata-settings-code").style.display = value ? "" : "none";
         }
     }
 

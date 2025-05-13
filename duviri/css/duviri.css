@@ -1,0 +1,63 @@
+
+div#duviri-map {
+    text-align: center;
+    background: #404040;
+    margin: 1ex;
+    padding: 1ex;
+    border-radius: 1ex;
+}
+
+div#duviri-map-area {
+    background: #202020;
+    padding: 2ex;
+    border-radius: 1ex;
+}
+
+div#duviri-map-container {
+    background: #202020;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    position: relative;
+}
+
+.duviri-map-dot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+div.duviri-station {
+    background: #404040;
+    padding: 1ex;
+    margin: 1ex;
+    border-radius: 1ex;
+}
+
+span.duviri-station-title-text {
+    font-weight: bold;
+    font-color: #FFFFFF;
+    padding: 0 3ex;
+}
+
+div.image-thumbnail-list {
+    background: #202020;
+    margin: 1ex 0;
+    padding: 1ex;
+    border-radius: 1ex;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+img.image-thumbnail-image {
+    margin: 0.5ex;
+    cursor: pointer;
+}
+
+div.station-duviri-about {
+    background: #202020;
+    margin: 1ex 0 0 0;
+    padding: 1ex;
+    border-radius: 1ex;
+}
+

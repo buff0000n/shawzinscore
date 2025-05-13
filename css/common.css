@@ -18,12 +18,15 @@
     li {
         margin: 0ex 0ex 1ex 0ex;
     }
+    li > ul {
+        margin: 1ex 0 0 0;
+    }
     input, textarea, select {
         color: #FFFFFF;
         background-color: #000000;
     }
 
-    .button, .button-disabled, .selectButton, .selectButtonDark, .lightButton, .textButton {
+    .button, .button-disabled, .selectButton, .selectButtonDark, .lightButton, .darkButton, .textButton {
         cursor: pointer;
         border: none;
         color: #FFFFFF;
@@ -31,7 +34,7 @@
         font-size: 100%;
         border-radius: 1ex;
     }
-    .button, .button-disabled, .selectButton, .lightButton, .textButton {
+    .button, .button-disabled, .selectButton, .lightButton, .darkButton, .textButton {
         padding: 1ex;
     }
     .selectButtonDark {
@@ -39,7 +42,7 @@
         padding: 0ex;
         margin 0.5ex;
     }
-    .button, .button-disabled, .lightButton {
+    .button, .button-disabled, .lightButton, .darkButton {
         text-align: center;
     }
     .button, .selectButton {
@@ -51,6 +54,9 @@
     .lightButton {
         background-color: #808080;
     }
+    .darkButton {
+        background-color: #202020;
+    }
     .selectButton {
         text-align: left;
     }
@@ -61,13 +67,12 @@
     .urlButton, {
         background-color: #406080;
     }
-    .smallButton, .smallButton-disabled {
+    .smallButton, .smallButton-disabled, .smallButton-light {
         text-align: center;
         text-decoration: none;
         font-size: 100%;
         display: inline-block;
         margin: 0;
-        background-color: #404040;
         border: none;
         padding: 0;
         border-radius: 1ex;
@@ -75,10 +80,17 @@
     .smallButton {
         cursor: pointer;
         color: #FFFFFF;
+        background-color: #404040;
+    }
+    .smallButton-light {
+        cursor: pointer;
+        color: #FFFFFF;
+        background-color: #606060;
     }
     .smallButton-disabled {
         cursor: default;
         color: #808080;
+        background-color: #404040;
     }
 
     .icon {
