@@ -64,14 +64,17 @@ var Duviri = (function() {
     function buildMapDots() {
         var container = document.getElementById("duviri-map-container");
         container.style.position = "relative";
-        // sort in decending order by y coordinate
         // since z-index doesn't work to keep tooltips from appearing underneath other dots, add them to the
         // container so that lower dots are added before higher dots
-        var list = DuviriMetadata.stations.slice();
-        list.sort((a, b) => { return -(a.coordinates.y - b.coordinates.y); });
+        var list = DuviriMetadata.stations.
+            // zip with the original index first so we have it for the event handler
+            map(function(e, i) { return [e, i]}).
+            // sort descending by y coordinates
+            sort((a, b) => { return -(a[0].coordinates.y - b[0].coordinates.y); });
 
         for (var i = 0; i < list.length; i++) {
-            var station = list[i];
+            var station = list[i][0];
+            var stationIndex = list[i][1];
 
             var dot = document.createElement("div");
             dot.className = "duviri-map-dot tooltip";
@@ -80,12 +83,12 @@ var Duviri = (function() {
             dot.style.top = (station.coordinates.y / 2) + "px";
             dot.style.left = (station.coordinates.x / 2) + "px";
             // event listener for map dots
-            dot.stationIndex = i;
+            dot.stationIndex = stationIndex;
             dot.addEventListener("click", mapDotClicked, { passive: false })
             container.appendChild(dot);
 
             var dotImg = document.createElement("img");
-            dotImg.id = "duviri-station-dot-" + i;
+            dotImg.id = "duviri-station-dot-" + stationIndex;
             dotImg.src = "img/dot-red.png";
             dotImg.srcset = "img2x/dot-red.png 2x";
             dot.appendChild(dotImg);
