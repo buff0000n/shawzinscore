@@ -40,13 +40,18 @@ span.duviri-station-title-text {
     padding: 0 3ex;
 }
 
-div.image-thumbnail-list {
+div.image-thumbnail-list-container {
     background: #202020;
     margin: 1ex 0;
     padding: 1ex;
     border-radius: 1ex;
+    text-align: center;
+}
+
+div.image-thumbnail-list {
     overflow-x: scroll;
     white-space: nowrap;
+    display: inline-block;
 }
 
 img.image-thumbnail-image {

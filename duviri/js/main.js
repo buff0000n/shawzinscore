@@ -30,6 +30,9 @@ var Duviri = (function() {
 
             // se need this so the normal ways of exiting a pop-up are available
             Events.registerEventListeners();
+
+            // can't figure out how to make it resize nicely with CSS, so javascript it is
+            Events.addCombinedResizeListener(resize);
         }, 100);
     }
 
@@ -77,6 +80,7 @@ var Duviri = (function() {
             var stationIndex = list[i][1];
 
             var dot = document.createElement("div");
+            dot.id = "duviri-station-dot-container-" + stationIndex;
             dot.className = "duviri-map-dot tooltip";
             // coordinate numbers are based on the full resolution images, which are the 2x ones,
             // so we have to divide them by 2
@@ -189,9 +193,14 @@ var Duviri = (function() {
         }
 
         {
+            var thumbnailListContainer = document.createElement("div");
+            thumbnailListContainer.className = "image-thumbnail-list-container";
+            container.appendChild(thumbnailListContainer);
+
             var thumbnailList = document.createElement("div");
+            thumbnailList.id = "image-thumbnail-list-" + stationIndex;
             thumbnailList.className = "image-thumbnail-list";
-            container.appendChild(thumbnailList);
+            thumbnailListContainer.appendChild(thumbnailList);
 
             for (var t = 0; t < station.pics.length; t++) {
                 var pic = station.pics[t];
@@ -346,6 +355,49 @@ var Duviri = (function() {
     }
 
     // event listener functions
+
+    // recalculate map and thumbnail box sizes
+    function resize(w, h) {
+        {
+            // todo: not a fudge
+            var margin = 100;
+            var width = w - margin;
+
+            var image = document.getElementById("duviri-map-image");
+            var mapWidth = 500;
+            var mapHeight = 450;
+
+            var scale = width > mapWidth ? 1.0 : width / mapWidth;
+            image.width = mapWidth * scale;
+            image.height = mapHeight * scale;
+            // have to relocate and scale the dots without also scaling their tooltips
+            for (var i = 0; i < DuviriMetadata.stations.length; i++) {
+                var station = DuviriMetadata.stations[i];
+                var dot = document.getElementById("duviri-station-dot-container-" + i);
+                dot.style.top = ((station.coordinates.y / 2) * scale) + "px";
+                dot.style.left = ((station.coordinates.x / 2) * scale) + "px";
+
+                var dotImg = document.getElementById("duviri-station-dot-" + i);
+                dotImg.style.scale = (100 * scale) + "%";
+            }
+        }
+
+        {
+            // todo: not a fudge
+            var margin = 80;
+            var width = w - margin;
+            var maxWidth = 750;
+
+            if (width > maxWidth) {
+                width = maxWidth;
+            }
+
+            for (var i = 0; i < DuviriMetadata.stations.length; i++) {
+                var tnl = document.getElementById("image-thumbnail-list-" + i);
+                tnl.style.width = width + "px";
+            }
+        }
+    }
 
     function stationCheckClicked(e) {
         var e = e || window.event;
