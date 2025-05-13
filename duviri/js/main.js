@@ -14,28 +14,37 @@ var Duviri = (function() {
 
             // build the mood menu
             buildMoodMenu();
+            // build the map dots
             buildMapDots();
+            // initialize the dots
             setMood(Settings.getDuviriMood());
 
+            // build all the shawzin station sections
             buildStations();
+            // initialize the checkbox/dot colors
             updateStationsChecked();
 
             // set up generic event listeners
             var resetButton = document.getElementById("duviri-reset-station-checks");
             resetButton.addEventListener("click", resetButtonClicked, { passive: "false" });
 
+            // se need this so the normal ways of exiting a pop-up are available
             Events.registerEventListeners();
-
         }, 100);
     }
 
     function buildMoodMenu() {
+        // Oh man I didn't want to write three hundred lines of javascript that mostly just builds HTML
+        // but here we are
         var container = document.getElementById("change-duviri-mood")
         for (var i = 0; i < DuviriMetadata.moodList.length; i++) {
             var mood = DuviriMetadata.moodList[i];
             var button = document.createElement("span");
             button.id = "duviri-mood-" + mood;
             button.class = "button";
+            // event listener for mood ratio buttons
+            button.mood = mood;
+            button.addEventListener("click", moodClicked, { passive: false });
             container.appendChild(button);
 
             var input = document.createElement("input");
@@ -49,8 +58,6 @@ var Duviri = (function() {
             label.innerHTML = mood;
             button.appendChild(label);
 
-            button.mood = mood;
-            button.addEventListener("click", moodClicked, { passive: false });
         }
     }
 
@@ -66,6 +73,7 @@ var Duviri = (function() {
             // so we have to divide them by 2
             dot.style.top = (station.coordinates.y / 2) + "px";
             dot.style.left = (station.coordinates.x / 2) + "px";
+            // event listener for map dots
             dot.stationIndex = i;
             dot.addEventListener("click", mapDotClicked, { passive: false })
             container.appendChild(dot);
@@ -79,7 +87,7 @@ var Duviri = (function() {
             var tooltip = document.createElement("div");
             tooltip.className = "tooltiptextbottom";
             tooltip.innerHTML = station.name + "<br/>" + buildDifficultyStars(station);
-            // todo: can I make this appear above all the other dots?
+            // todo: can I make this appear above all the other dots?  z-index doesn't appear to work
             dot.appendChild(tooltip);
         }
     }
@@ -148,6 +156,7 @@ var Duviri = (function() {
             {
                 var checkButton = document.createElement("span");
                 checkButton.className = "darkButton tooltip";
+                // event listener for station checkbox
                 checkButton.stationIndex = stationIndex;
                 checkButton.addEventListener("click", stationCheckClicked, { passive: "false" });
                 titleBar.appendChild(checkButton);
@@ -180,6 +189,7 @@ var Duviri = (function() {
                 var pic = station.pics[t];
                 var span = document.createElement("span");
                 span.className = "image-thumbnail";
+                // event listener for image thumbnail
                 span.fullImage = `img/${pic}.jpg`;
                 span.addEventListener("click", imageClicked, { passive: "false" });
                 thumbnailList.appendChild(span);
@@ -215,6 +225,7 @@ var Duviri = (function() {
 
             ul.appendChild(buildInfoItem("Location", station.location));
 
+            // generate a "not available" section if the station is not available in all moods
             if (station.moods.length < 5) {
                 var notAvailableMoods = "";
                 for (var m = 0; m < DuviriMetadata.moodList.length; m++) {
@@ -322,9 +333,12 @@ var Duviri = (function() {
         var img = document.createElement("img");
         img.src = imageLink;
         var close = Menus.showMenu(img, button, null, true, null);
+        // event listener to close the pop-up if the image is clicked
         img.addEventListener("click", close, { passive: "false" });
     }
-    
+
+    // event listener functions
+
     function stationCheckClicked(e) {
         var e = e || window.event;
         var stationIndex = e.currentTarget.stationIndex;

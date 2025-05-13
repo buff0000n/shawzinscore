@@ -113,6 +113,108 @@ var DuviriMetadata = (function() {
                "meter": "4/4",
                "tempo": "120"
             }
+        },
+        {
+            "name": "Fair Shores Hamlet",
+            "location": "Fair Shores Hamlet, on the building at the north side the bridge that goes over the road",
+            "coordinates": {"x": 494, "y": 586},
+            "moods": [joy, anger, envy, sorrow, fear],
+            "pics": ["7-ham-1", "7-ham-2", "7-ham-3", "7-ham-4"],
+            "difficulty": 5,
+            "song": {
+                "name": "Sky Ever Changing",
+                "code": {
+                    "normal": "6BAAJAQKAYJAoBAwJBAKBIBBgJBwKB4RCISCQUCgSCo0DAk//yDYi//0Dwk//yEIi//0Egk//yE4i//SFQUFghFoB//BGAJGQKGYBGwJHAKHIBHgJHwKH4RIISIQMIYE//KIgC//JIoB//",
+                    "virtuoso": "6BAAJAQMAUKAYJAoBAwJBAMBEKBIBBgJBwMB0KB4RCISCQUCgSCo0DAk//yDYi//0Dwk//kEAyEIi//0Egk//yE4i//SFISFQUFghFoBGAJGQMGUKGYJGoBGwJHAMHEKHIBHgJHwMH0KH4RIISIQRIUMIYKIgJIo"
+               },
+               "meter": "3/4",
+               "tempo": "120"
+            }
+        },
+        {
+            "name": "The Agora",
+            "location": "The Agora, west side of the central island",
+            "coordinates": {"x": 428, "y": 560},
+            "moods": [joy, anger, envy, sorrow, fear],
+            "pics": ["8-ago-1", "8-ago-2", "8-ago-3", "8-ago-4"],
+            "difficulty": 5,
+            "song": {
+                "name": "Galleria Delights",
+                "code": {
+                    "normal": "5SAAUAIhAQB//hAYB//SAwUA4hBAB//hBIB//SBgUBohBwB//iB4C//hCAB//UCIE//SCQC//RCYB//UCgE//hCoB//SDAUDIhDQB//hDYB//SDwUD4hEAB//hEIB//SEgUEohEwB//iE4C//hFAB//UFIE//SFQC//RFYB//KFgC//SFo",
+                    "virtuoso": "5SAAUAI0AQk//0AYk//SAwUA40BAk//0BIk//SBgUBohBwiB4hCAUCISCQRCYyCgi//0Cok//SDAUDI0DQk//0DYk//SDwUD40EAk//0EIk//SEgUEohEwiE4hFAUFISFQRFYKFgSFo"
+               },
+               "meter": "3/4",
+               "tempo": "120"
+            }
+        },
+        {
+            "name": "Primrose Village",
+            "location": "Primrose Village, east of the village at the top of the hill, under a tree",
+            "coordinates": {"x": 336, "y": 639},
+            "moods": [joy, anger, envy, sorrow, fear],
+            "pics": ["9-hill-1", "9-hill-2", "9-hill-3", "9-hill-4"],
+            "difficulty": 4,
+            "song": {
+                "name": "Lorn Echoes",
+                "code": {
+                    "normal": "8RAAUAQkAYE//iAgC//kAwE//RBAUBQkBYE//hBgB//RCAUCQkCYE//iCgC//hCwB//RDAUDQkDYE//hDgB//yEAi//0EYk//xEgh//yFAi//0FYk//cFgE//RGAUGQkGYE//iGgC//kGwE//0HAk//xHQh//aHgK//ZHwJ//SIAJIg",
+                    "virtuoso": "8RAASAIUAQkAYiAgkAwRBASBIUBQkBYhBgRCASCIUCQkCYiCghCwRDASDIUDQkDYhDgyEAi//yEIi//yEQi//0EYk//xEgh//xEwh//yFAi//yFIi//yFQi//0FYk//cFgM//RGASGIUGQkGYiGgkGw0HAk//yHIi//xHQh//cHYM//aHgK//ZHwJ//SIAJIg"
+               },
+               "meter": "4/4",
+               "tempo": "120"
+            }
+        },
+        {
+            "name": "The King's Palace",
+            "location": "The King's Palace, on the building at the southeast corner of the central plaza, near the bridge with dining tables on it",
+            "coordinates": {"x": 190, "y": 735},
+            "moods": [joy, anger, envy, sorrow, fear],
+            "pics": ["10-town-1", "10-town-2", "10-town-3", "10-town-4"],
+            "difficulty": 3,
+            "song": {
+                "name": "Watcher's Eye",
+                "code": {
+                    "normal": "1BAABAMCAYEAcJAgB//JAwB//BBABBMCBYEBcKBgC//JBwB//BCABCMCCYECcJCgB//JCwB//kDASDQSDYSDgUDskEASEQSEYSEgREsBFABFMCFYEFcJFgB//JFwB//BGABGMCGYEGcBGg",
+                    "virtuoso": "1BAABAMCAYEAcyAgi//yAwi//BBABBMCBYEBc0Bgk//yBwi//BCABCMCCYECcyCgi//yCwi//kDAiDFhDKSDQSDYSDgUDskEAiEFhEKSEQSEYSEgUEkREskFAiFFhFKSFQSFYSFgUFsBGABGMCGYEGcyGgi//yGwi//BHABHMCHYEHcBHg"
+               },
+               "meter": "4/4",
+               "tempo": "120"
+            }
+        },
+        {
+            "name": "Titan's Rest",
+            "location": "Titan's Rest, to the southeast and underneath, on the balconies by the caves",
+            "coordinates": {"x": 739, "y": 727},
+            "moods": [joy, anger, envy, sorrow, fear],
+            "pics": ["11-under-1", "11-under-2", "11-under-3", "11-under-4"],
+            "difficulty": 3,
+            "song": {
+                "name": "There Came A Stranger",
+                "code": {
+                    "normal": "1BAAMAIE//JAQB//KAYC//BAgMAoE//JAwB//BBAMBIE//JBQB//KBYC//RBgB//UBwE//BCAMCIE//JCQB//KCYC//BCgMCoE//JCwB//BDAMDIE//JDQB//KDYC//RDgB//UDwE//yEAi//xEQh//yEgi//xEwh//cFAM//aFQK//cFgM//aFwK//BGAMGIE//JGQB//KGYC//BGgMGoE//JGwB//BHAMHIE//JHQB//EHgCHoBHw",
+                    "virtuoso": "1BAAMAIKAMJAQKAYBAgMAoKAsJAwBBAMBIKBMJBQKBYRBgSBoUBwBCAMCIKCMJCQKCYBCgMCoKCsJCwBDAMDIKDMJDQKDYRDgSDoUDwhD4yEAi//xEQh//yEgi//xEwh//cFAM//aFQK//cFgM//aFwK//BGAMGIKGMJGQKGYBGgMGoKGsJGwBHAMHIKHMJHQKHYMHcEHgCHoBHw"
+               },
+               "meter": "4/4",
+               "tempo": "120"
+            }
+        },
+        {
+            "name": "Chamber of the Muses",
+            "location": "Chamber of the Muses, southeast and just south of the opera singer's stage",
+            "coordinates": {"x": 827, "y": 834},
+            "moods": [joy, anger, envy, sorrow, fear],
+            "pics": ["12-muse-1", "12-muse-2", "12-muse-3", "12-muse-4"],
+            "difficulty": 2,
+            "song": {
+                "name": "Spirits of Manipura",
+                "code": {
+                    "normal": "2JAAMAIKAQJAgMAoKAwUBASBIUBgRBoSBwJCAMCIKCQJCgMCoKCwUDASDIUDgRDoSDwMEAMEQREgMFARFQSFgJGAMGIKGQJGgMGoKGwUHARHQMHg",
+                    "virtuoso": "2JAAMAIKAQJAgMAoKAwUBASBIUBgSBkRBoSBwJCAMCIKCQJCgMCoKCwUDASDIUDgRDoSDwaEAK//aEQK//cEgM//aFAK//cFQM//xFgh//JGAMGIKGQJGgMGoKGwUHASHERHIMHMKHQJHYMHg"
+               },
+               "meter": "4/4",
+               "tempo": "120"
+            }
         }
     ];
     return {
