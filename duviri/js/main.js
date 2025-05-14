@@ -471,6 +471,8 @@ var Duviri = (function() {
             // update which arrow buttons are displayed based in the index
             arrowImgLeft.style.display = (currentIndex > 0) ? "" : "none";
             arrowImgRight.style.display = (currentIndex < imageList.length - 1) ? "" : "none";
+            // event listener to close the menu if the image is clicked
+            img.addEventListener("click", close, { passive: "false" });
         }
 
         function startLoading(index) {
@@ -486,8 +488,6 @@ var Duviri = (function() {
             currentIndex = index;
             // create new image element
             nextImg = document.createElement("img");
-            // event listener to close the menu if the image is clicked
-            nextImg.addEventListener("click", close, { passive: "false" });
             // set the onload callback depending on whether this is the first image or a change in image
             nextImg.onload = !img ? firstOnLoad : secondOnLoad;
 
