@@ -300,7 +300,7 @@
         position: absolute;
         z-index: 10;
         top: 120%;
-        left: calc(50% - 16px);
+        left: calc(50% - 112px);
         margin-left: -16px;
         pointer-events: none;
         white-space: normal;

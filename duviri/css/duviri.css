@@ -1,3 +1,8 @@
+html, body {
+    /* Necessary for mobile for some reason */
+    /* Don't do this with the main Shawzinscore page */
+    overflow-x: hidden;
+}
 
 div#duviri-map {
     text-align: center;
@@ -64,5 +69,12 @@ div.station-duviri-about {
     margin: 8px 0 0 0;
     padding: 8px;
     border-radius: 8px;
+}
+
+.icon-button {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 100;
 }
 

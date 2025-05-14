@@ -202,12 +202,19 @@ var Duviri = (function() {
             thumbnailList.className = "image-thumbnail-list";
             thumbnailListContainer.appendChild(thumbnailList);
 
+            var imageList = [];
+            for (var t = 0; t < station.pics.length; t++) {
+                var pic = station.pics[t];
+                imageList.push(`img/${pic}.jpg`);
+            }
+
             for (var t = 0; t < station.pics.length; t++) {
                 var pic = station.pics[t];
                 var span = document.createElement("span");
                 span.className = "image-thumbnail";
                 // event listener for image thumbnail
-                span.fullImage = `img/${pic}.jpg`;
+                span.imageList = imageList;
+                span.imageIndex = t;
                 span.title = station.name;
                 span.addEventListener("click", imageClicked, { passive: "false" });
                 thumbnailList.appendChild(span);
@@ -350,53 +357,146 @@ var Duviri = (function() {
     // flag for when loading an image is in progress
     var imageLoading = false;
 
-    function showFullImage(button, title, imageLink) {
+    // todo: this should probably be its own module
+    function showFullImage(button, title, imageList, startIndex) {
         // short circuit
         if (imageLoading) return;
 
-        // lazy way: just set the cursor style on the clicked element to signify something is loading
-        button.style.cursor = "wait";
+        // state
+        // current image index
+        var currentIndex = startIndex;
+        // currently image
+        var img = null;
+        // pending next image
+        var nextImg = null;
+        // menu close callback
+        var close = null;
 
-        // basic image div
-        var img = document.createElement("img");
+        // left and right arrows
+        var arrowImgLeft = document.createElement("img");
+        arrowImgLeft.className = "icon-button";
+        arrowImgLeft.srcset = "img2x/arrow-left-big.png 2x";
+        arrowImgLeft.src = "img/icon-arrow-left-big.png";
+
+        var arrowImgRight = document.createElement("img");
+        arrowImgRight.className = "icon-button";
+        arrowImgRight.srcset = "img2x/arrow-right-big.png 2x";
+        arrowImgRight.src = "img/icon-arrow-right-big.png";
+
+        // use the ResizeObserver API to find out when the image's parent is resized
+        var resizeObserver = new ResizeObserver((list) => {
+            // we get a list, it's only gonna have one element in it
+            for (var e of list) {
+                // get the target element
+                var target = e.target;
+                // get the element's bounds
+                var bcr = target.getBoundingClientRect();
+                // scroll so the center of the image is in the center of the containing element
+                target.scrollTo(img.width/2 - bcr.width/2, img.height/2 - bcr.height/2);
+
+                var bcr2 = target.parentElement.getBoundingClientRect();
+                // subtract the container padding, scrollbar width, arrow placement
+                arrowImgRight.style.left = (bcr2.width - 8 - 32) + "px";
+                // add the container padding, arrow placement
+                arrowImgLeft.style.left = (8 + 32) + "px";
+                // arrow vertical placing is easy
+                arrowImgRight.style.top = (bcr2.height/2) + "px";
+                arrowImgLeft.style.top = (bcr2.height/2) + "px";
+            }
+        });
 
         // register an onload function.  We can't lay out the pop-up menu unless the image is loaded and we
         // know how big it is
-        img.onload = function() {
-            // use the ResizeObserver API to find out when the image's parent is resized
-            var resizeObserver = new ResizeObserver((list) => {
-                // we get a list, it's only gonna have one element in it
-                for (var e of list) {
-                    // get the target element
-                    var target = e.target;
-                    // get the element's bounds
-                    var bcr = target.getBoundingClientRect();
-                    // scroll so the center of the image is in the center of the containing element
-                    target.scrollTo(img.width/2 - bcr.width/2, img.height/2 - bcr.height/2);
-                }
-            });
-
+        function firstOnLoad() {
+            img = nextImg;
             // create a menu around the image
-            var close = Menus.showMenu(img, button, title, true, () => {
+            close = Menus.showMenu(img, button, title, true, () => {
                 // not sure this necessary, but clean up the resize observer when the menu is closed
                 resizeObserver.unobserve(img.parentElement);
+                Events.removeKeyDownListener("ArrowLeft", moveLeft);
+                Events.removeKeyDownListener("ArrowRight", moveRight);
             });
-            // event listener to close the menu if the image is clicked
-            img.addEventListener("click", close, { passive: "false" });
-
+            var parent = img.parentElement;
             // start observing the image's parent, which should exist at this point
-            resizeObserver.observe(img.parentElement);
+            resizeObserver.observe(parent);
 
-            // reset the flag
-            imageLoading = false;
-            // reset the button cursor
-            button.style.cursor = "pointer";
+            // hack: switch the scroll div's parent to relative and add arrow buttons
+            parent.parentElement.style.position = "relative";
+            parent.parentElement.appendChild(arrowImgRight);
+            parent.parentElement.appendChild(arrowImgLeft);
+
+            // clean up UI and state
+            loadingDone();
         }
 
-        // set the flag
-        imageLoading = true;
-        // setting src starts the loading process
-        img.src = imageLink;
+        // subsequent onloads just need to switch out the img
+        function secondOnLoad() {
+            // get the current img parent
+            var parent = img.parentElement;
+            // remove the old image and add the new one
+            parent.removeChild(img);
+            parent.appendChild(nextImg);
+            // update state
+            img = nextImg;
+
+            // clean up UI and state
+            loadingDone();
+        }
+
+        // event handlers for arrow buttons and arrow keys
+        function moveLeft(e) {
+            if (currentIndex > 0) startLoading(currentIndex - 1);
+            return false;
+        }
+
+        function moveRight(e) {
+            if (currentIndex < imageList.length - 1) startLoading(currentIndex + 1);
+            return false;
+        }
+
+        // register event handlers
+        arrowImgLeft.addEventListener("click", moveLeft, { passive: "false" });
+        arrowImgRight.addEventListener("click", moveRight, { passive: "false" });
+        Events.addKeyDownListener("ArrowLeft", moveLeft);
+        Events.addKeyDownListener("ArrowRight", moveRight);
+
+        function loadingDone() {
+            // reset the flag
+            imageLoading = false;
+            // reset cursors
+            button.style.cursor = "pointer";
+            img.style.cursor = "";
+            arrowImgLeft.style.cursor = "pointer";
+            arrowImgRight.style.cursor = "pointer";
+            // update which arrow buttons are displayed based in the index
+            arrowImgLeft.style.display = (currentIndex > 0) ? "" : "none";
+            arrowImgRight.style.display = (currentIndex < imageList.length - 1) ? "" : "none";
+        }
+
+        function startLoading(index) {
+            // set the flag
+            imageLoading = true;
+            // lazy way: just set the cursor styles everywhere to signify something is loading
+            button.style.cursor = "wait";
+            arrowImgLeft.style.cursor = "wait";
+            arrowImgRight.style.cursor = "wait";
+            if (img) img.style.cursor = "wait";
+
+            // update state
+            currentIndex = index;
+            // create new image element
+            nextImg = document.createElement("img");
+            // event listener to close the menu if the image is clicked
+            nextImg.addEventListener("click", close, { passive: "false" });
+            // set the onload callback depending on whether this is the first image or a change in image
+            nextImg.onload = !img ? firstOnLoad : secondOnLoad;
+
+            // setting src starts the loading process and will cause the onload callback to be called once loaded
+            nextImg.src = imageList[index];
+        }
+
+        // initialize with the starting image
+        startLoading(startIndex);
     }
 
     // event listener functions
@@ -470,9 +570,10 @@ var Duviri = (function() {
 
     function imageClicked() {
         var e = e || window.event;
-        var fullImage = e.currentTarget.fullImage;
+        var imageList = e.currentTarget.imageList;
+        var imageIndex = e.currentTarget.imageIndex;
         var title = e.currentTarget.title;
-        showFullImage(e.currentTarget, title, fullImage);
+        showFullImage(e.currentTarget, title, imageList, imageIndex);
     }
 
     function resetButtonClicked() {
