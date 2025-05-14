@@ -178,7 +178,7 @@ var Controls = (function() {
 
             tr.innerHTML = `
                 <div class="tooltip">
-                    <img class="icon" src="img/icon-shawzin-${name}.png" srcset="img2x/icon-shawzin-${name}.png 2x"/>
+                    <img class="icon" src="img/icon-shawzin-${name}.png" srcset="img2x/icon-shawzin-${name}.png 2x" height=32 width=32/>
                     ${sm.config.name}
                     <span class="tooltiptextbottom">${sm.config.comment}</span>
                 </div>
@@ -218,7 +218,7 @@ var Controls = (function() {
 
             // meh. build the selection contents from the metadata icon image, name, and description
             tr.innerHTML = `
-                <img src="img/${sm.scales[name].config.img}" srcset="img2x/${sm.scales[name].config.img} 2x" class="icon" style="height: 2ex; width: auto; margin: 0.5ex;"/>
+                <img src="img/${sm.scales[name].config.img}" srcset="img2x/${sm.scales[name].config.img} 2x" class="icon" style="height: 16px; width: auto; margin: 4px;"/>
                 ${sm.scales[name].config.name}
             `;
 
@@ -464,7 +464,7 @@ var Controls = (function() {
             document.getElementById("hidden-things").appendChild(shawzinTabDiv);
             // clean up Shawzintab
             ShawzinTab.close();
-        });
+        }, false);
 
         // hack, wait some time to start rendering the shawzin tab
         setTimeout(() => { ShawzinTab.render(); }, 200);

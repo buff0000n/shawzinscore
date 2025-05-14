@@ -127,9 +127,17 @@ var Menus = (function() {
         // wrap the content div
         var contentContainerDiv = document.createElement("div");
         contentContainerDiv.className = "menu-content-container";
-        contentContainerDiv.appendChild(contentDiv);
 
-        // add to container
+        var scrollDiv = document.createElement("div");
+        scrollDiv.className = "menu-content-scroll";
+
+        // add content to scroll div
+        scrollDiv.appendChild(contentDiv);
+
+        // add scroll div to content container
+        contentContainerDiv.appendChild(scrollDiv);
+
+        // add content container div to container
         menuDiv.appendChild(contentContainerDiv);
 
         // save the current level on the container
@@ -144,107 +152,119 @@ var Menus = (function() {
         return menuDiv;
     }
 
+    // arbitrary margin between the window border and the menu container
+    var placementMargin = 10;
+    // guessing at the space we need to leave below and to the left of a menu to account for the window scrollbars
+    var scrollbarSizeGuess = 16;
+    // delay in running rounds 2 and three of the layout mechanism.
+    var menuDelay = 50;
 
-    function showMenuAt(menuDiv, left, top) {
-        // just throw it on the top level document
-        document.body.appendChild(menuDiv);
+    function showMenuAt(menuDiv, left, top, scrollEnabled = true) {
+        // Cripes on a cracker this is way harder than it should be.
 
-        // get the global position of the element
-        var bcr = menuDiv.getBoundingClientRect();
-        // get the window dimensions
-        var wx1 = window.scrollX;
-        var wx2 = wx1 + window.innerWidth;
-        var wy1 = window.scrollY;
-        var wy2 = wy1 + window.innerHeight;
+        // get the window dimensions before adding the menu
+        var wx1 = window.scrollX + placementMargin;
+        var wx2 = window.scrollX + window.innerWidth - (placementMargin * 2) - scrollbarSizeGuess;
+        var wy1 = window.scrollY + placementMargin;
+        var wy2 = window.scrollY + window.innerHeight - (placementMargin * 2) - scrollbarSizeGuess;
 
-        // snap to the left, if overlapping
-        if (left < wx1) left = wx1;
-
-        // snap to the top, if overlapping
-        if (top < wy1) top = wy1;
-
-        // snap to the right, if overlapping and it won't push it back over the left border
-        if (left + bcr.width > wx2) {
-            left = Math.max(0, wx2 - bcr.width);
-        }
-
-        // snap to the bottom, if overlapping and it won't push it back over the top border
-        if (top + bcr.height > wy2) {
-            top = Math.max(0, wy2 - bcr.height);
-        }
-
-        // don't mess with the width/height, yet
-
-        // place the menu container
+        // initialize the menu location
         menuDiv.style.left = left + "px";
         menuDiv.style.top = top + "px";
+        // just throw it on the top level document
+        document.body.appendChild(menuDiv);
 
         // save to the menu stack
         menus.push(menuDiv);
 
-        // schedule something to make it fit after it lays out its internals
-        setTimeout(function() { menuPlacementHack1(menuDiv) }, 100);
-    }
+        // let the browser lay it out where we put it, then we'll adjust
+        setTimeout(function() {
+            // get the global position of the element
+            var bcr = menuDiv.getBoundingClientRect();
+            var left = bcr.left + window.scrollX;
+            var top = bcr.top + window.scrollY;
+            var width = bcr.width;
+            var height = bcr.height;
 
-    // arbitrary margin between the window border and the menu container
-    var placementMargin = 10;
+            // snap to the left, if overlapping
+            if (left < wx1) left = wx1;
 
-    function menuPlacementHack1(menuDiv) {
-        // we're gong to need the scroll status of the main document
-        var se = document.scrollingElement;
+            // snap to the top, if overlapping
+            if (top < wy1) top = wy1;
 
-        // get the menu position
-        var bcr = menuDiv.getBoundingClientRect();
-        // getBoundingClientRect is in terms of the visible window, convert to absolute global position using the scroll state
-        var mTop = bcr.top + se.scrollTop;
-        var mLeft = bcr.left + se.scrollLeft;
-        var mHeight = bcr.height;
-        var mWidth = bcr.width;
-
-        // get a bounds for the currently viewable page portion, minus a margin
-        var seTop = se.scrollTop + placementMargin;
-        var seLeft = se.scrollLeft + placementMargin;
-        // todo: why x5?
-        var seHeight = window.innerHeight - (placementMargin * 5);
-        var seWidth = window.innerWidth - (placementMargin * 5);
-        
-        // trim the width if its too wide for the screen
-        if (mHeight > seHeight) mHeight = seHeight;
-        
-        // trim the height if its too tall for the screen
-        if (mWidth > seWidth) mWidth = seWidth;
-
-        // snap to the top, if it's overlapping
-        if (mTop < seTop) {
-            mTop = seTop;
-
-        // otherwise snap to the bottom, if it's overlapping
-        } else if (mTop + mHeight > seTop + seHeight) {
-            mTop = seTop + seHeight - mHeight;
-        }
-
-        // snap to the left, if it's overlapping
-        if (mLeft < seLeft) {
-            mLeft = seLeft;
-
-        // otherwise, snap to the right, if it's overlapping
-        } else if (mLeft + mWidth > seLeft + seWidth) {
-            mLeft = seLeft + seWidth - mWidth;
-        }
-
-        // check if we have to make changes
-        if (mTop != bcr.top || mLeft != bcr.left || mHeight != bcr.height || mWidth != bcr.width) {
-            //console.log(`Moved menu from ${bcr.left + se.scrollLeft}, ${bcr.top + se.scrollTop} (${bcr.width} x ${bcr.height}) to ${mLeft}, ${mTop} (${mWidth} x ${mHeight})`);
-            // apply position changes
-            menuDiv.style.top = mTop + "px";
-            menuDiv.style.left = mLeft + "px";
-            menuDiv.style.height = mHeight + "px";
-            menuDiv.style.width = mWidth + "px";
-            // If we're reducing the dimensions of the element, add scrollbars
-            if (mHeight < bcr.height || mWidth < bcr.width) {
-                menuDiv.style.overflow = "auto";
+            // snap to the right, if overlapping and it won't push it back over the left border
+            if (left + width > wx2) {
+                left = Math.max(wx1, wx2 - width);
             }
-        }
+
+            // snap to the bottom, if overlapping and it won't push it back over the top border
+            if (top + height > wy2) {
+                top = Math.max(wy1, wy2 - height);
+            }
+
+            // place the menu container
+            if (left != bcr.left) menuDiv.style.left = left + "px";
+            if (top != bcr.top) menuDiv.style.top = top + "px";
+
+            // check to see if it's still too wide
+            if (left + width > wx2) {
+                width = wx2 - wx1;
+            }
+
+            // check to see if it's still too tall
+            if (top + height > wy2) {
+                height = wy2 - wy1;
+            }
+
+            // scrollbar flags
+            var needsScrollY = false;
+            var needsScrollX = false;
+
+            // check if we need to resize vertically
+            if (height != bcr.height) {
+                menuDiv.style.height = height + "px";
+                needsScrollY = true;
+            }
+
+            // check if we need to resize horizontally
+            if (width != bcr.width) {
+                menuDiv.style.width = width + "px";
+                needsScrollX = true;
+            }
+
+            // check if the scrollbar is enabled and we need it
+            if (scrollEnabled && (needsScrollX || needsScrollY)) {
+                // give the browser one more chance to lay things out before resizing
+                setTimeout(function() {
+                    // sigh, we need to account for the vertical size if the title bar, if present
+                    var titleBar = DomUtils.getFirstChild(menuDiv, "menu-title-bar", 1);
+                    // get the scrollbar container
+                    var scroll = DomUtils.getFirstChild(menuDiv, "menu-content-scroll", 3);
+
+                    // get the top level menu div size
+                    var bcr = menuDiv.getBoundingClientRect();
+                    // get the height of the title bar, if present
+                    var titleHeight = titleBar ? titleBar.getBoundingClientRect().height : 0;
+
+                    // 8px margin and 8px padding on both sides
+                    var totalPadding = 32;
+
+                    if (needsScrollY) {
+                        // enable vertical scrollbar
+                        scroll.style.overflowY = "scroll";
+                        // explicitly set the height of the scrollbar div
+                        // this is the only way I've found to reliably keep the scroll section inside the menu div
+                        scroll.style.height = (bcr.height - totalPadding - titleHeight) + "px";
+                    }
+                    if (needsScrollX) {
+                        // enable horizontal scrollbar
+                        scroll.style.overflowX = "scroll";
+                        // explicitly set the width of the scrollbar div
+                        scroll.style.width = (bcr.width - totalPadding) + "px";
+                    }
+                }, menuDelay);
+            }
+        }, menuDelay);
     }
 
     function getMenuCoordsFromElement(element, fullWidth = false) {
@@ -281,26 +301,26 @@ var Menus = (function() {
         return [left + s.scrollLeft, top + s.scrollTop];
     }
 
-    function showMenu(contentDiv, left, top, title = null, fullWidth = false, closeCallback = null) {
+    function showMenu(contentDiv, left, top, title = null, fullWidth = false, closeCallback = null, scrollEnabled = true) {
         // build the menu element
         var menuDiv = buildMenu(contentDiv, title);
         // save the close callback, if present
         menuDiv.closeCallback = closeCallback;
         // show the menu
-        showMenuAt(menuDiv, left, top);
+        showMenuAt(menuDiv, left, top, scrollEnabled);
         // save the last event so we don't accidentally close the menu immediately
         lastMenuEvent = window.event;
         // return the callback to close the menu
         return menuDiv.onclose;
     }
 
-    function showMenuAtElement(contentDiv, element, title = null, fullWidth = false, closeCallback = null) {
+    function showMenuAtElement(contentDiv, element, title = null, fullWidth = false, closeCallback = null, scrollEnabled = true) {
         // get the starting position from the element
         var [left, top] = getMenuCoordsFromElement(element, fullWidth);
-        return showMenu(contentDiv, left, top, title, fullWidth, closeCallback);
+        return showMenu(contentDiv, left, top, title, fullWidth, closeCallback, scrollEnabled);
     }
 
-    function showMenuAtEvent(contentDiv, e, title = null, fullWidth = false, closeCallback = null) {
+    function showMenuAtEvent(contentDiv, e, title = null, fullWidth = false, closeCallback = null, scrollEnabled = true) {
         // get the starting position from the event
         return showMenu(contentDiv, e.clientX + window.scrollX, e.clientY + window.scrollY, title, fullWidth, closeCallback);
     }
@@ -309,8 +329,8 @@ var Menus = (function() {
     return  {
         // Wrap the given div in a menu and pop it up under the given element with a title,
         // optionally full width, and with an optional callback when the menu is closed
-        showMenu: showMenuAtElement, // (contentDiv, element, title, fullWidth = false, closeCallback = null)
+        showMenu: showMenuAtElement, // (contentDiv, element, title, fullWidth = false, closeCallback = null, scrollEnabled = true)
         // show a menu at the location of the given event
-        showMenuAtEvent: showMenuAtEvent, // (contentDiv, event, title, fullWidth = false, closeCallback = null)
+        showMenuAtEvent: showMenuAtEvent, // (contentDiv, event, title, fullWidth = false, closeCallback = null, scrollEnabled = true, )
     }
 })();

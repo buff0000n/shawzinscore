@@ -13,9 +13,9 @@
 
 div.chat_day {
     background: #404040;
-    border-radius: 1ex;
-    padding: 1ex;
-    margin: 1ex 0ex;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 8px 0;
 }
 
 table.chat_day_header {
@@ -27,7 +27,7 @@ tr.chat_day_header_row {}
 td.chat_day_label {
     color: #c0c0c0;
     font-weight: bold;
-    margin: 1ex 0ex;
+    margin: 8px 0;
     width: 100%;
 }
 
@@ -35,13 +35,13 @@ td.chat_day_arrow {}
 
 div.chat_day_table_div {
     background: #202020;
-    border-radius: 1ex;
-    padding: 0ex 1ex;
-    margin: 0ex 0ex;
+    border-radius: 8px;
+    padding: 0 8px;
+    margin: 0 0;
 }
 
 table.chat_day_table {
-    border-spacing: 0.5ex 1ex;
+    border-spacing: 4px 8px;
 }
 
 tr.chat_item, tr.chat_item_first {}
@@ -55,7 +55,7 @@ td.chat_text {
 }
 
 td.chat_text div {
-    margin: 0.25ex;
+    margin: 2px;
     padding: 0;
 }
 
@@ -64,7 +64,7 @@ p.chat_gold {
 }
 
 td.chat_text p {
-    margin: 0.25ex;
+    margin: 2px;
     padding: 0;
 }
 
@@ -74,8 +74,8 @@ td.chat_dots_text {
 
 span.dotsButton {
     background-color: #303030;
-    border-radius: 0.5ex;
-    margin: 0ex 1ex;
-    padding: 0ex 1ex;
+    border-radius: 4px;
+    margin: 0 8px;
+    padding: 0 8px;
     cursor: pointer;
 }

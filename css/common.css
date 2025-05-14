@@ -16,10 +16,10 @@
         list-style-type: disc;
     }
     li {
-        margin: 0ex 0ex 1ex 0ex;
+        margin: 0 0 8px 0;
     }
     li > ul {
-        margin: 1ex 0 0 0;
+        margin: 8px 0 0 0;
     }
     input, textarea, select {
         color: #FFFFFF;
@@ -32,15 +32,15 @@
         color: #FFFFFF;
         text-decoration: none;
         font-size: 100%;
-        border-radius: 1ex;
+        border-radius: 8px;
     }
     .button, .button-disabled, .selectButton, .lightButton, .darkButton, .textButton {
-        padding: 1ex;
+        padding: 8px;
     }
     .selectButtonDark {
         background-color: #000000;
-        padding: 0ex;
-        margin 0.5ex;
+        padding: 0;
+        margin 4px;
     }
     .button, .button-disabled, .lightButton, .darkButton {
         text-align: center;
@@ -49,7 +49,7 @@
         background-color: #404040;
     }
     .selectButton {
-        margin: 1ex;
+        margin: 8px;
     }
     .lightButton {
         background-color: #808080;
@@ -62,7 +62,7 @@
     }
     .button, .button-disabled {
         margin: 0;
-        padding: 0.5ex;
+        padding: 4px;
     }
     .urlButton, {
         background-color: #406080;
@@ -75,7 +75,7 @@
         margin: 0;
         border: none;
         padding: 0;
-        border-radius: 1ex;
+        border-radius: 8px;
     }
     .smallButton {
         cursor: pointer;
@@ -110,13 +110,13 @@
     }
     .titleBar {
         background-color: #404040;
-        margin: 1ex;
-        padding: 1ex;
-        border-radius: 1ex;
+        margin: 8px;
+        padding: 8px;
+        border-radius: 8px;
         text-align: center;
     }
     .titleBar .businessDiv {
-        margin: 2ex 1ex 1ex 1ex;
+        margin: 16px 8px 8px 8px;
     }
     .mainTitle {
 	    font-weight: bold;
@@ -140,13 +140,13 @@
     }
     #lotsOfWordsContainer, .footerContainer {
         background-color: #202020;
-        margin: 1ex;
-        padding: 1ex;
-        border-radius: 1ex;
+        margin: 8px;
+        padding: 8px;
+        border-radius: 8px;
    	    text-align: center;
     }
     .lotsOfWords, .footer {
-        max-width: 100ex;
+        max-width: 800px;
         display: inline-block;
    	    text-align: left;
     }
@@ -173,16 +173,16 @@
     ul.qa {
         list-style-type: none; /* Remove bullets */
         padding: 0;
-        margin: 3ex 0;
+        margin: 24px 0;
     }
     #TOC li {
         margin: 0;
     }
     code {
         background-color: #000000;
-        margin: 1ex;
-        padding: 1ex;
-        border-radius: 1ex;
+        margin: 8px;
+        padding: 8px;
+        border-radius: 8px;
    	    text-align: left;
    	    word-wrap: anywhere;
         overflow-wrap: anywhere;
@@ -209,9 +209,9 @@
 	    font-weight: bold;
 	    text-align: left;
 	    color: #FFFFFF;
-        margin: 1ex;
-        padding: 1ex;
-        border-radius: 1ex;
+        margin: 8px;
+        padding: 8px;
+        border-radius: 8px;
         display: inline-block;
     }
     .errorLine {
@@ -228,9 +228,9 @@
 	    font-weight: bold;
 	    text-align: left;
 	    color: #FFFFFF;
-        margin: 1ex;
-        padding: 1ex;
-        border-radius: 1ex;
+        margin: 8px;
+        padding: 8px;
+        border-radius: 8px;
         display: inline-block;
     }
     .debugLine {
@@ -260,16 +260,16 @@
     /* right side tooltip */
     .tooltip .tooltiptext {
         visibility: hidden;
-        width: 50ex;
+        width: 400px;
         background-color: #C0C0C0;
         color: #4040A0;
         text-align: center;
-        border-radius: 0.5ex;
-        padding: 1ex;
+        border-radius: 4px;
+        padding: 8px;
         position: absolute;
         z-index: 10;
-        top: 1ex;
-        left: calc(100% + 2ex);
+        top: 8px;
+        left: calc(100% + 16px);
         pointer-events: none;
         white-space: normal;
 
@@ -280,10 +280,10 @@
     .tooltip .tooltiptext::after {
         content: "";
         position: absolute;
-        top: 2.25ex;
+        top: 18px;
         right: 100%;
-        margin-top: -1ex;
-        border-width: 1ex;
+        margin-top: -8px;
+        border-width: 8px;
         border-style: solid;
         border-color: transparent #C0C0C0 transparent transparent;
     }
@@ -291,17 +291,17 @@
     /* bottom side tooltip */
     .tooltip .tooltiptextbottom {
         visibility: hidden;
-        width: 30ex;
+        width: 240px;
         background-color: #C0C0C0;
         color: #4040A0;
         text-align: center;
-        border-radius: 0.5ex;
-        padding: 1ex;
+        border-radius: 4px;
+        padding: 8px;
         position: absolute;
         z-index: 10;
         top: 120%;
-        left: calc(50% - 15ex);
-        margin-left: -2ex;
+        left: calc(50% - 16px);
+        margin-left: -16px;
         pointer-events: none;
         white-space: normal;
 
@@ -314,8 +314,8 @@
         position: absolute;
         bottom: 100%;  /* At the top of the tooltip */
         left: 50%;
-        margin-left: -1ex;
-        border-width: 1ex;
+        margin-left: -8px;
+        border-width: 8px;
         border-style: solid;
         border-color: transparent transparent #C0C0C0 transparent;
     }
@@ -331,25 +331,25 @@
     }
     .popup .popuptext {
         visibility: hidden;
-        width: 50ex;
+        width: 400px;
         background-color: #C0C0C0;
         color: #000080;
         text-align: center;
-        border-radius: 0.5ex;
-        padding: 1ex;
+        border-radius: 4px;
+        padding: 8px;
         position: absolute;
         z-index: 10;
         top: 120%;
-        left: -44ex;
-        margin-left: -2ex;
+        left: -352px;
+        margin-left: -16px;
     }
     .popup .popuptext::after {
         content: "";
         position: absolute;
         bottom: 100%;  /* At the top of the tooltip */
-        right: 2ex;
-        margin-left: -1ex;
-        border-width: 1ex;
+        right: 16x;
+        margin-left: -8px;
+        border-width: 8px;
         border-style: solid;
         border-color: #C0C0C0;
     }

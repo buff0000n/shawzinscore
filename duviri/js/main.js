@@ -347,11 +347,33 @@ var Duviri = (function() {
     }
 
     function showFullImage(button, imageLink) {
+        // basic image div
         var img = document.createElement("img");
         img.src = imageLink;
-        var close = Menus.showMenu(img, button, null, true, null);
-        // event listener to close the pop-up if the image is clicked
+
+        // use the ResizeObserver API to find out when the image's parent is resized
+        var resizeObserver = new ResizeObserver((list) => {
+            // we get a list, it's only gonna have one element in it
+            for (var e of list) {
+                // get the target element
+                var target = e.target;
+                // get the element's bounds
+                var bcr = target.getBoundingClientRect();
+                // scroll so the center of the image is in the center of the containing element
+                target.scrollTo(img.width/2 - bcr.width/2, img.height/2 - bcr.height/2);
+            }
+        });
+
+        // create a menu around the image
+        var close = Menus.showMenu(img, button, null, true, () => {
+            // not sure this necessary, but clean up the resize observer when the menu is closed
+            resizeObserver.unobserve(img.parentElement);
+        });
+        // event listener to close the menu if the image is clicked
         img.addEventListener("click", close, { passive: "false" });
+
+        // start observing the image's parent, which should exist at this point
+        resizeObserver.observe(img.parentElement);
     }
 
     // event listener functions

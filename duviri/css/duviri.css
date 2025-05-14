@@ -2,15 +2,15 @@
 div#duviri-map {
     text-align: center;
     background: #404040;
-    margin: 1ex;
-    padding: 1ex;
-    border-radius: 1ex;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 8px;
 }
 
 div#duviri-map-area {
     background: #202020;
-    padding: 2ex;
-    border-radius: 1ex;
+    padding: 16px;
+    border-radius: 8px;
 }
 
 div#duviri-map-container {
@@ -29,22 +29,22 @@ div#duviri-map-container {
 
 div.duviri-station {
     background: #404040;
-    padding: 1ex;
-    margin: 1ex;
-    border-radius: 1ex;
+    padding: 8px;
+    margin: 8px;
+    border-radius: 8px;
 }
 
 span.duviri-station-title-text {
     font-weight: bold;
     font-color: #FFFFFF;
-    padding: 0 3ex;
+    padding: 0 24px
 }
 
 div.image-thumbnail-list-container {
     background: #202020;
-    margin: 1ex 0;
-    padding: 1ex;
-    border-radius: 1ex;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 8px;
     text-align: center;
 }
 
@@ -55,14 +55,14 @@ div.image-thumbnail-list {
 }
 
 img.image-thumbnail-image {
-    margin: 0.5ex;
+    margin: 4px
     cursor: pointer;
 }
 
 div.station-duviri-about {
     background: #202020;
-    margin: 1ex 0 0 0;
-    padding: 1ex;
-    border-radius: 1ex;
+    margin: 8px 0 0 0;
+    padding: 8px;
+    border-radius: 8px;
 }
 

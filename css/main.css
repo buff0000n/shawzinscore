@@ -4,22 +4,22 @@ html, body {
 }
 
 div {
-    margin: 0ex;
-    padding: 0ex;
-    border-width: 0ex;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
     /*background-color: #400000;*/
 }
 
 tr {
-    margin: 0px;
-    padding: 0px;
-    border-width: 0ex;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
 }
 
 td {
-    margin: 0px;
-    padding: 0px;
-    border-width: 0ex;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
 }
 .layoutTable {
     border-spacing: 0;
@@ -54,9 +54,9 @@ td.label {
     display: block;
     position: absolute;
     background-color: #404040;
-    margin: 1ex;
-    /*padding: 1ex;*/
-    border-radius: 1ex;
+    /*margin: 8px;*/
+    padding: 8px;
+    border-radius: 8px;
     text-align: left;
     box-shadow: 0 0 3px 3px #000000;
     z-index: 100;
@@ -65,8 +65,8 @@ td.label {
 .menu-title-bar {
     background-color: #808080;
     margin: 0;
-    padding: 0.5ex;
-    border-radius: 1ex;
+    padding: 4px;
+    border-radius: 8px;
     text-align: left;
 }
 .menu-title {
@@ -76,11 +76,21 @@ td.label {
     white-space: nowrap;
 }
 .menu-content-container {
-    padding: 1ex;
+    padding: 8px;
+    background-color: #202020;
+}
+.menu-content-scroll {
+    padding: 0;
+    margin: 0;
+    /*
+    overflow-y: auto;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    */
 }
 .selection-div {
-    padding: 1ex;
-    border-radius: 1ex;
+    padding: 8px;
+    border-radius: 8px;
     background-color: #202020;
 }
 .selection-table {
@@ -89,13 +99,13 @@ td.label {
 .selection-item {
     cursor: pointer;
     background-color: #202020;
-    border-radius: 1ex;
+    border-radius: 8px;
     white-space: nowrap;
 }
 .selection-item-selected {
     cursor: pointer;
     background-color: #404040;
-    border-radius: 1ex;
+    border-radius: 8px;
     white-space: nowrap;
 }
 .selection-item:hover, .selection-item-selected:hover {
@@ -106,9 +116,9 @@ td.label {
     color: #FFFFFF;
 }
 .field-entry, .field-entry-span, .field-entry-span-light, .field-button, .field-button-light, .field-entry-dark {
-    padding: 0.5ex;
-    margin: 0.5ex;
-    border-radius: 1ex;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 8px;
 }
 
 .field-entry:not(.disabled), .field-entry-span:not(.disabled) {
@@ -178,15 +188,15 @@ td.label {
 }
 
 .field-div {
-    border-radius: 1ex;
+    border-radius: 8px;
     background-color: #202020;
     text-align: left;
 }
 
 .key-sig-box {
-    border-radius: 0.5ex;
+    border-radius: 4px;
     background-color: #FFFFFF;
-    margin: 0.5ex;
+    margin: 4px;
     display: inline-block;
     border: solid;
     border-width: 1px;
@@ -205,17 +215,17 @@ td.label {
 }
 
 .expandBar .field-div {
-    margin: 0 0 0 1ex;
+    margin: 0 0 0 8px;
 }
 
 .expandTitle {
     font-weight: bold;
     color: #FFFFFF;
-    border-radius: 1ex;
+    border-radius: 8px;
     background-color: #404040;
     text-align: left;
-    margin: 0.5ex;
-    padding: 0.5ex;
+    margin: 4px;
+    padding: 4px;
     cursor: pointer;
 }
 
@@ -232,9 +242,9 @@ td.label {
 }
 .toolbarSection {
     background-color: #404040;
-    margin: 1ex;
-    padding: 1ex;
-    border-radius: 1ex;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 8px;
     text-align: left;
 }
 
@@ -272,7 +282,7 @@ td.label {
 }
 #song-bar-tab {
     background-color: #101010;
-    /*border-radius: 1ex;*/
+    /*border-radius: 8px;*/
 }
 #song-bar-tab > div {
     /* display: inline-block; */
@@ -281,7 +291,7 @@ td.label {
 }
 #song-bar-roll {
     background-color: #202020;
-    /*border-radius: 1ex;*/
+    /*border-radius: 8px;*/
     position: relative;
 }
 #roll-keyboard {}
@@ -297,9 +307,9 @@ td.label {
     -ms-overflow-style: none;  /* Internet Explorer 10+ *
     scrollbar-width: none;  /* Firefox *
     */
-    margin: 0px;
-    padding: 0px;
-    border-width: 0ex;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
     background-color: #337799;
     /*scroll-behavior: smooth !important;*/
 }
@@ -324,15 +334,15 @@ td.label {
 }
 
 #song-bar-table, #song-scroll-table {
-    margin: 0ex;
-    padding: 0ex;
-    border-width: 0ex;
-    border-spacing: 0px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    border-spacing: 0;
 }
 
 #edit-buttons {
     position: absolute;
-    top: 0.5ex;
+    top: 4px;
     left: 53%;
     /*right: 55%;*/
     /*transform: translate(0%, 0);*/
@@ -340,7 +350,7 @@ td.label {
 }
 #tab-duviri-mode {
     position: absolute;
-    top: 0.5ex;
+    top: 4px;
     left: 25%;
     transform: translate(-50%, 0);
     z-index: 100;
@@ -357,8 +367,8 @@ td.label {
     position: absolute;
     width: 45px;
     height: 45px;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     transform: translate(-50%, -50%);
     cursor: pointer;
     z-index: 10;
@@ -430,7 +440,7 @@ td.label {
     transform: translateY(-50%);
 }
 img.showcase {
-    width: 5ex;
+    width: 40px;
     height: auto;
     transform: rotate(30deg);
     transition: transform 0.125s ease-in-out 30ms;
@@ -478,7 +488,7 @@ img.showcase:hover {
 
 .measure-marker {
     position: absolute;
-    left: 0px;
+    left: 0;
     transform: translateY(-50%);
     z-index: 0;
 }
@@ -489,13 +499,13 @@ img.showcase:hover {
     font-weight: bold;
     font-size: 200%;
     color: #A0A0A0;
-    right: 0.5ex;
+    right: 4px;
 }
 .measure-index {
-    top: 0.5ex;
+    top: 4px;
 }
 .measure-index-reversed {
-    bottom: 0.5ex;
+    bottom: 4px;
 }
 
 .playback-marker {
@@ -510,18 +520,18 @@ img.showcase:hover {
 
 .tab-fret-div {
     position: relative;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     cursor: pointer;
-    border-radius: 1ex;
+    border-radius: 8px;
 }
 .tab-fret-div:hover {
     background-color: #404040;
 }
 .tab-string-div {
     position: absolute;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 .tab-fret-button, .tab-fret-button-enabled {
     position: absolute;
@@ -556,14 +566,14 @@ img.showcase:hover {
 }
 
 #speedRangeContainer, #speedRange {
-    width: 25ex;
+    width: 200px;
 }
 #speedLabel {
-    width: 5ex;
+    width: 40px;
 }
 
 #volume-shawzin-range-container, #volume-shawzin, #volume-metronome-range-container, #volume-metronome {
-    width: 25ex;
+    width: 200px;
 }
 #volume-shawzin-range-container, #volume-metronome-range-container {
     z-index: 1;

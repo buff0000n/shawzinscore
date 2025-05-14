@@ -285,7 +285,7 @@ var Editing = (function() {
             containerDiv.appendChild(selectionDiv);
             selectionDiv = createSelectionContainerDiv();
             // shrugs
-            selectionDiv.style.margin = "1ex 0 0 0";
+            selectionDiv.style.margin = "8px 0 0 0";
         }
 
         // go over the sorted note list

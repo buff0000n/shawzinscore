@@ -16,7 +16,7 @@ var DomUtils = (function() {
         return node;
     }
 
-    function getFirstChild(node, childClass) {
+    function getFirstChild(node, childClass, maxDepth = 0) {
         // perform a depth first search from the first child to the last,
         // until we find an element with the given class name
         var children = node.children;
@@ -26,15 +26,17 @@ var DomUtils = (function() {
                 return child;
             }
             // recursive call
-            var child2 = getFirstChild(child, childClass);
-            if (child2 !== null) {
-                return child2;
+            if (maxDepth == 0 || maxDepth > 2) {
+                var child2 = getFirstChild(child, childClass, maxDepth == 0 ? 0 : maxDepth - 1);
+                if (child2 !== null) {
+                    return child2;
+                }
             }
         }
         return null;
     }
 
-    function getLastChild(node, childClass) {
+    function getLastChild(node, childClass, maxDepth = 0) {
         // perform a depth first search going from the last child to the first,
         // until we find an element with the given class name
         var children = node.children;
@@ -45,9 +47,11 @@ var DomUtils = (function() {
                 return child;
             }
             // recursive call
-            var child2 = getLastChild(child, childClass);
-            if (child2 !== null) {
-                return child2;
+            if (maxDepth == 0 || maxDepth > 2) {
+                var child2 = getLastChild(child, childClass, maxDepth == 0 ? 0 : maxDepth - 1);
+                if (child2 !== null) {
+                    return child2;
+                }
             }
         }
         return null;
@@ -118,8 +122,8 @@ var DomUtils = (function() {
     // public members
     return  {
         getParent: getParent, // (node, parentClass)
-        getFirstChild: getFirstChild, // (node, childClass)
-        getLastChild: getLastChild, // (node, childClass)
+        getFirstChild: getFirstChild, // (node, childClass, maxDepth = 0)
+        getLastChild: getLastChild, // (node, childClass, maxDepth = 0)
         getAllChildren: getAllChildren, // (node, childClass)
         deleteNode: deleteNode, // (node)
         addClass: addClass, // (node, clazz)
