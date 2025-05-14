@@ -346,34 +346,56 @@ var Duviri = (function() {
         updateStationsChecked();
     }
 
+    // flag for when loading an image is in progress
+    var imageLoading = false;
+
     function showFullImage(button, imageLink) {
+        // short circuit
+        if (imageLoading) return;
+
+        // lazy way: just set the cursor style on the clicked element to signify something is loading
+        button.style.cursor = "wait";
+
         // basic image div
         var img = document.createElement("img");
+
+        // register an onload function.  We can't lay out the pop-up menu unless the image is loaded and we
+        // know how big it is
+        img.onload = function() {
+            // use the ResizeObserver API to find out when the image's parent is resized
+            var resizeObserver = new ResizeObserver((list) => {
+                // we get a list, it's only gonna have one element in it
+                for (var e of list) {
+                    // get the target element
+                    var target = e.target;
+                    // get the element's bounds
+                    var bcr = target.getBoundingClientRect();
+                    // scroll so the center of the image is in the center of the containing element
+                    target.scrollTo(img.width/2 - bcr.width/2, img.height/2 - bcr.height/2);
+                }
+            });
+
+            // create a menu around the image
+            var close = Menus.showMenu(img, button, null, true, () => {
+                // not sure this necessary, but clean up the resize observer when the menu is closed
+                resizeObserver.unobserve(img.parentElement);
+            });
+            // event listener to close the menu if the image is clicked
+            img.addEventListener("click", close, { passive: "false" });
+
+            // start observing the image's parent, which should exist at this point
+            resizeObserver.observe(img.parentElement);
+
+            // reset the flag
+            imageLoading = false;
+            // reset the button cursor
+            button.style.cursor = "pointer";
+        }
+
+        // set the flag
+        imageLoading = true;
+        // setting src starts the loading process
         img.src = imageLink;
-
-        // use the ResizeObserver API to find out when the image's parent is resized
-        var resizeObserver = new ResizeObserver((list) => {
-            // we get a list, it's only gonna have one element in it
-            for (var e of list) {
-                // get the target element
-                var target = e.target;
-                // get the element's bounds
-                var bcr = target.getBoundingClientRect();
-                // scroll so the center of the image is in the center of the containing element
-                target.scrollTo(img.width/2 - bcr.width/2, img.height/2 - bcr.height/2);
-            }
-        });
-
-        // create a menu around the image
-        var close = Menus.showMenu(img, button, null, true, () => {
-            // not sure this necessary, but clean up the resize observer when the menu is closed
-            resizeObserver.unobserve(img.parentElement);
-        });
-        // event listener to close the menu if the image is clicked
-        img.addEventListener("click", close, { passive: "false" });
-
-        // start observing the image's parent, which should exist at this point
-        resizeObserver.observe(img.parentElement);
     }
 
     // event listener functions
