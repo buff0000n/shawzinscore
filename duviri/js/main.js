@@ -208,6 +208,7 @@ var Duviri = (function() {
                 span.className = "image-thumbnail";
                 // event listener for image thumbnail
                 span.fullImage = `img/${pic}.jpg`;
+                span.title = station.name;
                 span.addEventListener("click", imageClicked, { passive: "false" });
                 thumbnailList.appendChild(span);
 
@@ -349,7 +350,7 @@ var Duviri = (function() {
     // flag for when loading an image is in progress
     var imageLoading = false;
 
-    function showFullImage(button, imageLink) {
+    function showFullImage(button, title, imageLink) {
         // short circuit
         if (imageLoading) return;
 
@@ -376,7 +377,7 @@ var Duviri = (function() {
             });
 
             // create a menu around the image
-            var close = Menus.showMenu(img, button, null, true, () => {
+            var close = Menus.showMenu(img, button, title, true, () => {
                 // not sure this necessary, but clean up the resize observer when the menu is closed
                 resizeObserver.unobserve(img.parentElement);
             });
@@ -470,7 +471,8 @@ var Duviri = (function() {
     function imageClicked() {
         var e = e || window.event;
         var fullImage = e.currentTarget.fullImage;
-        showFullImage(e.currentTarget, fullImage);
+        var title = e.currentTarget.title;
+        showFullImage(e.currentTarget, title, fullImage);
     }
 
     function resetButtonClicked() {
