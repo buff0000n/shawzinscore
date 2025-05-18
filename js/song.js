@@ -261,8 +261,8 @@ class Note {
     // convert to a three-character code
     toCode(offsetTick = 0, justNonAlt = false, justAlt = false) {
         // generate the base note code, depending on whether we want just the alt or not, offsetting the ticks
-        var code = justAlt ? SongUtils.toNoteCode(this.tick + offsetTick, this.altFret, this.altString) :
-                             SongUtils.toNoteCode(this.tick + offsetTick, this.fret, this.string);
+        var code = justAlt ? SongUtils.toNoteCode(this.tick - offsetTick, this.altFret, this.altString) :
+                             SongUtils.toNoteCode(this.tick - offsetTick, this.fret, this.string);
         // check if there are no extra formatting options and append the alt note code if necessary
         if (!justNonAlt && !justAlt && this.hasAlt()) {
             code = code + SongUtils.toAltNoteCode(this.altFret, this.altString);
@@ -615,14 +615,12 @@ class Song {
             // this works because the note list is fully ordered by tick and then by fret
             while (n < this.notes.length - 1 && this.notes[n + 1].tick == note.tick && this.notes[n + 1].fret == note.fret) {
                 // not really interested in optimizing this extremely rare case
-                // build a new note
-                var note2 = new Note();
-                // merge
-                note2.tick = note.tick;
-                note2.fret = note.fret;
+                // merge strings
                 // just append, when creating the note code it doesn't matter what order the strings are in or
                 // how many duplicates there are
-                note2.string = note.string + this.notes[n + 1].string;
+                var newNoteString = note.string + this.notes[n + 1].string;
+                // create new note
+                var note2 = new Note(note.fret + "-" + newNoteString, note.tick);
                 // replace the note to write
                 note = note2;
                 // move to the next note
