@@ -1135,7 +1135,7 @@ var Metadata = (function() {
                     "12-2": {
                         "name": "C\u266F",
                         "length": 12, "monoFadeTime": 0.25,
-                        "notes": [note.Gs1, note.Cs2, note.Gs2]
+                        "notes": [note.Cs1, note.Gs1, note.Cs2]
                     },
                     "12-3": {
                         "name": "D",
