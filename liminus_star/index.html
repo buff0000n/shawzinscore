@@ -6,23 +6,21 @@
 <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <head>
-  <title>Duviri Shawzin Stations</title>
+  <title>Warframe 1999 - Liminus_star Chat Transcript</title>
 </head>
 <link href="../img/favicon.png" rel="icon" type="image/png"/>
 <link rel="stylesheet" type="text/css" href="../css/common.css"/>
 <link rel="stylesheet" type="text/css" href="../css/main.css"/>
-<link rel="stylesheet" type="text/css" href="css/duviri.css"/>
+<link rel="stylesheet" type="text/css" href="css/flare.css"/>
 <body onload="init()">
 <script type="text/javascript" language="javascript" src="../js/lib/util.js"></script>
-<script type="text/javascript" language="javascript" src="../js/lib/events.js"></script>
-<script type="text/javascript" language="javascript" src="../js/lib/menus.js"></script>
 <script type="text/javascript" language="javascript" src="../js/settings.js"></script>
-<script type="text/javascript" language="javascript" src="js/metadata.js"></script>
+<script type="text/javascript" language="javascript" src="js/transcript.js"></script>
 <script type="text/javascript" language="javascript" src="js/main.js"></script>
 
 <div class="lotsOfWords">
     <div class="titleBar">
-        <div class="mainTitle">Duviri Shawzin Stations</div>
+        <div class="mainTitle">Liminus_Star Chat Transcript</div>
     </div>
 
     <div id="error-bar">
@@ -31,36 +29,40 @@
         </div>
     </div>
 
-    <p>
-        Click on a station in the map below to see more information.
-    </p>
-
-    <div id="duviri-map">
-        <div class="field-entry-span tooltip" id="change-duviri-mood">
-            <div class="tooltiptextbottom">Change the displayed map to a different mood</div>
-        </div>
-        <div id="duviri-map-area">
-            <div id="duviri-map-container">
-                <img id="duviri-map-image" src="img/map-joy.jpg" srcset="img2x\map-joy.jpg 2x" width="500" height="450"/>
-            </div>
-        </div>
-        <div class="field-entry-span tooltip" id="duviri-reset-station-checks" style="display: none">
-            <div class="lightButton" id="duviri-reset-station-checks-button">Reset</div>
-            <div class="tooltiptextbottom">Reset all stations to unchecked</div>
-        </div>
+    <div class="field-entry-span" id="change-speed-type">
+        <span>Spoiler Level: </span>
+        <span id="spoiler-level-1" class="tooltip">
+            <input id="spoiler-level-1-input" type="radio" name="spoiler-level" checked="checked"/>
+            <span class="fieldTitle">Minimal</span>
+            <span class="tooltiptextbottom">First three words for each Drifter choice</span>
+        </span>
+        <span id="spoiler-level-2" class="tooltip">
+            <input id="spoiler-level-2-input" type="radio" name="spoiler-level"/>
+            <span class="fieldTitle">Cheat Sheet</span>
+            <span class="tooltiptextbottom">Full starting lines and Drifter dialogue</span>
+        </span>
+        <span id="spoiler-level-3" class="tooltip">
+            <input id="spoiler-level-3-input" type="radio" name="spoiler-level"/>
+            <span class="fieldTitle">Full transcript</span>
+            <span class="tooltiptextbottom">Full chat transcript, all the spoilers</span>
+        </span>
     </div>
 
-    <div id="duviri-stations">
+    <div id="transcript">
     </div>
 
-    <p>
-        <strong class="warn">Note: </strong> You must complete each Shawzin station on <strong>Virtuoso</strong>
-        difficulty at least once to obtain the Courtly Shawzin.  This does not have to be done in a single session.
-    </p>
-    <p>
-        <strong class="warn">Note: </strong> Difficulty ratings are based loosely on how many tries it took me to play
-        each one without mistakes.  Your mileage may vary.
-    </p>
+    <div>
+        <p>
+            <strong class="warn">Note</strong>:
+            This is the transcript from my personal play though. Your results may vary,
+            I'm not sure how random the conversations are.
+        </p>
+        <p>
+            <strong class="warn">Also Note</strong>:
+            I used OCR to transcribe this from screenshots. I've done some proofreading, but it's probably not 100%
+            accurate.
+        </p>
+    </div>
 
     <div id="bottomBar" class="titleBar">
         <div class="footerContainer">
@@ -68,7 +70,7 @@
                 <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
             </div>
             <div>
-                v1.3: 2025-05-14
+                v1.1: 2025-05-20
             </div>
             <div>
                 <a href="https://github.com/buff0000n/shawzinscore">Source</a>
@@ -80,7 +82,7 @@
                 &bull;
                 <a href="notechart.html">Shawzin Note Chart</a>
                 &bull;
-                <a href="../liminus_star/">1999 Help</a>
+                <a href="duviri/">Duviri Help</a>
             </div>
             <div>
                 Contact:
