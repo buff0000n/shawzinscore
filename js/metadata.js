@@ -2140,7 +2140,6 @@ var Metadata = (function() {
             "name": "Lizzie",
             "comment": "Sentient guitar",
             "type": polyTypeMonophonic,
-            "spoiler": true,
         },
         "notes": {
             "length": 28,

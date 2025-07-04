@@ -265,9 +265,12 @@ var MetadataUI = (function() {
     var minVolume = 0;
     var maxVolume = 2;
 
-    var midiNoteC = 48;
-    var midiNoteChord1 = 44;
-    var midiNoteChord2 = 46
+    // My personal preference: base the Shawzin scale on the C an octave below middle C
+    var midiNoteC = Midi.middleC - 12;
+    // chord key 1 is the Ab below the start of the shawzin scale
+    var midiNoteChord1 = midiNoteC - 4;
+    // chord key 2 is the Bb below the start of the shawzin scale
+    var midiNoteChord2 = midiNoteC - 2;
 
     return {
         // UI metadata
