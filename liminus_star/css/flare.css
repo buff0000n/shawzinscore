@@ -63,6 +63,10 @@ p.chat_gold {
     color: #c0b070;
 }
 
+p.chat_gold > span {
+    color: #c0b070;
+}
+
 td.chat_text p {
     margin: 2px;
     padding: 0;
