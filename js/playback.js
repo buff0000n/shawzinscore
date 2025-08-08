@@ -48,24 +48,21 @@ var Playback = (function() {
 
         // set up global key listener for the spacebar
         Events.addKeyDownListener("Space", (e) => {
-            if (e.shiftKey) {
-                // shift-spacebar plays from the beginning regardless of the current state
-                FullPlayer.stopPlaying();
-                FullPlayer.startPlaying();
-            } else {
-                // regular spacebar starts from wherever it left off if paused, otherwise starts from the beginning
-                togglePlay();
-            }
+            // regular spacebar starts from wherever it left off if paused, otherwise starts from the beginning
+            togglePlay();
             return true;
-        });
+        }, shiftKey = false, altKey = false, ctrlKey = false);
+        Events.addKeyDownListener("Space", (e) => {
+            // shift-spacebar plays from the beginning regardless of the current state
+            FullPlayer.stopPlaying();
+            FullPlayer.startPlaying();
+            return true;
+        }, shiftKey = true, altKey = false, ctrlKey = false);
         Events.addKeyDownListener("KeyR", (e) => {
             // just R with no other keys
-            if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
-                toggleRecording();
-                return true;
-            }
-            return false;
-        });
+            toggleRecording();
+            return true;
+        }, shiftKey = false, altKey = false, ctrlKey = false);
 
         // initialize the metronome button state from settings
         setMetronomeOn(Settings.getMetronomeOn());

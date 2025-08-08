@@ -164,7 +164,7 @@ var ControlSchemeUI = (function() {
 
             // build the selection contents from the control data
             tr.innerHTML = `
-                <img src="img/${control.imgBase}_w.png" srcset="img2x/${control.imgBase}_w.png 2x" class="icon" style="height: 2ex; width: auto; margin: 0.5ex;"/>
+                <img src="img/${control.imgBase}_w.png" srcset="img2x/${control.imgBase}_w.png 2x" class="icon" style="height: 16px; width: auto; margin: 4px;"/>
                 ${actionBinding.name}
             `;
 
@@ -638,7 +638,7 @@ var ControlSchemeUI = (function() {
         var customDiv = document.createElement("div");
         customDiv.className = "selection-div";
         // shrugs
-        customDiv.style.margin = "1ex 0 0 0";
+        customDiv.style.margin = "8px 0 0 0";
 
         // loop over the custom control schemes
         for (var i = 0; i < customSchemeList.length; i++) {

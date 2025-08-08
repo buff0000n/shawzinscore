@@ -7,38 +7,31 @@ var Undo = (function() {
     var maxUndoStackSize = 250;
     // stack for nested actions while building an undo action
     var undoCombos = [];
+    // state for undo/redo in progress
+    var inProgress = null;
     
     function registerEventListeners() {
         // set up the undo and redo buttons
         document.getElementById("button-undo").addEventListener("click", doUndo, { passive: false });
+        document.getElementById("button-undo2").addEventListener("click", doUndo, { passive: false });
         document.getElementById("button-redo").addEventListener("click", doRedo, { passive: false });
+        document.getElementById("button-redo2").addEventListener("click", doRedo, { passive: false });
 
-        // add a global key listener for Z
+        // add a global key listener for Ctrl-Z
         Events.addKeyDownListener("KeyZ", (e) => {
-            // ctrlKey on Windows, metaKey on Mac
-            if (e.ctrlKey || e.metaKey) {
-                if (e.shiftKey) {
-                    // ctrl/meta + shift + Z: redo
-                    doRedo();
-                    return true;
-                } else {
-                    // ctrl/meta + Z: undo
-                    doUndo();
-                    return true;
-                }
-            }
-			return false;
-        }, { passive: false });
-        // add a global key listener for Y
+            doUndo();
+            return true;
+        }, shiftKey = false, altKey = false, ctrlKey = true);
+        // add a global key listener for Ctrl-Shift-Z
+        Events.addKeyDownListener("KeyZ", (e) => {
+            doRedo();
+            return true;
+        }, shiftKey = true, altKey = false, ctrlKey = true);
+        // add a global key listener for Ctrl-Y
         Events.addKeyDownListener("KeyY", (e) => {
-            // ctrlKey on Windows, metaKey on Mac
-            if (e.ctrlKey || e.metaKey) {
-                // ctrl/meta + Y: redo
-                doRedo();
-                return true;
-            }
-			return false;
-        }, { passive: false });
+            doRedo();
+            return true;
+        }, shiftKey = false, altKey = false, ctrlKey = true);
     }
 
     function updateUndoRedoButton(button, stack, prefix) {
@@ -64,8 +57,10 @@ var Undo = (function() {
     function updateButtons() {
         // update the undo button with the undo action stack
         updateUndoRedoButton(document.getElementById("button-undo"), undoStack, "Undo");
+        updateUndoRedoButton(document.getElementById("button-undo2"), undoStack, "Undo");
         // update the redo button with the redo action stack
         updateUndoRedoButton(document.getElementById("button-redo"), redoStack, "Redo");
+        updateUndoRedoButton(document.getElementById("button-redo2"), redoStack, "Redo");
     }
     
     function addUndoAction(action) {
@@ -73,6 +68,14 @@ var Undo = (function() {
         if (undoCombos.length > 0) {
             // put in the combo
             undoCombos[undoCombos.length - 1].push(action);
+            return;
+        }
+
+        // check if a new undo action is being added from inside an undo or redo operation
+        if (inProgress) {
+            // should throw an error, but just log for now
+            // throw "Undo action added while " + inProgress + " is in progress";
+            console.log("Undo action added while " + inProgress + " is in progress");
             return;
         }
     
@@ -163,7 +166,12 @@ var Undo = (function() {
         // make sure there was a last action
         if (action) {
             // undo the action
-            action.undoAction();
+            inProgress = "undo";
+            try {
+                action.undoAction();
+            } finally {
+                inProgress = null;
+            }
             // put it on the redo stack
             redoStack.push(action);
     
@@ -186,7 +194,12 @@ var Undo = (function() {
         // make sure is a next action
         if (action) {
             // redo the action
-            action.redoAction();
+            inProgress = "undo";
+            try {
+                action.redoAction();
+            } finally {
+                inProgress = null;
+            }
             // put it back on the undo stack
             undoStack.push(action);
             // update UI

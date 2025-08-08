@@ -1,14 +1,22 @@
 // generic listener for MIDI events
 class MidiListener {
+    // notify a device was connected
     deviceOn(device) { }
+    // notify a device was disconnected
     deviceOff(device) { }
+    // notify a note was started, the note for middle C is Midi.middleC
     noteOn(device, note) { }
+    // notify a note was stopped, the note for middle C is Midi.middleC
     noteOff(device, note) { }
+    // notify the pitch bend was changed. Value ranges from -1 to 1, with 0 being no pitch bend
     pitchBend(device, value) { }
 }
 
 // generic MIDI event library
 var Midi = (function() {
+    // misc constants
+    var middleC = 60;
+
     // device map
     var devices = {};
     // listener list
@@ -172,12 +180,17 @@ var Midi = (function() {
             if (e.data.length == 3) {
                 switch (e.data.at(0)) {
                     case 144: // note down
-                        noteOn(this.name, e.data.at(1));
-                        // ignore the third byte, it's velocity
+                        // if the velocity is 0 then it's a note up event
+                        if (e.data.at(2) == 0) {
+                            noteOff(this.name, e.data.at(1));
+                        } else {
+                            // otherwise, it's a note down
+                            noteOn(this.name, e.data.at(1));
+                        }
                         break;
                     case 128: // note up
                         noteOff(this.name, e.data.at(1));
-                        // ignore the third byte, it's velocity
+                        // ignore the third byte, it's release velocity
                         break;
                     case 224: // pitch bend
                         // unsigned little-endian, 7 bits + 7 bits, zero bend is the halfway point
@@ -225,6 +238,8 @@ var Midi = (function() {
         disable: disable,
         // add an event listener
         addMidiListener: addMidiListener,
+        // misc constants
+        middleC: middleC,
     }
 })();
 

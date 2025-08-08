@@ -345,19 +345,24 @@ var TrackBar = (function() {
             // clone the old fret settings
             oldFretEnabled = fretEnabled.slice();
         }
-        // new fret settings
+        // new fret settings, set them all then send the update
         for (var i = 0; i < 4; i++) {
-            setFretEnabled(i, fret.indexOf(i) >= 0);
+            setFretEnabled(i, fret.indexOf(i) >= 0, false);
         }
+        Track.updateFrets(fretEnabled.slice());
     }
 
     // return the tab side frets and roll side chord mode to their previous values
     function revertTemporarySettings() {
         // revert tab side frets
         if (oldFretEnabled) {
-            for (var i = 0; i < 4; i++) {
-                setFretEnabled(i, oldFretEnabled[i]);
+            // doing in reverse order is easier than trying to make the rules play nice when
+            // we set a bunch at once
+            // set them all then send the update
+            for (var i = 3; i >= 0; i--) {
+                setFretEnabled(i, oldFretEnabled[i], false);
             }
+            Track.updateFrets(fretEnabled.slice());
             // clear out temp values
             oldFretEnabled = null;
         }
@@ -683,7 +688,7 @@ var TrackBar = (function() {
 
     function toggleFretEnabled(fret) {
         // get the current enabled value for the fret and invert it
-        setFretEnabled(fret, !fretEnabled[fret]);
+        setFretEnabled(fret, !fretEnabled[fret], true);
     }
 
     function setFretEnabled(fret, enabled, runUpdate=true) {
@@ -706,7 +711,7 @@ var TrackBar = (function() {
                 }
                 // if any were enabled before, then don't enable the 0 yet, it was just clearing the other frets.
                 // The user will have to click again to enable the 0.
-                if (changed) {
+                if (changed && runUpdate) {
                     enabled = false;
                 }
             }
@@ -728,7 +733,8 @@ var TrackBar = (function() {
 
         // update the track, if this update doesn't already come from the track
         if (runUpdate) {
-            Track.updateFrets(fretEnabled);
+            // create a copy of the fret array because otherwise things get weird
+            Track.updateFrets(fretEnabled.slice());
         }
         // return the previous state
         return prevEnabled;

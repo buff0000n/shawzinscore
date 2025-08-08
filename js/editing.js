@@ -38,11 +38,26 @@ var Editing = (function() {
 
         // the options in the tempo dropdown are built dynamically from metadata
         initTempoControl();
+
+        // apply the editing setting
+        // we have to wait for more of the UI to get initialized before we enable editing,
+        // so save it for later
+        setTimeout(() => {
+            setEditing(Settings.getEditingEnabled());
+        }, 100);
     }
 
     function toggleEditing() {
         // flip the flag
-        editing = !editing;
+        setEditing(!editing);
+    }
+
+    function setEditing(newEditing) {
+        // short circuit
+        if (newEditing == editing) return;
+
+        // apply
+        editing = newEditing;
 
         var buttonImg = document.getElementById("edit-bar-img");
         var toolbar = document.getElementById("edit-toolbar");
@@ -77,6 +92,9 @@ var Editing = (function() {
 
         // set the track up for editing
         Track.setEditing(editing);
+
+        // save preference, I'm tired of re-enabling editing a million times while debugging
+        Settings.setEditingEnabled(editing);
     }
 
     function updateKeySig() {
@@ -278,7 +296,7 @@ var Editing = (function() {
             containerDiv.appendChild(selectionDiv);
             selectionDiv = createSelectionContainerDiv();
             // shrugs
-            selectionDiv.style.margin = "1ex 0 0 0";
+            selectionDiv.style.margin = "8px 0 0 0";
         }
 
         // go over the sorted note list

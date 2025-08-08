@@ -593,6 +593,11 @@ var Transcript = (function() {
                 { "name": flare, "text": "we'll be here for you whenever you need us, space traveler" },
                 { "name": flare, "text": "wherever it might take Us ;)" },
             ]},
+            { "day": 19, "chat": [
+                { "name": drifter, "text": "What do you like to do for your birthday, Flare?" },
+                { "name": flare, "text": "normally? drink myself silly and go out on the town with friends" },
+                { "name": flare, "text": "but i guess now my home is a bar, so... let 'er rip, i suppose", "gold": true  },
+            ]},
         ]
     };
     return {

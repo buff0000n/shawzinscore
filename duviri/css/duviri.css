@@ -1,0 +1,80 @@
+html, body {
+    /* Necessary for mobile for some reason */
+    /* Don't do this with the main Shawzinscore page */
+    overflow-x: hidden;
+}
+
+div#duviri-map {
+    text-align: center;
+    background: #404040;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+div#duviri-map-area {
+    background: #202020;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+div#duviri-map-container {
+    background: #202020;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    position: relative;
+}
+
+.duviri-map-dot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+div.duviri-station {
+    background: #404040;
+    padding: 8px;
+    margin: 8px;
+    border-radius: 8px;
+}
+
+span.duviri-station-title-text {
+    font-weight: bold;
+    font-color: #FFFFFF;
+    padding: 0 24px
+}
+
+div.image-thumbnail-list-container {
+    background: #202020;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+div.image-thumbnail-list {
+    overflow-x: scroll;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+img.image-thumbnail-image {
+    margin: 4px
+    cursor: pointer;
+}
+
+div.station-duviri-about {
+    background: #202020;
+    margin: 8px 0 0 0;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.icon-button {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 100;
+}
+

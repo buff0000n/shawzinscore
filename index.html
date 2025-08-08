@@ -63,6 +63,22 @@
                             <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
                         </span>
                     </div>
+                    <div id="metadata-settings-code-duviri-played" class="toolbarSection" style="display: none">
+                        <div class="fieldTitle">Song Code (as it's played)</div>
+                        <input id="metadata-settings-code-duviri-played-text" type="text" value="" size="12" readonly/>
+                        <span id="copyCodeButton-duviri-played" class="smallButton icon tooltip">
+                            <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
+                        </span>
+                    </div>
+                    <div id="metadata-settings-code-duviri-sounds" class="toolbarSection" style="display: none">
+                        <div class="fieldTitle">Song Code (as it sounds)</div>
+                        <input id="metadata-settings-code-duviri-sounds-text" type="text" value="" size="12" readonly/>
+                        <span id="copyCodeButton-duviri-sounds" class="smallButton icon tooltip">
+                            <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon"/>
+                            <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
+                        </span>
+                    </div>
                     <div id="metadata-settings-title" class="toolbarSection tooltip">
                         <div id="metadata-settings-title-title" class="fieldTitle">Title</div>
                         <input id="metadata-settings-title-text" type="text" value="" size="22"/>
@@ -104,6 +120,14 @@
                             <span class="tooltiptextbottom">Generate a sound file for this song</span>
                         </div>
                         -->
+                        <div id="button-undo" class="smallButton tooltip">
+                            <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
+                            <span id="button-undo-tooltip" class="tooltiptextbottom">Undo</span>
+                        </div>
+                        <div id="button-redo" class="smallButton tooltip">
+                            <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
+                            <span id="button-redo-tooltip" class="tooltiptextbottom">Redo</span>
+                        </div>
                     </div>
                 </div>
             </td>
@@ -348,38 +372,48 @@
                 </tr>
             </table>
         </div>
+        <div id="tab-duviri-mode" style="display: none">
+            <div class="field-entry-span-light" id="config-tab-duvirimode">
+                <span class="tooltip">
+                    <input id="config-tab-duvirimode-input" type="checkbox"/>
+                    <img src="img/icon-edit-duviri-mode.png" srcset="img2x/icon-edit-duviri-mode.png 2x" alt="Duviri Mode" class="icon"/>
+                    <span class="fieldTitle">Duviri Mode</span>
+                    <span class="tooltiptextbottom">If enabled, the notes as they appear in Duviri will be shown.  If disabled, the actual notes as they sound will be displayed</span>
+                </span>
+            </div>
+        </div>
         <div id="edit-buttons" style="display: none">
             <div id="button-select" class="smallButton-light tooltip">
-                <img src="img/icon-select.png" srcset="img2x/icon-select.png 2x" alt="undo" class="icon-disabled"/>
+                <img src="img/icon-select.png" srcset="img2x/icon-select.png 2x" alt="Select" class="icon-disabled"/>
                 <span id="button-select-tooltip" class="tooltiptextbottom">Enable selection mode</span>
             </div>
             <div id="button-measure" class="smallButton-light tooltip">
-                <img src="img/icon-select-measure.png" srcset="img2x/icon-select-measure.png 2x" alt="undo" class="icon-disabled"/>
+                <img src="img/icon-select-measure.png" srcset="img2x/icon-select-measure.png 2x" alt="Select Measure" class="icon-disabled"/>
                 <span id="button-measure-tooltip" class="tooltiptextbottom">Enable measure selection mode</span>
             </div>
             <div id="button-copy" class="smallButton-light tooltip">
-                <img src="img/icon-copy-notes.png" srcset="img2x/icon-copy-notes.png 2x" alt="undo" class="icon-disabled"/>
+                <img src="img/icon-copy-notes.png" srcset="img2x/icon-copy-notes.png 2x" alt="Copy" class="icon-disabled"/>
                 <span id="button-copy-tooltip" class="tooltiptextbottom">Copy selected notes to clipboard</span>
             </div>
             <div id="button-cut" class="smallButton-light tooltip">
-                <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="undo" class="icon-disabled"/>
+                <img src="img/icon-cut-notes.png" srcset="img2x/icon-cut-notes.png 2x" alt="Cut" class="icon-disabled"/>
                 <span id="button-cut-tooltip" class="tooltiptextbottom">Cut selected notes to clipboard</span>
             </div>
             <div id="button-paste" class="smallButton-light tooltip">
-                <img src="img/icon-paste-notes.png" srcset="img2x/icon-paste-notes.png 2x" alt="undo" class="icon-disabled"/>
+                <img src="img/icon-paste-notes.png" srcset="img2x/icon-paste-notes.png 2x" alt="Paste" class="icon-disabled"/>
                 <span id="button-paste-tooltip" class="tooltiptextbottom">Paste from clipboard</span>
             </div>
             <div id="button-delete" class="smallButton-light tooltip">
-                <img src="img/icon-delete-notes.png" srcset="img2x/icon-delete-notes.png 2x" alt="undo" class="icon-disabled"/>
+                <img src="img/icon-delete-notes.png" srcset="img2x/icon-delete-notes.png 2x" alt="Delete" class="icon-disabled"/>
                 <span id="button-delete-tooltip" class="tooltiptextbottom">Delete selected notes</span>
             </div>
-            <div id="button-undo" class="smallButton-light tooltip">
+            <div id="button-undo2" class="smallButton-light tooltip">
                 <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
-                <span id="button-undo-tooltip" class="tooltiptextbottom">Undo</span>
+                <span id="button-undo-tooltip2" class="tooltiptextbottom">Undo</span>
             </div>
-            <div id="button-redo" class="smallButton-light tooltip">
+            <div id="button-redo2" class="smallButton-light tooltip">
                 <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
-                <span id="button-redo-tooltip" class="tooltiptextbottom">Redo</span>
+                <span id="button-redo-tooltip2" class="tooltiptextbottom">Redo</span>
             </div>
         </div>
     </div>
@@ -446,6 +480,16 @@
                     Enable MIDI controller support.
                     <strong class="warn">Note:</strong> This usually requires giving this website permission to access
                     your MIDI devices.
+                </span>
+            </div>
+        </div>
+        <div class="field-entry" id="config-duvirimodeeditingenabled">
+            <div class="tooltip">
+                <input id="config-duvirimodeeditingenabled-input" type="checkbox"/>
+                <span class="fieldTitle">Duviri Mode Editing Enabled</span>
+                <span class="tooltiptextbottom">
+                    Enable adding Duviri-mode notes to a song while editing, meaning
+                    they sound like a different note from what is played.
                 </span>
             </div>
         </div>
@@ -598,6 +642,16 @@
             <span class="fieldTitle">Delete</span>
             <span class="tooltiptextbottom">Delete the selected note</span>
         </div>
+        <div class="field-button-light lightbutton tooltip" id="note-edit-duviri-mode" style="display: none">
+            <img src="img/icon-edit-duviri-mode.png" srcset="img2x/icon-edit-duviri-mode.png 2x" class="icon"/>
+            <span class="fieldTitle">Duviri Mode</span>
+            <span class="tooltiptextbottom">Switch the note to the currently selected frets without changing the sound that it plays</span>
+        </div>
+        <div class="field-button-light lightbutton tooltip" id="note-edit-duviri-mode-remove" style="display: none">
+            <img src="img/icon-edit-duviri-mode-remove.png" srcset="img2x/icon-edit-duviri-mode-remove.png 2x" class="icon"/>
+            <span class="fieldTitle">Remove Duviri Mode</span>
+            <span class="tooltiptextbottom">Switch the note back so it matches sound that it plays</span>
+        </div>
     </div>
 </div>
 
@@ -620,14 +674,19 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v2.0.3: 2024-10-11
+            v2.1.4: 2025-05-20
         </div>
         <div>
             <a href="https://github.com/buff0000n/shawzinscore">Source</a>
             &bull;
             <a href="https://github.com/buff0000n/shawzinscore/issues/new">Bug report</a>
-            &bull;
+        </div>
+        <div>
             <a href="notechart.html">Shawzin Note Chart</a>
+            &bull;
+            <a href="duviri/">Duviri Help</a>
+            &bull;
+            <a href="liminus_star/">1999 Help</a>
         </div>
         <div>
             Contact:
@@ -636,8 +695,6 @@
             <a href="https://forums.warframe.com/messenger/compose/?to=1331202">Forums</a>
             &bull;
             <a href="https://discordapp.com/users/290339586511732736">Discord</a>
-            &bull;
-            <a href="https://twitter.com/mw2mh">Bird App</a>
             &bull;
             <a href="https://bsky.app/profile/mw2mh.bsky.social">Blue app</a>
             &bull;

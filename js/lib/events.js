@@ -53,9 +53,8 @@ var Events = (function() {
     // add a global listener for a specific key
     // The listener returns true if it did something
     function addKeyDownListener(key, listener, shiftKey = false, altKey = false, ctrlKey = false) {
-        if (shiftKey || altKey || ctrlKey) {
-            listener = wrapListener(listener, shiftKey, altKey, ctrlKey);
-        }
+        // always check modifier keys
+        listener = wrapListener(listener, shiftKey, altKey, ctrlKey);
         // lazily create a listener list for this key
         if (!keyDownListeners[key]) {
             keyDownListeners[key] = [];

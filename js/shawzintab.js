@@ -391,10 +391,12 @@ var ShawzinTab = (function() {
             // start at zero at the beginning of the line
             // substract 1 from interval length to let barMargin take care of separating lines/measures
             var x3 = x1 + (((x2 - x1) * (note.tick - tickOffset)) / (intervalLength - 1));
+
+            var noteString = Track.isDuviriModeOn() ? note.altString : note.string;
             // iterate over the note's strings
             // do multi-string notes actually happen?
-            for (var j = 0; j < note.string.length; j++) {
-                var string = note.string.charAt(j);
+            for (var j = 0; j < noteString.length; j++) {
+                var string = noteString.charAt(j);
                 // pick the y position for the correct string
                 var ty;
                 switch (string) {
@@ -403,17 +405,19 @@ var ShawzinTab = (function() {
                     case "3": ty = stringThreeOnTop ? y1 : y3; break;
                 }
 
+                // respect the current Duviri mode
+                var noteFret = Track.isDuviriModeOn() ? note.altFret : note.fret;
                 if (!imageMap) {
                     // if there's no frets then use "0"
-                    var fret = (note.fret != "" ? note.fret : "0");
+                    var fret = (noteFret != "" ? noteFret : "0");
 
                     // clear space or draw the note
                     placeText(context, fontSize, fret, x3, ty, fret.length > 1, clear);
                 } else {
                     // draw the three frets, either open or closed
-                    drawCenteredImage(context, note.fret.includes("1") ? imageMap["f1"] : imageMap["f0"], x3, ty + fretSep, fretScale);
-                    drawCenteredImage(context, note.fret.includes("2") ? imageMap["f2"] : imageMap["f0"], x3, ty, fretScale);
-                    drawCenteredImage(context, note.fret.includes("3") ? imageMap["f3"] : imageMap["f0"], x3, ty - fretSep, fretScale);
+                    drawCenteredImage(context, noteFret.includes("1") ? imageMap["f1"] : imageMap["f0"], x3, ty + fretSep, fretScale);
+                    drawCenteredImage(context, noteFret.includes("2") ? imageMap["f2"] : imageMap["f0"], x3, ty, fretScale);
+                    drawCenteredImage(context, noteFret.includes("3") ? imageMap["f3"] : imageMap["f0"], x3, ty - fretSep, fretScale);
                 }
             }
         }

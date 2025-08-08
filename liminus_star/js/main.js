@@ -86,7 +86,6 @@ var Flare = (function() {
         var currentDay = Settings.getFlareDay();
         // toggle off if clicked again
         if (day == currentDay) day = 0;
-        debugger;
         if (day > 0) {
             var dayElement = document.getElementById("chat_day_" + day);
             // save old screen position, this is relative to scrollTop

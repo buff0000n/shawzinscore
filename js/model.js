@@ -128,18 +128,19 @@ var Model = (function() {
     function doUpdateSongCode() {
         // get or re-generate the song code
         var songCode = doGetSongCode();
-        // update the UI
-        Controls.updateSongCode(songCode);
+        // update the UI, sending the song code and any alternates
+        Controls.updateSongCode(songCode[0], songCode[1], songCode[2]);
         // return it for convenience
         return songCode;
     }
 
     function getQueryParamMap() {
         // get or re-generate the song code, also updating it in the UI
-        var songCode = doUpdateSongCode();
+        var songCode = doUpdateSongCode()[0];
         // build an ordered parameter map, putting the song code last
         return {
-            "n": PageUtils.urlEncodeString(songName),
+            // this will get url-encoded elsewhere
+            "n": songName, // PageUtils.urlEncodeString(songName),
             "s": shawzin,
             "m": meter,
             "t": tempo,
@@ -261,8 +262,12 @@ var Model = (function() {
     function doGetSongCode() {
         // check if don't have one cached
         if (!songCode) {
-            // get the song code from the song object, or use a default
-            songCode = song ? song.toCode() : "";
+            // get the song code from the song object, along with its two alternatives if applicable
+            songCode = [
+                song ? song.toCode() : "",
+                song && song.hasAltNotes() ? song.toCode(false, true) : null,
+                song && song.hasAltNotes() ? song.toCode(true, false) : null
+            ];
         }
         return songCode;
     }
@@ -278,7 +283,8 @@ var Model = (function() {
 
         // save the song and code
         song = newSong;
-        songCode = newSongCode;
+        // just clear out the cached song code and let it get regenerated
+        songCode = null;
         // the scale is part of the song
         updateScale();
 
@@ -611,6 +617,8 @@ var Model = (function() {
         getLeadInTicks: function() { return leadInTicks; },
         // direct setter for lead-in ticks
         setLeadInTicks: setLeadInTicks, // (leadInTicks, updateSong=true)
+        // even more direct setter with no undo action
+        doSetLeadInTicks: doSetLeadInTicks, // (leadInTicks, updateSong=true)
         // setter for lead-in beats
         setLeadInBeats: function(leadInBeatsString, updateSong) {
             // convert to ticks using the current tempo/meter
@@ -630,7 +638,7 @@ var Model = (function() {
 
         // song getters
         getSong: function() { return song; },
-        getSongCode: doGetSongCode,
+        getSongCode: function() { return doGetSongCode()[0]; },
         // direct song object setter
         setSong: function(newSong) {
             var currentSong = song;
@@ -655,7 +663,7 @@ var Model = (function() {
 
             // store the old song and code
             var currentSong = song;
-            var currentCode = doGetSongCode();
+            var currentCode = doGetSongCode()[0];
 
             // check for change
             if (newCode != currentCode) {

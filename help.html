@@ -150,6 +150,7 @@
                 <li><a href="#tocUndoRedo">Undo/Redo</a></li>
             </ul>
         </li>
+        <li><a href="#tocDuviriMode">Duviri Mode</a></li>
         <li><a href="#tocGeneral">General Info</a>
             <ul>
                 <li><a href="#tocMechanics">Shawzin Mechanics</a>
@@ -199,7 +200,7 @@
                         <li><a href="#shawz_void">Void's Song</a></li>
                         <li><a href="#shawz_lonesome">Lonesome</a></li>
                         <li><a href="#shawz_courtly">Courtly</a></li>
-                        <li><a class="spoiler" href="#shawz_lizzie">Lizzie</a></li>
+                        <li><a href="#shawz_lizzie">Lizzie</a></li>
                     </ul>
                 </li>
                 <li><a href="#tocScaleList">Scale List</a>
@@ -278,7 +279,7 @@
     <h2 id="tocShawzins">Shawzin</h2>
     <p>
         Under the Title is a Shawzin selector.  Click here to change the currently active Shawzin.  There are
-        currently <a href="#tocShawzinList">ten Shawzins to choose from</a>.
+        currently <a href="#tocShawzinList">eleven Shawzins to choose from</a>.
     </p>
     <p>
         The Shawzin section is not part of the song code, but it does get saved to any Shawzinscore links.
@@ -508,7 +509,7 @@
     </p>
     <h2 id="tocPlaybackStart">Playback Start</h2>
     <p>
-        By default, a fresh playback starts about two seconds before the beginning of the song.  Click anywhere
+        By default, a fresh playback starts about 2.75 seconds before the beginning of the song.  Click anywhere
         on the background of the tablature or piano roll sides to set a
         <strong>Playback Start Marker</strong>.  When you start a new playback, or stop and restart playback,
         then it will start at this marker instead of at the beginning.
@@ -629,7 +630,7 @@
     <p>
         Use this to determine how many seconds or measures are put on each line of the Shawzin Tab.  You may need
         to adjust this down for faster-paced songs so the notes are spread out more.  Alternatively, adjust it
-        up for very slow songs to make the image smaller.  You want the Shawin tab for your song to be easily
+        up for very slow songs to make the image smaller.  You want the Shawzin tab for your song to be easily
         readable.
     </p>
     <p>
@@ -690,6 +691,11 @@
             play the on-screen keyboard, or use it to enter notes while recording.
             <strong class="warn">Note:</strong> This usually requires giving this website permission to access
             your MIDI devices.
+        </li>
+        <li>
+            <strong>Enable Duviri Mode Editing</strong>: This enables editing Duviri-mode songs, where the note you
+            play isn't always the note you hear.  See <a href="#tocDuviriMode">Duviri Mode</a> for almost no
+            further information.
         </li>
     </ul>
     <p>
@@ -1110,6 +1116,28 @@
         longer redo your previously undone actions.
     </p>
 
+    <h1 id="tocDuviriMode">Duviri Mode</h1>
+    <p>
+        The twelve Shawzin stations in Duviri each a have a song, in both normal and virtuoso mode.  These 24 songs are
+        special in that the notes you play are not always the notes you hear.  This happens mainly with chords,
+        which are played with a single fret in these songs.  Presumably this to make them easier to play.
+    </p>
+    <p>
+        Duviri mode exists for no other reason than to be able to show these songs in Shawzinscore as they appear and
+        sound in game.  When loading one of these songs, you will see a <strong>Duviri Mode</strong> checkbox at the
+        top of the tablature side of the track view.  Enable this to show the notes as they appear in-game.  Disable
+        this to show the notes as they actually sound.
+    </p>
+    <p>
+        <strong class="info">Note: </strong> You can use settings to enable the creation of your own Duviri-mode songs,
+        I guess.  However, there's no way to load them and play them like that in, game.  You will have to pick one
+        type of song code, <strong>as it's played</strong> or <strong>as it sounds</strong>.
+    </p>
+    <p>
+        <strong class="info">Note: </strong> Documentation of how to edit Duviri mode songs is coming
+        <strong class="warn">never</strong> because I'm literally the only one who will ever use it.
+    </p>
+
     <div style="text-align: center;">
         <img class="showcase" src="img/shawzin-dax-large.png" srcset="img2x/shawzin-dax-large.png 2x"/>
         <img class="showcase" src="img/shawzin-nelumbo-large.png" srcset="img2x/shawzin-nelumbo-large.png 2x"/>
@@ -1121,7 +1149,7 @@
         <img class="showcase" src="img/shawzin-void-large.png" srcset="img2x/shawzin-void-large.png 2x"/>
         <img class="showcase" src="img/shawzin-lonesome-large.png" srcset="img2x/shawzin-lonesome-large.png 2x"/>
         <img class="showcase" src="img/shawzin-courtly-large.png" srcset="img2x/shawzin-courtly-large.png 2x"/>
-        <img class="showcase spoiler" src="img/shawzin-lizzie-large.png" srcset="img2x/shawzin-lizzie-large.png 2x"/>
+        <img class="showcase" src="img/shawzin-lizzie-large.png" srcset="img2x/shawzin-lizzie-large.png 2x"/>
     </div>
 
     <h1 id="tocGeneral">General Info</h1>
@@ -1140,14 +1168,14 @@
     <ul>
         <li>
             A decoration that can be placed in your Orbiter, Drifter Camp, or Dormizone, or donated to a
-            dojo<sup><a href="#shawz_courtly">*</a></sup> <sup class="spoiler"><a href="#shawz_lizzie">*</a></sup>.
+            dojo<sup><a href="#shawz_courtly">*</a></sup> <sup><a href="#shawz_lizzie">*</a></sup>.
         </li>
         <li>
             An emote you can equip on your emote wheel.
         </li>
     </ul>
     <p>
-        You can play a Shawin as long as the decoration is in your inventory, Orbiter, Drifter Camp, or
+        You can play a Shawzin as long as the decoration is in your inventory, Orbiter, Drifter Camp, or
         Dormizone.  However, if you donate the decoration to a dojo, or sell it, then you must obtain another
         one in order to play that Shawzin again.
     </p>
@@ -1316,39 +1344,39 @@
     </p>
     <ol>
         <li>
-            <img class="icon" src="img/standard/pmin/scale.png" srcset="img2x/standard/pmin/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/pmin/scale.png" srcset="img2x/standard/pmin/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_pmin">Minor Pentatonic</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/pmaj/scale.png" srcset="img2x/standard/pmaj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/pmaj/scale.png" srcset="img2x/standard/pmaj/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_pmaj">Major Pentatonic</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/chrom/scale.png" srcset="img2x/standard/chrom/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/chrom/scale.png" srcset="img2x/standard/chrom/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_chrom">Chromatic</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/hex/scale.png" srcset="img2x/standard/hex/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/hex/scale.png" srcset="img2x/standard/hex/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_hex">Hexatonic</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/maj/scale.png" srcset="img2x/standard/maj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/maj/scale.png" srcset="img2x/standard/maj/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_min">Major</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/min/scale.png" srcset="img2x/standard/min/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/min/scale.png" srcset="img2x/standard/min/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_maj">Minor</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_hira">Hirajoshi</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/phry/scale.png" srcset="img2x/standard/phry/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/phry/scale.png" srcset="img2x/standard/phry/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_phry">Phrygian Dominant</a>
         </li>
         <li>
-            <img class="icon" src="img/standard/yo/scale.png" srcset="img2x/standard/yo/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+            <img class="icon" src="img/standard/yo/scale.png" srcset="img2x/standard/yo/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
             <a href="#scale_yo">Yo</a>
         </li>
     </ol>
@@ -1813,8 +1841,7 @@
                     <strong class="info">Obtained: </strong> Market for
                     40<img class="icon" src="img/icon-plat.png" srcset="img2x/icon-plat.png 2x" alt="plat"/>
                 </p>
-                <p><strong class="warn">Note: The market description for the Narmer Shawzin contains spoilers for the New
-                    War quest.</strong>
+                <p><strong class="warn">Note: The Narmer Shawzin is only available after completing the New War quest.</strong>
                 </p>
                 <p>
                     The Narmer Shawzin was released with the New War quest in Update 31.0 (2021). Its sound is based on a
@@ -1934,7 +1961,13 @@
                 <h3 id="shawz_courtly">Courtly Shawzin</h3>
                 <p>
                     <strong class="info">Obtained: </strong> Complete the Shawzin minigame at all twelve locations in
-                    Duviri on Virtuoso difficulty.  <a href="https://www.youtube.com/watch?v=16LMiOuKEmE">Here's my video on it.</a>
+                    Duviri on Virtuoso difficulty.
+                </p>
+                <p>
+                    <a target="_top" href="duviri/">Here is a page showing all 12 locations where you can track your progress</a>
+                </p>
+                <p>
+                    I also have <a href="https://www.youtube.com/watch?v=16LMiOuKEmE">a video</a> on it.
                 </p>
                 <p>
                     The Courtly Shawzin was released with the Duviri Paradox quest in Update 33.0 (2023). Its sound seems
@@ -1953,7 +1986,7 @@
                 </p>
             </td>
         </tr>
-        <tr class="spoiler">
+        <tr>
             <td>
                 <img class="icon" src="img/shawzin-lizzie-large.png" srcset="img2x/shawzin-lizzie-large.png 2x"/>
             </td>
@@ -1968,7 +2001,7 @@
                     status with <strong class="info">Liminus_Star</strong> in the KIM system.
                 </p>
                 <p>
-                    <strong>If you need some help, then I've made my full <a href="flare/" target="_top" >chat transcript</a>
+                    <strong>If you need some help, then I've made my full <a href="liminus_star/" target="_top" >chat transcript</a>
                     available with as few or many spoilers as you want.</strong>
                 </p>
                 <p>
@@ -2024,7 +2057,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/pmin/scale.png" srcset="img2x/standard/pmin/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/pmin/scale.png" srcset="img2x/standard/pmin/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2059,7 +2092,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/pmaj/scale.png" srcset="img2x/standard/pmaj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/pmaj/scale.png" srcset="img2x/standard/pmaj/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2090,7 +2123,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/chrom/scale.png" srcset="img2x/standard/chrom/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/chrom/scale.png" srcset="img2x/standard/chrom/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2118,7 +2151,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/hex/scale.png" srcset="img2x/standard/hex/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/hex/scale.png" srcset="img2x/standard/hex/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2146,7 +2179,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/maj/scale.png" srcset="img2x/standard/maj/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/maj/scale.png" srcset="img2x/standard/maj/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2175,7 +2208,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/min/scale.png" srcset="img2x/standard/min/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/min/scale.png" srcset="img2x/standard/min/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2203,7 +2236,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2233,7 +2266,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/hira/scale.png" srcset="img2x/standard/hira/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2282,7 +2315,7 @@
         <tr>
             <td>
                 <p>
-                    <img class="icon" src="img/standard/yo/scale.png" srcset="img2x/standard/yo/scale.png 2x" style="width: 10ex; margin: 0 1ex;"/>
+                    <img class="icon" src="img/standard/yo/scale.png" srcset="img2x/standard/yo/scale.png 2x" style="width: 80px; margin: 0 8px;"/>
                 </p>
             </td>
             <td>
@@ -2647,6 +2680,18 @@
         <li>Made the massive help section a separate page.</li>
         <li>Made MIDI an optional setting, defaulting to disabled.</li>
         <li>Added measure numbers (thanks <strong>DialEnder</strong>)</li>
+        <li>Added Spoiler Shawzin</li>
+    </ul>
+    <h3 id="tocUpdates2.1">v2.1: 2025-05-13</h3>
+    <ul>
+        <li>Added full display and editing support for Duviri mode, where what you play doesn't match what you hear.
+            Because if it's worth doing then it's worth overdoing.
+        </li>
+        <li>
+            Added full help Duviri page for getting the Courtly Shawzin.  All twelve locations mapped, screenshotted,
+            and transcribed.
+        </li>
+        <li>Made a number of fixes around pop-up menus to make them resize better, especially on mobile</li>
     </ul>
 
     <h1 id="tocTodo">To do</h1>
