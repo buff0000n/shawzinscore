@@ -8,11 +8,32 @@
 <head>
     <title>Warframe Shawzinscore</title>
 </head>
+<meta name="application-name" content="Shawzinscore"/>
+<meta name="author" content="Buff00n"/>
+<meta name="keywords" content="warframe,shawzin,editor,player"/>
+<meta name="description" content="Warframe Shawzin editor and player"/>
+<meta name="robots" content="index,follow"/>
+<meta name="generator" content="Hands 1.0"/>
+<!-- Open graph crap -->
+<meta property="og:title" content="Shawzinscore"/>
+<meta property="og:description" content="Warframe Shawzin editor and player"/>
+<meta property="og:url" content="https://buff0000n.github.io/shawzinscore/"/>
+<meta property="og:image" content="https://buff0000n.github.io/shawzinscore/img/shawzinscore-thumb.png"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:width" content="256"/>
+<meta property="og:image:height" content="256"/>
+<meta property="og:image:alt" content="Shawzinscore"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Buff00n Github Pages"/>
+<meta property="og:updated_time" content="2026-05-12T00:00:00+05:00"/>
+<!-- favicon -->
 <link href="img/favicon.png" rel="icon" type="image/png"/>
+<!-- CSS -->
 <link rel="stylesheet" type="text/css" href="css/common.css"/>
 <link rel="stylesheet" type="text/css" href="css/main.css"/>
 <link rel="stylesheet" type="text/css" href="css/slider.css"/>
-<body onload="initModel()">
+<!-- code -->
 <script type="text/javascript" language="javascript" src="js/lib/bufferLoader.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/imageLoader.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/audio.js"></script>
@@ -38,22 +59,19 @@
 <script type="text/javascript" language="javascript" src="js/editing.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
 <script type="text/javascript" language="javascript" src="js/init.js"></script>
-
+<!-- the rest -->
+<body onload="initModel()">
 <div id="toolbar"> <!-- style="width: 344px;" -->
     <div id="title-bar" class="titleBar">
         <div class="mainTitle">Shawzinscore</div>
     </div>
-    <!-- todo: figure out some way to prevent this from getting messed up on skinny mobile screens without resotring to a table -->
+    <!-- todo: figure out some way to prevent this from getting messed up on skinny mobile screens without resorting to a table -->
     <table class="layoutTable">
         <tr>
-            <td id="toolbar-shawzin">
-                <img id="toolbar-shawzin-img" src="img/shawzin-dax-large.png" srcset="img2x/shawzin-dax-large.png 2x"/>
-            </td>
-            <td>
-                <div id="toolbar-settings">
-                    <div id="metadata-settings-code" class="toolbarSection">
-                        <div class="fieldTitle">Song Code</div>
-                        <input id="metadata-settings-code-text" type="text" value="" size="12"/>
+            <td colspan="2">
+                <div id="metadata-settings-code" class="toolbarSection">
+                    <div class="fieldTitle">
+                        Song Code
                         <span id="pasteCodeButton" class="smallButton icon tooltip">
                             <img src="img/icon-paste-code.png" srcset="img2x/icon-paste-code.png 2x" class="icon"/>
                             <span class="tooltiptextbottom">Paste a song code from the clipboard</span>
@@ -63,71 +81,79 @@
                             <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
                         </span>
                     </div>
-                    <div id="metadata-settings-code-duviri-played" class="toolbarSection" style="display: none">
-                        <div class="fieldTitle">Song Code (as it's played)</div>
-                        <input id="metadata-settings-code-duviri-played-text" type="text" value="" size="12" readonly/>
-                        <span id="copyCodeButton-duviri-played" class="smallButton icon tooltip">
-                            <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon"/>
-                            <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
+                    <textarea id="metadata-settings-code-text" wrap="soft" cols="40" rows="5"></textarea>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td id="toolbar-shawzin">
+                <img id="toolbar-shawzin-img" src="img/shawzin-dax-large.png" srcset="img2x/shawzin-dax-large.png 2x"/>
+            </td>
+            <td id="toolbar-settings">
+                <div id="metadata-settings-code-duviri-played" class="toolbarSection" style="display: none">
+                    <div class="fieldTitle">Song Code (as it's played)</div>
+                    <input id="metadata-settings-code-duviri-played-text" type="text" value="" size="12" readonly/>
+                    <span id="copyCodeButton-duviri-played" class="smallButton icon tooltip">
+                        <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
+                    </span>
+                </div>
+                <div id="metadata-settings-code-duviri-sounds" class="toolbarSection" style="display: none">
+                    <div class="fieldTitle">Song Code (as it sounds)</div>
+                    <input id="metadata-settings-code-duviri-sounds-text" type="text" value="" size="12" readonly/>
+                    <span id="copyCodeButton-duviri-sounds" class="smallButton icon tooltip">
+                        <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon"/>
+                        <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
+                    </span>
+                </div>
+                <div id="metadata-settings-title" class="toolbarSection tooltip">
+                    <div id="metadata-settings-title-title" class="fieldTitle">Title</div>
+                    <input id="metadata-settings-title-text" type="text" value="" size="22"/>
+                    <span class="tooltiptextbottom">Enter a short title for the song</span>
+                </div>
+                <div id="select-shawzin" class="selectButton tooltip">
+                    <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                    <span id="select-shawzin-text"></span>
+                    <span class="tooltiptextbottom">Select a Shawzin</span>
+                </div>
+                <div id="select-scale" class="selectButton tooltip">
+                    <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                    <span id="select-scale-text"></span>
+                    <span class="tooltiptextbottom">Select a Scale</span>
+                </div>
+                <div id="select-control-scheme" class="selectButton tooltip">
+                    <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
+                    <span id="select-control-scheme-text"></span>
+                    <span class="tooltiptextbottom">Select or create a Control Scheme</span>
+                </div>
+                <div id="toolbar-buttons">
+                    <span id="toolbar-buttons-settings" class="smallButton urlButton popup tooltip">
+                        <img src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x" alt="Settings" class="icon"/>
+                        <span class="tooltiptextbottom">Edit Settings</span>
+                    </span>
+                    <span id="toolbar-buttons-copyurl" class="smallButton urlButton popup tooltip">
+                        <img src="img/icon-link.png" srcset="img2x/icon-link.png 2x" alt="URL" class="icon"/>
+                        <span class="tooltiptextbottom">Generate a URL for this song</span>
+                    </span>
+                    <span id="toolbar-buttons-shawzintab" class="smallButton urlButton popup tooltip">
+                        <img src="img/icon-png.png" srcset="img2x/icon-png.png 2x" alt="Shawzintab" class="icon"/>
+                        <span class="tooltiptextbottom">Generate a tablature image for this song</span>
+                    </span>
+                    <!--
+                    <div class="tooltip">
+                        <span id="createWavButton" class="smallButton urlButton popup" onclick="generateWav(this)">
+                            <img src="img/icon-wav.png" srcset="img2x/icon-wav.png 2x" alt="WAV" class="icon"/>
                         </span>
+                        <span class="tooltiptextbottom">Generate a sound file for this song</span>
                     </div>
-                    <div id="metadata-settings-code-duviri-sounds" class="toolbarSection" style="display: none">
-                        <div class="fieldTitle">Song Code (as it sounds)</div>
-                        <input id="metadata-settings-code-duviri-sounds-text" type="text" value="" size="12" readonly/>
-                        <span id="copyCodeButton-duviri-sounds" class="smallButton icon tooltip">
-                            <img src="img/icon-copy-code.png" srcset="img2x/icon-copy-code.png 2x" class="icon"/>
-                            <span class="tooltiptextbottom">Copy the song code to the clipboard</span>
-                        </span>
+                    -->
+                    <div id="button-undo" class="smallButton tooltip">
+                        <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
+                        <span id="button-undo-tooltip" class="tooltiptextbottom">Undo</span>
                     </div>
-                    <div id="metadata-settings-title" class="toolbarSection tooltip">
-                        <div id="metadata-settings-title-title" class="fieldTitle">Title</div>
-                        <input id="metadata-settings-title-text" type="text" value="" size="22"/>
-                        <span class="tooltiptextbottom">Enter a short title for the song</span>
-                    </div>
-                    <div id="select-shawzin" class="selectButton tooltip">
-                        <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-                        <span id="select-shawzin-text"></span>
-                        <span class="tooltiptextbottom">Select a Shawzin</span>
-                    </div>
-                    <div id="select-scale" class="selectButton tooltip">
-                        <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-                        <span id="select-scale-text"></span>
-                        <span class="tooltiptextbottom">Select a Scale</span>
-                    </div>
-                    <div id="select-control-scheme" class="selectButton tooltip">
-                        <img src="img/icon-dropdown.png" srcset="img2x/icon-dropdown.png 2x" class="icon"/>
-                        <span id="select-control-scheme-text"></span>
-                        <span class="tooltiptextbottom">Select or create a Control Scheme</span>
-                    </div>
-                    <div id="toolbar-buttons">
-                        <span id="toolbar-buttons-settings" class="smallButton urlButton popup tooltip">
-                            <img src="img/icon-settings.png" srcset="img2x/icon-settings.png 2x" alt="Settings" class="icon"/>
-                            <span class="tooltiptextbottom">Edit Settings</span>
-                        </span>
-                        <span id="toolbar-buttons-copyurl" class="smallButton urlButton popup tooltip">
-                            <img src="img/icon-link.png" srcset="img2x/icon-link.png 2x" alt="URL" class="icon"/>
-                            <span class="tooltiptextbottom">Generate a URL for this song</span>
-                        </span>
-                        <span id="toolbar-buttons-shawzintab" class="smallButton urlButton popup tooltip">
-                            <img src="img/icon-png.png" srcset="img2x/icon-png.png 2x" alt="Shawzintab" class="icon"/>
-                            <span class="tooltiptextbottom">Generate a tablature image for this song</span>
-                        </span>
-                        <!--
-                        <div class="tooltip">
-                            <span id="createWavButton" class="smallButton urlButton popup" onclick="generateWav(this)">
-                                <img src="img/icon-wav.png" srcset="img2x/icon-wav.png 2x" alt="WAV" class="icon"/>
-                            </span>
-                            <span class="tooltiptextbottom">Generate a sound file for this song</span>
-                        </div>
-                        -->
-                        <div id="button-undo" class="smallButton tooltip">
-                            <img src="img/icon-undo.png" srcset="img2x/icon-undo.png 2x" alt="undo" class="icon-disabled"/>
-                            <span id="button-undo-tooltip" class="tooltiptextbottom">Undo</span>
-                        </div>
-                        <div id="button-redo" class="smallButton tooltip">
-                            <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
-                            <span id="button-redo-tooltip" class="tooltiptextbottom">Redo</span>
-                        </div>
+                    <div id="button-redo" class="smallButton tooltip">
+                        <img src="img/icon-redo.png" srcset="img2x/icon-redo.png 2x" alt="redo" class="icon-disabled"/>
+                        <span id="button-redo-tooltip" class="tooltiptextbottom">Redo</span>
                     </div>
                 </div>
             </td>
@@ -674,7 +700,7 @@
             <img src="https://i.imgur.com/b5pNXKU.png" srcset="https://i.imgur.com/z6U8Oxs.png 2x"/>
         </div>
         <div>
-            v2.1.4: 2025-05-20
+            v2.1.5: 2026-09-01
         </div>
         <div>
             <a href="https://github.com/buff0000n/shawzinscore">Source</a>
