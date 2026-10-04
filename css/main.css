@@ -179,6 +179,7 @@ td.label {
     filter: brightness(50%) saturate(0%);
 }
 
+
 .field-entry-span, .field-entry-span-light {
     display: inline-block;
 }
@@ -597,3 +598,99 @@ img.showcase:hover {
     filter: blur(0);
     transition: filter 0.25s linear 0.25s;
 }
+
+/* MIDI grid */
+/* sticky header row/column CSS Ganked from:
+   https://dev.to/lalitkhu/creating-a-scrollable-table-with-a-sticky-header-and-frozen-column-using-html-and-css-1d2a
+*/
+
+div.midiGridContainer {
+    border-bottom: none;
+    overflow: auto;
+    height: 600px;
+    width: 800px;
+}
+
+table.midiGrid {
+    border-spacing: 0;
+    width: 100%;
+    /* Messes up the empty cell layout
+    table-layout: fixed;
+    */
+}
+
+th.midiLabel {
+    white-space: nowrap;
+    text-align: right;
+}
+
+th.midiNumber {
+    white-space: nowrap;
+    text-align: left;
+    color: #B0B0B0;
+}
+
+/* Frozen first column */
+table.midiGrid th:nth-child(1) {
+    background-color: #202020; /* necessary to cover up stuff underneath */
+    position: sticky;
+    left: 0; /* Ensures the column stays on the left */
+    z-index: 5; /* Keeps the column above other cells */
+}
+
+/* Add higher z-index for header */
+table.midiGrid th:nth-child(1) {
+    z-index: 6;
+}
+
+/* Sticky header */
+table.midiGrid th {
+    background-color: #202020; /* necessary to cover up stuff underneath */
+    position: sticky;
+    top: 0; /* Makes the header stick to the top */
+    z-index: 2; /* Keeps the header above the table body */
+}
+
+/* put first column of first row on top to prevent weird label scrolling */
+table.midiGrid tr:nth-child(1) th:nth-child(1) {
+    z-index: 7;
+}
+
+table.midiGrid td.ya {
+    padding: 0.5em;
+    border: 0.25em solid #202020;
+    background-color: #B0B0B0;
+}
+
+table.midiGrid td.no {
+    padding: 0.5em;
+    border: 0.25em solid #202020;
+    background-color: #404040;
+}
+
+table.midiGrid td.na {
+    padding: 0.5em;
+    border: 0.25em solid #202020;
+    background-color: #606060;
+}
+
+table.midiGrid td.ya:hover, table.midiGrid td.no:hover, table.midiGrid td.na:hover {
+    border: 0.25em solid #BF8340;
+}
+
+table.midiGrid td.selected {
+    border: 0.25em solid #3FC03F !important;
+}
+
+table.midiGrid td.selected:hover {
+    border: 0.25em solid #E27119 !important;
+}
+
+table.midiGrid tr:hover td {
+    border: 0.25em solid #303030;
+}
+
+table.midiGrid tr:hover th {
+    background-color: #303030;
+}
+

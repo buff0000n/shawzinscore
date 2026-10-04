@@ -320,25 +320,14 @@ var Model = (function() {
             tempo = null;
 
         } else {
-            // parse meter, throw an error if there's any format issues
-            var newMeterStringArray = newMeter.split("/");
-            // check format
-            if (newMeterStringArray.length != 2) {
+            const parseResult = Music.parseMeter(newMeter);
+            if (parseResult == null) {
                 throw "Invalid meter format: '" + newMeter + "'";
             }
-
-            // parse as two ints
-            var newMeterArray = [MiscUtils.parseInt(newMeterStringArray[0]), MiscUtils.parseInt(newMeterStringArray[1])];
-
-            // range check
-            if (newMeterArray[0] > MetadataUI.maxBeatsPerMeasure) {
-                newMeterArray[0] = MetadataUI.maxBeatsPerMeasure;
-                newMeter = newMeterArray[0] + "/" + newMeterArray[1];
-            }
-
+            
             // after all the parsing/checking is done, save the values
-            meter = newMeter;
-            meterArray = newMeterArray;
+            meter = parseResult[0];
+            meterArray = parseResult[1];
             tempo = newTempo;
         }
 

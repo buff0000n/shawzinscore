@@ -126,6 +126,7 @@ var Metadata = (function() {
         "scales": {
         
             "free": {
+                "key": "free",
                 "config": {
                     "img": "standard/blank.png",
                     "name": "Free"
@@ -163,14 +164,15 @@ var Metadata = (function() {
             },
 
             "pmin": {
+                "key": "pmin",
                 "config": {
                     "img": "standard/pmin/scale.png",
                     "name": scaleName["pmin"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.Eb],
                     "altScales": [
-                        { "name": "Pentatonic Major", "key": MetadataMusic.note.Eb }
+                        { "name": "Pentatonic Major", "key": Music.note.Eb }
                     ]
                 },
                 "notes": {
@@ -252,14 +254,15 @@ var Metadata = (function() {
             },
 
             "pmaj": {
+                "key": "pmaj",
                 "config": {
                     "img": "standard/pmaj/scale.png",
                     "name": scaleName["pmaj"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.C],
                     "altScales": [
-                        { "name": "Pentatonic Minor", "key": MetadataMusic.note.A }
+                        { "name": "Pentatonic Minor", "key": Music.note.A }
                     ]
                 },
                 "notes": {
@@ -341,12 +344,13 @@ var Metadata = (function() {
             },
 
             "chrom": {
+                "key": "chrom",
                 "config": {
                     "img": "standard/chrom/scale.png",
                     "name": scaleName["chrom"],
                     "chordtype": chordTypeSingle,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.C],
                     "altScales": [ ]
                 },
                 "notes": {
@@ -429,15 +433,16 @@ var Metadata = (function() {
             },
 
             "hex": {
+                "key": "hex",
                 "config": {
                     "img": "standard/hex/scale.png",
                     "name": scaleName["hex"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.Eb],
                     "altScales": [
-                        { "name": "Minor Blues", "key": MetadataMusic.note.C },
-                        { "name": "Major Blues", "key": MetadataMusic.note.Eb }
+                        { "name": "Minor Blues", "key": Music.note.C },
+                        { "name": "Major Blues", "key": Music.note.Eb }
                     ]
                 },
                 "notes": {
@@ -519,14 +524,15 @@ var Metadata = (function() {
             },
 
             "maj": {
+                "key": "maj",
                 "config": {
                     "img": "standard/maj/scale.png",
                     "name": scaleName["maj"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.C],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.C],
                     "altScales": [
-                        { "name": "Minor", "key": MetadataMusic.note.A }
+                        { "name": "Minor", "key": Music.note.A }
                     ]
                 },
                 "notes": {
@@ -608,14 +614,15 @@ var Metadata = (function() {
             },
 
             "min": {
+                "key": "min",
                 "config": {
                     "img": "standard/min/scale.png",
                     "name": scaleName["min"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Eb],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.Eb],
                     "altScales": [
-                        { "name": "Major", "key": MetadataMusic.note.Eb }
+                        { "name": "Major", "key": Music.note.Eb }
                     ]
                 },
                 "notes": {
@@ -697,14 +704,15 @@ var Metadata = (function() {
             },
 
             "hira": {
+                "key": "hira",
                 "config": {
                     "img": "standard/hira/scale.png",
                     "name": scaleName["hira"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Db],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.Db],
                     "altScales": [
-                        { "name": "Harmonic Minor", "key": MetadataMusic.note.Bb }
+                        { "name": "Harmonic Minor", "key": Music.note.Bb }
                     ]
                 },
                 "notes": {
@@ -786,14 +794,15 @@ var Metadata = (function() {
             },
 
             "phry": {
+                "key": "phry",
                 "config": {
                     "img": "standard/phry/scale.png",
                     "name": scaleName["phry"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.C,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Ab],
+                    "key": Music.note.C,
+                    "keysig": Music.keySigs[Music.note.Ab],
                     "altScales": [
-                        { "name": "Harmonic Minor", "key": MetadataMusic.note.F }
+                        { "name": "Harmonic Minor", "key": Music.note.F }
                     ]
                 },
                 "notes": {
@@ -875,15 +884,16 @@ var Metadata = (function() {
             },
 
             "yo": {
+                "key": "yo",
                 "config": {
                     "img": "standard/yo/scale.png",
                     "name": scaleName["yo"],
                     "chordtype": chordTypeDual,
-                    "key": MetadataMusic.note.Db,
-                    "keysig": MetadataMusic.keySigs[MetadataMusic.note.Gb],
+                    "key": Music.note.Db,
+                    "keysig": Music.keySigs[Music.note.Gb],
                     "altScales": [
-                        { "name": "Pentatonic Minor", "key": MetadataMusic.note.Eb },
-                        { "name": "Pentatonic Major", "key": MetadataMusic.note.Gb }
+                        { "name": "Pentatonic Minor", "key": Music.note.Eb },
+                        { "name": "Pentatonic Major", "key": Music.note.Gb }
                     ]
                 },
                 "notes": {
@@ -968,6 +978,7 @@ var Metadata = (function() {
     };
 
     var daxShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "dax",
         "config": {
             "name": "Dax's Shawzin",
             "comment": "Based on a shamisen. Also includes Dawn, Mimica, and Day of the Dead skins.",
@@ -975,6 +986,7 @@ var Metadata = (function() {
     });
 
     var nelumboShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "nelumbo",
         "config": {
             "name": "Nelumbo Shawzin",
             "comment": "Based on an acoustic guitar.",
@@ -983,6 +995,7 @@ var Metadata = (function() {
     });
 
     var corbuShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "corbu",
         "config": {
             "name": "Corbu Shawzin",
             "comment": "Based on djent-style electric guitar.",
@@ -994,7 +1007,6 @@ var Metadata = (function() {
             "monoFadeTime": 0.25
         },
         "scales": {
-
             "pmin": {
                 "chords": {
                     "12-1": {
@@ -1603,6 +1615,7 @@ var Metadata = (function() {
     });
 
     var tiamatShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "tiamat",
         "config": {
             "name": "Tiamat Shawzin",
             "comment": "Based on an electric bass.",
@@ -1759,6 +1772,7 @@ var Metadata = (function() {
     });
 
     var aristeiShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "aristei",
         "config": {
             "name": "Aristei Shawzin",
             "comment": "Based on a harp.",
@@ -1778,6 +1792,7 @@ var Metadata = (function() {
     });
 
     var narmerShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "narmer",
         "config": {
             "name": "Narmer Shawzin",
             "comment": "Based on a lead electric guitar.",
@@ -1937,6 +1952,7 @@ var Metadata = (function() {
     });
 
     var kiraShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "kira",
         "config": {
             "name": "Kira's Shawzin",
             "comment": "Based on a keytar/synthesizer.",
@@ -1944,6 +1960,7 @@ var Metadata = (function() {
     });
 
     var voidShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "void",
         "config": {
             "name": "Void's Song Shawzin",
             "comment": "Based on vocals/vocaloid.",
@@ -2122,6 +2139,7 @@ var Metadata = (function() {
     });
 
     var lonesomeShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "lone",
         "config": {
             "name": "Lonesome Shawzin",
             "comment": "Based on bells, I guess?",
@@ -2129,6 +2147,7 @@ var Metadata = (function() {
     });
 
     var courtlyShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "courtly",
         "config": {
             "name": "Courtly Shawzin",
             "comment": "Based on a Chinese Dulcimer",
@@ -2136,6 +2155,7 @@ var Metadata = (function() {
     });
 
     var lizzieShawzin = ObjectUtils.merge(standardShawzin, {
+        "key": "lizzie",
         "config": {
             "name": "Lizzie",
             "comment": "Sentient guitar",

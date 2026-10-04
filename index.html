@@ -42,7 +42,9 @@
 <script type="text/javascript" language="javascript" src="js/lib/undo.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/menus.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/slider.js"></script>
+<script type="text/javascript" language="javascript" src="js/lib/music.js"></script>
 <script type="text/javascript" language="javascript" src="js/lib/midi.js"></script>
+<script type="text/javascript" language="javascript" src="js/lib/midifile.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata_music.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata.js"></script>
 <script type="text/javascript" language="javascript" src="js/metadata_ui.js"></script>
@@ -58,6 +60,7 @@
 <script type="text/javascript" language="javascript" src="js/controlScheme.js"></script>
 <script type="text/javascript" language="javascript" src="js/editing.js"></script>
 <script type="text/javascript" language="javascript" src="js/controls.js"></script>
+<script type="text/javascript" language="javascript" src="js/midireader.js"></script>
 <script type="text/javascript" language="javascript" src="js/init.js"></script>
 <!-- the rest -->
 <body onload="initModel()">
@@ -246,6 +249,12 @@
                 </div>
                 <span class="tooltiptextbottom">Transpose the pitch to a different key</span>
             </div>
+            <div class="field-button tooltip" id="edit-midi-import">
+                <img src="img/icon-edit-delete.png" srcset="img2x/icon-edit-delete.png 2x" class="icon"/>
+                <span class="fieldTitle">Import Midi File</span>
+                <span class="tooltiptextbottom">Upload a standard MIDI file and <i>attempt</i> to extract a Shawzin song </span>
+            </div>
+
         </div>
     </div>
 </div>
@@ -645,6 +654,16 @@
             <img src="img/icon-edit-duviri-mode-remove.png" srcset="img2x/icon-edit-duviri-mode-remove.png 2x" class="icon"/>
             <span class="fieldTitle">Remove Duviri Mode</span>
             <span class="tooltiptextbottom">Switch the note back so it matches sound that it plays</span>
+        </div>
+    </div>
+
+    <div id="midi-import-dialog">
+        <div class="field-entry">
+            <input type="file" id="midi-import-input">
+        </div>
+        <div id="midi-import-display"></div>
+        <div id="midi-import-log">
+            <textarea cols="100" rows="25" id="midi-import-log-textarea"></textarea>
         </div>
     </div>
 </div>

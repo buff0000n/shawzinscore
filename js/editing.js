@@ -17,6 +17,8 @@ var Editing = (function() {
 
         // tempo combobox event handlers
         document.getElementById("config-tempo-input").addEventListener("change", commitTempoChange, { passive: false });
+        // the options in the tempo dropdown are built dynamically from metadata
+        initTempoControl();
 
         // lead-in textbox event handlers
         Events.setupTextInput(document.getElementById("config-leadin-beats-input"), true);
@@ -36,8 +38,9 @@ var Editing = (function() {
         // key signature selection event handlers
         document.getElementById("select-keysig").addEventListener("click", doKeySigSelect, { passive: false });
 
-        // the options in the tempo dropdown are built dynamically from metadata
-        initTempoControl();
+        // key signature selection event handlers
+        document.getElementById("edit-midi-import").addEventListener("click", doMidiImport, { passive: false });
+
 
         // apply the editing setting
         // we have to wait for more of the UI to get initialized before we enable editing,
@@ -244,7 +247,7 @@ var Editing = (function() {
             var tr = document.createElement("div");
             // display it differently if it's the currently selected item
             tr.className = (note == currentNote ? "selection-item-selected" : "selection-item") +
-                            (note == MetadataMusic.noteOrder[0] ? " fret3" : "") +
+                            (note == Music.noteOrder[0] ? " fret3" : "") +
                             " tooltip";
 
             // meh. build the selection contents from the metadata icon image, name, and description
@@ -270,8 +273,8 @@ var Editing = (function() {
         // generate a note list
         var noteList = [];
         // loop over all 12 notes
-        for (var i = 0; i < MetadataMusic.noteOrder.length; i++) {
-            var note = MetadataMusic.noteOrder[i];
+        for (var i = 0; i < Music.noteOrder.length; i++) {
+            var note = Music.noteOrder[i];
             // get the pitch offset for the key signature correponding to the note
             var pitchOffset = Piano.getPitchOffset(note);
             // save in a struct
@@ -292,13 +295,13 @@ var Editing = (function() {
         for (var i = 0; i < noteList.length; i++) {
             var note = noteList[i].note;
             // if it's the default key signature base, then build a separator before it
-            if (note == MetadataMusic.noteOrder[0]) {
+            if (note == Music.noteOrder[0]) {
                 doSeparator();
             }
             // build the selection
             selectionDiv.appendChild(createSelection(note));
             // if it's the default key signature base, then build another separator after it
-            if (note == MetadataMusic.noteOrder[0]) {
+            if (note == Music.noteOrder[0]) {
                 doSeparator();
             }
         }
@@ -662,6 +665,10 @@ var Editing = (function() {
         Undo.endUndoCombo("Delete All");
     }
 
+    function doMidiImport() {
+        MidiReader.showDialog(this);
+    }
+
     return {
         // register event listeners
         registerEventListeners: registerEventListeners,
@@ -670,4 +677,5 @@ var Editing = (function() {
         // notify that something with the meter/tempo has changed
         updateStructure: updateStructure,
     };
+
 })();
