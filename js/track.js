@@ -1375,7 +1375,16 @@ var Track = (function() {
             }
         }
 
+        function isScrollbarEvent(e) {
+            // if the original target of the event is just the main scroll panel itself, then it's
+            // an event on the scrollbar
+            return e.target == scroll;
+        }
+
         function handleDownEvent(e) {
+            // filter out clicks on the scrollbar itself
+            if (isScrollbarEvent(e)) return;
+
             // if we're editing then call the edit event handler
             if (editing) {
                 handleEditEvent(e, true, false, false);
@@ -1389,6 +1398,9 @@ var Track = (function() {
         }
 
         function handleUpEvent(e) {
+            // filter out clicks on the scrollbar itself
+            if (isScrollbarEvent(e)) return;
+
             // if we're editing then call the edit event handler
             if (editing) {
                 handleEditEvent(e, false, true, false);
@@ -1399,6 +1411,9 @@ var Track = (function() {
         }
 
         function handleMoveEvent(e) {
+            // filter out clicks on the scrollbar itself
+            if (isScrollbarEvent(e)) return;
+
             // if we're editing then call the edit event handler
             if (editing) {
                 handleEditEvent(e, false, false, false);
@@ -2250,8 +2265,8 @@ var Track = (function() {
             // all the hard work is in this function
             var noteIndex = Piano.rollNoteIndexFromOffset(Model.getKeySig(), x2);
 
-            // get the nearest scale note, depending on the current chord mode
-            return TrackBar.getNearestScaleNoteName(noteIndex);
+            // if there is anote index then get the nearest scale note, depending on the current chord mode
+            return noteIndex == null ? null : TrackBar.getNearestScaleNoteName(noteIndex);
         }
 
         function getRollNoteOffset(baseNote, clickNote) {
