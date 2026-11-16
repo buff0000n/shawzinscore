@@ -5,15 +5,15 @@ var MetadataMusic = (function() {
                               // get the current scale metadata
                               scaleMetadata = shawzinMetadata.scales[Model.getScale()]) {
         // lookup the offset of the base scale note
-        var baseNoteOffset = Music.noteOrder.indexOf(scaleMetadata.config.key);
+        var baseNoteOffset = Music.noteIndex[scaleMetadata.config.key];
 
         // lookup the offset of the key signature
-        var offset = Music.noteOrder.indexOf(note)
+        var offset = Music.noteIndex[note]
         // Add the note offsets and lookup the corresponding note
         var baseNote = Music.noteOrder[(baseNoteOffset + offset) % Music.noteOrder.length];
 
         // Calculate the index of the base note for the key signature
-        var baseNoteIndex = (Music.noteOrder.indexOf(scaleMetadata.config.keysig.baseNote) + offset) % Music.noteOrder.length
+        var baseNoteIndex = (Music.noteIndex[scaleMetadata.config.keysig.baseNote] + offset) % Music.noteOrder.length
         // lookup the base note, then the key signature
         var keySigBaseNote = Music.noteOrder[baseNoteIndex];
         var selectKeySig = Music.keySigs[keySigBaseNote];
@@ -37,7 +37,7 @@ var MetadataMusic = (function() {
             // get the alt scale metadata
             var altScale = scaleMetadata.config.altScales[i];
             // get the absolute offset of the alt scale's base note
-            var altOffset = Music.noteOrder.indexOf(altScale.key)
+            var altOffset = Music.noteIndex[altScale.key]
             // calculate the alt scale's base note in the current key
             // Note: baseNoteOffset cancels itself out
             var altBaseNote = Music.noteOrder[(offset + altOffset) % Music.noteOrder.length];

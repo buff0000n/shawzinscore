@@ -249,7 +249,7 @@ var TrackBar = (function() {
         // dumb way
         for (var noteName in noteMap) {
             var note = noteMap[noteName];
-            var noteIndex = Metadata.noteOrder.indexOf(note);
+            var noteIndex = Metadata.noteIndex[note];
             lookup[noteIndex] = noteName;
         }
         return lookup;
@@ -264,7 +264,7 @@ var TrackBar = (function() {
         for (var noteName in noteMap) {
             var note = noteMap[noteName];
             // find the full keyboard index of the scale note
-            var index = Metadata.noteOrder.indexOf(note);
+            var index = Metadata.noteIndex[note];
             // get the fret color for the note
             // todo: better way to get the fret and color
             var color = MetadataUI.fretToRollColors[noteName.split("-")[0]];
@@ -574,14 +574,14 @@ var TrackBar = (function() {
             var note = noteMap[noteName];
             // get the position for the note box from the canvas,
             // indexed by the note's overall index in the full note order list
-            var boxStyleList = newImage.boxStyles[Metadata.noteOrder.indexOf(note)];
+            var boxStyleList = newImage.boxStyles[Metadata.noteIndex[note]];
             // create a key group
             var keyGroup = new KeyGroup(noteName, boxStyleList);
             // build the click boxes and add them to the container
             keyGroup.buildBoxes();
 
             // get the midi note number plus any offset
-            var midiNote = MetadataUI.midiNoteC + Metadata.noteOrder.indexOf(note) + midiNoteOffset;
+            var midiNote = Midi.midiNoteC + Metadata.noteIndex[note] + midiNoteOffset;
             // save to a map
             midiMap[midiNote] = keyGroup;
         }
@@ -864,7 +864,7 @@ var TrackBar = (function() {
             else setChordMode("none");
         };
         // for dual chord type, add a listener on the Ab below the starting C for chord mode A
-        midiMap[MetadataUI.midiNoteC + midiNoteOffset - 4] = {
+        midiMap[Midi.midiNoteChord1 + midiNoteOffset] = {
             "action": function() {
                 // set state
                 aOn = true;
@@ -880,7 +880,7 @@ var TrackBar = (function() {
             },
         };
         // and a listener on the Bb below the starting C for chord mode B
-        midiMap[MetadataUI.midiNoteC + midiNoteOffset - 2] = {
+        midiMap[Midi.midiNoteChord2 + midiNoteOffset] = {
             "action": function() {
                 // set state
                 bOn = true;
@@ -926,8 +926,8 @@ var TrackBar = (function() {
             },
         };
         // just to be consistent with the dual chord type, eitehr Ab or Bb can be used to turn on chord mode
-        midiMap[MetadataUI.midiNoteC + midiNoteOffset - 2] = box;
-        midiMap[MetadataUI.midiNoteC + midiNoteOffset - 4] = box;
+        midiMap[Midi.midiNoteChord2 + midiNoteOffset] = box;
+        midiMap[Midi.midiNoteChord1 + midiNoteOffset] = box;
         return midiMap;
     }
 
@@ -961,15 +961,15 @@ var TrackBar = (function() {
         // find the top tone of the scale, this takes some mapping
         var top = 0;
         for (noteName in scaleMd.notes) {
-            var noteIndex = Metadata.noteOrder.indexOf(scaleMd.notes[noteName]);
+            var noteIndex = Metadata.noteIndex[scaleMd.notes[noteName]];
             if (noteIndex > top) top = noteIndex;
         }
         // go up to an octave
         for (var n = 1; n <= 12; n++) {
             // below the scale
-            midiMap[MetadataUI.midiNoteC + midiNoteOffset - n] = box;
+            midiMap[Midi.midiNoteC + midiNoteOffset - n] = box;
             // above the scale
-            midiMap[MetadataUI.midiNoteC + midiNoteOffset + top + n] = box;
+            midiMap[Midi.midiNoteC + midiNoteOffset + top + n] = box;
         }
         return midiMap;
     }

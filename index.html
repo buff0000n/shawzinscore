@@ -422,6 +422,47 @@
     </div>
 </div>
 
+
+<div id="midi-import" class="inline-menu-container">
+    <table id="midi-import-title" class="menu-title-bar">
+        <tr>
+            <td class="menu-title">Import MIDI File</td>
+            <td style="text-align: right;">
+                <img id="midi-import-close" class="imgButton" src="img/icon-close.png" srcset="img2x/icon-close.png 2x"
+                     title="Close">
+            </td>
+        </tr>
+    </table>
+    <div class="menu-content-container">
+        <div id="midi-import-fields" class="field-div">
+            <span class="field-entry-span" id="midi-import-field">
+                <label for="midi-import-input">
+                    <div class="field-button tooltip" id="midi-import-input-button">
+                        <img src="img/icon-edit-quantize.png" srcset="img2x/icon-edit-quantize.png 2x" class="icon"/>
+                        <span class="fieldTitle">Choose File</span>
+                        <span class="tooltiptextbottom">Choose a midi file from your local file system</span>
+                    </div>
+                </label>
+                <input type="file" id="midi-import-input">
+            </span>
+            <span id="midi-import-filename"></span>
+        </div>
+
+        <div id="midi-import-display"></div>
+        <div id="midi-import-log" style="display: none;">
+            <textarea cols="100" rows="25" id="midi-import-log-textarea"></textarea>
+        </div>
+
+
+<!--        <div class="menu-content-scroll">-->
+<!--            <div class="selection-div">-->
+
+<!--            </div>-->
+<!--        </div>-->
+    </div>
+</div>
+
+
 <!-- holding pen for pop-up menus and dialogs that I didn't feel like building from scratch in javascript -->
 <div id="hidden-things" style="display: none;">
 
@@ -654,16 +695,6 @@
             <img src="img/icon-edit-duviri-mode-remove.png" srcset="img2x/icon-edit-duviri-mode-remove.png 2x" class="icon"/>
             <span class="fieldTitle">Remove Duviri Mode</span>
             <span class="tooltiptextbottom">Switch the note back so it matches sound that it plays</span>
-        </div>
-    </div>
-
-    <div id="midi-import-dialog">
-        <div class="field-entry">
-            <input type="file" id="midi-import-input">
-        </div>
-        <div id="midi-import-display"></div>
-        <div id="midi-import-log">
-            <textarea cols="100" rows="25" id="midi-import-log-textarea"></textarea>
         </div>
     </div>
 </div>

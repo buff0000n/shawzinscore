@@ -1,6 +1,6 @@
 // magic singleton pattern
-var Metadata = (function() {
-    var note = {
+const Metadata = (function() {
+    const note = {
         C1: "c1",
             Cs1: "cs1", Db1: "cs1",
         D1: "d1",
@@ -31,7 +31,7 @@ var Metadata = (function() {
             Ds3: "ds3", Eb3: "ds3"
     };
 
-    var noteOrder = [
+    const noteOrder = [
         note.C1,
             note.Cs1,
         note.D1,
@@ -62,20 +62,25 @@ var Metadata = (function() {
             note.Ds3
     ];
 
-    var ticksPerSecond = 16;
-    // technically the song code format can support 4m16s, but the game caps it at exactly 4m
-    var maxSongTime = 4 * 60;
-    var maxTickLength = maxSongTime * ticksPerSecond;
-    var maxNotes = 1000;
-    // the UI gives you about a 2.75 second lead-in before the song starts
-    var leadInTicks = Math.ceil(2.75 * ticksPerSecond);
+    const noteIndex = {};
+    for (var n = 0; n < noteOrder.length; n++) {
+        noteIndex[noteOrder[n]] = n;
+    }
 
-    var shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void", "lonesome", "courtly", "lizzie" ];
-    var scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
-    var scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
-    var scaleChordOrder = [ "12-1", "12-2", "12-3", "23-1", "23-2", "23-3", "13-1", "13-2", "13-3", "123-1", "123-2", "123-3" ];
+    const ticksPerSecond = 16;
+    // technically the song code format can support 4m16s, but the game caps it at exactly 4m
+    const maxSongTime = 4 * 60;
+    const maxTickLength = maxSongTime * ticksPerSecond;
+    const maxNotes = 1000;
+    // the UI gives you about a 2.75 second lead-in before the song starts
+    const leadInTicks = Math.ceil(2.75 * ticksPerSecond);
+
+    const shawzinOrder = [ "dax", "nelumbo", "corbu", "tiamat", "aristei", "narmer", "kira", "void", "lonesome", "courtly", "lizzie" ];
+    const scaleOrder = ["pmin", "pmaj", "chrom", "hex", "maj", "min", "hira", "phry", "yo"];
+    const scaleNoteOrder = [ "0-1", "0-2", "0-3", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3", "3-1", "3-2", "3-3" ];
+    const scaleChordOrder = [ "12-1", "12-2", "12-3", "23-1", "23-2", "23-3", "13-1", "13-2", "13-3", "123-1", "123-2", "123-3" ];
     
-    var scaleName = {
+    const scaleName = {
         "pmin": "Pentatonic Minor",
         "pmaj": "Pentatonic Major",
         "chrom": "Chromatic",
@@ -87,27 +92,27 @@ var Metadata = (function() {
         "yo": "Yo",
     }
 
-    var slapMap = {};
+    const slapMap = {};
     for (var n = 0; n < scaleNoteOrder.length; n++) {
         slapMap[scaleChordOrder[n]] = scaleNoteOrder[n];
     }
 
-    var polyTypePolyphonic = 1;
-    var polyTypeMonophonic = 2;
-    var polyTypeDuophonic = 3;
+    const polyTypePolyphonic = 1;
+    const polyTypeMonophonic = 2;
+    const polyTypeDuophonic = 3;
     
-    var chordTypeDual = "dual";
-    var chordTypeSingle = "single";
-    var chordTypeSlap = "slap";
+    const chordTypeDual = "dual";
+    const chordTypeSingle = "single";
+    const chordTypeSlap = "slap";
 
-    var flat = "\u266D";
-    var sharp = "\u266F";
-    var natural = "\u266E";
+    const flat = "\u266D";
+    const sharp = "\u266F";
+    const natural = "\u266E";
 
-    var defaultShawzinVolume = 0.25;
-    var defaultMetronomeVolume = 0.5;
+    const defaultShawzinVolume = 0.25;
+    const defaultMetronomeVolume = 0.5;
 
-    var standardShawzin  = {
+    const standardShawzin  = {
         "config": {
             // metadata, override this
             "name": "",
@@ -124,7 +129,6 @@ var Metadata = (function() {
             "alts": false
         },
         "scales": {
-        
             "free": {
                 "key": "free",
                 "config": {
@@ -977,7 +981,7 @@ var Metadata = (function() {
         }
     };
 
-    var daxShawzin = ObjectUtils.merge(standardShawzin, {
+    const daxShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "dax",
         "config": {
             "name": "Dax's Shawzin",
@@ -985,7 +989,7 @@ var Metadata = (function() {
         }
     });
 
-    var nelumboShawzin = ObjectUtils.merge(standardShawzin, {
+    const nelumboShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "nelumbo",
         "config": {
             "name": "Nelumbo Shawzin",
@@ -994,7 +998,7 @@ var Metadata = (function() {
         }
     });
 
-    var corbuShawzin = ObjectUtils.merge(standardShawzin, {
+    const corbuShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "corbu",
         "config": {
             "name": "Corbu Shawzin",
@@ -1614,7 +1618,7 @@ var Metadata = (function() {
         }
     });
 
-    var tiamatShawzin = ObjectUtils.merge(standardShawzin, {
+    const tiamatShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "tiamat",
         "config": {
             "name": "Tiamat Shawzin",
@@ -1771,7 +1775,7 @@ var Metadata = (function() {
         }
     });
 
-    var aristeiShawzin = ObjectUtils.merge(standardShawzin, {
+    const aristeiShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "aristei",
         "config": {
             "name": "Aristei Shawzin",
@@ -1791,7 +1795,7 @@ var Metadata = (function() {
         }
     });
 
-    var narmerShawzin = ObjectUtils.merge(standardShawzin, {
+    const narmerShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "narmer",
         "config": {
             "name": "Narmer Shawzin",
@@ -1951,7 +1955,7 @@ var Metadata = (function() {
         }
     });
 
-    var kiraShawzin = ObjectUtils.merge(standardShawzin, {
+    const kiraShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "kira",
         "config": {
             "name": "Kira's Shawzin",
@@ -1959,7 +1963,7 @@ var Metadata = (function() {
         }
     });
 
-    var voidShawzin = ObjectUtils.merge(standardShawzin, {
+    const voidShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "void",
         "config": {
             "name": "Void's Song Shawzin",
@@ -2138,7 +2142,7 @@ var Metadata = (function() {
         }
     });
 
-    var lonesomeShawzin = ObjectUtils.merge(standardShawzin, {
+    const lonesomeShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "lone",
         "config": {
             "name": "Lonesome Shawzin",
@@ -2146,7 +2150,7 @@ var Metadata = (function() {
         }
     });
 
-    var courtlyShawzin = ObjectUtils.merge(standardShawzin, {
+    const courtlyShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "courtly",
         "config": {
             "name": "Courtly Shawzin",
@@ -2154,7 +2158,7 @@ var Metadata = (function() {
         }
     });
 
-    var lizzieShawzin = ObjectUtils.merge(standardShawzin, {
+    const lizzieShawzin = ObjectUtils.merge(standardShawzin, {
         "key": "lizzie",
         "config": {
             "name": "Lizzie",
@@ -2319,6 +2323,7 @@ var Metadata = (function() {
         // shawzin metadata
         shawzinOrder: shawzinOrder,
         noteOrder: noteOrder,
+        noteIndex: noteIndex,
         scaleOrder: scaleOrder,
         scaleName: scaleName,
         scaleNoteOrder: scaleNoteOrder,

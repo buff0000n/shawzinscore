@@ -71,8 +71,8 @@ var Editing = (function() {
             // display the editing controls
             toolbar.style.display = "block";
 
-            // make sure the key signature item is displaying the current key signature
-            document.getElementById("select-keysig-text").innerHTML = getKeySigHTMLAndTooltip(Model.getKeySig())[0];
+            // refresh the key signature selection
+            updateScale();
 
             // notify playback that the other metronome button is shown
             Playback.showSettingsMetronome();
@@ -211,6 +211,13 @@ var Editing = (function() {
             option.value = `${tempo}`;
             option.innerHTML = option.value;
             input.appendChild(option);
+        }
+    }
+
+    function updateScale() {
+        if (editing) {
+            // make sure the key signature item is displaying the current key signature
+            document.getElementById("select-keysig-text").innerHTML = getKeySigHTMLAndTooltip(Model.getKeySig())[0];
         }
     }
 
@@ -676,6 +683,8 @@ var Editing = (function() {
         updateSongStats: updateSongStats,
         // notify that something with the meter/tempo has changed
         updateStructure: updateStructure,
+        // notify that something has changed with the scale
+        updateScale: updateScale,
     };
 
 })();

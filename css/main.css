@@ -50,18 +50,30 @@ td.label {
 .closeMenuButton {
 }
 
-.menu-container {
-    display: block;
-    position: absolute;
+.imgButton {
+    cursor: pointer;
+}
+
+.menu-container, .inline-menu-container {
     background-color: #404040;
     /*margin: 8px;*/
     padding: 8px;
     border-radius: 8px;
     text-align: left;
+    /*overflow: auto;*/
+}
+.menu-container {
+    display: block;
+    position: absolute;
     box-shadow: 0 0 3px 3px #000000;
     z-index: 100;
     /*overflow: auto;*/
 }
+.inline-menu-container {
+    display: inline-block;
+    /*overflow: auto;*/
+}
+
 .menu-title-bar {
     background-color: #808080;
     margin: 0;
@@ -604,11 +616,20 @@ img.showcase:hover {
    https://dev.to/lalitkhu/creating-a-scrollable-table-with-a-sticky-header-and-frozen-column-using-html-and-css-1d2a
 */
 
-div.midiGridContainer {
+input[type="file"] {
+    display: none;
+}
+
+#midi-import {
+    width: 688px;
+    vertical-align: top;
+    display: none;
+}
+
+#midi-import-display {
     border-bottom: none;
     overflow: auto;
-    height: 600px;
-    width: 800px;
+    width: 100%;
 }
 
 table.midiGrid {

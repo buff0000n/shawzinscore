@@ -360,6 +360,9 @@ var Events = (function() {
 
         // handle a layout resize event
         onResize(w, h) {
+            // <body> element has an 8px margin
+            w -= 16;
+            h -= 16;
             // save the dimensions
             this.lastWidth = w;
             this.lastHeight = h;
@@ -371,6 +374,9 @@ var Events = (function() {
 
         // handle a layout resize event
         onVisualResize(w, h) {
+            // <body> element has an 8px margin
+            w -= 16;
+            h -= 16;
             // save the dimensions
             this.lastVisualWidth = w;
             this.lastVisualHeight = h;

@@ -225,19 +225,12 @@ var Track = (function() {
         }
     }
 
-    /// ugh
-    function getHeight(elementId) {
-        var element = document.getElementById(elementId)
-        var bcr = element.getBoundingClientRect();
-        return bcr.height;
-    }
-
     // recalculate visible pixels and ticks when the window size has changed
     function resize(w, h) {
         var container = document.getElementById("song-container");
         container.style.height = h + "px";
         // FFS goddammit I'm drunk but why is it so hard to make this the right height with CSS
-        scroll.style.height = (h - getHeight("song-toolbar") - getHeight("song-bar")) + "px";
+        scroll.style.height = (h - PageUtils.getHeight("song-toolbar") - PageUtils.getHeight("song-bar")) + "px";
         viewHeight = scroll.getBoundingClientRect().height;
         visibleTicks = Math.ceil(viewHeight / tickSpacing);
         // if we're playing, make sure the full track is onscreen

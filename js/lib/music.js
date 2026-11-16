@@ -34,6 +34,11 @@ var Music = (function() {
         note.B,
     ];
 
+    const noteIndex = {};
+    for (var n = 0; n < noteOrder.length; n++) {
+        noteIndex[noteOrder[n]] = n;
+    }
+
     var noteNames = {};
     noteNames[note.C] = ["C", "C"];
         noteNames[note.Cs] = ["C" + sharp, "D" + flat];
@@ -124,6 +129,7 @@ var Music = (function() {
     return  {
         note: note,
         noteOrder: noteOrder,
+        noteIndex: noteIndex,
         noteNames: noteNames,
         keySigs: keySigs,
         getNoteNameInKeySig: getNoteNameInKeySig, // (keySig, note)

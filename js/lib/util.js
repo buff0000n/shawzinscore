@@ -508,6 +508,13 @@ var PageUtils = (function() {
         return img;
     }
 
+    /// ugh
+    function getHeight(elementId) {
+        var element = document.getElementById(elementId)
+        var bcr = element.getBoundingClientRect();
+        return bcr.height;
+    }
+
     // public members
     return  {
         showError: function(error) {
@@ -533,6 +540,7 @@ var PageUtils = (function() {
 
         setImgSrc: setImgSrc, // (img, png)
         makeImage: makeImage, // (png, className="centerImg")
+        getHeight: getHeight, // (elementId)
     }
 })();
 

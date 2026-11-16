@@ -231,6 +231,13 @@ var Midi = (function() {
 //        }
 //    }
 
+    // My personal preference: base the Shawzin scale on the C an octave below middle C
+    var midiNoteC = middleC - 12;
+    // chord key 1 is the Ab below the start of the shawzin scale
+    var midiNoteChord1 = midiNoteC - 4;
+    // chord key 2 is the Bb below the start of the shawzin scale
+    var midiNoteChord2 = midiNoteC - 2;
+
     return {
         // enable and init the MIDI event handlers
         init: init,
@@ -240,6 +247,9 @@ var Midi = (function() {
         addMidiListener: addMidiListener,
         // misc constants
         middleC: middleC,
+        midiNoteC: midiNoteC,
+        midiNoteChord1: midiNoteChord1,
+        midiNoteChord2: midiNoteChord2,
     }
 })();
 

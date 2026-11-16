@@ -198,6 +198,7 @@ var Model = (function() {
         Track.updateScale();
         TrackBar.updateScale();
         Playback.updateScale();
+        Editing.updateScale();
     }
 
     function doSetScale(name) {
@@ -324,7 +325,7 @@ var Model = (function() {
             if (parseResult == null) {
                 throw "Invalid meter format: '" + newMeter + "'";
             }
-            
+
             // after all the parsing/checking is done, save the values
             meter = parseResult[0];
             meterArray = parseResult[1];
